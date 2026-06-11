@@ -22,6 +22,9 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [參考網站清單](planning/reference/website.txt) | 5 個國際包裝印刷大廠官網 |
 | [參考網站分析](docs/reference-website-analysis.md) | 競品設計分析與對 NTI 的建議 |
 | [Harness 設定說明](docs/harness.md) | Claude Code harness 設定、權限、skills、memory |
+| [Harness Engineering（Agent 編排）](docs/harness-engineering.md) | 建置專案的 agent 角色編組、階段對應、編排模式 |
+| [網站建置時程（PDF）](planning/NTI_網站建置時程.pdf) | 26 週建置時程 Gantt、Pacdora 整合、客戶治理機制 |
+| [網站建置時程（HTML）](planning/網站建置時程.html) | 時程表原始檔（可編輯，產 PDF 用） |
 
 ## 目錄結構
 
@@ -55,7 +58,7 @@ NTI/
 
 ## 工作慣例
 
-- 文件放 `docs/`；規劃原始檔放 `planning/`。新增重要文件時，於上方「文件索引」補連結。
+- **檔案放置慣例**：`docs/` 僅放 **harness engineering 文件**；其他產出的 PDF／時程／規劃檔一律放 `planning/`。新增重要文件時，於上方「文件索引」補連結。
 - 前端開發優先使用 `frontend-design` skill；改動後用 `run`／`verify` skill 驗證。
 - 若要進版控，先 `git init`（目前非 git repo）。
 
