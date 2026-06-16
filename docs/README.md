@@ -32,10 +32,10 @@
 | API | **Azure Functions .NET 10**（isolated、Consumption） | 唯一資料存取層，**Dapper** + Azure SQL |
 | 資料庫 | **Azure SQL Database — Basic 層** | 已定案 |
 | 媒體/檔案 | **Azure Blob Storage** | 設計稿、媒體 |
-| 3D 包裝客製 | **Pacdora（pacdora.com）整合** | 採「研究→PoC→關卡」P7 track，串「客製設計→報價」；備案＝樣板+人工報價（參考案例 riiqi 紙杯） |
+| 3D 包裝客製 | **本期不納入** | 曾評估 Pacdora 整合，但廠商不提供技術崁入（embedding）服務，故本期不納入；如需 3D 客製改以樣板+人工報價或後續另案評估 |
 | AI 客服 | **暫不納入本期** | Claude API/AI Agent 浮動按鈕本期不做，後續再評估 |
 
-> 月費約 $7–18（East Asia）+ 第三方（Pacdora 授權）。公開站 SSR host 的 SWA Free 額度需上線前以實際流量驗證。
+> 月費約 $7–18（East Asia）。公開站 SSR host 的 SWA Free 額度需上線前以實際流量驗證。
 
 ---
 
@@ -51,7 +51,6 @@
 | **設計稿已存在** | `planning/reference/WebsiteDesign/*.psd`（首頁、NTI Difference、Printing Solution、Green Advantage、Facility） | 設計 agent 為「**轉譯既有視覺 → 設計系統 + RWD**」，非從零發想 |
 | **客戶需求＝差異化** | `NTI Printing 官網客戶需求.docx` | 內容/文案需強調 核心能力 × 解決方案 × ESG，避免型錄式 |
 | **硬性 SEO 規範** | `2026_0514 網站建置 SEO 注意事項.pdf`（37 頁） | SEO 為**跨 agent 的交付驗收條件**，非獨立階段 |
-| **Pacdora（Pandora）3D 包裝整合** | `Pandora.txt`（pacdora.com、riiqi.com.tw 案例） | 第三方不確定性高 → **deep-research + PoC 先行**，獨立關卡 |
 | **客戶囉唆、不懂裝懂** | 專案備註 | 每階段強制 **原型先行 + 書面簽核 Gate**；agent 產出需可被非技術客戶看懂 |
 
 ## A1. Agent 角色編組（Roster）
@@ -59,13 +58,13 @@
 | Agent | 專案職責 | 主要 skills | 關鍵交付物 |
 |-------|----------|-------------|------------|
 | **software-architect-blueprint** | 需求拆解、使用流程、產品藍圖、範圍界定（含 out-of-scope） | — | 需求規格書、範圍確認書、藍圖 |
-| **system-analyst** | 系統架構、DB schema、API 結構、SEO 技術規範、Pacdora 整合介面定義 | — | 技術規格書、ER Model、API 文件 |
+| **system-analyst** | 系統架構、DB schema、API 結構、SEO 技術規範 | — | 技術規格書、ER Model、API 文件 |
 | **visual-design-architect** | 既有 PSD → 設計系統 + 響應式版型 + 可點擊原型 | `frontend-design` | Design tokens、各頁 RWD 設計稿、互動原型 |
-| **frontend-architect** | Next.js 前台、i18n 雙語、共用元件、CMS 串接、Pacdora 前端嵌入 | `frontend-design`、`run`、`verify` | 前台站台、元件庫 |
-| **backend-engineer** | 自建 CMS、API（Azure Functions .NET 10）、會員系統、報價/聯絡、權限角色、媒體/Blob、Pacdora 後端串接 | `run`、`verify` | API 服務、CMS 後台、DB |
+| **frontend-architect** | Next.js 前台、i18n 雙語、共用元件、CMS 串接 | `frontend-design`、`run`、`verify` | 前台站台、元件庫 |
+| **backend-engineer** | 自建 CMS、API（Azure Functions .NET 10）、會員系統、報價/聯絡、權限角色、媒體/Blob | `run`、`verify` | API 服務、CMS 後台、DB |
 | **qa-test-engineer** | 功能/RWD/跨瀏覽器/無障礙/SEO/效能稽核（只審不改） | `verify` | 缺失報告、驗收檢核表 |
 | **code-review-optimizer** | 每次合併前的程式碼審查與重構建議 | `code-review`、`simplify` | Review 報告、修正項 |
-| **deep-research（skill）** | Pacdora API/SDK 可行性、競品（DNP/Toppan/Amcor 等）分析 | `deep-research` | 研究報告、PoC 建議 |
+| **deep-research（skill）** | 競品（DNP/Toppan/Amcor 等）分析 | `deep-research` | 研究報告、PoC 建議 |
 
 > 行動裝置採 **RWD 響應式**（依 SEO 規範），**不需** `mobile-app-engineer`（無原生 App）。
 
@@ -83,7 +82,6 @@ P4 後端/CMS        ─┼─ 平行 fan-out（frontend-architect ‖ backend-e
 P5 前台頁面開發    ─┘
         ▼
 P6 會員/報價/聯絡        → backend + frontend（AI 客服本期不做）
-P7 Pacdora 3D 整合       → deep-research → PoC → backend + frontend（獨立關卡）
 P8 內容遷移/雙語/SEO實作  → backend + 內容團隊（301 map、結構化資料、WebP/alt）
         ▼
 P9 整合測試/QA/效能/SEO稽核 → qa-test-engineer + code-review-optimizer (verify)
@@ -97,12 +95,6 @@ P12 保固維運              → 視缺失指派
 **A3.1 序列關卡（P0→P1→P2）** — 需求與設計階段**嚴格序列**、每階段以 Gate 簽核收斂。針對「不懂裝懂」客戶，**設計原型（P2）必須在任何開發前完成並簽核** —— 讓客戶「先看得到、再開發」，把「我以為是這樣」擋在寫程式之前。
 
 **A3.2 平行 fan-out（P3‖P4‖P5）** — 前端與後端在設計定稿後平行推進，以 **API 契約（§04）** 為介面，雙方並行不互鎖。每個 PR 合併前由 `code-review-optimizer` 把關，再由 `qa-test-engineer` 抽審。
-
-**A3.3 研究 → PoC → 整合（P7 Pacdora）** — 第三方整合風險最高，採三段式：
-1. `deep-research` 釐清 Pacdora 是 **SDK 嵌入 / iframe / API** 何種整合方式、授權與費用、可否帶設計結果進報價流程。
-2. 最小 **PoC**（單一品項 3D 預覽）→ 交付 **G-Pacdora 關卡**簽核。
-3. 確認可行後才正式整合，並把「客製化設計 → 報價」串成一條動線。
-> 若 PoC 顯示不可行或超出預算，於關卡即時止損、改為「樣板選擇 + 人工報價」備案，避免拖累主線。
 
 **A3.4 持續驗證** — 所有可執行交付物以 `run`／`verify` skill 在真實環境跑起來確認；SEO 規範（Lighthouse / Core Web Vitals / 結構化資料測試）列為 `qa-test-engineer` 的**驗收條件**，而非事後補做。
 
@@ -125,13 +117,13 @@ P12 保固維運              → 視缺失指派
 | `frontend-design` | 設計系統、所有前台元件/頁面開發 |
 | `run` / `verify` | 每次改動後實機啟動、驗證行為（提交客戶 Demo 前必做） |
 | `code-review` / `simplify` | 每次合併前；客戶驗收前的整體體檢 |
-| `deep-research` | Pacdora 整合研究、競品分析 |
+| `deep-research` | 競品分析 |
 
 ## A6. Memory 與情境約定
 
 - 客戶決策、需求凍結內容、變更紀錄 → 寫入專案記憶（`type: project`），並轉成絕對日期。
 - 客戶溝通慣例與雷點（如「不懂裝懂、需原型先行」）→ `type: feedback`，附 **Why / How to apply**。
-- 既有 WordPress 結構、Pacdora 介面細節 → `type: reference`，附來源連結。
+- 既有 WordPress 結構等 → `type: reference`，附來源連結。
 
 ## A7. 風險與對策（與時程表 PDF 對應）
 
@@ -139,7 +131,6 @@ P12 保固維運              → 視缺失指派
 |------|--------|------------------|
 | 客戶反覆改需求 | 全程 | 需求凍結 + 變更管理 CR 流程；原型先行 |
 | 客戶誤解技術 | 評審/驗收 | agent 產出白話化、附截圖/原型；避免術語 |
-| Pacdora 不可行/超支 | P7 PoC | 研究→PoC→關卡止損；備案＝樣板+人工報價 |
 | 舊站 SEO 權重流失 | 上線 | 301 轉址對照表、sitemap 提交、GSC 監控 |
 | 雙語內容延遲 | P8 | 內容遷移與開發解耦，內容缺口不卡開發 |
 
@@ -183,7 +174,7 @@ NTI/
 | `verify` | 實際執行 app 驗證改動是否如預期 |
 | `code-review` / `simplify` | 程式碼審查／重構 |
 | `security-review` | 安全審查 |
-| `deep-research` | Pacdora 整合研究、競品分析 |
+| `deep-research` | 競品分析 |
 | `update-config` | 調整 harness 設定（權限、env、hooks） |
 
 ## B4. Memory（持久記憶）
@@ -226,5 +217,6 @@ Agent 具備檔案式持久記憶，位於使用者層級：
 | 2026-06-12 | Tim（Claude Code） | 建立分項 harness 文件架構，新增 01–07 七份作業書與索引 |
 | 2026-06-12 | Tim（Claude Code） | 凍結技術選型（Next.js SSR/ISR + Azure Functions .NET10 + Azure SQL Basic + Blob + SWA）；AI 客服暫緩、納入 Pacdora 3D；資料存取定為 Dapper |
 | 2026-06-12 | Tim（Claude Code） | 整併 docs/：移除 harness/ 子資料夾、檔案攤平至 docs/；本檔吸收原 harness-engineering.md（編排總則）與 harness.md（Claude Code 設定）；競品分析併入 01-design.md |
+| 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 P7 整合 track、G 關卡、相關研究/職責/成本/風險 |
 
-*最後更新：2026-06-12｜對應時程：見 `planning/網站建置時程.html` 與 PDF。*
+*最後更新：2026-06-16｜對應時程：見 `planning/網站建置時程.html` 與 PDF。*

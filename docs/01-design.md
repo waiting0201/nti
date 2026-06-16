@@ -50,8 +50,7 @@
 - **綠色優勢**：大數字＋圖示的數據統計區（學 CCL）。
 - **認證夥伴**：整齊 logo tile 網格（學 LSC）。
 - **導覽**：sticky 頂部 + 多層下拉、語系切換右上（學 Toppan）。
-- **Pacdora 3D 包裝客製**：需在 Printing Solution／Get a Quote 版型中設計 3D 設計/預覽的嵌入區與「客製設計 → 報價」的視覺動線入口（整合方式 SDK/iframe/API 待 P7 PoC，版位先預留）。
-- **待定**：影片來源/規格、Pacdora 3D 元件最終尺寸/互動範圍（與 P7 連動）。
+- **待定**：影片來源/規格。
 
 ---
 
@@ -127,5 +126,6 @@
 | 2026-06-12 | Tim（Claude Code） | 初版：定義設計領域 harness 作業書 |
 | 2026-06-12 | Tim（Claude Code） | Floating Button 移除 AI Agent；新增 Pacdora 3D 嵌入版位與報價動線設計需求 |
 | 2026-06-12 | Tim（Claude Code） | 併入競品設計分析（原 reference-website-analysis.md）為 §8；移至 docs/ 頂層 |
+| 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 3D 嵌入版位與「客製設計→報價」設計需求 |
 
-*最後更新：2026-06-12*
+*最後更新：2026-06-16*

@@ -30,7 +30,6 @@
 | **API** | Azure Functions **.NET 10**（isolated、Consumption） | Azure Functions | CI/CD | 公開讀免認證、會員/後台需認證 |
 | **資料庫** | **Azure SQL Database — Basic** | Azure（PaaS） | — | 受 Functions 存取 |
 | **媒體/檔案** | Azure Blob Storage | Azure | — | 預簽章 URL |
-| **第三方 SaaS** | **Pacdora 3D**（pacdora.com） | Pacdora 雲端（SDK/iframe/API，依 PoC） | — | 授權/金鑰後端持有 |
 
 > Mockup 預覽更新指令（網址 https://nti-mockup.pages.dev 不變）：
 > ```bash
@@ -41,9 +40,9 @@
 
 ## 3. 架構選型（已定案 2026-06-12）
 
-全棧定為 **Azure**：公開站 Next.js(SSR/ISR) → **Static Web Apps**；CMS 後台純 SPA → 靜態；API → **Azure Functions .NET 10**；DB → **Azure SQL Database Basic**；媒體 → **Blob Storage**；3D 客製 → **Pacdora**（P7 PoC）。**AI 客服本期不納入**。
+全棧定為 **Azure**：公開站 Next.js(SSR/ISR) → **Static Web Apps**；CMS 後台純 SPA → 靜態；API → **Azure Functions .NET 10**；DB → **Azure SQL Database Basic**；媒體 → **Blob Storage**。**AI 客服本期不納入**；**3D 客製（Pacdora）本期不納入**。
 
-- 月費約 **$7–18（East Asia）+ Pacdora 授權**，成本地板為 SQL Basic（~$5）。
+- 月費約 **$7–18（East Asia）**，成本地板為 SQL Basic（~$5）。
 - **唯一待驗證**：公開站 SSR 在 **SWA Free 額度**是否夠；不夠則退 **Azure Container Apps**（scale-to-zero）或 App Service B1。上線前以實際流量驗一次。
 - **mockup 不受影響**：`nti-mockup`（Cloudflare direct upload）維持原樣，與正式站兩條獨立部署。
 
@@ -53,7 +52,7 @@
 
 1. **環境區隔**（全程）：mockup（Cloudflare direct upload）與正式站（Azure）兩條獨立部署互不觸發；`.gitignore` 排除 `web/node_modules`、`web/.next`。
 2. ~~架構選型~~：已定案（§3）。
-3. **CI/CD**：公開站/CMS push 自動 build（SWA）；Functions pipeline（build/test/deploy）；環境變數與金鑰（含 Pacdora 授權、SQL 連線字串）走 **Azure Key Vault / SWA 與 Functions 的 App settings**，**不進版控**。
+3. **CI/CD**：公開站/CMS push 自動 build（SWA）；Functions pipeline（build/test/deploy）；環境變數與金鑰（含 SQL 連線字串）走 **Azure Key Vault / SWA 與 Functions 的 App settings**，**不進版控**。
 4. **環境分層**：dev / staging（客戶 UAT）/ production；staging 供 P10 UAT。
 5. **上線（P11）**：DNS 切換、HTTPS 憑證、部署 **301 轉址**、提交 `sitemap.xml` 至 GSC、開啟監控/錯誤追蹤/備份。
 6. **維運（P12）**：備份還原演練、日誌/告警、依缺失指派修補。
@@ -90,8 +89,7 @@
 | 公開站 SSR 撞 SWA Free 額度 | 上線前以實際流量驗證；不夠退 Container Apps（scale-to-zero）或 App Service B1 |
 | mockup 與正式站互相觸發 | mockup＝Cloudflare direct upload 不監看 git；正式站＝Azure，兩條獨立 |
 | 上線 SEO 斷鏈 | 301 對照表 + sitemap 提交列為上線 Gate |
-| 金鑰外洩（SQL 連線字串、Pacdora 授權） | Azure Key Vault / App settings、不進版控、`security-review` |
-| Pacdora SaaS 不可用/改版/停服 | adapter 包覆可切備案；監控其可用性；契約面留可選 |
+| 金鑰外洩（SQL 連線字串） | Azure Key Vault / App settings、不進版控、`security-review` |
 | 切換當機 | staging 演練 + 可回滾部署 + DNS 低 TTL |
 
 ---
@@ -102,5 +100,6 @@
 |------|--------|------|
 | 2026-06-12 | Tim（Claude Code） | 初版：定義部署領域 harness 作業書（彙整既有部署與環境區隔策略） |
 | 2026-06-12 | Tim（Claude Code） | 架構定案 Azure（SWA + Functions .NET10 + SQL Basic + Blob）；移除 Cloudflare/Vercel/Claude；新增 Pacdora SaaS 依賴與風險 |
+| 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 Pacdora SaaS 依賴、成本加項、相關金鑰與風險 |
 
-*最後更新：2026-06-12*
+*最後更新：2026-06-16*

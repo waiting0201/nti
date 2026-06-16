@@ -39,7 +39,6 @@
 ### 2.4 渲染與可檢索
 - 公開站內容頁採 **Next.js SSG + ISR**（CMS 更新以 webhook 觸發 revalidate）、會員/個人化頁 SSR/CSR；關鍵內容**不依賴 JS**。
 - CMS 後台 SPA 以 `X-Robots-Tag: noindex` / `robots.txt` 排除索引。
-- Pacdora 3D 互動元件本身不需被索引，但其所在頁面的周邊文字內容仍須伺服器渲染、可檢索。
 - **避免文字圖片化**（標題/正文為可選取文字）。
 - 語意化標籤、單一 H1、合理 H2–H3 階層、麵包屑。
 
@@ -118,5 +117,6 @@
 |------|--------|------|
 | 2026-06-12 | Tim（Claude Code） | 初版：定義 SEO harness 作業書 |
 | 2026-06-12 | Tim（Claude Code） | 範圍限定公開站、CMS noindex；補 Next.js SSG+ISR 重生策略與 Pacdora 頁面說明 |
+| 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 Pacdora 頁面 SEO 說明 |
 
-*最後更新：2026-06-12*
+*最後更新：2026-06-16*

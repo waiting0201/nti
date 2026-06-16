@@ -28,9 +28,10 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [05 SEO](docs/05-seo.md) | system-analyst + qa：SEO 規範與稽核 |
 | [06 GEO](docs/06-geo.md) | deep-research + system-analyst：生成式引擎優化 |
 | [07 部署](docs/07-deployment.md) | backend-engineer（DevOps）：Azure 部署地圖 |
-| [網站建置時程（PDF）](planning/NTI_網站建置時程.pdf) | 26 週建置時程 Gantt、Pacdora 整合、客戶治理機制 |
+| [網站建置時程（PDF）](planning/NTI_網站建置時程.pdf) | 建置時程 Gantt（2026/07–11，7 月啟動、11 月測試上線）、客戶確認控制點 |
 | [網站建置時程（HTML）](planning/網站建置時程.html) | 時程表原始檔（可編輯，產 PDF 用） |
 | [部署與環境區隔](planning/部署與環境區隔.md) | mockup 預覽部署（Cloudflare Pages）、與正式站的區隔策略、架構待決事項 |
+| [現有網站盤點與內容遷移](planning/現有網站盤點與內容遷移.md) | 舊站 nti-printing.com 頁面/內容盤點、新舊頁面對應、缺漏頁面與待製內容、待決策點 |
 
 ## 目錄結構
 
@@ -62,7 +63,7 @@ NTI/
 | API／後端 | **Azure Functions .NET 10**（isolated）+ **Dapper** |
 | 資料庫 | **Azure SQL Database — Basic** |
 | 檔案儲存 | **Azure Blob Storage** |
-| 3D 包裝客製 | **Pacdora** 整合（P7 研究→PoC→關卡；串「客製設計→報價」） |
+| 3D 包裝客製 | **本期不納入**（Pacdora 廠商不提供技術崁入服務） |
 | AI 客服 | **本期不納入**（Claude API/AI Agent 暫緩） |
 
 ## 工作慣例

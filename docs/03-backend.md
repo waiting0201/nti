@@ -5,7 +5,7 @@
 | **主責 Agent** | `backend-engineer` |
 | **協作 Agent** | `system-analyst`（DB schema / API 契約 / 權限模型）、`frontend-architect`（串接）、`code-review-optimizer`（合併前審查） |
 | **搭配 Skills** | `run`、`verify`、`code-review`／`simplify`、`security-review` |
-| **對應階段** | P4（後端/CMS）／P6（會員/報價/聯絡）／P7（Pacdora 後端串接）／P8（內容遷移） |
+| **對應階段** | P4（後端/CMS）／P6（會員/報價/聯絡）／P8（內容遷移） |
 | **核心定位** | 自建 CMS + API 服務；以 [`04-api.md`](04-api.md) 契約為與前端的介面，平行 fan-out。 |
 
 ---
@@ -49,8 +49,6 @@
 
 **表單後端（P6）**：Get a Quote（含設計稿上傳）、Contact Us — 送出後通知信給業務、確認信給客戶，可串 CRM。
 
-**第三方（P7）**：**Pacdora 3D 包裝客製**後端串接（依 PoC，把客製設計結果帶入報價流程；adapter 包覆，可替換為備案）。
-
 > 本期不含 AI 客服（Claude API）。
 
 ---
@@ -59,10 +57,9 @@
 
 1. **資料層**（P4）：依 ER Model 建表（內容模型 + 多語欄位 + 媒體 + 會員 + 報價/聯絡 + RBAC）。
 2. **CMS 後台**：CRUD + 排序 + 上下架排程 + 富文本 + 媒體上傳（Azure Blob）+ 角色權限。
-3. **API 實作**：對齊 04-api 契約（前台讀取 + 後台管理 + 表單 + 會員 + Pacdora adapter）。
+3. **API 實作**：對齊 04-api 契約（前台讀取 + 後台管理 + 表單 + 會員）。
 4. **會員與表單**（P6）：認證（JWT/session）、密碼雜湊、信件通知、檔案上傳防護。
-5. **Pacdora 3D 後端串接**（P7）：依 deep-research → PoC 決定整合方式（SDK/iframe/API）；後端以 **adapter 包覆** Pacdora，把「客製設計結果」寫入報價（quote）；Pacdora 授權/金鑰一律後端持有，不外露前端。PoC 不可行則切備案（樣板+人工報價），不阻主線。
-6. **內容遷移**（P8）：WordPress → 新 CMS（含媒體、分類、上架狀態），配合 301 對照表（見 05-seo）。
+5. **內容遷移**（P8）：WordPress → 新 CMS（含媒體、分類、上架狀態），配合 301 對照表（見 05-seo）。
 
 ---
 
@@ -82,7 +79,6 @@
 - ← `system-analyst`：DB schema、API 契約、權限模型、SEO 欄位需求。
 - ↔ `frontend-architect`：04-api 契約為介面；契約變更雙方同步並回寫 04-api。
 - → `qa-test-engineer`：交付供功能/安全/效能稽核。
-- ↔ `deep-research`：Pacdora 整合方式（SDK/iframe/API）、授權/費用、可否帶設計結果進報價。
 
 ---
 
@@ -92,7 +88,6 @@
 |------|------|
 | 內容遷移資料遺失/格式跑掉 | 先試遷一批驗證、保留原站、媒體 checksum 比對 |
 | 報價/設計稿上傳被濫用 | 型別白名單、大小限制、病毒掃描、登入後才可上傳大檔 |
-| Pacdora 整合方式/授權不明 | 等 P7 PoC，adapter 包覆，可替換為備案（樣板+人工報價）；金鑰後端持有 |
 | Functions 冷啟動影響 API | 公開站內容頁走 ISR 不每次打 API；必要端點評估 Flex/常駐 |
 
 ---
@@ -104,5 +99,6 @@
 | 2026-06-12 | Tim（Claude Code） | 初版：定義後端/CMS 領域 harness 作業書 |
 | 2026-06-12 | Tim（Claude Code） | 凍結 .NET10/Functions/Azure SQL Basic/Blob；CMS 前端純 SPA；移除 AI 客服；Pacdora 後端 adapter 串接 |
 | 2026-06-12 | Tim（Claude Code） | 資料存取改用 **Dapper**（取代 EF Core） |
+| 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 P7 後端 adapter 串接、報價帶入、相關協作與風險 |
 
-*最後更新：2026-06-12*
+*最後更新：2026-06-16*

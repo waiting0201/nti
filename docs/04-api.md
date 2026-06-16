@@ -62,12 +62,7 @@
 - `/admin/quotes`、`/admin/contacts`（檢視/回覆/狀態/匯出）
 - `/admin/members`（清單/啟用停用）、`/admin/users`（管理員/角色）、`/admin/i18n`（中英對照）
 
-### 3.5 第三方 — Pacdora 3D 包裝客製（P7，依 PoC）
-- 整合方式（SDK/iframe/API）由 deep-research 確認後補契約；後端以 **adapter 包覆**，Pacdora 授權/金鑰後端持有。
-- 報價串接：`POST /quotes` 增加可選欄位（如 `pacdoraDesignId` / 設計快照 URL），把「客製設計結果」帶入報價；後端負責保存與轉交業務。
-- PoC 不可行則停用該欄位、切備案（樣板選擇 + 人工報價），契約以可選欄位設計即不阻主線。
-
-> 本期不含 AI 客服端點（原 `/ai/chat` 已移除）。
+> 本期不含 AI 客服端點（原 `/ai/chat` 已移除），亦不含 Pacdora／3D 包裝客製端點（廠商不提供技術崁入服務）。
 
 ---
 
@@ -85,7 +80,7 @@
 - [ ] OpenAPI 與本文件一致，前後端皆可由契約獨立開發。
 - [ ] 認證/RBAC/錯誤格式/分頁一致落實。
 - [ ] 內容 endpoint 回傳完整 SEO 欄位（與 05-seo 對齊）。
-- [ ] 第三方金鑰（Pacdora 等）一律後端持有，前端零金鑰。
+- [ ] 第三方金鑰一律後端持有，前端零金鑰。
 - [ ] `verify` 實機通過、`code-review` 審查通過。
 
 ---
@@ -103,7 +98,6 @@
 |------|------|
 | 契約頻繁變動拖累雙方 | v1 凍結 + CR 流程；mock 先行 |
 | SEO 欄位漏在 API 層 | 內容 endpoint 強制含 SEO 欄位，列入 DoD |
-| 第三方契約不明 | Pacdora 以 adapter 包覆，PoC 後補；備案不阻主線 |
 
 ---
 
@@ -113,5 +107,6 @@
 |------|--------|------|
 | 2026-06-12 | Tim（Claude Code） | 初版：定義 API 契約 harness 作業書 |
 | 2026-06-12 | Tim（Claude Code） | 改為 Azure Functions .NET10 HTTP trigger；移除 `/ai/chat`；Pacdora 設計結果併入 `/quotes` 可選欄位 |
+| 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 §3.5 Pacdora 契約、/quotes 之 pacdora 欄位、相關風險 |
 
-*最後更新：2026-06-12*
+*最後更新：2026-06-16*

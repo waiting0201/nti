@@ -1,6 +1,6 @@
 ---
 name: nti-tech-stack-frozen
-description: NTI 官網已凍結的技術選型與本期範圍決策（Azure 棧、Dapper、Pacdora、AI 客服暫緩）
+description: NTI 官網已凍結的技術選型與本期範圍決策（Azure 棧、Dapper；Pacdora／3D 與 AI 客服本期不納入）
 metadata:
   type: project
 ---
@@ -12,9 +12,9 @@ NTI 官網技術選型於 **2026-06-12 凍結**：
 - **API／後端**：**Azure Functions .NET 10（isolated）+ Dapper**（micro-ORM、手寫 SQL，**非 EF Core**），為唯一資料存取層；前端只呼叫 API、不直連 DB。
 - **資料庫**：**Azure SQL Database — Basic 層**（客戶定案）。
 - **媒體/檔案**：**Azure Blob Storage**（預簽章 URL）。
-- **3D 包裝客製**：採 **Pacdora（pacdora.com）** 整合，走 P7「研究→PoC→關卡」，把「客製設計→報價」串成動線；adapter 包覆、授權/金鑰後端持有；備案＝樣板+人工報價（參考案例 riiqi 紙杯）。
+- **3D 包裝客製（Pacdora）**：**本期不納入**——已與 Pacdora 確認其不提供技術崁入（embedding）服務，故移除 P7 整合 track；如需 3D 客製需另尋方案/廠商，後續再評估。
 - **AI 客服（Claude API/AI Agent 浮動按鈕）**：**本期不納入**，後續再評估。
-- **月費估算**：約 $7–18（Azure East Asia）+ Pacdora 授權；成本地板為 SQL Basic（~$5）。
+- **月費估算**：約 $7–18（Azure East Asia）；成本地板為 SQL Basic（~$5）。
 - **mockup 不受影響**：`nti-mockup`（Cloudflare direct upload）維持原樣，與正式站（Azure）兩條獨立部署。
 
 **Why**：客戶為 .NET 班底、要求最省且 Azure；公開站 SEO/GEO 為硬需求故須 SSR/ISR，CMS 後台不需 SEO；資料存取選 Dapper 求效能與查詢可控。

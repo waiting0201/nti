@@ -5,7 +5,7 @@
 | **主責 Agent** | `frontend-architect` |
 | **協作 Agent** | `visual-design-architect`（設計交付）、`backend-engineer`（API/CMS 串接）、`system-analyst`（SEO/i18n 技術約束） |
 | **搭配 Skills** | `frontend-design`、`run`、`verify` |
-| **對應階段** | P3（前端框架/元件）／P5（前台頁面）／P6（會員/報價/聯絡）／P7（Pacdora 前端嵌入） |
+| **對應階段** | P3（前端框架/元件）／P5（前台頁面）／P6（會員/報價/聯絡） |
 | **核心定位** | 以**設計定稿**與 **API 契約**為雙介面，與後端平行 fan-out 不互鎖。 |
 
 ---
@@ -42,7 +42,6 @@
 - **首頁**：Banner/Videos 輪播、COURAGE 互動區、Printing、Project 卡、Clients 輪播。
 - **內容頁（吃 CMS）**：NTI Difference、Printing Solution（+4 子方案）、Projects（總覽 + 詳細）、Facility & Equipment、Advantages（數據統計區）、NEWS（列表 + 詳細）、Green Vlog（含 YouTube 嵌入）、Supplier Area（公告/規格/下載）、Privacy & Legal。
 - **功能頁**：Get a Quote（含檔案上傳）、Contact Us（Google Map 嵌入）、Member（登入/註冊/會員中心/報價紀錄/訂單）。
-- **Pacdora 3D 包裝客製**（P7）：於 Printing Solution／Get a Quote 嵌入 Pacdora 3D 設計/預覽（SDK/iframe/API，依 PoC 決定），把「客製設計結果 → 報價」串成一條動線（參考案例：riiqi 紙杯）。3D 元件為互動工具、不需被索引，但其所在頁面的周邊內容仍須 SSR/SEO。
 - ~~AI 客服~~：本期不做（Claude API/AI Agent 暫緩）。
 
 ---
@@ -53,8 +52,7 @@
 2. **元件庫**：對齊 01-design 元件，Storybook 或等效清單。
 3. **內容頁**（P5）：串 CMS 資料，先以 API mock 開發，契約穩定後接真值。
 4. **功能頁**（P6）：表單驗證、檔案上傳、會員流程（登入/註冊/忘記密碼/會員中心）。
-5. **Pacdora 嵌入**（P7）：依 deep-research → PoC 結果整合「客製設計 → 報價」動線；預留嵌入點位，不提前 hardcode 整合方式。
-6. **i18n 內容串接**（P8）：中英對照、語系切換、hreflang。
+5. **i18n 內容串接**（P8）：中英對照、語系切換、hreflang。
 
 ---
 
@@ -85,7 +83,6 @@
 |------|------|
 | API 契約未定卡前端 | 以 04-api 契約 + mock server 解耦，契約凍結後接真值 |
 | SSR host 未定 | 以 Next.js 標準寫法，避免綁定特定平台；部署選型見 07 |
-| Pacdora 整合不確定 | 等 P7 PoC 結果，前端預留嵌入點位，不提前 hardcode |
 | 重要資訊依賴 JS 傷 SEO | SSR/SSG 關鍵內容，client 僅做漸進增強 |
 
 ---
@@ -96,5 +93,6 @@
 |------|--------|------|
 | 2026-06-12 | Tim（Claude Code） | 初版：定義前端領域 harness 作業書 |
 | 2026-06-12 | Tim（Claude Code） | 凍結 Next.js SSR/ISR + Azure SWA；移除 AI 客服；強化 Pacdora 3D 嵌入與報價動線 |
+| 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 P7 前端嵌入與報價動線、相關風險列 |
 
-*最後更新：2026-06-12*
+*最後更新：2026-06-16*
