@@ -24,24 +24,18 @@
 
 | 環境 | 內容 | 託管 | 觸發 | 存取 |
 |------|------|------|------|------|
-| **Mockup 預覽（v1）** | `mockup/` 純靜態切版稿 | Cloudflare Pages 專案 `nti-mockup`（direct upload，**不連 git**） | 手動 `wrangler pages deploy` | 公開、免密碼，**設計定案後下線** |
-| **Mockup2 預覽（現況）** | `mockup2/` 靜態切版稿（`.dc.html` + `support.js`） | Cloudflare Pages 專案 `nti-mockup2`（direct upload，**不連 git**） | 手動 `wrangler pages deploy` | 公開、免密碼，**設計定案後下線** |
+| **Mockup 預覽（現況）** | `mockup/` 靜態 mockup（完整站雛形） | Cloudflare Pages 專案 `nti-mockup2`（direct upload，**不連 git**） | 手動 `wrangler pages deploy` | 公開、免密碼，**設計定案後下線** |
 | **公開網站（前端）** | Next.js **SSR + ISR** | **Azure Static Web Apps**（Free 起，SSR 撞限制退 Container Apps） | push / CI 自動 build | 公開、需 SEO |
 | **CMS 後台（前端）** | 純 SPA（靜態） | Azure Static Web Apps（另一專案）/ Blob 靜態 | push / CI | 登入後台、**noindex** |
 | **API** | Azure Functions **.NET 10**（isolated、Consumption） | Azure Functions | CI/CD | 公開讀免認證、會員/後台需認證 |
 | **資料庫** | **Azure SQL Database — Basic** | Azure（PaaS） | — | 受 Functions 存取 |
 | **媒體/檔案** | Azure Blob Storage | Azure | — | 預簽章 URL |
 
-> Mockup 預覽更新指令（網址 https://nti-mockup.pages.dev 不變）：
+> Mockup 預覽更新指令（網址 https://nti-mockup2.pages.dev 不變；`--branch=main` 必加，否則會被歸到 Preview 環境而非 production）：
 > ```bash
-> npx wrangler pages deploy mockup --project-name=nti-mockup --commit-dirty=true
+> npx wrangler pages deploy mockup --project-name=nti-mockup2 --branch=main --commit-dirty=true
 > ```
->
-> Mockup2 預覽更新指令（網址 https://nti-mockup2.pages.dev 不變；`--branch=main` 必加，否則會被歸到 Preview 環境而非 production）：
-> ```bash
-> npx wrangler pages deploy mockup2 --project-name=nti-mockup2 --branch=main --commit-dirty=true
-> ```
-> 根網址由 `mockup2/_redirects` 302 導向 `index.dc.html`。
+> 2026-07-15：`mockup/`（完整站雛形）取代 `mockup2/` 切版稿部署至 `nti-mockup2`；原 v1 專案 `nti-mockup`（nti-mockup.pages.dev）已刪除。`mockup2/` 資料夾保留於 repo 作切版素材參考，不再部署。
 
 ---
 
