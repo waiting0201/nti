@@ -31,6 +31,7 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [網站建置時程（PDF）](planning/NTI_網站建置時程.pdf) | 建置時程 Gantt（2026/07–11，7 月啟動、11 月測試上線）、客戶確認控制點 |
 | [網站建置時程（HTML）](planning/網站建置時程.html) | 時程表原始檔（可編輯，產 PDF 用） |
 | [部署與環境區隔](planning/部署與環境區隔.md) | mockup 預覽部署（Cloudflare Pages）、與正式站的區隔策略、架構待決事項 |
+| [官網資訊架構 IA](reference/官網資訊架構_IA.md) | 依客戶 sitemap 的完整節點→mockup 頁面對照、footer/浮動鈕、對齊異動紀錄 |
 | [現有網站盤點與內容遷移](planning/現有網站盤點與內容遷移.md) | 舊站 nti-printing.com 頁面/內容盤點、新舊頁面對應、缺漏頁面與待製內容、待決策點 |
 
 ## 目錄結構

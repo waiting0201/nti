@@ -38,9 +38,11 @@
 
 ## 3. 範圍（對應 sitemap）
 
-- **共用元件**：Header（多層下拉、語系切換、會員入口）、Footer、Floating Button（Get a Quote／Contact Us；~~AI Agent 本期不做~~）、麵包屑、分頁、卡片、輪播、表單元件。
-- **首頁**：Banner/Videos 輪播、COURAGE 互動區、Printing、Project 卡、Clients 輪播。
-- **內容頁（吃 CMS）**：NTI Difference、Printing Solution（+4 子方案）、Projects（總覽 + 詳細）、Facility & Equipment、Advantages（數據統計區）、NEWS（列表 + 詳細）、Green Vlog（含 YouTube 嵌入）、Supplier Area（公告/規格/下載）、Privacy & Legal。
+> 架構依據：客戶 sitemap（`reference/sbk/sitemap20260831.JPG`）。路由與節點對照見 [`reference/官網資訊架構_IA.md`](../reference/官網資訊架構_IA.md)；`mockup/` 已依此架構對齊，切版時以 mockup 為準。
+
+- **共用元件**：Header（**5 個頂層**：About Us／Solutions／Projects／Sustainability／Insights，多層下拉、語系切換、會員入口）、Footer（Company 欄含 **Careers**）、Floating Button（Get a Quote／Contact Us；~~AI Agent 本期不做~~）、麵包屑、分頁、卡片、輪播、表單元件。
+- **首頁**：Banner/Videos 輪播、品牌標語區（The Courage to Print Green）、Printing Solutions、Projects 卡、Clients 輪播。
+- **內容頁（吃 CMS）**：About Us（NTI Difference／Benefits to Clients／Certifications, Partnerships & Awards／Facilities & Equipment + 5 個第三層）、Solutions（+4 子方案，第四項為 **Other Printing**）、Projects（總覽 + 詳細，含 Industries / Applications 與 Case Studies & Photos 錨點）、Sustainability（數據統計區 + 4 子頁）、Insights（Latest News 列表+詳細／Green Vlog 含 YouTube 嵌入／FAQ／**Industry Trends**）、Supplier Area（公告/規格/下載）、**Careers**、Privacy & Legal。
 - **功能頁**：Get a Quote（含檔案上傳）、Contact Us（Google Map 嵌入）、Member（登入/註冊/會員中心/報價紀錄/訂單）。
 - ~~AI 客服~~：本期不做（Claude API/AI Agent 暫緩）。
 
@@ -94,5 +96,6 @@
 | 2026-06-12 | Tim（Claude Code） | 初版：定義前端領域 harness 作業書 |
 | 2026-06-12 | Tim（Claude Code） | 凍結 Next.js SSR/ISR + Azure SWA；移除 AI 客服；強化 Pacdora 3D 嵌入與報價動線 |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 P7 前端嵌入與報價動線、相關風險列 |
+| 2026-08-31 | Tim（Claude Code） | 依客戶 sitemap 對齊 §3 範圍與路由（5 個頂層、Other Printing、Post-Press Processing、Projects 錨點、Insights/Careers/Industry Trends）；標註切版以 mockup 為準 |
 
-*最後更新：2026-06-16*
+*最後更新：2026-08-31*

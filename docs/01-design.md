@@ -26,9 +26,17 @@
 
 需交付設計系統與 RWD 版型的頁面／區塊：
 
-- **共用**：Header（多層下拉、語系切換、會員入口）、Footer、Floating Button（Get a Quote／Contact Us；AI Agent 本期不做）、Cookie/隱私 banner。
-- **首頁**：Banner/Videos、COURAGE 品牌精神、Printing 服務、Project 案例卡、Clients 輪播。
-- **內容頁**：NTI Difference、Printing Solution（含 4 子方案）、Projects（總覽 + 詳細）、Facility & Equipment、Advantages（綠色優勢，含數據統計區）、NEWS、Green Vlog、Supplier Area、Privacy & Legal。
+> 架構依據：客戶 sitemap（`reference/sbk/sitemap20260831.JPG`，內容與 0818 版相同）。完整節點對照見 [`reference/官網資訊架構_IA.md`](../reference/官網資訊架構_IA.md)。
+
+- **共用**：Header（**5 個頂層**：About Us／Solutions／Projects／Sustainability／Insights，多層下拉、語系切換、會員入口）、Footer（About Us／Solutions／Projects／**Careers**／Privacy & Legal＋Supplier Area 三子項＋社群 icon）、Floating Button（Get a Quote／Contact Us；AI Agent 本期不做）、Cookie/隱私 banner。
+- **首頁**：Banner/Videos、Taiwan's Sustainable Packaging & Printing Leader（The Courage to Print Green）、Printing Solutions、Projects 案例卡、Clients 輪播。
+- **內容頁**：
+  - About Us：The NTI Difference、Benefits to Clients、Certifications, Partnerships & Awards、Facilities & Equipment（下含 Prepress／Environmentally Friendly Printing／Post-Press Processing／Quality Inspection／Factory Tour 五個第三層）。
+  - Solutions：Color Box Packaging、Packaging Paperboard、UV Printing、Other Printing。
+  - Projects：Industries / Applications、Case Studies & Photos。
+  - Sustainability：Our Green Advantages、Carbon Efficiency、ECO Materials、ESG & Future Goals（含數據統計區）。
+  - Insights：Latest News（列表＋詳細）、Green Vlog、FAQ、**Industry Trends**。
+  - 其他：Supplier Area、**Careers**、Privacy & Legal。
 - **功能頁**：Get a Quote 表單、Contact Us、Member（登入/註冊/會員中心）。
 
 ---
@@ -127,5 +135,6 @@
 | 2026-06-12 | Tim（Claude Code） | Floating Button 移除 AI Agent；新增 Pacdora 3D 嵌入版位與報價動線設計需求 |
 | 2026-06-12 | Tim（Claude Code） | 併入競品設計分析（原 reference-website-analysis.md）為 §8；移至 docs/ 頂層 |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 3D 嵌入版位與「客製設計→報價」設計需求 |
+| 2026-08-31 | Tim（Claude Code） | 依客戶 sitemap（0831＝0818 內容）對齊 §2 範圍：頁首 5 個頂層、Facilities 移入 About Us、Insights 收納 News/Vlog/FAQ/Industry Trends、頁尾新增 Careers；新增 IA 對照文件連結 |
 
-*最後更新：2026-06-16*
+*最後更新：2026-08-31*
