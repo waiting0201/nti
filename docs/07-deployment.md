@@ -24,8 +24,8 @@
 
 | 環境 | 內容 | 託管 | 觸發 | 存取 |
 |------|------|------|------|------|
-| **Mockup 預覽（現況）** | `mockup/` 靜態 mockup（完整站雛形） | Cloudflare Pages 專案 `nti-mockup`（direct upload，**不連 git**） | 手動 `wrangler pages deploy` | 公開、免密碼，**設計定案後下線** |
-| **Mockup2 預覽** | `mockup2/` 靜態切版稿（`.dc.html` + `support.js`） | Cloudflare Pages 專案 `nti-mockup2`（direct upload，**不連 git**） | 手動 `wrangler pages deploy` | 公開、免密碼，**設計定案後下線** |
+| **Mockup 預覽（現況）** | `mockup/` 靜態 mockup（完整站雛形）— **客戶採用版** | Cloudflare Pages 專案 `nti-mockup`（direct upload，**不連 git**） | 手動 `wrangler pages deploy` | 公開、免密碼，**設計定案後下線** |
+| ~~**Mockup2 預覽**~~（未採用） | `mockup2/` 靜態切版稿（`.dc.html` + `support.js`） | Cloudflare Pages 專案 `nti-mockup2`（direct upload，**不連 git**） | 已停止更新 | 公開、免密碼，**可即刻下線** |
 | **公開網站（前端）** | Next.js **SSR + ISR** | **Azure Static Web Apps**（Free 起，SSR 撞限制退 Container Apps） | push / CI 自動 build | 公開、需 SEO |
 | **CMS 後台（前端）** | 純 SPA（靜態） | Azure Static Web Apps（另一專案）/ Blob 靜態 | push / CI | 登入後台、**noindex** |
 | **API** | Azure Functions **.NET 10**（isolated、Consumption） | Azure Functions | CI/CD | 公開讀免認證、會員/後台需認證 |
@@ -44,6 +44,8 @@
 > 根網址由 `mockup2/_redirects` 302 導向 `index.dc.html`。
 >
 > 2026-07-15：`nti-mockup` 專案重建，改載 `mockup/` 完整站雛形（原 v1 切版稿內容汰除）；`nti-mockup2` 維持 `mockup2/` 切版稿不動。
+>
+> **2026-08-31：客戶選定 `mockup/`（https://nti-mockup.pages.dev）為設計版本。** `mockup2/` 未採用，停止維護，`nti-mockup2` 專案可下線；後續改稿與正式站切版一律以 `mockup/` 為基準。
 
 ---
 
@@ -110,5 +112,6 @@
 | 2026-06-12 | Tim（Claude Code） | 初版：定義部署領域 harness 作業書（彙整既有部署與環境區隔策略） |
 | 2026-06-12 | Tim（Claude Code） | 架構定案 Azure（SWA + Functions .NET10 + SQL Basic + Blob）；移除 Cloudflare/Vercel/Claude；新增 Pacdora SaaS 依賴與風險 |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 Pacdora SaaS 依賴、成本加項、相關金鑰與風險 |
+| 2026-08-31 | Tim（Claude Code） | **設計版本定案：客戶選定 `mockup/`**；`mockup2/` 未採用並停止維護，`nti-mockup2` 標為可下線 |
 
-*最後更新：2026-06-16*
+*最後更新：2026-08-31*
