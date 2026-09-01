@@ -17,6 +17,8 @@
 | [`planning/NTI_Printing_官網規劃書.md`](../planning/NTI_Printing_官網規劃書.md) §1、§3 | 前台資料需求 + CMS 功能 → endpoint 推導 |
 | [`03-backend.md`](03-backend.md) | 資料模型與模組邊界 |
 | [`05-seo.md`](05-seo.md) | 內容型別需回傳的 SEO 欄位 |
+| [`08-database.md`](08-database.md) | ER Model／資料表欄位（endpoint 回傳欄位的來源） |
+| [`09-cms-admin.md`](09-cms-admin.md) | 後台 24 個單元 → `/admin/*` 資源與權限碼對照 |
 | 過往案例（webservice/SAP RFC/SAP RFC 串接經驗） | 第三方串接模式參考 |
 
 ---
@@ -36,7 +38,7 @@
 
 ## 3. Endpoint 群組（依 sitemap / 功能推導）
 
-> 下列為**契約藍圖**，欄位細節以 OpenAPI 為準。
+> 下列為**契約藍圖**，欄位細節以 OpenAPI 為準；資料表與欄位定義見 [`08-database.md`](08-database.md)。
 
 ### 3.1 前台內容（公開、唯讀，吃 CMS）
 - `GET /content/home`（Banner、COURAGE、Printing、精選 Project、Clients）
@@ -108,5 +110,6 @@
 | 2026-06-12 | Tim（Claude Code） | 初版：定義 API 契約 harness 作業書 |
 | 2026-06-12 | Tim（Claude Code） | 改為 Azure Functions .NET10 HTTP trigger；移除 `/ai/chat`；Pacdora 設計結果併入 `/quotes` 可選欄位 |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 §3.5 Pacdora 契約、/quotes 之 pacdora 欄位、相關風險 |
+| 2026-09-01 | Tim（Claude Code） | 上游輸入補 08（DDL）／09（後台單元）；ER Model 權威來源改指向 `08-database.md` |
 
-*最後更新：2026-06-16*
+*最後更新：2026-09-01*

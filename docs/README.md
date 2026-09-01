@@ -17,6 +17,8 @@
 | 05 | SEO | [05-seo.md](05-seo.md) | `system-analyst`（規範）+ `qa-test-engineer`（稽核） | 全體 | P1→P9（跨階段） |
 | 06 | GEO（生成式引擎優化） | [06-geo.md](06-geo.md) | `deep-research`（skill）+ `system-analyst` | 內容團隊 | P1 / P8 |
 | 07 | 部署 Deployment | [07-deployment.md](07-deployment.md) | `backend-engineer`（DevOps 角色） | system-analyst | P11 |
+| 08 | 資料庫設計 Database | [08-database.md](08-database.md) | `system-analyst`（schema）+ `backend-engineer`（建置） | — | P1 / P4 |
+| 09 | 後台 CMS 功能 | [09-cms-admin.md](09-cms-admin.md) | `backend-engineer` | system-analyst | P4 / P6 |
 
 > SEO／GEO 為**跨 agent 的交付驗收條件**，不是孤立階段——每個前台頁面與 CMS 模組完成前都需滿足其 DoD（見 §A4）。
 

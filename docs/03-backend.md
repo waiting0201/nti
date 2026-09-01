@@ -18,6 +18,8 @@
 | [`04-api.md`](04-api.md) | API 契約（system-analyst 定義） |
 | 既有 WordPress 站 `nti-printing.com`（約 80 篇文章 / 46 頁） | 內容遷移來源（P8） |
 | [`05-seo.md`](05-seo.md) | CMS 需提供的 SEO 欄位（meta/slug/alt/canonical/hreflang） |
+| [`08-database.md`](08-database.md) | **資料表 DDL、多語策略、索引、種子**（本文件 §4.1 的落地規格） |
+| [`09-cms-admin.md`](09-cms-admin.md) | **後台 24 個單元的欄位／操作／權限規格**（本文件 §3 的落地規格） |
 
 ---
 
@@ -27,7 +29,7 @@
 |------|------|------|
 | 後端框架 | **Azure Functions .NET 10**（isolated worker） | HTTP trigger API，唯一資料存取層 |
 | 資料存取 | **Dapper**（micro-ORM、手寫 SQL） | 對應 Azure SQL，效能優先；避免 N+1、查詢可控 |
-| 資料庫 | **Azure SQL Database — Basic 層** | 已定案；ER Model 見 [`04-api.md`](04-api.md) |
+| 資料庫 | **Azure SQL Database — Basic 層** | 已定案；ER Model 與 DDL 見 [`08-database.md`](08-database.md) |
 | 檔案儲存 | **Azure Blob Storage** | 媒體/設計稿上傳（預簽章 URL） |
 | CMS 後台前端 | **純 SPA（靜態）**，不需 SEO、不需 SSR | 與公開站分開部署 |
 | AI 客服 | **本期不納入** | Claude API/AI Agent 暫緩，後續再評估 |
@@ -55,8 +57,8 @@
 
 ## 4. 工作分解
 
-1. **資料層**（P4）：依 ER Model 建表（內容模型 + 多語欄位 + 媒體 + 會員 + 報價/聯絡 + RBAC）。
-2. **CMS 後台**：CRUD + 排序 + 上下架排程 + 富文本 + 媒體上傳（Azure Blob）+ 角色權限。
+1. **資料層**（P4）：依 [`08-database.md`](08-database.md) 建表（47 張表：內容模型 + 多語 i18n 子表 + 會員 + 報價/聯絡 + RBAC）。
+2. **CMS 後台**：依 [`09-cms-admin.md`](09-cms-admin.md) 的 24 個單元實作 CRUD + 排序 + 上下架排程 + 富文本 + 欄位級檔案上傳（Azure Blob，**不做 Media Library**）+ 角色權限。
 3. **API 實作**：對齊 04-api 契約（前台讀取 + 後台管理 + 表單 + 會員）。
 4. **會員與表單**（P6）：認證（JWT/session）、密碼雜湊、信件通知、檔案上傳防護。
 5. **內容遷移**（P8）：WordPress → 新 CMS（含媒體、分類、上架狀態），配合 301 對照表（見 05-seo）。
@@ -100,5 +102,6 @@
 | 2026-06-12 | Tim（Claude Code） | 凍結 .NET10/Functions/Azure SQL Basic/Blob；CMS 前端純 SPA；移除 AI 客服；Pacdora 後端 adapter 串接 |
 | 2026-06-12 | Tim（Claude Code） | 資料存取改用 **Dapper**（取代 EF Core） |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 P7 後端 adapter 串接、報價帶入、相關協作與風險 |
+| 2026-09-01 | Tim（Claude Code） | 拆出 [`08-database.md`](08-database.md)（DDL）與 [`09-cms-admin.md`](09-cms-admin.md)（後台單元規格）；本文件保留領域編排，細節改為引用 |
 
-*最後更新：2026-06-16*
+*最後更新：2026-09-01*
