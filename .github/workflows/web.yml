@@ -1,0 +1,77 @@
+# 公開站 + 後台 → Azure Static Web Apps（stapp-nti-prod）
+#
+# 這個 repo 的 main 分支由 tools/sync-public.sh 從 master 產生，所以每次
+# 「commit → sync-public.sh → push Remote_GitHub」就會觸發一次部署。
+name: web
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 同時只跑一個部署：SWA Free 只有一個正式環境，兩個 job 同時上傳會互相覆蓋
+concurrency:
+  group: web-deploy
+  cancel-in-progress: true
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    name: Build and Deploy
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      # SWA 的打包器不跟隨符號連結，而 pnpm 預設的 node_modules 幾乎全是連結，
+      # 會以 `Could not find file .../node_modules/react` 失敗。hoisted 安裝出來的
+      # 是實體目錄（npm 那種形狀），standalone 產物才打包得動。
+      # 只在 CI 這樣做 —— 本機保留 pnpm 的嚴格佈局，才擋得住 phantom dependency。
+      - name: Install
+        run: pnpm install --frozen-lockfile
+        env:
+          NPM_CONFIG_NODE_LINKER: hoisted
+
+      # 後台先 build，產物落在 apps/web/public/admin —— 它是公開站的一部分，
+      # 順序反過來的話部署出去的 /admin 會是上一次的版本
+      - name: Build admin SPA
+        run: pnpm --filter admin build
+        env:
+          VITE_MEDIA_BASE: ${{ vars.MEDIA_BASE }}
+
+      # 素材走 Blob（stntiprod）。少了這個變數，頁面會指向 /assets/... 而
+      # public/assets 在 CI 上根本不存在（mockup/ 未進版控）—— 站台會整片缺圖，
+      # 而 build 完全成功。
+      - name: Build web
+        run: pnpm --filter web build
+        env:
+          NEXT_PUBLIC_MEDIA_BASE: ${{ vars.MEDIA_BASE }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+          # 上線前一律 noindex（apps/web/src/app/robots.ts）。
+          # 正式上線那次才把這個 variable 設成 1。
+          NEXT_PUBLIC_ALLOW_INDEXING: ${{ vars.ALLOW_INDEXING }}
+
+      # postbuild 已經跑過 250MB gate（apps/web/scripts/check-size.mjs），
+      # 這裡只把數字留在 log 裡，方便日後回頭看是哪一次開始變大的
+      - name: Report bundle size
+        run: du -sh apps/web/.next/standalone
+
+      - name: Deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          app_location: apps/web
+          api_location: ''
+          output_location: ''
+          # 已經自己 build 過了。讓 action 再 build 一次會在 pnpm workspace 下
+          # 產生巢狀的 standalone 路徑，結果是 CSS 與字型 404 而部署顯示成功
+          skip_app_build: true
+          skip_api_build: true
