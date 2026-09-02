@@ -32,10 +32,12 @@ web/
 │   ├── A.tsx                  # <a> 包裝：站內走 next/link，錨點與外部連結維持原生 <a>
 │   └── nav-active.ts          # 逐頁自 mockup 擷取的 header active 對照表
 ├── src/lib/i18n.ts            # locale、路由前綴、canonical/hreflang
-├── src/middleware.ts          # `/` 與缺語系路徑導向 `/en`
+├── src/middleware.ts          # `/` 與缺語系路徑導向 `/en`；`/admin/*` 的後台 SPA fallback
 └── scripts/
     ├── sync-assets.mjs        # 素材同步
     ├── build-pages.mjs        # 一次性 codegen：mockup HTML → page.tsx
+    ├── pack-standalone.mjs    # postbuild：把 standalone 整理成 SWA 收得下的形狀
+    ├── check-size.mjs         # postbuild：SWA Free 的 250MB 閘
     └── verify-markup.mjs      # 版面驗收閘：Next 輸出 vs mockup 逐節點比對
 ```
 
@@ -51,8 +53,8 @@ web/
 4. **有驗收閘**：
 
 ```bash
-npm run build && npm run start          # 一個終端
-npm run verify:markup                   # 另一個終端 → 「全部 44 頁與 mockup 一致」
+pnpm --filter web build && pnpm --filter web start          # 一個終端
+pnpm --filter web verify:markup                   # 另一個終端 → 「全部 44 頁與 mockup 一致」
 ```
 
 `verify:markup` 比對標籤結構、class、屬性值、文字與**會被渲染的空白**，
@@ -60,6 +62,68 @@ npm run verify:markup                   # 另一個終端 → 「全部 44 頁�
 共用元件（header／footer／浮動鈕）也逐頁比對，順便驗證每頁的 nav active 狀態。
 
 > 若之後改為手動維護頁面內容，請停用 `build-pages.mjs`（它會覆寫 `page.tsx`）。
+
+## 後台同站部署（`/admin/`）
+
+管理後台（`apps/admin`，Vite 打包的純 SPA）與公開站部署到**同一個 Azure Static Web Apps**，
+掛在 `/admin/`。後台的 vite `build.outDir` 直接指向本專案的 `public/admin/`，沒有複製步驟；
+產物不進版控。
+
+⚠️ **建置順序有相依：先 admin 後 web**，`next build` 才會把 `public/admin` 一起打包。
+
+```bash
+pnpm --filter admin build && pnpm --filter web build
+```
+
+同站之後有三件事必須知道：
+
+1. **SPA fallback 寫在 `src/middleware.ts`，不是 `next.config.ts`。**
+   `[locale]` 是動態段、什麼都吃，`/admin/news` 會先被 `/[locale]/news` 接走
+   （locale=`"admin"`）在 layout 裡 `notFound()`，`fallback` rewrite 根本輪不到。
+   middleware 排在路由比對之前，才擋得住這個碰撞。
+2. **也不能用 `staticwebapp.config.json`。** SWA 對 Next.js hybrid 站會忽略該檔的
+   路由設定（`routes` / `navigationFallback`）。寫在 middleware 讓 dev、`next start`、
+   SWA 三種環境行為一致。
+3. **後台不自帶素材。** vite build 會關掉 `publicDir`，後台的 `/assets/...` 直接命中
+   本專案的 `public/assets`，省掉重複的 70MB。
+
+middleware 的 matcher 有兩個不可拿掉的排除項：`.swa`（SWA 用 `/.swa/health.html`
+驗證部署起得來，被導向就判定部署失敗，錯誤訊息不會指向這裡）與副檔名結尾
+（`/assets/*`、`/admin/static/*`、`robots.txt` 一律放行）。
+
+後台與公開站同域，所以 `src/app/robots.ts` 明確 `Disallow: /admin/`
+（`index.html` 的 `meta noindex` 只擋索引、不擋爬取）。
+
+## 部署產物（SWA Free）
+
+`next build` 設 `output: 'standalone'`，並由 `postbuild` 收尾：
+
+```bash
+pnpm --filter web build          # next build → pack-standalone → check-size
+pnpm --filter web start:standalone   # 用實際要部署的產物起站（驗證用）
+```
+
+`pack-standalone.mjs` 做兩件 Next 不會自己做、但少了就會出事的事：
+
+1. **把 `.next/static` 與 `public/` 複製進 standalone。** 少了它們，部署後 CSS、
+   字型、圖片與整個 `/admin` 全部 404 —— 而 build 完全成功，不會有任何警告。
+2. **壓平 pnpm workspace 造成的兩層巢狀。** SWA 找的是
+   `.next/standalone/server.js`，workspace 下它會落在
+   `.next/standalone/apps/web/server.js`，SWA 找不到入口，部署會走到最後才回
+   「Web app warm up timed out」。
+
+`check-size.mjs` 擋 SWA Free 的 250MB 單一環境上限（目前 135MB，其中
+`public/assets` 佔 63MB）。超標的話部署會失敗。
+
+> ⚠️ 三個不會出現在錯誤訊息裡的坑——`outputFileTracingRoot` 不可釘在 app 上、
+> CI 必須 `NPM_CONFIG_NODE_LINKER=hoisted` 安裝、middleware matcher 必須排除
+> `.swa`——原因分別寫在 `next.config.ts`、`scripts/pack-standalone.mjs`、
+> `src/middleware.ts` 的註解，彙整在
+> [`docs/07-deployment.md`](../../docs/07-deployment.md) §7.1。
+
+> ⚠️ **目前還不能用 CI 部署。** `mockup/` 未進版控，而 `public/assets` 由它同步
+> 而來 —— GitHub Actions checkout 之後沒有素材，會建出一個缺圖但 build 成功的站。
+> 圖片轉 Blob Storage 之前，部署只能從有 `mockup/` 的機器手動執行。
 
 ## 雙語現況
 

@@ -1,0 +1,10 @@
+packages:
+  - 'apps/*'
+
+# 這兩個套件要跑安裝腳本才會取得平台原生二進位檔：
+# - esbuild：apps/admin 的 check:units 直接用它把 units/*.ts 打包起來檢查
+# - sharp：Next.js 圖片優化用。本站 images.unoptimized（素材走 mockup／Blob 直連），
+#   但 next build 仍會參照它，不允許安裝腳本會出警告。
+onlyBuiltDependencies:
+  - esbuild
+  - sharp

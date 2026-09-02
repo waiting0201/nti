@@ -5,3 +5,7 @@ next-env.d.ts
 *.tsbuildinfo
 # 圖片素材由 mockup/assets 同步而來（62MB），不進版控：npm run sync:assets
 public/assets/
+
+
+# 後台產物：由 apps/admin 的 vite build 直接寫進來
+public/admin/

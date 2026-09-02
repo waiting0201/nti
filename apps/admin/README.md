@@ -7,8 +7,8 @@
 
 ```bash
 npm install
-npm run seed     # 從 db/seed/*.sql 與 mockup/*.html 產生種子資料
-npm run dev      # http://localhost:3300/admin/
+pnpm --filter admin seed     # 從 db/seed/*.sql 與 mockup/*.html 產生種子資料
+pnpm --filter admin dev      # http://localhost:3300/admin/
 ```
 
 登入頁選一個角色即可進入。任何網址加上 `?as=SuperAdmin` / `?as=Editor` / `?as=Viewer`
@@ -17,11 +17,38 @@ npm run dev      # http://localhost:3300/admin/
 > 圖片來自 `public/assets`（指向 `../../mockup/assets` 的 symlink，不進版控）。
 > 正式站的圖片會放 Azure Blob Storage。
 
+## 部署形態：與公開站同站
+
+後台不單獨開一個 Static Web Apps，而是**併進公開站掛在 `/admin/`**：
+vite 的 `build.outDir` 直接指向 `../web/public/admin`，沒有複製步驟。
+
+⚠️ **建置順序有相依：先 admin 後 web**，`next build` 才會把產物一起打包。
+從 repo 根執行：
+
+```bash
+pnpm --filter admin build && pnpm --filter web build
+```
+
+dev 與 build 兩種形態的差別只有素材來源：
+
+| | `pnpm --filter admin dev` | `pnpm --filter admin build` |
+|---|---|---|
+| 素材 | `public/assets` symlink → `mockup/assets` | 共用公開站的 `/assets/`，不複製第二份 |
+| `publicDir` | `public` | `false`（見 `vite.config.ts`） |
+| `assetUrl()` 前綴 | `/admin` | 無（見 `src/lib/asset.ts`） |
+
+> `pnpm --filter admin preview` 是 build 產物，圖片會指向 `/assets/`——
+> 那要由公開站提供，單獨 preview 會缺圖，屬預期行為。
+
+深層路徑（`/admin/u/news/1`）的 SPA fallback 在 `apps/web/src/middleware.ts`——
+不能寫在 `next.config.ts` 或 `staticwebapp.config.json`，原因見
+[`apps/web/README.md`](../web/README.md#後台同站部署admin)。
+
 ## 驗收閘
 
 ```bash
-npm run check:units   # → 「✓ 每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 171 列」
-npm run typecheck
+pnpm --filter admin check:units   # → 「✓ 每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 171 列」
+pnpm --filter admin typecheck
 ```
 
 `check:units` 對應 [`docs/09-cms-admin.md`](../docs/09-cms-admin.md) §8 DoD 的三條可機檢項目；
@@ -54,7 +81,7 @@ npm run typecheck
 - `db/seed/150_solution.sql` → 4 筆方案
 - `mockup/*.html` → 12 篇新聞、6 個案例、8 則 FAQ、14 枚認證、24 張設備卡、5 個職缺…
 
-由 [`scripts/build-seed.mjs`](scripts/build-seed.mjs) 產生（`npm run seed`），
+由 [`scripts/build-seed.mjs`](scripts/build-seed.mjs) 產生（`pnpm --filter admin seed`），
 所以後台一打開就是這個站真正的內容，客戶看得懂自己在改什麼。
 P6 的報價／聯絡／會員／訂單與操作紀錄則是示意資料（前台表單尚未接 API）。
 

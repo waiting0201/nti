@@ -6,7 +6,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const src = path.resolve(root, '../mockup/assets')
+const src = path.resolve(root, '../../mockup/assets')
 const dest = path.resolve(root, 'public/assets')
 
 if (!existsSync(src)) {

@@ -11,7 +11,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const mockupDir = path.resolve(root, '../mockup')
+const mockupDir = path.resolve(root, '../../mockup')
 const appDir = path.join(root, 'src/app/[locale]')
 
 /** HTML 屬性 → JSX 屬性 */

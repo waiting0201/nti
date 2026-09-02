@@ -12,7 +12,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const mockupDir = path.resolve(root, '../mockup')
+const mockupDir = path.resolve(root, '../../mockup')
 const base = process.env.VERIFY_BASE ?? 'http://localhost:3100'
 const locale = process.env.VERIFY_LOCALE ?? 'en'
 

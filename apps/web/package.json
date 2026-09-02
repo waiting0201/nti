@@ -1,13 +1,15 @@
 {
-  "name": "nti-web",
+  "name": "web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "sync:assets": "node scripts/sync-assets.mjs",
     "dev": "next dev -p 3100",
-    "build": "next build",
+    "build": "next build && pnpm run postbuild",
     "start": "next start -p 3100",
-    "verify:markup": "node scripts/verify-markup.mjs"
+    "verify:markup": "node scripts/verify-markup.mjs",
+    "postbuild": "node scripts/pack-standalone.mjs && node scripts/check-size.mjs",
+    "start:standalone": "node .next/standalone/server.js"
   },
   "dependencies": {
     "next": "15.5.4",
