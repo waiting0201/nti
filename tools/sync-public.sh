@@ -41,10 +41,13 @@ trap 'rm -f "$tmpidx"' EXIT
 n=0
 for c in $commits; do
     rm -f "$tmpidx"
-    GIT_INDEX_FILE="$tmpidx" git read-tree "$c"
+    export GIT_INDEX_FILE="$tmpidx"
+    git read-tree "$c"
+    # 純 index plumbing：不碰工作目錄，也不做 git rm 的工作目錄掃描（快上數千倍）
     # shellcheck disable=SC2086
-    GIT_INDEX_FILE="$tmpidx" git rm -r --cached -q --ignore-unmatch -- $EXCLUDE
-    tree=$(GIT_INDEX_FILE="$tmpidx" git write-tree)
+    git ls-files -z -- $EXCLUDE | xargs -0 -r git update-index --force-remove --
+    tree=$(git write-tree)
+    unset GIT_INDEX_FILE
 
     GIT_AUTHOR_NAME=$(git log -1 --format=%an "$c")
     GIT_AUTHOR_EMAIL=$(git log -1 --format=%ae "$c")
