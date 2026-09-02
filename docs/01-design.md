@@ -14,11 +14,11 @@
 
 | 來源 | 路徑 | 用途 |
 |------|------|------|
-| 設計稿 PSD（5 頁） | `planning/reference/WebsiteDesign/*.psd`（Homepage、NTIdifferences、PrintingSolutions、GreenAdvantage、Facility-Equipment） | 視覺基準，需轉成設計系統 |
+| 設計稿 PSD（5 頁） | `reference/WebsiteDesign/*.psd`（Homepage、NTIdifferences、PrintingSolutions、GreenAdvantage、Facility-Equipment） | 視覺基準，需轉成設計系統 |
 | 既有切版稿 mockup | [`mockup/`](../mockup/)（5 頁靜態 HTML + assets） | 已落地的版型現況，設計 token 抽取起點 |
-| 品牌規範 CIS | `planning/reference/CISGuideBook/南台彩藝CIS完稿規範.pdf`、`BrandImage/`（中英、橫直式 logo、AI 原檔） | logo 用法、配色、字級的硬約束 |
+| 品牌規範 CIS | `reference/sbk/CISGuideBook/南台彩藝CIS完稿規範.pdf`、`BrandImage/`（中英、橫直式 logo、AI 原檔） | logo 用法、配色、字級的硬約束 |
 | 競品分析 | 本檔 [§8 競品設計分析](#8-競品設計分析)（原 reference-website-analysis.md 已併入） | 配色／Hero／數據區／logo 矩陣的設計方向 |
-| 規劃書版型需求 | [`planning/NTI_Printing_官網規劃書.md`](../planning/NTI_Printing_官網規劃書.md) §1 前端規劃 | 每頁區塊清單 |
+| 規劃書版型需求 | [`reference/NTI_Printing_官網規劃書.md`](../reference/NTI_Printing_官網規劃書.md) §1 前端規劃 | 每頁區塊清單 |
 
 ---
 
@@ -94,7 +94,7 @@
 
 ## 8. 競品設計分析
 
-> 來源：[planning/reference/世界大廠網站.txt](../planning/reference/世界大廠網站.txt)｜分析日期：2026-05-22
+> 來源：[reference/sbk/世界大廠網站.txt](../reference/sbk/世界大廠網站.txt)｜分析日期：2026-05-22
 > （原 `docs/reference-website-analysis.md`，2026-06-12 併入本設計作業書）
 
 針對 NTI Printing 官網規劃，研究 5 個國際包裝印刷大廠的官網，整理可借鏡的設計方向。

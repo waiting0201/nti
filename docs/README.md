@@ -2,7 +2,7 @@
 
 > 本檔整合三部分於一處：**A. Agent 編排總則**、**B. Claude Code 環境設定**、以及**分項作業書索引**。
 > 各建置領域（設計／前端／後端／API／SEO／GEO／部署）的細節，拆成同層的 7 份分項作業書（見下表）。
-> 搭配[網站建置時程](../planning/網站建置時程.html)（PDF）一起閱讀。
+> 搭配[網站建置時程](../reference/網站建置時程.html)（PDF）一起閱讀。
 
 ---
 
@@ -50,7 +50,7 @@
 | 事實 | 來源 | 對編排的影響 |
 |------|------|--------------|
 | **非全新案，是改版重建** | 既有站 `nti-printing.com`（WordPress + All-in-One SEO，約 80 篇文章 / 46 頁） | 需 **內容遷移 agent** 與 **301 轉址規劃**，非單純開發 |
-| **設計稿已存在** | `planning/reference/WebsiteDesign/*.psd`（首頁、NTI Difference、Printing Solution、Green Advantage、Facility） | 設計 agent 為「**轉譯既有視覺 → 設計系統 + RWD**」，非從零發想 |
+| **設計稿已存在** | `reference/WebsiteDesign/*.psd`（首頁、NTI Difference、Printing Solution、Green Advantage、Facility） | 設計 agent 為「**轉譯既有視覺 → 設計系統 + RWD**」，非從零發想 |
 | **客戶需求＝差異化** | `NTI Printing 官網客戶需求.docx` | 內容/文案需強調 核心能力 × 解決方案 × ESG，避免型錄式 |
 | **硬性 SEO 規範** | `2026_0514 網站建置 SEO 注意事項.pdf`（37 頁） | SEO 為**跨 agent 的交付驗收條件**，非獨立階段 |
 | **客戶囉唆、不懂裝懂** | 專案備註 | 每階段強制 **原型先行 + 書面簽核 Gate**；agent 產出需可被非技術客戶看懂 |
@@ -152,7 +152,7 @@ NTI/
 ├── docs/                      # 文件區（本總覽 + 7 份分項作業書）
 │   ├── README.md              # 本檔：Harness 總覽（編排總則 + 設定 + 索引）
 │   ├── 01-design.md … 07-deployment.md
-├── planning/                  # 規劃案原始文件
+├── reference/                 # 規劃案原始文件（客戶素材在 reference/sbk/）
 └── mockup/                    # 靜態切版稿（用過即丟）
 ```
 
@@ -188,7 +188,7 @@ Agent 具備檔案式持久記憶，位於使用者層級：
 
 ## B5. 慣例
 
-- 文件一律放 `docs/`，規劃原始檔放 `planning/`。
+- 文件一律放 `docs/`，規劃原始檔放 `reference/`（客戶素材 `reference/sbk/`）。
 - `CLAUDE.md` 為單一索引入口，新增重要文件時於其中補上連結。
 - 此專案目前**非 git repo**；若要進版控需先 `git init`。
 
@@ -198,7 +198,7 @@ Agent 具備檔案式持久記憶，位於使用者層級：
 
 1. **單一事實來源**：各領域規格以對應分項文件（01–07）為準；本檔 §A 只保留編排層面的決策。兩者衝突時，先更新 §A 再回寫分項。
 2. **每份文件都帶「變更紀錄」表**：任何修改（含他人代改）都要在該表補一列（日期 / 修改者 / 摘要），並同步更新本檔末端「最後更新」日期。詳見下方〈變更紀錄維護規範〉。
-3. **檔案放置**：harness engineering 文件一律放 `docs/`；產出的規劃／時程／設計檔放 `planning/`（見 [CLAUDE.md](../CLAUDE.md) 工作慣例）。
+3. **檔案放置**：harness engineering 文件一律放 `docs/`；產出的規劃／時程／設計檔放 `reference/`（見 [CLAUDE.md](../CLAUDE.md) 工作慣例）。
 
 ## 變更紀錄維護規範（重要）
 
@@ -221,4 +221,4 @@ Agent 具備檔案式持久記憶，位於使用者層級：
 | 2026-06-12 | Tim（Claude Code） | 整併 docs/：移除 harness/ 子資料夾、檔案攤平至 docs/；本檔吸收原 harness-engineering.md（編排總則）與 harness.md（Claude Code 設定）；競品分析併入 01-design.md |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 P7 整合 track、G 關卡、相關研究/職責/成本/風險 |
 
-*最後更新：2026-06-16｜對應時程：見 `planning/網站建置時程.html` 與 PDF。*
+*最後更新：2026-06-16｜對應時程：見 `reference/網站建置時程.html` 與 PDF。*

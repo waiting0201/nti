@@ -14,7 +14,7 @@
 
 | 來源 | 用途 |
 |------|------|
-| [`planning/NTI_Printing_官網規劃書.md`](../planning/NTI_Printing_官網規劃書.md) §3 官網後端 | CMS 功能清單（權威） |
+| [`reference/NTI_Printing_官網規劃書.md`](../reference/NTI_Printing_官網規劃書.md) §3-1 | CMS 功能需求來源（與現行 IA 的差異見 [`09-cms-admin.md` §2.1](09-cms-admin.md)） |
 | [`04-api.md`](04-api.md) | API 契約（system-analyst 定義） |
 | 既有 WordPress 站 `nti-printing.com`（約 80 篇文章 / 46 頁） | 內容遷移來源（P8） |
 | [`05-seo.md`](05-seo.md) | CMS 需提供的 SEO 欄位（meta/slug/alt/canonical/hreflang） |
@@ -38,7 +38,8 @@
 
 ## 3. 範圍 — CMS 模組（對應規劃書 §3 功能清單）
 
-**內容維護**：首頁 Banner（圖片/影片、排序、上下架日期）、COURAGE、Printing、Project 精選、Clients Carousel、NTI Difference、Printing Solution（含子方案）、Projects（分類標籤、上架日）、Facility & Equipment、Advantages（數據）、NEWS（富文本、上下架、是否上首頁）、Green Vlog（YouTube 嵌入、分類）、Supplier Area（公告/規格文件/下載檔管理）、Privacy & Legal（富文本）、Contact 公司資訊。
+**內容維護**：以 **24 個後台單元**實作，單元清單、欄位與權限見 [`09-cms-admin.md`](09-cms-admin.md)。
+規劃書 §3-1 的部分區塊名稱（COURAGE、Project 精選、NTI Difference、Advantages 數據）已被 2026-08-31 IA 改版與 2026-09-01 首頁改版取代，逐項差異與**三個待確認缺口**（電子報／CSR／Banner 影片）見 [`09-cms-admin.md` §2.1](09-cms-admin.md)。
 
 **系統管理**：
 - **管理員與權限角色**：超級管理員 / 內容編輯 / 檢視者（RBAC）。
@@ -103,5 +104,6 @@
 | 2026-06-12 | Tim（Claude Code） | 資料存取改用 **Dapper**（取代 EF Core） |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 P7 後端 adapter 串接、報價帶入、相關協作與風險 |
 | 2026-09-01 | Tim（Claude Code） | 拆出 [`08-database.md`](08-database.md)（DDL）與 [`09-cms-admin.md`](09-cms-admin.md)（後台單元規格）；本文件保留領域編排，細節改為引用 |
+| 2026-09-01 | Tim（Claude Code） | §3 內容維護清單（照抄規劃書、已被 IA 改版取代）改為指向 09 §2／§2.1；修正規劃書路徑 `planning/` → `reference/` |
 
 *最後更新：2026-09-01*

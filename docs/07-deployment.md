@@ -14,7 +14,7 @@
 
 | 來源 | 用途 |
 |------|------|
-| [`planning/部署與環境區隔.md`](../planning/部署與環境區隔.md) | 現況 mockup 部署 + 正式站區隔策略 + 架構待決事項（**權威**） |
+| [`reference/部署與環境區隔.md`](../reference/部署與環境區隔.md) | 現況 mockup 部署 + 正式站區隔策略 + 架構待決事項（**權威**） |
 | [`05-seo.md`](05-seo.md) | 上線 301/sitemap/GSC 交付 |
 | [`02-frontend.md`](02-frontend.md)、[`03-backend.md`](03-backend.md) | 前後端 host 需求 |
 

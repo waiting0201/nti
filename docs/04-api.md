@@ -14,7 +14,7 @@
 
 | 來源 | 用途 |
 |------|------|
-| [`planning/NTI_Printing_官網規劃書.md`](../planning/NTI_Printing_官網規劃書.md) §1、§3 | 前台資料需求 + CMS 功能 → endpoint 推導 |
+| [`reference/NTI_Printing_官網規劃書.md`](../reference/NTI_Printing_官網規劃書.md) §1、§3 | 前台資料需求 + CMS 功能 → endpoint 推導 |
 | [`03-backend.md`](03-backend.md) | 資料模型與模組邊界 |
 | [`05-seo.md`](05-seo.md) | 內容型別需回傳的 SEO 欄位 |
 | [`08-database.md`](08-database.md) | ER Model／資料表欄位（endpoint 回傳欄位的來源） |
@@ -31,7 +31,7 @@
 - **認證**：公開讀取（前台內容）免認證；會員 API 用 JWT/session；後台管理 API 需 RBAC（超管/編輯/檢視者）。
 - **錯誤格式**：統一 `{ code, message, details }`，HTTP 狀態語意正確。
 - **分頁**：清單一律 `page`/`pageSize` + `total`。
-- **檔案**：上傳走 multipart 或預簽章 URL（S3），回傳資產 id/url。
+- **檔案**：上傳走 multipart 或 **Azure Blob 預簽章（SAS）URL**；回傳 Blob 相對路徑（無資產表，見 [`08-database.md` §2.6](08-database.md)）。
 - **文件化**：OpenAPI/Swagger 為單一事實來源，與本文件對齊。
 
 ---
@@ -41,13 +41,16 @@
 > 下列為**契約藍圖**，欄位細節以 OpenAPI 為準；資料表與欄位定義見 [`08-database.md`](08-database.md)。
 
 ### 3.1 前台內容（公開、唯讀，吃 CMS）
-- `GET /content/home`（Banner、COURAGE、Printing、精選 Project、Clients）
-- `GET /nti-difference`、`GET /printing-solutions`、`GET /printing-solutions/{slug}`（4 子方案）
-- `GET /projects`、`GET /projects/{slug}`（含影片、技術標籤、分類篩選）
-- `GET /facility`、`GET /advantages`（含碳效率/ESG 數據）
-- `GET /news`、`GET /news/{slug}`、`GET /green-vlog`、`GET /green-vlog/{slug}`
-- `GET /supplier/announcements`、`/supplier/specs`、`/supplier/downloads`
-- `GET /legal/privacy`、`GET /contact-info`
+> 依 `mockup/` 44 頁實際結構對齊：**Projects 與 Green Vlog 無詳細頁**（前者卡片即完整內容，後者外連 YouTube）。
+
+- `GET /content/home`（Banner、Solutions 卡、Proof 認證牆、Clients）
+- `GET /solutions`、`GET /solutions/{slug}`（含品項卡）
+- `GET /projects`（分類篩選）、`GET /facility?group={code}`、`GET /certifications`、`GET /clients`
+- `GET /news`、`GET /news/{slug}`、`GET /green-vlog`
+- `GET /faq`、`GET /industry-trends`、`GET /careers`
+- `GET /supplier/notices`、`/supplier/specs`、`/supplier/downloads`
+- `GET /pages/{pageKey}`（28 個固定頁的 SEO 欄位；`privacy-legal` 另含 `bodyHtml`）
+- `GET /site-settings`（公司資訊與社群連結；信件收件者等內部設定不外露）
 - 每筆內容回傳 **SEO 欄位**：`title/metaDescription/h1/canonical/og/slug/imageAlt/hreflang`。
 
 ### 3.2 表單（公開寫入）
@@ -62,7 +65,8 @@
 ### 3.4 後台管理（RBAC）
 - `GET/POST/PUT/DELETE /admin/{resource}`（各內容型別 CRUD + 排序 + 上下架排程）
 - `/admin/quotes`、`/admin/contacts`（檢視/回覆/狀態/匯出）
-- `/admin/members`（清單/啟用停用）、`/admin/users`（管理員/角色）、`/admin/i18n`（中英對照）
+- `/admin/members`（清單/啟用停用）、`/admin/users`（管理員/角色）、`/admin/settings`、`/admin/categories`、`/admin/audit`
+- `{resource}` 對應 [`09-cms-admin.md` §2](09-cms-admin.md) 的 24 個單元代號；RBAC 權限碼為 `{單元代號}.{action}`。中英對照無獨立端點，兩語系隨各資源一併讀寫。
 
 > 本期不含 AI 客服端點（原 `/ai/chat` 已移除），亦不含 Pacdora／3D 包裝客製端點（廠商不提供技術崁入服務）。
 
@@ -111,5 +115,6 @@
 | 2026-06-12 | Tim（Claude Code） | 改為 Azure Functions .NET10 HTTP trigger；移除 `/ai/chat`；Pacdora 設計結果併入 `/quotes` 可選欄位 |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 §3.5 Pacdora 契約、/quotes 之 pacdora 欄位、相關風險 |
 | 2026-09-01 | Tim（Claude Code） | 上游輸入補 08（DDL）／09（後台單元）；ER Model 權威來源改指向 `08-database.md` |
+| 2026-09-01 | Tim（Claude Code） | §3.1 依 mockup 44 頁對齊（移除 `/projects/{slug}`、`/green-vlog/{slug}`；`/nti-difference`、`/advantages` 併入 `/pages/{pageKey}`；新增 faq／industry-trends／careers／certifications／clients／site-settings）；檔案上傳由「預簽章 URL（S3）」更正為 Azure Blob SAS；`/admin/i18n` 移除 |
 
 *最後更新：2026-09-01*

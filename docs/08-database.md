@@ -10,15 +10,13 @@
 
 ---
 
-## 1. 設計原則（三條專案決議）
+## 1. 設計原則
 
-| # | 決議 | 落到 schema 的做法 |
-|---|------|-------------------|
-| 1 | **後台以「單元功能」為主** | 每個後台單元 = 1 個主表（＋1 個 i18n 子表）；不做通用 page-builder、不做區塊拖拉。單元清單見 [09-cms-admin.md](09-cms-admin.md)。 |
-| 2 | **不做 Media Library** | 沒有 `Media` 資產表。檔案／圖片一律是**所屬資料列上的欄位**（`XxxPath` 存 Blob 相對路徑），刪除該列即解除引用。 |
-| 3 | **固定文字不進後台** | About／Sustainability／Facility 各內頁的長篇敘述文字寫死在前端；資料庫只保留這些頁的 **SEO 欄位**（`Page` / `PageI18n`）。 |
+本 schema 依 [`09-cms-admin.md` §1](09-cms-admin.md) 的三條專案決議設計，對應的落地做法：
 
-> 例外只有一處：`privacy-legal` 屬法務文件、客戶會自行改版，故 `Page.HasRichBody = 1` 開富文本。
+1. **單元式後台** → 一個後台單元 = 1 主表（＋1 張 `*I18n` 子表），無通用區塊表。
+2. **不做 Media Library** → 無 `Media` 資產表；檔案是所屬資料列上的 `*Path` 欄位，刪列即解除引用。
+3. **固定文字不進後台** → About／Sustainability／Facility 內頁長文寫死在前端，DB 只留其 SEO 欄位（`Page`／`PageI18n`）。唯一例外 `privacy-legal`（`HasRichBody = 1`）。
 
 ---
 
@@ -84,32 +82,7 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 
 ---
 
-## 3. ER 概觀
-
-```mermaid
-erDiagram
-  Category ||--o{ CategoryI18n : ""
-  Category ||--o{ News : "NewsCategory"
-  Category ||--o{ Project : "ProjectCategory"
-  Category ||--o{ Vlog : "VlogCategory"
-  Category ||--o{ Faq : "FaqGroup"
-  Category ||--o{ Certification : "CertGroup"
-  Category ||--o{ FacilityItem : "FacilityGroup"
-  Category ||--o{ SupplierNotice : "NoticeCategory"
-  News ||--o{ NewsI18n : ""
-  Solution ||--o{ SolutionI18n : ""
-  Solution ||--o{ SolutionItem : ""
-  SolutionItem ||--o{ SolutionItemI18n : ""
-  Page ||--o{ PageI18n : ""
-  QuoteRequest ||--o{ QuoteAttachment : ""
-  Member ||--o{ QuoteRequest : "可選"
-  Member ||--o{ MemberToken : ""
-  Member ||--o{ Orders : ""
-  Orders ||--o{ OrderProgress : ""
-  Role ||--o{ RolePermission : ""
-  Role ||--o{ AdminUser : ""
-  AdminUser ||--o{ AuditLog : ""
-```
+## 3. 資料表一覽
 
 分區一覽（**31 張主表 + 16 張 `*I18n` 多語子表 = 47 張**）：
 
@@ -127,6 +100,8 @@ erDiagram
 ---
 
 ## 4. DDL
+
+> `*Path` 欄位一律存 Blob 相對路徑；**建議尺寸與檔案限制不在此重複**，唯一來源為 [`09-cms-admin.md` §3](09-cms-admin.md)。
 
 ### 4.1 共用主檔
 
@@ -170,8 +145,8 @@ CREATE TABLE dbo.SiteSetting (
 -- 首頁 Banner 輪播（mockup index.html #hero，目前 3 張）
 CREATE TABLE dbo.HomeBanner (
   Id INT IDENTITY(1,1) PRIMARY KEY,
-  ImagePath NVARCHAR(260) NOT NULL,        -- 建議 2400x900
-  ImagePathMobile NVARCHAR(260) NULL,      -- 建議 1080x1350，未填則用桌機圖
+  ImagePath NVARCHAR(260) NOT NULL,        -- 桌機圖
+  ImagePathMobile NVARCHAR(260) NULL,      -- 手機圖，未填則用桌機圖
   LinkUrl NVARCHAR(300) NULL,              -- 站內相對路徑或外部 URL
   OpenInNewTab BIT NOT NULL DEFAULT 0,
   SortOrder INT NOT NULL DEFAULT 0,
@@ -196,8 +171,8 @@ CREATE TABLE dbo.HomeBannerI18n (
 CREATE TABLE dbo.Solution (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   Code VARCHAR(30) NOT NULL UNIQUE,        -- boxes|cardboard|uv|other
-  CoverImagePath NVARCHAR(260) NOT NULL,   -- 建議 1160x940
-  OgImagePath NVARCHAR(260) NULL,          -- 建議 1200x630
+  CoverImagePath NVARCHAR(260) NOT NULL,
+  OgImagePath NVARCHAR(260) NULL,          -- 未填沿用封面
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1, PublishAt DATETIME2(0) NULL, UnpublishAt DATETIME2(0) NULL,
   /* audit */
@@ -220,7 +195,7 @@ CREATE TABLE dbo.SolutionI18n (
 CREATE TABLE dbo.SolutionItem (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   SolutionId INT NOT NULL REFERENCES dbo.Solution(Id),
-  ImagePath NVARCHAR(260) NOT NULL,        -- 建議 1280x960
+  ImagePath NVARCHAR(260) NOT NULL,
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1,
   /* audit */
@@ -242,7 +217,7 @@ CREATE TABLE dbo.SolutionItemI18n (
 CREATE TABLE dbo.Project (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   CategoryId INT NOT NULL REFERENCES dbo.Category(Id),   -- CategoryType='Project'（Food/Pharma/...）
-  ImagePath NVARCHAR(260) NOT NULL,        -- 建議 1160x940
+  ImagePath NVARCHAR(260) NOT NULL,
   VideoUrl NVARCHAR(300) NULL,             -- 有值才顯示播放圖示
   StatValue NVARCHAR(20) NULL,             -- 卡片大數字，如 -32%
   SortOrder INT NOT NULL DEFAULT 0,
@@ -270,8 +245,8 @@ CREATE TABLE dbo.News (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   CategoryId INT NOT NULL REFERENCES dbo.Category(Id),   -- CategoryType='News'
   PublishDate DATE NOT NULL,               -- 顯示用日期（2026.03.13）
-  CoverImagePath NVARCHAR(260) NOT NULL,   -- 建議 1800x1200
-  OgImagePath NVARCHAR(260) NULL,          -- 建議 1200x630，未填沿用封面
+  CoverImagePath NVARCHAR(260) NOT NULL,
+  OgImagePath NVARCHAR(260) NULL,          -- 未填沿用封面
   IsFeaturedHome BIT NOT NULL DEFAULT 0,   -- 是否上首頁／Insights 精選
   IsPublished BIT NOT NULL DEFAULT 0, PublishAt DATETIME2(0) NULL, UnpublishAt DATETIME2(0) NULL,
   /* audit */
@@ -297,7 +272,7 @@ CREATE TABLE dbo.Vlog (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   CategoryId INT NOT NULL REFERENCES dbo.Category(Id),   -- CategoryType='Vlog'
   YoutubeId VARCHAR(20) NOT NULL,          -- 只存 ID，前端組 embed / thumb URL
-  ThumbOverridePath NVARCHAR(260) NULL,    -- 建議 1280x720，未填自動取 YouTube hqdefault
+  ThumbOverridePath NVARCHAR(260) NULL,    -- 未填自動取 YouTube hqdefault
   IsMainFeature BIT NOT NULL DEFAULT 0,    -- 頁面頂部大播放器（僅一支）
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1, PublishAt DATETIME2(0) NULL, UnpublishAt DATETIME2(0) NULL,
@@ -355,7 +330,7 @@ CREATE TABLE dbo.IndustryTrendI18n (
 CREATE TABLE dbo.Certification (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   CategoryId INT NULL REFERENCES dbo.Category(Id),       -- CategoryType='Certification'（認證/夥伴/獎項）
-  LogoPath NVARCHAR(260) NOT NULL,         -- 建議 600x600 去背 PNG／SVG
+  LogoPath NVARCHAR(260) NOT NULL,         -- 去背 PNG／SVG
   LinkUrl NVARCHAR(300) NULL,
   ShowOnHome BIT NOT NULL DEFAULT 1,       -- 是否列入首頁 Proof 牆
   SortOrder INT NOT NULL DEFAULT 0,
@@ -376,7 +351,7 @@ CREATE TABLE dbo.CertificationI18n (
 CREATE TABLE dbo.ClientLogo (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   Name NVARCHAR(120) NOT NULL,             -- 同時作為 alt
-  LogoPath NVARCHAR(260) NOT NULL,         -- 建議短邊 >=300px 去背 PNG／SVG
+  LogoPath NVARCHAR(260) NOT NULL,         -- 去背 PNG／SVG
   LinkUrl NVARCHAR(300) NULL,
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1,
@@ -387,7 +362,7 @@ CREATE TABLE dbo.ClientLogo (
 CREATE TABLE dbo.FacilityItem (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   CategoryId INT NOT NULL REFERENCES dbo.Category(Id),   -- CategoryType='Facility'
-  ImagePath NVARCHAR(260) NOT NULL,        -- 建議 1200x1200（1:1）
+  ImagePath NVARCHAR(260) NOT NULL,
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1,
   /* audit */
@@ -430,7 +405,7 @@ CREATE TABLE dbo.SupplierNotice (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   CategoryId INT NOT NULL REFERENCES dbo.Category(Id),   -- CategoryType='SupplierNotice'（Policy/ESG/Quality/Logistics）
   NoticeDate DATE NOT NULL,
-  AttachmentPath NVARCHAR(260) NULL,       -- 選填，PDF ≤20MB
+  AttachmentPath NVARCHAR(260) NULL,       -- 選填
   IsPublished BIT NOT NULL DEFAULT 1, PublishAt DATETIME2(0) NULL, UnpublishAt DATETIME2(0) NULL,
   /* audit */
 );
@@ -460,7 +435,7 @@ CREATE TABLE dbo.SupplierSpecI18n (
 
 CREATE TABLE dbo.SupplierDownload (
   Id INT IDENTITY(1,1) PRIMARY KEY,
-  FilePath NVARCHAR(260) NOT NULL,         -- PDF/XLSX/DOCX ≤20MB
+  FilePath NVARCHAR(260) NOT NULL,
   FileExt VARCHAR(10) NOT NULL,            -- 自動帶入，前台顯示 PDF/XLSX 標籤
   FileSizeBytes BIGINT NOT NULL,           -- 自動帶入，前台格式化為 2.4 MB
   RequireLogin BIT NOT NULL DEFAULT 0,     -- 受控文件：會員系統上線後才生效（P6）
@@ -487,7 +462,7 @@ CREATE TABLE dbo.Page (
   PageKey VARCHAR(60) NOT NULL UNIQUE,     -- home|about-difference|green-carbon|...
   RouteTemplate NVARCHAR(200) NOT NULL,    -- /{lang}/about/difference
   HasRichBody BIT NOT NULL DEFAULT 0,      -- 只有 privacy-legal = 1
-  OgImagePath NVARCHAR(260) NULL,          -- 建議 1200x630
+  OgImagePath NVARCHAR(260) NULL,          -- OG 分享圖
   IsIndexable BIT NOT NULL DEFAULT 1,      -- 0 → noindex
   /* audit */
 );
@@ -754,7 +729,7 @@ CREATE INDEX IX_AuditLog_Entity ON dbo.AuditLog(EntityName, EntityId, CreatedAt 
 | Company | `company.name`、`company.address`、`company.hours` | text/multiline | ✓ |
 | Company | `company.phone`、`company.fax`、`company.email`、`company.map_embed` | text/url | — |
 | Social | `social.facebook`、`social.linkedin`、`social.youtube` | url | — |
-| Home | `home.gallery_image`（建議 2400×1000）、`home.gallery_alt` | image/text | 圖—／alt ✓ |
+| Home | `home.gallery_image`、`home.gallery_alt` | image/text | 圖—／alt ✓ |
 | Mail | `mail.quote_notify_to`、`mail.contact_notify_to`、`mail.bcc` | email | — |
 
 ### 6.4 頁面（`Page`）
@@ -782,15 +757,6 @@ OFFSET (@page - 1) * @pageSize ROWS FETCH NEXT @pageSize ROWS ONLY;
 ```
 
 ```sql
--- 前台：新聞詳細（含 hreflang 對照，一次取回兩語系 slug）
-SELECT n.*, i.*, alt.Lang AS AltLang, alt.Slug AS AltSlug
-FROM dbo.News n
-JOIN dbo.NewsI18n i ON i.NewsId = n.Id AND i.Lang = @lang
-LEFT JOIN dbo.NewsI18n alt ON alt.NewsId = n.Id AND alt.Lang <> @lang
-WHERE i.Slug = @slug AND n.IsDeleted = 0 AND n.IsPublished = 1;
-```
-
-```sql
 -- 後台：中英完成度（清單頁的 zh/en badge）
 SELECT n.Id,
        MAX(CASE WHEN i.Lang = 'zh' THEN 1 ELSE 0 END) AS HasZh,
@@ -815,11 +781,11 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 
 ## 9. DoD
 
-- [ ] 所有內容表具備稽核五欄、上下架四欄、i18n 子表。
-- [ ] 有網址的實體具備完整 SEO 欄位組（05-seo §2.1）。
+> 僅列 schema 獨有項；安全／效能／可維運的通則見 [`03-backend.md` §5](03-backend.md)。
+
+- [ ] 所有內容表具備稽核五欄、上下架四欄與 `*I18n` 子表。
+- [ ] 有網址的實體（`Page`／`News`／`Solution`）具備完整 SEO 欄位組。
 - [ ] 每個圖片欄位都有對應的多語 `Alt` 欄位。
-- [ ] §5 索引全數建立，前台列表／詳細查詢無 table scan。
-- [ ] 密碼僅存雜湊、token 僅存 SHA-256、無明碼個資欄位。
 - [ ] 遷移腳本可從空庫一次建置到位並帶入 §6 種子。
 
 ---
