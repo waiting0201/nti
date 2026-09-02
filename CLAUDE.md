@@ -56,8 +56,12 @@ NTI/
 │   └── tools/         # run-local.sh 一鍵建置
 ├── mockup/            # 靜態 HTML 原型（44 頁，客戶已定案的設計版本）
 │   └── assets/        # 圖片、site.css、img-size.js
-├── reference/         # 規劃案原始文件（規劃書、時程、IA、簡報）
+├── reference/         # 規劃案原始文件（規劃書、時程、IA、簡報）— 約 2.5GB，**只進 NAS**
 │   └── sbk/           # 客戶提供的原始素材（sitemap、CIS、需求書）
+├── tools/
+│   └── sync-public.sh # master → public 同步（去除 reference/），推 GitHub 前執行
+├── .githooks/
+│   └── pre-push       # 安全網：擋下含 reference/ 的 ref 推向 Remote_GitHub
 └── .claude/           # Claude Code 本機設定
 ```
 
@@ -88,7 +92,22 @@ NTI/
 - **資料庫**：schema 設計在 [docs/08-database.md](docs/08-database.md)；**權威來源為 EF Core Migration**（`Api/Data/Migrations/`，表達方式對照見 10 §8.5）。[`db/`](db/README.md) 為參考實作與交付腳本，本機一鍵建置：`cp db/.env.local.example db/.env.local && db/tools/run-local.sh`；`db/verify/verify.sql` 保留為驗收閘。
 - **檔案放置慣例**：`docs/` 僅放 **harness engineering 文件**；其他產出的 PDF／時程／規劃檔一律放 `reference/`，客戶提供的原始素材放 `reference/sbk/`。新增重要文件時，於上方「文件索引」補連結。
 - 前端開發優先使用 `frontend-design` skill；改動後用 `run`／`verify` skill 驗證。
-- 已納入 git 版控（`master` 分支）。
+- **版控與雙 remote（重要）**：git 無法對不同 remote 過濾路徑，因此用**兩條分支**分流：
+
+  | 分支 | 內容 | 推向 | 體積 |
+  |------|------|------|------|
+  | `master` | 完整（含 `reference/`） | `Remote_NAS`（`/Volumes/public/Repo/NTI`） | 2,527 MB / 111 檔 |
+  | `public` | master 去掉 `reference/` | `Remote_GitHub`（`waiting0201/nti`） | 0.3 MB / 32 檔 |
+
+  **日常流程**：一律 commit 在 `master` → `git push Remote_NAS` → `tools/sync-public.sh` → `git push Remote_GitHub`。
+  兩個 remote 的預設 refspec 已設好，裸的 `git push <remote>` 就會推對的分支到對的地方。
+
+  - `sync-public.sh` 用 plumbing 重建 tree，**不動工作目錄**（毫秒級，不會複製 2.5GB），
+    保留每個 commit 的訊息／作者／日期並加註 `X-Source-Commit`；**append-only，永不需要 force push**。
+  - `.githooks/pre-push` 會擋下任何含 `reference/` 的 ref 推向 `Remote_GitHub`
+    （2.3GB 會撞上 GitHub 的 2GB 單次推送上限）。
+  - **重新 clone 後必須執行 `git config core.hooksPath .githooks`**，否則安全網不生效。
+  - 不要 commit 在 `public` 上 —— 它由腳本產生，手動提交會讓下次同步接不上。
 
 ## 聯絡資訊
 
