@@ -1,0 +1,570 @@
+/* ============================================================
+   NTI Printing — shared site stylesheet (chrome + primitives)
+   Used by interior pages; mirrors index.html design system.
+   ============================================================ */
+:root{
+  --green:#6FA044;        /* PSD primary grass green */
+  --green-d:#5C8736;
+  --green-title:#74A93E;  /* section / product titles */
+  --leaf:#8FB954;         /* CIS lime */
+  --teal:#357D54;         /* CIS mid green */
+  --deep:#003F3A;         /* CIS deep teal */
+  --mint-1:#9CDCC5;
+  --mint-2:#8AD2B7;
+  --grey:#595757;         /* CIS charcoal — text */
+  --grey-2:#7c7b7b;
+  --card:#F3F5F7;
+  --line:#e8eae9;
+  --orange:#E58A2E;
+  --maxw:1200px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --shadow:0 18px 50px -22px rgba(0,63,58,.28);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Mulish","Noto Sans TC",system-ui,sans-serif;color:var(--grey);background:#fff;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--leaf);color:#fff}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,4vw,40px)}
+.zh{font-family:"Noto Sans TC",sans-serif}
+
+/* ---------- header ---------- */
+header{position:sticky;top:0;z-index:90;background:#fff;border-bottom:1px solid var(--line);transition:box-shadow .3s}
+header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:74px;gap:24px}
+.brand{display:flex;align-items:center}
+.brand .logo-img{height:40px;width:auto;display:block}
+.menu{display:flex;align-items:center;gap:30px;margin-left:auto}
+.menu .mi>a{font-weight:700;font-size:.93rem;color:var(--grey);display:inline-flex;align-items:center;gap:5px;padding:6px 0;position:relative;transition:color .2s}
+.menu .mi>a.active{color:var(--green)}
+.menu .mi>a .ca{width:9px;height:9px;opacity:.6;transition:transform .25s var(--ease)}
+.menu .mi>a::after{content:"";position:absolute;left:0;bottom:-2px;height:2px;width:0;background:var(--green);transition:width .28s var(--ease)}
+.menu .mi>a.active::after{width:100%}
+.menu .mi>a:hover{color:var(--green)}
+.menu .mi>a:hover::after{width:100%}
+
+/* header dropdown */
+.menu .mi{position:relative;display:flex;align-items:center}
+/* invisible bridge so the pointer can travel from the label into the panel */
+.menu .mi::after{content:"";position:absolute;left:-16px;right:-16px;top:100%;height:18px}
+.menu .mi:hover>a .ca{transform:rotate(180deg)}
+.sub-menu{position:absolute;top:calc(100% + 16px);left:50%;transform:translateX(-50%) translateY(6px);min-width:222px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 20px 44px -20px rgba(0,63,58,.38);padding:8px;opacity:0;visibility:hidden;transition:opacity .2s,transform .2s,visibility .2s;z-index:95}
+.menu .mi:hover .sub-menu,.menu .mi:focus-within .sub-menu{opacity:1;visibility:visible;transform:translateX(-50%)}
+.sub-menu a{display:block;padding:9px 13px;font-weight:700;font-size:.87rem;color:var(--grey);border-radius:8px;white-space:nowrap;transition:background .15s,color .15s}
+.sub-menu a:hover{background:#f2f6ee;color:var(--green)}
+.sub-menu a.active{color:var(--green);background:#f2f6ee}
+.sub-menu .sm-sep{margin:7px 9px;border-top:1px solid var(--line)}
+
+/* breadcrumb */
+.crumb{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-weight:700;font-size:.82rem;color:var(--grey-2);margin-bottom:16px}
+.crumb a{color:var(--grey-2);transition:color .2s}
+.crumb a:hover{color:var(--green)}
+.crumb span{opacity:.45}
+.crumb b{color:var(--green);font-weight:800}
+.htools{display:flex;align-items:center;gap:18px;padding-left:8px;border-left:1px solid var(--line)}
+.lang{position:relative}
+.lang-btn{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:.86rem;color:var(--grey);background:none;border:none;cursor:pointer;font-family:inherit;padding:10px 0}
+.flag{width:18px;height:13px;border-radius:2px;display:block;flex:0 0 auto;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.lang-menu{position:absolute;top:100%;right:0;min-width:136px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 18px 40px -18px rgba(0,63,58,.35);padding:6px;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .2s,transform .2s,visibility .2s;z-index:95}
+.lang.open .lang-menu{opacity:1;visibility:visible;transform:none}
+.lang-menu a{display:flex;align-items:center;gap:9px;padding:8px 10px;font-weight:700;font-size:.86rem;color:var(--grey);border-radius:7px;white-space:nowrap;transition:background .15s,color .15s}
+.lang-menu a:hover{background:#f2f6ee;color:var(--green)}
+.lang-menu a.active{color:var(--green)}
+.icn{color:var(--grey-2);cursor:pointer;transition:color .2s}
+.icn:hover{color:var(--green)}
+.burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer}
+.burger span{width:24px;height:2px;background:var(--grey);border-radius:2px}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;gap:.6em;font-weight:800;font-size:.92rem;padding:.82em 1.6em;border-radius:100px;cursor:pointer;border:none;font-family:inherit;transition:transform .25s var(--ease),box-shadow .25s,background .2s,color .2s;white-space:nowrap}
+.btn-solid{background:var(--green);color:#fff;box-shadow:0 10px 22px -12px rgba(111,160,68,.9)}
+.btn-solid:hover{background:var(--green-d);transform:translateY(-2px);box-shadow:0 16px 28px -12px rgba(111,160,68,.95)}
+.btn-out{background:transparent;color:var(--green);border:2px solid var(--green)}
+.btn-out:hover{background:var(--green);color:#fff;transform:translateY(-2px)}
+.btn-white{background:#fff;color:var(--green)}
+.btn-white:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.btn .arr{transition:transform .3s var(--ease)}
+.btn:hover .arr{transform:translateX(3px)}
+
+/* ============================================================
+   CONTENT PRIMITIVES (interior pages)
+   ============================================================ */
+/* full-bleed photo hero (facility / differences / solutions) */
+.phero{position:relative;line-height:0;background:#e9eeec}
+.phero img{width:100%;height:clamp(320px,44vw,560px);object-fit:cover;object-position:center}
+.phero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,40,30,.18),transparent 32%,transparent 70%,rgba(0,40,30,.10))}
+.phero .tag{position:absolute;left:0;right:0;bottom:clamp(22px,4vw,46px);z-index:2}
+.phero .tag .wrap{line-height:1.2}
+.phero .eyebrow{color:#fff}
+.phero .eyebrow::before{background:#fff}
+.phero h1{color:#fff;font-weight:800;font-size:clamp(2rem,4.4vw,3.4rem);letter-spacing:-.02em;text-shadow:0 2px 18px rgba(0,30,20,.4)}
+
+/* section scaffolding */
+.section{padding:clamp(54px,7vw,96px) 0}
+.section.tight{padding:clamp(40px,5vw,68px) 0}
+/* sub-page masthead: crumb + title + sibling tabs, sits tight above the body */
+.section.subhead{padding-bottom:clamp(6px,1vw,12px)}
+header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
+/* Heading ladder — four steps, each separated by size AND weight AND colour so a
+   long title, a long deck and a long paragraph never read as one grey mass:
+   eyebrow (.72/800/green) → title (2.9/800/green) → deck (1.24/600/grey) → prose (1.1/500/grey-2) */
+.eyebrow{display:inline-flex;align-items:center;gap:.7em;font-size:.72rem;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:var(--green)}
+.eyebrow::before{content:"";width:28px;height:1.5px;background:var(--leaf)}
+/* measure cap keeps the long new H1s to 2–3 lines instead of one 1100px ruler;
+   line-height opens from 1.06 to 1.12 because these titles now actually wrap */
+.sec-title{color:var(--green-title);font-weight:800;font-size:clamp(1.9rem,3.6vw,2.9rem);letter-spacing:-.022em;line-height:1.12;max-width:24ch;text-wrap:balance}
+.sec-title.full{max-width:none}
+/* "News / Latest news & insights" — demote the half after the slash so the pair
+   reads as name + descriptor rather than one undifferentiated string */
+.sec-title .ti-slash{color:var(--leaf);font-weight:400;margin:0 .06em 0 .12em}
+.sec-title .ti-alt{font-size:.5em;font-weight:700;color:var(--grey-2);letter-spacing:-.005em}
+.eyebrow+.sec-title{margin-top:18px}
+.sec-sub{font-weight:600;color:var(--grey);font-size:clamp(1.05rem,1.4vw,1.24rem);line-height:1.55;letter-spacing:-.005em;margin-top:16px;max-width:56ch;text-wrap:pretty}
+.sec-title+.sec-sub{margin-top:18px}
+.lead,.prose{color:var(--grey-2);font-weight:500;font-size:clamp(1rem,1.25vw,1.1rem);line-height:1.85;max-width:62ch;text-wrap:pretty}
+/* .wide is "wider than default", not "unbounded" — 70ch ≈ 85 characters, the top
+   of the readable range, instead of 140+ characters on a 1440 screen */
+.prose.wide{max-width:70ch}
+.prose+.prose{margin-top:18px}
+.sec-sub+.prose{margin-top:22px}
+.mt-s{margin-top:18px}.mt-m{margin-top:30px}.mt-l{margin-top:46px}
+
+/* bracketed green link  e.g. [Take a factory tour] */
+.blink{display:inline-flex;align-items:center;gap:.3em;color:var(--green);font-weight:800;font-size:.96rem;transition:gap .25s var(--ease),color .2s}
+.blink::before{content:"[";opacity:.55}
+.blink::after{content:"]";opacity:.55}
+.blink:hover{color:var(--green-d);gap:.5em}
+
+/* explorer: left tab list + right framed media */
+.explorer{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(28px,5vw,64px);align-items:center}
+.ex-list{display:flex;flex-direction:column;gap:2px}
+.ex-list a{font-weight:700;font-size:clamp(1rem,1.4vw,1.18rem);color:var(--grey);padding:11px 2px;border-bottom:1px solid var(--line);position:relative;transition:color .2s,padding .25s var(--ease)}
+.ex-list a::before{content:"";position:absolute;left:-14px;top:0;bottom:0;width:3px;background:var(--leaf);opacity:0;transition:opacity .25s}
+.ex-list a:hover,.ex-list a.active{color:var(--green);padding-left:10px}
+.ex-list a:hover::before,.ex-list a.active::before{opacity:1}
+.ex-media{position:relative;display:flex;align-items:center;gap:14px}
+.ex-frame{flex:1;border-radius:18px;overflow:hidden;background:var(--card);box-shadow:var(--shadow);aspect-ratio:16/11}
+.ex-frame img{width:100%;height:100%;object-fit:cover}
+.ex-arrow{width:46px;height:46px;flex:0 0 auto;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--grey-2);display:grid;place-items:center;cursor:pointer;transition:all .25s var(--ease)}
+.ex-arrow:hover{border-color:var(--green);color:var(--green);transform:scale(1.06)}
+
+/* detail bullets */
+.dtitle{font-weight:800;color:var(--grey);font-size:clamp(1.08rem,1.4vw,1.24rem);line-height:1.4;letter-spacing:-.012em;margin-bottom:14px;text-wrap:balance}
+/* CJK inside an English small-cap-ish heading: drop the latin tracking, step the
+   weight/colour back so "Pre-Press Equipment 印前設備" reads as label + gloss */
+.dtitle .zh{font-weight:700;font-size:.9em;color:var(--grey-2);margin-left:.3em;letter-spacing:.02em}
+/* A dtitle that follows body copy starts a new beat. The hairline + extra air stops
+   pages like green-materials (4 × dtitle+paragraph in a row) reading as one flat run.
+   The first dtitle of a section follows a heading, not copy, so it stays rule-free. */
+.prose+.dtitle,.flist+.dtitle,.bullets+.dtitle,.applist+.dtitle,.photorow+.dtitle{
+  margin-top:clamp(34px,4.2vw,54px);padding-top:20px;border-top:1px solid var(--line)
+}
+.bullets{list-style:none;display:flex;flex-direction:column;gap:11px;max-width:64ch}
+.bullets li{position:relative;padding-left:24px;color:var(--grey-2);font-weight:500;line-height:1.7}
+.bullets li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:8px;border-radius:2px;background:var(--leaf);transform:rotate(45deg)}
+
+/* inline application tags */
+.applist{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.applist b{font-weight:700;font-size:.92rem;color:var(--teal);background:#eef5e9;border:1px solid #dcebcf;padding:.5em 1em;border-radius:100px}
+
+/* ---------- feature list: three variants for three kinds of content ----------
+   .flist        default — "Label – description" definition entries. The bold label
+                 is the anchor, so entries are separated by a hairline instead of a
+                 marker (matches the .notice / .ex-list rule language).
+   .flist.plain  sentence entries with no label. No anchor of their own, so they get
+                 the same leaf diamond as .bullets and tighter, marker-led rhythm.
+   .flist.chips  very short terms (Industries We Serve). Pill row, reusing .applist.
+   .flist.cols   modifier: two columns for short single-line entries.
+   ------------------------------------------------------------------------------ */
+.flist{display:block;margin-top:18px;max-width:74ch}
+.flist .fi{display:block;padding:14px 0;border-top:1px solid var(--line);color:var(--grey-2);font-weight:500;line-height:1.75;font-size:clamp(.98rem,1.15vw,1.05rem)}
+.flist .fi:first-child{border-top:none;padding-top:2px}
+.flist .fi:last-child{padding-bottom:2px}
+.flist .fi b{color:var(--grey);font-weight:800}
+/* margins rather than spaces inside content: the trailing space of a pseudo-element
+   sitting directly before the next inline gets collapsed, so "Label –Description"
+   ran together. Lighter weight/colour too — the dash is a separator, not the label. */
+.flist .fi b::after{content:"\2013";margin:0 .4em 0 .34em;font-weight:500;color:var(--grey-2)}
+
+/* plain — unlabelled sentences, marker-led */
+.flist.plain{max-width:68ch}
+.flist.plain .fi{position:relative;border-top:none;padding:0 0 0 26px;line-height:1.7}
+.flist.plain .fi+.fi{margin-top:12px}
+.flist.plain .fi::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:8px;border-radius:2px;background:var(--leaf);transform:rotate(45deg)}
+
+/* chips — short terms as a pill field rather than a 10-row column */
+.flist.chips{display:flex;flex-wrap:wrap;gap:10px;max-width:none;margin-top:20px}
+/* borderless on purpose: on projects.html this field sits immediately above the
+   .filter-row buttons, and an outlined pill there would read as another control */
+.flist.chips .fi{padding:.5em 1em;margin:0;border:none;border-radius:100px;background:#eef5e9;color:var(--teal);font-weight:700;font-size:.92rem;line-height:1.45}
+.flist.chips .fi::before{display:none}
+.flist.chips+.filter-row{margin-top:clamp(30px,3.6vw,44px)}
+
+/* cols — two columns for short entries (e.g. Presses in Use) */
+.flist.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px clamp(28px,4vw,56px);max-width:none}
+.flist.cols .fi,.flist.cols .fi+.fi{margin-top:0}
+.flist.plain.cols .fi+.fi{margin-top:0}
+/* three columns: 10 short terms that must NOT read as controls (projects.html sits
+   directly above .filter-row, so pills are out — marker-led text instead) */
+.flist.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px clamp(24px,3vw,44px);max-width:none}
+.flist.cols3 .fi,.flist.cols3 .fi+.fi{margin-top:0}
+.flist.cols3+.filter-row{margin-top:clamp(34px,4vw,52px)}
+
+/* certification logo row */
+.certrow{padding:clamp(40px,6vw,80px) 0}
+.certrow img{max-width:920px;width:100%;margin:0 auto;opacity:.92}
+/* printing solutions box explorer (per PSD) */
+.ex-left .fac-list{margin-top:14px}
+.ps-applications{margin-top:clamp(26px,3vw,38px)}
+.ps-apps-text{color:var(--grey-2);font-weight:500;margin-top:10px}
+.ps-mediawrap{display:flex;flex-direction:column;gap:16px}
+.ps-frame{flex:1;background:#fff;box-shadow:none;border-radius:0;aspect-ratio:auto}
+.ps-frame img{height:auto;object-fit:contain}
+.ps-cap{color:var(--grey-2);font-weight:500;line-height:1.6;font-size:clamp(.95rem,1.1vw,1.05rem)}
+
+/* green advantage stacked text block (per PSD) */
+.ga-block .ga-h{color:var(--grey);font-weight:800;font-size:clamp(1.02rem,1.3vw,1.16rem);line-height:1.5;margin-top:clamp(28px,3.2vw,42px)}
+.ga-block .ga-h:first-child{margin-top:0}
+/* was max-width:none — same unbounded-measure problem as .prose.wide had */
+.ga-block .prose{max-width:70ch;margin-top:12px}
+
+/* certification logo grid (differences page, per PSD) */
+.certs{padding-top:0}
+.certgrid{display:flex;align-items:center;justify-content:center;gap:clamp(40px,8vw,110px);flex-wrap:wrap}
+.certgrid img{height:clamp(58px,8vw,90px);width:auto;opacity:.9}
+.certgrid img.big{height:clamp(74px,10vw,116px)}
+
+/* full-bleed image band */
+.fullbleed{line-height:0}
+.fullbleed img{width:100%;height:clamp(260px,32vw,460px);object-fit:cover}
+
+/* facility banner — sliced straight from PSD hero */
+.fac-banner{line-height:0}
+.fac-banner img{width:100%;height:auto;display:block}
+header+.fac-banner img{aspect-ratio:16/3;object-fit:cover;max-height:calc(100vh - 240px)}
+
+/* our facility & equipment (per Facility PSD) */
+.fac-sub{font-weight:800;color:var(--grey);font-size:clamp(1.15rem,1.7vw,1.4rem);line-height:1.3}
+.fac-explorer{align-items:center}
+.fac-list a{border-bottom:none;color:var(--grey-2);font-weight:600;padding:9px 2px;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.fac-list a::before{display:none}
+.fac-list.tight a{padding-top:4px;padding-bottom:4px}
+.fac-list a:hover{color:var(--green);padding-left:2px}
+.fac-frame{aspect-ratio:1/1}
+.ex-stack{flex:1;min-width:0;display:flex;flex-direction:column}
+.fac-cap{margin-top:12px;text-align:center;color:var(--grey);font-weight:700;font-size:.95rem}
+.fac-count{color:var(--grey-2);font-weight:600;font-size:.82rem;margin-left:.6em;font-variant-numeric:tabular-nums}
+.ps-mediawrap .fac-cap{text-align:left;margin-top:2px}
+
+/* take-a-factory-tour (per Facility PSD) */
+.section.tour{padding-bottom:0}
+.tour-photo img{height:clamp(300px,38vw,620px)}
+.tour-more{display:inline-flex;align-items:center;gap:.5em;color:var(--green-title);font-weight:800;font-size:clamp(1rem,1.25vw,1.12rem);transition:gap .25s var(--ease),color .2s}
+.tour-more svg{width:1.05em;height:1.05em;transition:transform .3s var(--ease)}
+.tour-more:hover{color:var(--green-d)}
+.tour-more:hover svg{transform:translateX(4px)}
+
+/* two-up photo row */
+/* article photo, in-column — same 3:2 as the news cards */
+.artimg{position:relative;aspect-ratio:3/2;line-height:0;border-radius:14px;overflow:hidden;background:var(--card)}
+.artimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+.photorow{display:grid;grid-template-columns:1fr 1fr;gap:14px;line-height:0}
+.photorow img{width:100%;height:clamp(220px,26vw,360px);object-fit:cover;border-radius:14px}
+@media(max-width:720px){.photorow{grid-template-columns:1fr}}
+
+/* split hero (green advantage) */
+.shero{background:#fff;position:relative;overflow:hidden}
+.shero .wrap{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:24px;min-height:clamp(420px,46vw,540px)}
+.shero h1{font-weight:800;font-size:clamp(2.8rem,6.4vw,5.4rem);line-height:1;color:var(--leaf);letter-spacing:-.025em}
+.shero .sub{margin-top:20px;max-width:28ch;font-size:clamp(1rem,1.4vw,1.18rem);color:var(--grey-2);font-weight:600}
+.shero-img{align-self:end;display:flex;justify-content:flex-end}
+.shero-img img{max-height:clamp(360px,46vw,540px);width:auto;object-fit:contain}
+@media(max-width:820px){.shero .wrap{grid-template-columns:1fr;text-align:center;min-height:0;padding:40px 0}.shero .sub{margin-inline:auto}.shero-img{justify-content:center;margin-top:20px}}
+
+/* ---------- floating quote widget ---------- */
+.fab{position:fixed;right:22px;bottom:22px;z-index:120;width:268px;border-radius:16px;overflow:hidden;box-shadow:0 24px 60px -18px rgba(0,63,58,.5);transition:transform .45s var(--ease),opacity .35s;background:#fff}
+.fab.hide{transform:translateY(140%) scale(.9);opacity:0;pointer-events:none}
+.fab-head{background:linear-gradient(120deg,var(--green),var(--teal));color:#fff;padding:16px 44px 16px 18px;position:relative}
+.fab-head b{font-size:.98rem;font-weight:800;display:block}
+.fab-head span{font-size:.76rem;opacity:.85}
+.fab-close{position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.22);border:none;color:#fff;cursor:pointer;display:grid;place-items:center;transition:background .2s}
+.fab-close:hover{background:rgba(255,255,255,.4)}
+.fab-row{display:flex;align-items:center;gap:13px;padding:14px 18px;background:#eaf5e4;margin:10px;border-radius:11px;transition:background .2s,transform .2s}
+.fab-row:hover{background:#dcefcf;transform:translateX(2px)}
+.fab-row+.fab-row{margin-top:-2px}
+.fab-ic{width:34px;height:34px;border-radius:9px;background:var(--green);color:#fff;display:grid;place-items:center;flex:0 0 auto}
+.fab-row b{font-size:.9rem;font-weight:800;color:var(--grey);display:block}
+.fab-row span{font-size:.74rem;color:var(--grey-2)}
+.fab-reopen{position:fixed;right:22px;bottom:22px;z-index:119;width:56px;height:56px;border-radius:50%;background:var(--green);color:#fff;border:none;cursor:pointer;box-shadow:0 16px 36px -12px rgba(111,160,68,.9);display:none;place-items:center;transition:transform .25s}
+.fab-reopen.show{display:grid}
+.fab-reopen:hover{transform:scale(1.08)}
+
+/* ---------- footer ---------- */
+footer{background:var(--deep);color:#fff}
+footer a:hover{color:var(--leaf)}
+.fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:56px;padding:72px 0 64px}
+.fbrand{display:flex;flex-direction:column;gap:18px}
+.fbrand .logo-img{height:42px}
+.fbrand p{margin:0;font-size:13.5px;line-height:1.8;color:rgba(255,255,255,.62);max-width:34ch}
+.fsocial{display:flex;gap:14px;margin-top:4px}
+.fsocial a{display:grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,255,255,.25);color:#fff;transition:border-color .2s,color .2s}
+.fsocial a:hover{border-color:var(--leaf);color:var(--leaf)}
+.fcol{display:flex;flex-direction:column;gap:12px}
+.ftitle{font-size:11px;font-weight:600;letter-spacing:.16em;color:var(--leaf);text-transform:uppercase;margin-bottom:6px}
+.fcol a{font-size:14px;color:rgba(255,255,255,.78);transition:color .2s}
+.fcta{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:13px;color:var(--deep);background:var(--leaf);padding:11px 22px;margin-top:8px;align-self:flex-start;transition:background .2s}
+.fcol a.fcta{font-size:13px;color:var(--deep)}
+.fcta:hover{background:#fff;color:var(--deep)}
+.fbot{border-top:1px solid rgba(255,255,255,.14);padding:22px 0;display:flex;align-items:center;gap:24px;font-size:12.5px;color:rgba(255,255,255,.5)}
+.fbot .sp{flex:1}
+
+/* ---------- product pages ---------- */
+.pr-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}
+.pr-tabs a{font-weight:800;font-size:.82rem;color:var(--grey);background:#fff;border:1.5px solid var(--line);border-radius:100px;padding:9px 20px;transition:all .2s}
+.pr-tabs a:hover{border-color:var(--teal);color:var(--teal)}
+.pr-tabs a.active{color:#fff;background:var(--teal);border-color:var(--teal)}
+.pr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:46px}
+.pr-grid.two{grid-template-columns:1fr 1fr;max-width:900px}
+.pr-card{display:flex;flex-direction:column;border:1.5px solid var(--line);background:#fff;overflow:hidden;transition:transform .45s var(--ease),box-shadow .45s}
+.pr-card:hover{transform:translateY(-8px);box-shadow:0 30px 60px -30px rgba(0,63,58,.3)}
+.pr-img{height:230px;background:#fff;border-bottom:1.5px solid var(--line);padding:18px;overflow:hidden}
+.pr-grid.two .pr-img{height:280px}
+.pr-img img{width:100%;height:100%;object-fit:contain;transition:transform .5s var(--ease)}
+.pr-card:hover .pr-img img{transform:scale(1.05)}
+.pr-body{padding:22px 26px 26px;display:flex;flex-direction:column;gap:10px;flex:1}
+.pr-body h3{font-size:1.12rem;font-weight:800;color:var(--green-title)}
+.pr-body p{font-size:.88rem;line-height:1.7;color:var(--grey-2);flex:1}
+.pr-apply{border-top:1px solid var(--line);padding-top:12px;font-size:.8rem;line-height:1.65;color:var(--grey-2)}
+.pr-apply b{display:block;font-size:.7rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+
+/* ---------- projects ---------- */
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}
+.fbtn{font-family:inherit;font-weight:800;font-size:.82rem;color:var(--grey);background:#fff;border:1.5px solid var(--line);border-radius:100px;padding:9px 20px;cursor:pointer;transition:all .2s}
+.fbtn:hover{border-color:var(--teal);color:var(--teal)}
+.fbtn.active{color:#fff;background:var(--teal);border-color:var(--teal)}
+.pj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:46px}
+.pj-card{display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--line);overflow:hidden;transition:transform .45s var(--ease),box-shadow .45s}
+.pj-card:hover{transform:translateY(-8px);box-shadow:0 30px 60px -30px rgba(0,63,58,.3)}
+.pj-img{height:220px;position:relative;line-height:0;background:var(--card)}
+.pj-img img{width:100%;height:100%;object-fit:cover}
+.pj-tag{position:absolute;top:14px;left:14px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--deep);background:rgba(143,185,84,.85);padding:6px 13px;border-radius:6px;line-height:1.4}
+.pj-play{position:absolute;bottom:12px;right:12px;width:40px;height:40px;border-radius:50%;background:rgba(0,63,58,.85);display:grid;place-items:center;color:var(--leaf)}
+.pj-body{padding:24px 26px 28px;display:flex;flex-direction:column;gap:10px;flex:1}
+.pj-body h3{font-size:1.05rem;font-weight:800;color:var(--grey);line-height:1.4}
+.pj-body p{font-size:.86rem;line-height:1.7;color:var(--grey-2);flex:1}
+.pj-stat{border-top:1px solid var(--line);padding-top:14px;margin-top:6px}
+.pj-stat b{display:block;font-size:1.2rem;font-weight:800;color:var(--teal);letter-spacing:-.01em}
+.pj-stat span{font-size:.76rem;color:#9aa39a;font-weight:600}
+
+/* ---------- green vlog ---------- */
+.vl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:46px}
+.vl-card{display:flex;flex-direction:column;gap:14px}
+.vl-thumb{position:relative;display:block;height:200px;overflow:hidden;border-radius:14px;background:var(--card);line-height:0}
+.vl-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+.vl-card:hover .vl-thumb img{transform:scale(1.05)}
+.vl-play{position:absolute;left:14px;bottom:14px;width:42px;height:42px;border-radius:50%;background:rgba(0,63,58,.88);display:grid;place-items:center;color:var(--leaf)}
+.vl-ep{font-size:11.5px;font-weight:800;letter-spacing:.12em;color:var(--teal);text-transform:uppercase}
+.vl-card h3{font-size:1rem;font-weight:800;color:var(--grey);line-height:1.45;margin-top:6px}
+
+/* ---------- faq ---------- */
+.faq-list{display:flex;flex-direction:column;gap:14px;max-width:880px;margin-top:46px}
+.faq-layout{display:grid;grid-template-columns:250px 1fr;gap:clamp(32px,4vw,56px);align-items:start;margin-top:46px}
+.faq-layout .faq-list{margin-top:0;max-width:none}
+.faq-nav{position:sticky;top:104px;display:flex;flex-direction:column;gap:4px}
+.faq-nav button{font-family:inherit;text-align:left;font-weight:700;font-size:.92rem;color:var(--grey-2);background:none;border:none;border-left:3px solid transparent;padding:11px 16px;cursor:pointer;transition:all .2s;border-radius:0 9px 9px 0}
+.faq-nav button:hover{color:var(--green);background:#f6f9f4}
+.faq-nav button.active{color:var(--green);border-left-color:var(--leaf);background:#f2f7ee;font-weight:800}
+
+.faq{border:1.5px solid var(--line);border-radius:12px;background:#fff;transition:border-color .25s}
+.faq[open]{border-color:var(--leaf)}
+.faq summary{display:flex;align-items:center;gap:18px;padding:20px 24px;cursor:pointer;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary span{flex:1;font-weight:800;font-size:1rem;color:var(--grey);line-height:1.45}
+.faq summary::after{content:"+";flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:var(--card);color:var(--grey-2);display:grid;place-items:center;font-size:1.2rem;font-weight:600;transition:all .3s var(--ease)}
+.faq[open] summary::after{transform:rotate(45deg);background:var(--teal);color:#fff}
+.faq>p{padding:0 24px 22px;font-size:.92rem;line-height:1.85;color:var(--grey-2);max-width:68ch}
+.faq-cta{margin-top:40px;background:var(--card);border-radius:16px;padding:34px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.faq-cta h3{font-size:1.2rem;font-weight:800;color:var(--grey)}
+.faq-cta p{margin-top:6px;font-size:.88rem;color:var(--grey-2)}
+
+/* ---------- supplier area ---------- */
+.sa-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(36px,5vw,64px);align-items:start;margin-top:46px}
+.sa-h{font-size:1.3rem;font-weight:800;color:var(--grey);display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.sa-h::before{content:"";width:8px;height:24px;background:var(--teal);display:inline-block;border-radius:2px}
+.sa-h.mt{margin-top:52px}
+.notice{display:flex;gap:16px;align-items:baseline;padding:18px 6px;border-bottom:1px solid var(--line);transition:background .2s;flex-wrap:wrap}
+.notice:hover{background:#f9fbf8}
+.notice .nd{flex:0 0 auto;font-size:.8rem;font-weight:800;color:#9aa39a;font-variant-numeric:tabular-nums}
+.notice .nt{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);background:rgba(143,185,84,.25);padding:4px 11px;border-radius:6px;line-height:1.5}
+.notice .ns{font-size:.9rem;font-weight:700;color:var(--grey);line-height:1.5}
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.spec{border:1.5px solid var(--line);border-radius:14px;padding:22px 24px}
+.spec h3{font-size:.96rem;font-weight:800;color:var(--grey)}
+.spec p{margin-top:8px;font-size:.83rem;line-height:1.65;color:var(--grey-2)}
+.dl-panel{background:var(--deep);border-radius:18px;padding:32px;position:sticky;top:104px;color:#fff}
+.dl-panel h2{font-size:1.2rem;font-weight:800;display:flex;gap:10px;align-items:center;color:#fff}
+.dl-list{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+.dl-item{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 16px;transition:background .2s}
+.dl-item:hover{background:rgba(255,255,255,.16);color:#fff}
+.dl-type{flex:0 0 auto;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--deep);background:var(--leaf);padding:5px 8px;border-radius:5px}
+.dl-name{flex:1;font-size:.85rem;font-weight:700;color:#fff;line-height:1.4}
+.dl-size{font-size:.74rem;color:rgba(255,255,255,.45)}
+.dl-note{margin-top:20px;font-size:.76rem;line-height:1.6;color:rgba(255,255,255,.5)}
+
+/* ---------- privacy & legal ---------- */
+.legal-wrap{max-width:820px;margin:0 auto}
+.legal{display:flex;flex-direction:column;gap:38px;margin-top:46px}
+.legal section h2{font-size:1.2rem;font-weight:800;color:var(--grey);display:flex;align-items:center;gap:12px}
+.legal section h2::before{content:"";width:8px;height:22px;background:var(--teal);border-radius:2px;flex:0 0 auto}
+.legal section p{margin-top:12px;font-size:.92rem;line-height:1.9;color:var(--grey-2)}
+.legal-meta{font-size:.85rem;color:#9aa39a;font-weight:600}
+
+/* ---------- forms (quote / contact) ---------- */
+.form-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:clamp(36px,5vw,72px);align-items:start}
+.form-side{position:sticky;top:104px}
+.fsteps{display:flex;flex-direction:column;gap:16px;margin-top:32px}
+.fstep{display:flex;gap:14px;align-items:center;font-size:.9rem;font-weight:700;color:var(--grey)}
+.fstep b{width:34px;height:34px;flex:0 0 auto;background:rgba(143,185,84,.25);color:var(--teal);display:grid;place-items:center;font-weight:800;font-size:.85rem;border-radius:9px}
+.form-card{background:var(--card);border-radius:18px;padding:clamp(28px,4vw,48px);display:flex;flex-direction:column;gap:26px}
+.flegend{font-size:.8rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:16px}
+.f2col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.field{display:flex;flex-direction:column;gap:8px;font-size:.8rem;font-weight:800;color:var(--grey)}
+.field input,.field select,.field textarea{font-family:inherit;font-size:.92rem;font-weight:500;color:var(--grey);background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:12px 15px}
+.field textarea{resize:vertical}
+input::placeholder,textarea::placeholder{color:#b0b8b0}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--leaf);outline-offset:0;border-color:var(--leaf)}
+.fcheck{display:flex;align-items:flex-start;gap:10px;font-size:.8rem;line-height:1.6;color:var(--grey-2);font-weight:600;cursor:pointer}
+.fcheck input{width:16px;height:16px;accent-color:var(--teal);margin-top:2px;flex:0 0 auto}
+.fcheck a{color:var(--teal);font-weight:700}
+.fupload{border:1.5px dashed #c9d4c9;border-radius:12px;padding:24px;text-align:center;color:#9aa39a;font-size:.85rem;font-weight:600;margin-top:18px}
+.fupload b{color:var(--teal);font-weight:800}
+.ffoot{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:24px}
+.form-success{background:var(--card);border-radius:18px;padding:clamp(44px,5vw,68px);text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+.form-success[hidden],form[hidden]{display:none}
+.form-success .ok{width:72px;height:72px;border-radius:50%;background:rgba(143,185,84,.25);color:var(--teal);display:grid;place-items:center}
+.form-success h3{font-size:1.5rem;font-weight:800;color:var(--grey)}
+.form-success p{font-size:.92rem;line-height:1.75;color:var(--grey-2);max-width:44ch}
+.form-success button{font-family:inherit;font-weight:800;font-size:.88rem;color:var(--teal);background:none;border:none;cursor:pointer;margin-top:6px}
+.info-stack{display:flex;flex-direction:column;gap:14px}
+.info-card{background:var(--card);border-radius:16px;padding:26px 28px;display:flex;gap:18px;align-items:flex-start}
+.info-ic{flex:0 0 auto;width:44px;height:44px;border-radius:12px;background:rgba(143,185,84,.25);color:var(--teal);display:grid;place-items:center}
+.info-card h3{font-size:1rem;font-weight:800;color:var(--grey)}
+.info-card p{margin-top:6px;font-size:.86rem;line-height:1.75;color:var(--grey-2)}
+.info-card a{color:var(--teal);font-weight:700}
+.map-frame{border-radius:16px;overflow:hidden;background:var(--card);height:260px}
+.map-frame iframe{width:100%;height:100%;border:0;display:block}
+
+/* ---------- facility & equipment stage cards ---------- */
+.fe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:46px}
+.fe-grid.four{grid-template-columns:repeat(2,1fr)}
+.fe-card{display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--line);overflow:hidden;transition:transform .45s var(--ease),box-shadow .45s}
+.fe-card:hover{transform:translateY(-8px);box-shadow:0 30px 60px -30px rgba(0,63,58,.3)}
+.fe-img{height:200px;line-height:0;background:var(--card)}
+.fe-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.fe-card:hover .fe-img img{transform:scale(1.04)}
+.fe-body{padding:24px 26px 28px;display:flex;flex-direction:column;gap:12px;flex:1}
+.fe-step{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 10px;font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--teal)}
+.fe-step b{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;color:var(--leaf);line-height:1}
+/* CJK gloss: .16em latin tracking and uppercase do nothing for 印前設備 but wreck
+   its rhythm — reset tracking and set it back a step so the English label leads */
+.fe-step .zh{letter-spacing:.02em;text-transform:none;font-weight:700;font-size:12px;color:var(--grey-2)}
+.fe-card h3{font-size:1.12rem;font-weight:800;color:var(--grey);line-height:1.35}
+.fe-card p{font-size:.9rem;color:var(--grey-2);font-weight:500;line-height:1.7;flex:1}
+.fe-specs{list-style:none;display:flex;flex-direction:column;gap:7px;border-top:1px solid var(--line);padding-top:14px;margin-top:2px}
+.fe-specs li{position:relative;padding-left:16px;font-size:.84rem;font-weight:600;color:var(--grey-2);line-height:1.5}
+.fe-specs li::before{content:"";position:absolute;left:0;top:.48em;width:6px;height:6px;background:var(--leaf);transform:rotate(45deg)}
+/* In the 2×2 layout the cards are ~545px wide, so a 6–8 item spec list runs far
+   taller than a 3 item one and the two grid rows fall badly out of step. Only the
+   long lists go two-up, which brings every card back to a comparable height. */
+.fe-grid.four .fe-specs:has(li:nth-child(6)){display:block;columns:2;column-gap:clamp(20px,2.4vw,30px)}
+.fe-grid.four .fe-specs:has(li:nth-child(6)) li{break-inside:avoid;margin-bottom:8px}
+/* p{flex:1} bottom-anchors the spec list, which punched a visible hole between the
+   paragraph and the rule on the shorter cards. Top-pack instead so the leftover
+   height collects at the foot of the card, where it reads as padding. */
+.fe-grid.four .fe-card p{flex:0 1 auto}
+.fe-grid.four .fe-body{padding-bottom:26px}
+
+/* ---------- video embed ---------- */
+.video-frame{aspect-ratio:16/9;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);background:#000}
+.video-frame iframe{width:100%;height:100%;border:0;display:block}
+
+/* ---------- news ---------- */
+.news-feature{display:grid;grid-template-columns:1.2fr 1fr;background:var(--deep);color:#fff;overflow:hidden}
+.news-feature .nf-img{aspect-ratio:3/2;min-height:300px;line-height:0}
+.news-feature .nf-img img{width:100%;height:100%;object-fit:cover}
+.news-feature .nf-body{padding:clamp(36px,4vw,56px);display:flex;flex-direction:column;justify-content:center;gap:16px}
+.news-meta{display:flex;gap:14px;align-items:center;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.news-meta .cat{color:var(--leaf)}
+.news-meta .date{color:rgba(255,255,255,.45)}
+.news-feature h2{font-size:clamp(1.4rem,2.4vw,2rem);font-weight:700;letter-spacing:-.015em;line-height:1.25}
+.news-feature p{font-size:.9rem;line-height:1.75;color:rgba(255,255,255,.65)}
+.rm{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:.85rem;color:var(--leaf)}
+.rm svg{transition:transform .3s var(--ease)}
+a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:48px}
+.ncard{display:flex;flex-direction:column;border:1.5px solid var(--line);overflow:hidden;transition:transform .45s var(--ease),box-shadow .45s}
+.ncard:hover{transform:translateY(-8px);box-shadow:0 30px 60px -30px rgba(0,63,58,.3)}
+/* 3:2 across every card. The img is absolutely positioned so it never feeds its
+   intrinsic height back into the box (which would override aspect-ratio), and
+   flex:0 0 auto stops the grid row stretch from squashing it. */
+.ncard .nc-img{position:relative;aspect-ratio:3/2;flex:0 0 auto;background:var(--card);line-height:0;overflow:hidden}
+.ncard .nc-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ncard .nc-body{padding:22px 24px 26px;display:flex;flex-direction:column;gap:10px;flex:1}
+.ncard .news-meta{gap:12px;font-size:11.5px;letter-spacing:.1em}
+.ncard .news-meta .cat{color:var(--teal)}
+.ncard .news-meta .date{color:#b9c0b9}
+.ncard h3{font-size:1.02rem;font-weight:700;color:var(--grey);line-height:1.4;flex:1}
+.ncard .rm{gap:7px;font-size:.82rem;color:var(--teal)}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.reveal[data-d="1"]{transition-delay:.1s}.reveal[data-d="2"]{transition-delay:.2s}.reveal[data-d="3"]{transition-delay:.3s}
+
+/* ---------- responsive chrome ---------- */
+@media(max-width:900px){
+  .menu,.htools .lang{display:none}
+  .burger{display:flex}
+  .explorer{grid-template-columns:1fr;gap:30px}
+  .fgrid{grid-template-columns:1fr 1fr;gap:40px;padding:56px 0 48px}
+  .news-feature{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .form-side{position:static}
+  .pj-grid,.vl-grid{grid-template-columns:1fr 1fr}
+  .pr-grid,.pr-grid.two{grid-template-columns:1fr 1fr}
+  .sa-grid{grid-template-columns:1fr}
+  .faq-layout{grid-template-columns:1fr}
+  .faq-nav{position:static;flex-direction:row;flex-wrap:wrap;gap:8px}
+  .faq-nav button{border:1.5px solid var(--line);border-left-width:1.5px;border-radius:100px;padding:8px 16px}
+  .faq-nav button.active{border-color:var(--teal);background:var(--teal);color:#fff}
+  .dl-panel{position:static}
+  .f2col{grid-template-columns:1fr}
+  .news-grid{grid-template-columns:1fr 1fr}
+  .fe-grid,.fe-grid.four{grid-template-columns:1fr}
+  /* one card per row = full-width card, so the spec list no longer needs splitting */
+  .fe-grid.four .fe-specs:has(li:nth-child(6)){columns:1}
+}
+@media(max-width:980px){
+  /* ch caps are sized for the desktop type ramp; below this the column itself
+     is the measure, so let the text use the full width it has */
+  .sec-title,.sec-sub,.prose,.prose.wide,.lead,.flist,.flist.plain{max-width:none}
+  .flist.cols{grid-template-columns:1fr;gap:12px}
+  .flist.cols3{grid-template-columns:1fr 1fr;gap:12px 28px}
+}
+@media(max-width:560px){
+  .sec-title{line-height:1.16;letter-spacing:-.015em}
+  .sec-title .ti-alt{font-size:.58em}
+  .flist .fi{padding:12px 0}
+  .flist.chips{gap:8px}
+  .flist.chips .fi{font-size:.86rem;padding:.46em .9em}
+  .flist.cols3{grid-template-columns:1fr}
+  .prose+.dtitle,.flist+.dtitle,.bullets+.dtitle,.applist+.dtitle,.photorow+.dtitle{padding-top:16px}
+  .fab{right:14px;bottom:14px;width:248px}
+  .fgrid{grid-template-columns:1fr}
+  .news-grid{grid-template-columns:1fr}
+  .pj-grid,.vl-grid,.spec-grid{grid-template-columns:1fr}
+  .pr-grid,.pr-grid.two{grid-template-columns:1fr}
+  .fbot{flex-wrap:wrap;gap:10px}
+}

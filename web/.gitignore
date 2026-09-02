@@ -1,0 +1,7 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+# 圖片素材由 mockup/assets 同步而來（62MB），不進版控：npm run sync:assets
+public/assets/
