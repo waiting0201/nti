@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { HeroSlider } from '@/components/behaviors/HeroSlider'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 import '../home.css'
@@ -22,9 +23,9 @@ export default async function Page({ params }: Props) {
 
       {/* ============ HERO ============ */}
       <section className="hero" id="hero" aria-label="Featured highlights">
-        <A className="slide on" href={l("/green-advantage")}><img src="/assets/ref-home-banner1.png" alt="The courage to print green? — NTI Printing" /></A>{' '}
-        <A className="slide" href={l("/solutions")}><img src="/assets/ref-home-banner2.png" alt="NTI custom printed packaging solutions" /></A>{' '}
-        <A className="slide" href={l("/differences")}><img src="/assets/ref-home-mid2.png" alt="NTI printing facility — Heidelberg press line in Tainan" /></A>{' '}
+        <A className="slide on" href={l("/green-advantage")}><img src={mediaUrl("/assets/ref-home-banner1.png")} alt="The courage to print green? — NTI Printing" /></A>{' '}
+        <A className="slide" href={l("/solutions")}><img src={mediaUrl("/assets/ref-home-banner2.png")} alt="NTI custom printed packaging solutions" /></A>{' '}
+        <A className="slide" href={l("/differences")}><img src={mediaUrl("/assets/ref-home-mid2.png")} alt="NTI printing facility — Heidelberg press line in Tainan" /></A>{' '}
         <button className="sbtn prev" aria-label="Previous slide"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M15 5l-7 7 7 7" /></svg></button>{' '}
         <button className="sbtn next" aria-label="Next slide"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M9 5l7 7-7 7" /></svg></button>
         <div className="dots"></div>
@@ -74,28 +75,28 @@ export default async function Page({ params }: Props) {
           <h2 className="sec-h reveal">Printing Solutions</h2>
           <div className="prod-grid">
             <article className="pcard reveal" data-d="1">
-              <div className="ph"><img src="/assets/hp-prod-boxes.png" alt="Paper box printing" /></div>
+              <div className="ph"><img src={mediaUrl("/assets/hp-prod-boxes.png")} alt="Paper box printing" /></div>
               <h3>Color Box Packaging</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Customize package</div>
               <p>Multiple box-types: besides folding box, we also provide customize box structure design.</p>
               <A href={l("/products-boxes")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="2">
-              <div className="ph"><img src="/assets/hp-prod-cardboard.png" alt="Packaging paperboard printing" /></div>
+              <div className="ph"><img src={mediaUrl("/assets/hp-prod-cardboard.png")} alt="Packaging paperboard printing" /></div>
               <h3>Packaging Paperboard</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Various packaging paperboards</div>
               <p>Hang tags, blister cards and backcards for retail walls.</p>
               <A href={l("/products-cardboard")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="3">
-              <div className="ph"><img src="/assets/hp-prod-uv.png" alt="UV printing" /></div>
+              <div className="ph"><img src={mediaUrl("/assets/hp-prod-uv.png")} alt="UV printing" /></div>
               <h3>UV Printing</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Special printing</div>
               <p>Printing on special materials, special varnish, anti-counterfeiting and more.</p>
               <A href={l("/products-uv")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="3">
-              <div className="ph"><img src="/assets/hp-prod-other.png" alt="Other printing — hand bags, calendars, manuals" /></div>
+              <div className="ph"><img src={mediaUrl("/assets/hp-prod-other.png")} alt="Other printing — hand bags, calendars, manuals" /></div>
               <h3>Other Printing</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Beyond the box</div>
               <p>Desk calendars, hand bags, red envelopes, mouse pads and manuals.</p>
@@ -107,7 +108,7 @@ export default async function Page({ params }: Props) {
 
       {/* ============ GALLERY ============ */}
       <section className="gallery reveal">
-        <img src="/assets/ref-home-mid1.png" alt="A showcase of NTI's printed packaging work" />
+        <img src={mediaUrl("/assets/ref-home-mid1.png")} alt="A showcase of NTI's printed packaging work" />
       </section>
 
       {/* ============ WHY NTI ============ */}
@@ -152,20 +153,20 @@ export default async function Page({ params }: Props) {
         <div className="wrap">
           <h2 className="proof-h reveal"><b>Proof</b><span>&mdash; Through action, not words.</span></h2>
           <div className="cert-wall reveal" data-d="1">
-            <img src="/assets/cert-g7.png" alt="G7 Master Qualified Facility" />
-            <img src="/assets/cert-gmi.png" alt="GMI Certified Print Facility" />
-            <img src="/assets/cert-iso9001.png" alt="ISO 9001 Quality Assurance Management" />
-            <img src="/assets/cert-iso14001.png" alt="ISO 14001 Environmental Management" />
-            <img src="/assets/cert-iso45001.png" alt="ISO 45001 Occupational Health &amp; Safety" />
-            <img className="pad-lg" src="/assets/cert-fsc.png" alt="FSC certified" />
-            <img src="/assets/cert-leed-gold.png" alt="LEED Gold 2023" />
-            <img src="/assets/cert-greenbuilding.png" alt="Green Building Label &mdash; Diamond grade" />
-            <img src="/assets/cert-co2neutral.png" alt="CO2 Neutral" />
-            <img className="pad-md" src="/assets/cert-green.png" alt="Green Printing" />
-            <img src="/assets/cert-mof.png" alt="Mineral Oil Free" />
-            <img className="pad-sm" src="/assets/cert-esg.png" alt="ESG &mdash; Environmental, Social, Governance" />
-            <img className="wide" src="/assets/cert-sedex.png" alt="Sedex Member" />
-            <img className="lockup" src="/assets/cert-esci.png" alt="Energy Smart Communities Initiative" />
+            <img src={mediaUrl("/assets/cert-g7.png")} alt="G7 Master Qualified Facility" />
+            <img src={mediaUrl("/assets/cert-gmi.png")} alt="GMI Certified Print Facility" />
+            <img src={mediaUrl("/assets/cert-iso9001.png")} alt="ISO 9001 Quality Assurance Management" />
+            <img src={mediaUrl("/assets/cert-iso14001.png")} alt="ISO 14001 Environmental Management" />
+            <img src={mediaUrl("/assets/cert-iso45001.png")} alt="ISO 45001 Occupational Health &amp; Safety" />
+            <img className="pad-lg" src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" />
+            <img src={mediaUrl("/assets/cert-leed-gold.png")} alt="LEED Gold 2023" />
+            <img src={mediaUrl("/assets/cert-greenbuilding.png")} alt="Green Building Label &mdash; Diamond grade" />
+            <img src={mediaUrl("/assets/cert-co2neutral.png")} alt="CO2 Neutral" />
+            <img className="pad-md" src={mediaUrl("/assets/cert-green.png")} alt="Green Printing" />
+            <img src={mediaUrl("/assets/cert-mof.png")} alt="Mineral Oil Free" />
+            <img className="pad-sm" src={mediaUrl("/assets/cert-esg.png")} alt="ESG &mdash; Environmental, Social, Governance" />
+            <img className="wide" src={mediaUrl("/assets/cert-sedex.png")} alt="Sedex Member" />
+            <img className="lockup" src={mediaUrl("/assets/cert-esci.png")} alt="Energy Smart Communities Initiative" />
           </div>
         </div>
       </section>
@@ -178,20 +179,20 @@ export default async function Page({ params }: Props) {
           <div className="carousel reveal" data-d="1" aria-label="Trusted by Target, CVS pharmacy, Walgreens, Lowe&rsquo;s, Academy Sports + Outdoors, and The Home Depot">
             <div className="logo-track">
               <div className="logo-set">
-                <img src="/assets/client-target.png" alt="Target" />
-                <img src="/assets/client-cvs.png" alt="CVS pharmacy" />
-                <img src="/assets/client-walgreens.png" alt="Walgreens" />
-                <img src="/assets/client-lowes.png" alt="Lowe&rsquo;s" />
-                <img src="/assets/client-academy.png" alt="Academy Sports + Outdoors" />
-                <img src="/assets/client-homedepot.png" alt="The Home Depot" />
+                <img src={mediaUrl("/assets/client-target.png")} alt="Target" />
+                <img src={mediaUrl("/assets/client-cvs.png")} alt="CVS pharmacy" />
+                <img src={mediaUrl("/assets/client-walgreens.png")} alt="Walgreens" />
+                <img src={mediaUrl("/assets/client-lowes.png")} alt="Lowe&rsquo;s" />
+                <img src={mediaUrl("/assets/client-academy.png")} alt="Academy Sports + Outdoors" />
+                <img src={mediaUrl("/assets/client-homedepot.png")} alt="The Home Depot" />
               </div>
               <div className="logo-set" aria-hidden="true">
-                <img src="/assets/client-target.png" alt="" />
-                <img src="/assets/client-cvs.png" alt="" />
-                <img src="/assets/client-walgreens.png" alt="" />
-                <img src="/assets/client-lowes.png" alt="" />
-                <img src="/assets/client-academy.png" alt="" />
-                <img src="/assets/client-homedepot.png" alt="" />
+                <img src={mediaUrl("/assets/client-target.png")} alt="" />
+                <img src={mediaUrl("/assets/client-cvs.png")} alt="" />
+                <img src={mediaUrl("/assets/client-walgreens.png")} alt="" />
+                <img src={mediaUrl("/assets/client-lowes.png")} alt="" />
+                <img src={mediaUrl("/assets/client-academy.png")} alt="" />
+                <img src={mediaUrl("/assets/client-homedepot.png")} alt="" />
               </div>
             </div>
           </div>

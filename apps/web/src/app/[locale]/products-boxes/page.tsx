@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -28,7 +29,7 @@ export default async function Page({ params }: Props) {
         </nav>
         <div className="pr-grid">
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-box-gluing.jpg" alt="Gluing Box" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-box-gluing.jpg")} alt="Gluing Box" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Gluing Box</h3>
               <p>Simple top-and-bottom design, easy to assemble, ideal for lightweight products.</p>
@@ -36,7 +37,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-box-bottom.jpg" alt="Bottom Gluing Box" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-box-bottom.jpg")} alt="Bottom Gluing Box" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Bottom Gluing Box</h3>
               <p>Reinforced bottom for heavier items, strong and secure.</p>
@@ -44,7 +45,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-box-insert.jpg" alt="Insert Bottom Box" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-box-insert.jpg")} alt="Insert Bottom Box" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Insert Bottom Box</h3>
               <p>Four-latch cross structure for durability and easy assembly.</p>
@@ -52,7 +53,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-box-handcarry.jpg" alt="Hand-Carry Box" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-box-handcarry.jpg")} alt="Hand-Carry Box" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Hand-Carry Box</h3>
               <p>Built-in handle for convenience and reduced use of extra bags.</p>
@@ -60,7 +61,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-box-topbottom.jpg" alt="Top &amp; Bottom Box" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-box-topbottom.jpg")} alt="Top &amp; Bottom Box" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Top &amp; Bottom Box</h3>
               <p>Premium two-piece box, elegant and perfect for gift packaging.</p>
@@ -68,7 +69,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-box-special.jpg" alt="Special Package" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-box-special.jpg")} alt="Special Package" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Special Package</h3>
               <p>Fully customized designs and material suggestions for unique needs.</p>

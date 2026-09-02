@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { FacilityExplorer } from '@/components/behaviors/FacilityExplorer'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -17,7 +18,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <>
-      <section className="fac-banner"><img src="/assets/fac-banner.jpg" alt="NTI printing facility — Heidelberg press line" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/fac-banner.jpg")} alt="NTI printing facility — Heidelberg press line" /></section>
       <section className="section">
         <div className="wrap">
           <h1 className="sec-title reveal">Facilities &amp; Equipment</h1>
@@ -28,7 +29,7 @@ export default async function Page({ params }: Props) {
           <div className="ex-media">
             <button className="ex-arrow" id="facPrev" aria-label="Previous"><svg width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="m15 18-6-6 6-6" /></svg></button>
             <div className="ex-stack">
-              <div className="ex-frame fac-frame"><img id="facImg" src="/assets/fac-pre-ctp.jpg" alt="Heidelberg Suprasetter 105 S CTP" /></div>
+              <div className="ex-frame fac-frame"><img id="facImg" src={mediaUrl("/assets/fac-pre-ctp.jpg")} alt="Heidelberg Suprasetter 105 S CTP" /></div>
               <p className="fac-cap" id="facCap">Heidelberg Suprasetter 105 S CTP <span className="fac-count">1 / 4</span></p>
             </div>
             <button className="ex-arrow" id="facNext" aria-label="Next"><svg width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="m9 18 6-6-6-6" /></svg></button>
@@ -109,7 +110,7 @@ export default async function Page({ params }: Props) {
           <p className="prose reveal mt-s">Visitors can explore our clean water treatment system, energy-efficient production lines, and green facilities designed for both people and the planet.</p>
           <p className="prose reveal mt-s">Book a guided tour and experience how we bring &lsquo;The Courage to Print Green&rsquo; to life.</p>
           <p className="mt-m reveal"><A href={l("/facility-tour")} className="blink">More details &rsaquo;</A></p></div>
-        <div className="fullbleed tour-photo reveal mt-m"><img src="/assets/fac-tour-main.jpg" alt="Inside the NTI factory floor — palletised packaging stock and clean production aisles" /></div>
+        <div className="fullbleed tour-photo reveal mt-m"><img src={mediaUrl("/assets/fac-tour-main.jpg")} alt="Inside the NTI factory floor — palletised packaging stock and clean production aisles" /></div>
       </section>
       <FacilityExplorer />
     </>

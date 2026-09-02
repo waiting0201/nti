@@ -7,9 +7,11 @@
  * - **build**：產物進 `apps/web/public/admin`，與公開站同域，`/assets/...` 直接命中
  *   公開站的 `public/assets`，不補前綴、也不複製第二份素材（vite.config.ts 關掉 publicDir）。
  *
- * 正式站的圖片來自 Blob Storage，會是完整 URL，原樣回傳。
+ * 設了 `VITE_MEDIA_BASE`（Azure Blob Storage）時一律以它為前綴，蓋過上面兩種。
+ * 資料庫接上之後，圖片欄位會直接存 Blob 的完整 URL，那時走下面的原樣回傳。
  */
-const assetBase = import.meta.env.DEV ? import.meta.env.BASE_URL.replace(/\/$/, '') : ''
+const mediaBase = (import.meta.env.VITE_MEDIA_BASE ?? '').replace(/\/$/, '')
+const assetBase = mediaBase || (import.meta.env.DEV ? import.meta.env.BASE_URL.replace(/\/$/, '') : '')
 
 export function assetUrl(src: unknown): string {
   const s = typeof src === 'string' ? src : ''

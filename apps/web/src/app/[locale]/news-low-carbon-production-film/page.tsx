@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">Sustainability</span><span className="date">2024.08.09</span></span>
         <h1 className="sec-title reveal">Our integrated low-carbon production model &mdash; company film</h1>
         <div className="sec-sub reveal">NTI recently received both LEED Gold (US) and EEWH Diamond (Taiwan) green building certification. A new film walks through the integrated low-carbon production model behind them.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/low-carbon-production-film.jpg" alt="Our integrated low-carbon production model &mdash; company film" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/low-carbon-production-film.jpg")} alt="Our integrated low-carbon production model &mdash; company film" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose wide mt-s">As a packaging printer focused on the environment, NTI works to supply products and services that meet the highest environmental standards. The dual green building certification recognises the work done so far &mdash; and sets the bar for what comes next.</p>

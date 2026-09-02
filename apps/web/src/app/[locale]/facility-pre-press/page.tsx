@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <>
-      <section className="fac-banner"><img src="/assets/fac-pre-ctp.jpg" alt="Heidelberg Suprasetter 105 S CTP plate-making system" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/fac-pre-ctp.jpg")} alt="Heidelberg Suprasetter 105 S CTP plate-making system" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><A href={l("/facility")}>Facilities &amp; Equipment</A><span>&rsaquo;</span><b>Prepress Equipment</b></div>
         <h1 className="sec-title reveal">Prepress Equipment</h1>
@@ -38,19 +39,19 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Equipment</div>
         <div className="pr-grid">
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-pre-ctp.jpg" alt="Heidelberg Suprasetter 105 S CTP" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-pre-ctp.jpg")} alt="Heidelberg Suprasetter 105 S CTP" loading="lazy" /></div>
             <div className="pr-body"><h3>Heidelberg Suprasetter 105 S CTP</h3><p>Direct plate-making, output in house.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-pre-proof.jpg" alt="Prinect Color Proof Pro" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-pre-proof.jpg")} alt="Prinect Color Proof Pro" loading="lazy" /></div>
             <div className="pr-body"><h3>Prinect Color Proof Pro</h3><p>Digital contract proofing to signed-off colour.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-pre-jazzy.jpg" alt="Jazzy Light colour management" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-pre-jazzy.jpg")} alt="Jazzy Light colour management" loading="lazy" /></div>
             <div className="pr-body"><h3>Jazzy Light colour management</h3><p>Ink mixing and spot-colour matching.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-pre-zund.jpg" alt="Z&Uuml;ND CCD high-speed cutter" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-pre-zund.jpg")} alt="Z&Uuml;ND CCD high-speed cutter" loading="lazy" /></div>
             <div className="pr-body"><h3>Z&Uuml;ND CCD high-speed cutter</h3><p>Auto-registration cutting for box samples.</p></div>
           </article>
         </div>

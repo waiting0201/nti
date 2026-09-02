@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -29,7 +30,7 @@ export default async function Page({ params }: Props) {
         </nav>
         <div className="pr-grid">
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-other-calendar.jpg" alt="Desk Calendar" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-other-calendar.jpg")} alt="Desk Calendar" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Desk Calendar</h3>
               <p>A daily-use publication that keeps your brand on the desk all year &mdash; festival gifting, corporate gifts and promotions.</p>
@@ -37,7 +38,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-other-redenvelope.jpg" alt="Red Envelope" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-other-redenvelope.jpg")} alt="Red Envelope" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Red Envelope</h3>
               <p>Great graphic design or hot-foil embossing turns a tradition into a brand moment.</p>
@@ -45,7 +46,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-other-bag.jpg" alt="Hand Bag" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-other-bag.jpg")} alt="Hand Bag" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Hand Bag</h3>
               <p>Paper carriers that promote the product and lift the brand on the street.</p>
@@ -53,7 +54,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-other-mousepad.jpg" alt="Mouse Pad" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-other-mousepad.jpg")} alt="Mouse Pad" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Mouse Pad</h3>
               <p>UV-printed for high colour saturation and long fade resistance.</p>
@@ -61,7 +62,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-other-manual.png" alt="Instruction &amp; Catalogue" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-other-manual.png")} alt="Instruction &amp; Catalogue" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Instruction &amp; Catalogue</h3>
               <p>Product manuals, spec sheets and catalogues &mdash; function, usage and precautions, clearly printed.</p>

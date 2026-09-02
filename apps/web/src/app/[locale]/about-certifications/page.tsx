@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <>
-      <section className="fac-banner"><img src="/assets/ref-about-mid2.png" alt="NTI Printing headquarters in Tainan, Taiwan" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/ref-about-mid2.png")} alt="NTI Printing headquarters in Tainan, Taiwan" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><b>Our Certifications</b></div>
         <h1 className="sec-title reveal">Our Certifications &mdash; Proof of Quality &amp; Sustainability</h1>
@@ -33,17 +34,17 @@ export default async function Page({ params }: Props) {
         <p className="prose wide">NTI has built its reputation on printing quality, and our clients hold us to it. We keep applying for further certification so that every customer gets the same assurance of product quality &mdash; audited by an outside body rather than asserted by us. Alongside the international standards below, we developed the NTI Green Printing Certificate, a mark our clients can display on their packaging as proof of an eco-conscious process.</p>
       </div></section>
       <section className="section certs reveal"><div className="wrap certgrid">
-        <img src="/assets/cert-green.png" alt="NTI Green Printing" />
-        <img src="/assets/cert-fsc.png" alt="FSC certified" className="big" />
-        <img src="/assets/cert-leed.png" alt="LEED Leadership in Energy and Environmental Design" />
-        <img src="/assets/cert-mof.png" alt="Mineral Oil Free" />
-        <img src="/assets/cert-esg.png" alt="ESG Environmental, Social, Governance" />
+        <img src={mediaUrl("/assets/cert-green.png")} alt="NTI Green Printing" />
+        <img src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" className="big" />
+        <img src={mediaUrl("/assets/cert-leed.png")} alt="LEED Leadership in Energy and Environmental Design" />
+        <img src={mediaUrl("/assets/cert-mof.png")} alt="Mineral Oil Free" />
+        <img src={mediaUrl("/assets/cert-esg.png")} alt="ESG Environmental, Social, Governance" />
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Printing &amp; Colour Standards</div>
         <div className="flist mt-s"><p className="fi"><b>G7 Master Colorspace</b>Developed by Idealliance, a globally recognized colour calibration methodology based on ISO&nbsp;12647-2, ensuring consistent, accurate colour reproduction across every print run.</p><p className="fi"><b>ISO&nbsp;12647-2</b>The standard litho production procedure our colour management runs to, with spot colours matched to swatch under controlled viewing conditions.</p></div>
       </div></section>
-      <section className="fac-banner reveal"><img src="/assets/ref-about-mid1.png" alt="NTI leadership on the pressroom floor" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-mid1.png")} alt="NTI leadership on the pressroom floor" /></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">GMI Professional Printing Certification</div>
         <p className="prose wide">NTI is GMI certified, ensuring consistent, colour-accurate packaging that meets the quality standards of leading global retailers, including Target, Walgreens, Lowe&rsquo;s, The Home Depot, Academy Sports&nbsp;+&nbsp;Outdoors, and CVS Pharmacy.</p>

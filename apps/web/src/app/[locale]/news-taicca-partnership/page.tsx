@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">Partnership</span><span className="date">2025.11.13</span></span>
         <h1 className="sec-title reveal">NTI signs an ESG for Culture letter of intent with TAICCA</h1>
         <div className="sec-sub reveal">On 22 October NTI signed a cooperation letter of intent with the Taiwan Creative Content Agency (TAICCA) under the banner &ldquo;Sustainable Colour, Cultural Inclusion&rdquo;, linking green printing with cultural and creative work.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/taicca-partnership.jpg" alt="NTI signs an ESG for Culture letter of intent with TAICCA" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/taicca-partnership.jpg")} alt="NTI signs an ESG for Culture letter of intent with TAICCA" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose wide mt-s">ESG for Culture is TAICCA&rsquo;s cross-sector programme, pairing corporate sustainability strategy with creative energy to build collaborations that carry both social impact and brand value. The signing marks the printing industry formally entering that space, with NTI as one of the southern Taiwan partners.</p>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <>
-      <section className="fac-banner"><img src="/assets/fac-banner.jpg" alt="NTI press line — quality is measured at every stage" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/fac-banner.jpg")} alt="NTI press line — quality is measured at every stage" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><A href={l("/facility")}>Facilities &amp; Equipment</A><span>&rsaquo;</span><b>Quality Inspection</b></div>
         <h1 className="sec-title reveal">Quality Inspection</h1>
@@ -37,35 +38,35 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Measurement &amp; Test Equipment</div>
         <div className="pr-grid">
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-qc-i1io.png" alt="X-Rite i1iO" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-qc-i1io.png")} alt="X-Rite i1iO" loading="lazy" /></div>
             <div className="pr-body"><h3>X-Rite i1iO</h3><p>Automated spectral colour measurement.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-qc-exact.png" alt="X-Rite eXact" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-qc-exact.png")} alt="X-Rite eXact" loading="lazy" /></div>
             <div className="pr-body"><h3>X-Rite eXact</h3><p>Press-side spectrophotometer.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-qc-icplate.png" alt="X-Rite IC Plate II" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-qc-icplate.png")} alt="X-Rite IC Plate II" loading="lazy" /></div>
             <div className="pr-body"><h3>X-Rite IC Plate II</h3><p>Plate dot area verification.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-qc-barcode.png" alt="Barcode grade scanner" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-qc-barcode.png")} alt="Barcode grade scanner" loading="lazy" /></div>
             <div className="pr-body"><h3>Barcode grade scanner</h3><p>Grade compliance on every printed code.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-qc-chamber.png" alt="Temperature &amp; humidity chamber" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-qc-chamber.png")} alt="Temperature &amp; humidity chamber" loading="lazy" /></div>
             <div className="pr-body"><h3>Temperature &amp; humidity chamber</h3><p>Environmental simulation before shipment.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-qc-rub.png" alt="Ink rub tester" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-qc-rub.png")} alt="Ink rub tester" loading="lazy" /></div>
             <div className="pr-body"><h3>Ink rub tester</h3><p>Abrasion resistance to customer spec.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-qc-gloss.png" alt="Gloss meter" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-qc-gloss.png")} alt="Gloss meter" loading="lazy" /></div>
             <div className="pr-body"><h3>Gloss meter</h3><p>Surface brightness against specification.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-qc-blister.png" alt="Blister strength tester" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-qc-blister.png")} alt="Blister strength tester" loading="lazy" /></div>
             <div className="pr-body"><h3>Blister strength tester</h3><p>Gluing strength for blister components.</p></div>
           </article>
         </div>

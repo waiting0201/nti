@@ -13,6 +13,11 @@ import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const mockupDir = path.resolve(root, '../../mockup')
+
+// 素材前綴。與 src/lib/media.ts 同一個環境變數 —— 把 mockup 端的 `assets/...`
+// 正規化成 Next 實際會輸出的網址，所以本機（未設）與 Blob（已設）兩種模式
+// 這個閘都成立。
+const MEDIA_BASE = (process.env.NEXT_PUBLIC_MEDIA_BASE ?? '').replace(/\/$/, '')
 const base = process.env.VERIFY_BASE ?? 'http://localhost:3100'
 const locale = process.env.VERIFY_LOCALE ?? 'en'
 
@@ -38,7 +43,7 @@ function rewriteHref(v) {
     const [, name, hash = ''] = m
     return name === 'index' ? `/${locale}${hash}` : `/${locale}/${name}${hash}`
   }
-  if (v.startsWith('assets/')) return '/' + v
+  if (v.startsWith('assets/')) return MEDIA_BASE + '/' + v
   return v
 }
 
@@ -65,7 +70,8 @@ function tokenize(html, { fromMockup }) {
       let key = a[1].toLowerCase()
       let value = a[2] ?? a[3] ?? a[4] ?? ''
       if (key === 'href') value = fromMockup ? rewriteHref(value) : value
-      if ((key === 'src' || key === 'data-img') && fromMockup && value.startsWith('assets/')) value = '/' + value
+      if ((key === 'src' || key === 'data-img') && fromMockup && value.startsWith('assets/'))
+        value = MEDIA_BASE + '/' + value
       attrs.push(key + '=' + decode(value).replace(/\s+/g, ' ').trim())
     }
     attrs.sort()

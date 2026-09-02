@@ -131,14 +131,21 @@ function convertTag(tagName, attrStr, selfClosing, ctx) {
         ctx.usesLocale = true
         parts.push('href={l(' + JSON.stringify(route) + ')}')
       } else if (value.startsWith('assets/')) {
-        parts.push('href="/' + value + '"')
+        ctx.usesMedia = true
+        parts.push('href={mediaUrl(' + JSON.stringify('/' + value) + ')}')
       } else {
         parts.push('href=' + JSON.stringify(value))
       }
       continue
     }
     if (name === 'src' || name === 'data-img') {
-      parts.push(name + '="' + (value.startsWith('assets/') ? '/' + value : value) + '"')
+      // 素材一律走 mediaUrl：正式站指向 Blob，本機未設 base 時原樣輸出 /assets/...
+      if (value.startsWith('assets/')) {
+        ctx.usesMedia = true
+        parts.push(name + '={mediaUrl(' + JSON.stringify('/' + value) + ')}')
+      } else {
+        parts.push(name + '="' + value + '"')
+      }
       continue
     }
     if (NUMERIC.has(name) && /^\d+$/.test(value)) {
@@ -233,7 +240,7 @@ for (const file of files) {
   const routePath = isHome ? '/' : '/' + slug
   const { title, desc, body } = extract(readFileSync(path.join(mockupDir, file), 'utf8'))
 
-  const ctx = { usesA: false, usesLocale: false }
+  const ctx = { usesA: false, usesLocale: false, usesMedia: false }
   const jsx = htmlToJsx(body, ctx)
     .split('\n')
     .map((line) => (line.trim() ? '      ' + line : line))
@@ -243,6 +250,7 @@ for (const file of files) {
   const imports = [
     "import type { Metadata } from 'next'",
     ...(ctx.usesA ? ["import { A } from '@/components/A'"] : []),
+    ...(ctx.usesMedia ? ["import { mediaUrl } from '@/lib/media'"] : []),
     ...behaviors.map(([name, from]) => `import { ${name} } from '${from}'`),
     ctx.usesLocale
       ? "import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'"

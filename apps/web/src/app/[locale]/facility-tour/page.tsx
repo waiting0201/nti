@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <>
-      <section className="fac-banner"><img src="/assets/fac-tour-main.jpg" alt="Inside the NTI factory floor — palletised packaging stock and clean production aisles" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/fac-tour-main.jpg")} alt="Inside the NTI factory floor — palletised packaging stock and clean production aisles" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><A href={l("/facility")}>Facilities &amp; Equipment</A><span>&rsaquo;</span><b>Factory Tour</b></div>
         <h1 className="sec-title reveal">Factory Tour</h1>
@@ -40,8 +41,8 @@ export default async function Page({ params }: Props) {
         <p className="prose wide">The plant runs on a well-planned production area with a dedicated wastewater treatment zone, supporting an environmentally friendly workplace. Alongside production there is an employee cafeteria, dormitories and training rooms &mdash; the site is built for the people running it, not only for the presses.</p>
       </div></section>
       {/* panoramas (2880x620 / 2880x750) run full-width so they are never cropped */}
-      <section className="fac-banner reveal"><img src="/assets/fac-tour1.jpg" alt="NTI factory floor — press hall lighting and overhead services" loading="lazy" /></section>
-      <section className="fac-banner reveal"><img src="/assets/fac-tour2.jpg" alt="NTI production aisle — palletised stock between press and finishing" loading="lazy" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/fac-tour1.jpg")} alt="NTI factory floor — press hall lighting and overhead services" loading="lazy" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/fac-tour2.jpg")} alt="NTI production aisle — palletised stock between press and finishing" loading="lazy" /></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Booking a visit</div>
         <p className="prose wide">Factory visits run by appointment, Monday to Friday, 08:30&ndash;17:30 (GMT+8) at the Tainan plant. Tell us what you produce and we will shape the route around it.</p>

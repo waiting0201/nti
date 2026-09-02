@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { A } from './A'
 import { NAV_ACTIVE } from './nav-active'
 import { splitLocale, withLocale, type Locale } from '@/lib/i18n'
+import { mediaUrl } from '@/lib/media'
 
 const Caret = () => (
   <svg className="ca" viewBox="0 0 12 8" fill="none" stroke="currentColor" strokeWidth="2">
@@ -113,7 +114,7 @@ export function SiteHeader() {
     <header id="hdr">
       <div className="wrap nav">
         <A href={l('/')} className="brand" aria-label="NTI Printing home">
-          <img className="logo-img" src="/assets/logo.svg" alt="NTI Printing" />
+          <img className="logo-img" src={mediaUrl('/assets/logo.svg')} alt="NTI Printing" />
         </A>
         <nav className="menu">
           {MENU.map((mi) => (

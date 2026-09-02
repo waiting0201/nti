@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">Awards</span><span className="date">2025.01.15</span></span>
         <h1 className="sec-title reveal">Named a benchmark enterprise in the SME Accelerated Investment Programme</h1>
         <div className="sec-sub reveal">Out of more than 1,000 participating companies, NTI was selected as one of six benchmark enterprises &mdash; closing a milestone year for the company.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/sme-investment-benchmark.jpg" alt="Named a benchmark enterprise in the SME Accelerated Investment Programme" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/sme-investment-benchmark.jpg")} alt="Named a benchmark enterprise in the SME Accelerated Investment Programme" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose wide mt-s">2024 was a milestone year. In eco-friendly packaging printing NTI has held to a green and sustainable direction, earning client trust and then standing out in the SME Accelerated Investment Programme.</p>

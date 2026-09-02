@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <>
-      <section className="fac-banner"><img src="/assets/fac-eco-pressroom.jpg" alt="NTI press room — production control" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/fac-eco-pressroom.jpg")} alt="NTI press room — production control" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><A href={l("/facility")}>Facilities &amp; Equipment</A><span>&rsaquo;</span><b>Environmentally Friendly Printing</b></div>
         <h1 className="sec-title reveal">Environmentally Friendly Printing</h1>
@@ -39,19 +40,19 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Equipment</div>
         <div className="pr-grid">
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-eco-press.png" alt="Heidelberg Speedmaster CD-102" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-eco-press.png")} alt="Heidelberg Speedmaster CD-102" loading="lazy" /></div>
             <div className="pr-body"><h3>Heidelberg Speedmaster CD-102</h3><p>The main press line, with in-line coater.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-eco-pressroom.jpg" alt="Press room" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-eco-pressroom.jpg")} alt="Press room" loading="lazy" /></div>
             <div className="pr-body"><h3>Press room</h3><p>Production control on the floor.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-eco-axis.jpg" alt="Axis Control" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-eco-axis.jpg")} alt="Axis Control" loading="lazy" /></div>
             <div className="pr-body"><h3>Axis Control</h3><p>Faster colour measurement per cycle.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-eco-imagecontrol.jpg" alt="Image Control" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-eco-imagecontrol.jpg")} alt="Image Control" loading="lazy" /></div>
             <div className="pr-body"><h3>Image Control</h3><p>In-line spectral monitoring and auto-adjust.</p></div>
           </article>
         </div>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">Media</span><span className="date">2024.11.11</span></span>
         <h1 className="sec-title reveal">NTI interviewed by CommonWealth Magazine</h1>
         <div className="sec-sub reveal">An interview covering how sustainable packaging printing achieves genuinely green production, and where NTI sees the green industry heading.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/commonwealth-interview.jpg" alt="NTI interviewed by CommonWealth Magazine" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/commonwealth-interview.jpg")} alt="NTI interviewed by CommonWealth Magazine" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose wide mt-s">The conversation went into how NTI builds environmental thinking into every production detail &mdash; from material selection through to carbon reduction measures &mdash; and what it takes to be a green front-runner in this industry rather than a follower.</p>

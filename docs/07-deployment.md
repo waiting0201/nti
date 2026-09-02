@@ -30,7 +30,7 @@
 | **CMS 後台（前端）** | 純 SPA（靜態） | **與公開站同一個 Static Web Apps**，掛在 `/admin/`（vite `build.outDir` 直接寫進 `apps/web/public/admin`） | CI 先 `pnpm --filter admin build` 再 `pnpm --filter web build` | 登入後台、**noindex**（`robots.txt` Disallow） |
 | **API** | Azure Functions **.NET 10**（isolated、Consumption） | Azure Functions | CI/CD | 公開讀免認證、會員/後台需認證 |
 | **資料庫** | **Azure SQL Database — Basic** | Azure（PaaS） | — | 受 Functions 存取 |
-| **媒體/檔案** | Azure Blob Storage | Azure | — | 預簽章 URL |
+| **媒體/檔案** | Azure Blob Storage `stntiprod`（RG `NTIUS`／westus2） | Azure | `tools/upload-assets.sh` | 容器 `assets` 公開讀取；上傳走 AAD（Storage Blob Data Contributor），不用帳戶金鑰 |
 
 > Mockup 預覽更新指令（`--branch=main` 必加，否則會被歸到 Preview 環境而非 production）：
 > ```bash
@@ -98,12 +98,38 @@
 | 風險 | 對策 |
 |------|------|
 | 公開站 SSR 撞 SWA Free 額度 | 上線前以實際流量驗證；不夠退 Container Apps（scale-to-zero）或 App Service B1 |
-| **產物撞 SWA Free 的 250MB 上限** | `output: 'standalone'` + `apps/web/scripts/check-size.mjs` 在本機 build 就擋下（目前 135MB）。最大宗是 `public/assets` 63MB，正式站圖片轉 Blob 後會大幅下降 |
-| **CI 建不出有圖的站** | `mockup/` 未進版控（0 追蹤檔），而 `public/assets` 由它同步而來 —— GitHub Actions checkout 後沒有素材，建出來的站會缺圖而 build 成功。**在圖片轉 Blob 之前，部署只能從有 mockup 的機器手動執行**，不要先寫 workflow |
+| **產物撞 SWA Free 的 250MB 上限** | `output: 'standalone'` + `apps/web/scripts/check-size.mjs` 在本機 build 就擋下。素材轉 Blob 後 **135MB → 73MB**（設了 `NEXT_PUBLIC_MEDIA_BASE` 時 `pack-standalone.mjs` 不打包 `public/assets`） |
+| ~~CI 建不出有圖的站~~（2026-09-02 解除） | 素材已轉 Blob，頁面引用的是絕對網址，`mockup/` 與 `public/assets` 都不再是建置的前提 —— 已實測移走 `public/assets` 後建置照樣成功。CI 只需設 `NEXT_PUBLIC_MEDIA_BASE` |
 | mockup 與正式站互相觸發 | mockup＝Cloudflare direct upload 不監看 git；正式站＝Azure，兩條獨立 |
 | 上線 SEO 斷鏈 | 301 對照表 + sitemap 提交列為上線 Gate |
 | 金鑰外洩（SQL 連線字串） | Azure Key Vault / App settings、不進版控、`security-review` |
 | 切換當機 | staging 演練 + 可回滾部署 + DNS 低 TTL |
+
+### 7.2 素材與 Blob Storage
+
+mockup 的素材（126 檔、62MB）放在 `stntiprod` 的 `assets` 容器，公開讀取。
+公開站與後台以環境變數指向它，**未設時一律回落到本機 `/assets/...`**，
+所以本機開發與 `verify:markup` 的行為完全不變：
+
+| App | 變數 | 未設時 |
+|-----|------|--------|
+| `apps/web` | `NEXT_PUBLIC_MEDIA_BASE` | `/assets/...`（由 `public/assets` 服務） |
+| `apps/admin` | `VITE_MEDIA_BASE` | dev 走 `/admin/assets/`、build 走 `/assets/` |
+
+值為 `https://stntiprod.blob.core.windows.net`（容器名就叫 `assets`，所以只補前綴、
+路徑不改寫）。這是 build-time 內嵌，換 base 要重新 build。
+
+素材更新後重新上傳：
+
+```bash
+AZ_STORAGE_ACCOUNT=stntiprod tools/upload-assets.sh
+```
+
+`Cache-Control` 只給 `max-age=86400`：檔名沒有內容雜湊（`logo.svg` 就叫 `logo.svg`），
+設成 immutable 的話換圖後瀏覽器會抱著舊檔不放。
+
+> `verify:markup` 讀同一個環境變數來正規化 mockup 端的路徑，所以兩種模式下
+> 這個閘都成立 —— 已分別以「未設」與「指向 Blob」兩種模式驗過 44 頁一致。
 
 ### 7.1 SWA Free 的四條硬限制
 
@@ -138,5 +164,6 @@
 | 2026-09-02 | Tim（Claude Code） | **後台改與公開站同站部署**：`admin/` 產物合流進 `web/public/admin`，掛 `/admin/`，只需一個 SWA。SPA fallback 寫在 `web/src/middleware.ts`（不能用 `staticwebapp.config.json`——SWA 對 Next.js hybrid 忽略其路由設定；也不能用 `next.config.ts` 的 fallback rewrite——會被 `/[locale]/*` 動態路由先接走）。後台不再自帶素材，共用前台 `/assets/` |
 | 2026-09-02 | Tim（Claude Code） | **改為 pnpm workspace + `apps/{web,admin}`**（比照 EuniceMed）：後台 vite `build.outDir` 直接寫進 `apps/web/public/admin`，省掉複製步驟；middleware matcher 改用副檔名排除，並補上 **`.swa` 排除**（SWA 以 `/.swa/health.html` 驗證部署，被導向會判定部署失敗） |
 | 2026-09-02 | Tim（Claude Code） | 新增 §7.1 SWA Free 硬限制對策：`output: 'standalone'` + `pack-standalone.mjs`（壓平 workspace 巢狀）+ `check-size.mjs`（250MB 閘，目前 135MB）；記錄 `outputFileTracingRoot` 與 hoisted linker 兩個坑。**新增風險：`mockup/` 未進版控導致 CI 建不出有圖的站，圖片轉 Blob 前不寫 workflow** |
+| 2026-09-02 | Tim（Claude Code） | **素材轉 Azure Blob Storage**：建立 RG `NTIUS`／帳戶 `stntiprod`／容器 `assets`（westus2，公開讀取），上傳 126 檔 62MB。頁面素材改走 `mediaUrl()`（`NEXT_PUBLIC_MEDIA_BASE`），standalone 產物 135MB → 73MB。**CI 建置不再依賴 `mockup/`**，前一列的風險解除 |
 
 *最後更新：2026-09-02*

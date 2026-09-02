@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">Digital Printing</span><span className="date">2025.04.18</span></span>
         <h1 className="sec-title reveal">Gentle Wild paper bags: a different animal on every bag</h1>
         <div className="sec-sub reveal">&ldquo;We are not printing paper bags &mdash; we are making a brand&rsquo;s first impression.&rdquo; How a small brand used variable data printing to make every bag different and still look like one range.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/gentle-wild-paper-bags.png" alt="Gentle Wild paper bags: a different animal on every bag" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/gentle-wild-paper-bags.png")} alt="Gentle Wild paper bags: a different animal on every bag" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose wide mt-s">The market is unforgiving: however good the product is, if the packaging does not catch the eye the customer may never look. Gentle Wild designed a full series of animal illustrations &mdash; each one reading like a miniature story with its own character and setting.</p>

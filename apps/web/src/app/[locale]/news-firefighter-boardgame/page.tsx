@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">ESG</span><span className="date">2026.03.13</span></span>
         <h1 className="sec-title reveal">NTI donates a paper-model board game promoting disaster-prevention education</h1>
         <div className="sec-sub reveal">Working with design studio 72 Design, NTI developed the &ldquo;Fire Heroes: Rescue Now&rdquo; paper-model board game and formally donated it to the Tainan City Fire Bureau.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/firefighter-boardgame.jpg" alt="NTI donates a paper-model board game promoting disaster-prevention education" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/firefighter-boardgame.jpg")} alt="NTI donates a paper-model board game promoting disaster-prevention education" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose wide mt-s">The game turns fire and rescue scenarios into experiential learning &mdash; converting firefighting knowledge into material families can work through together. It is produced on FSC-certified paper using a low-carbon printing process, so the object itself carries the message.</p>

@@ -74,7 +74,8 @@ NTI/
 ├── reference/         # 規劃案原始文件（規劃書、時程、IA、簡報）— 約 2.5GB，**只進 NAS**
 │   └── sbk/           # 客戶提供的原始素材（sitemap、CIS、需求書）
 ├── tools/
-│   └── sync-public.sh # master → public 同步（去除 reference/），推 GitHub 前執行
+│   ├── sync-public.sh # master → public 同步（去除 reference/），推 GitHub 前執行
+│   └── upload-assets.sh # mockup/assets → Azure Blob（stntiprod/assets）
 ├── .githooks/
 │   └── pre-push       # 安全網：擋下含 reference/ 的 ref 推向 Remote_GitHub
 └── .claude/           # Claude Code 本機設定
@@ -97,7 +98,7 @@ NTI/
 | API／後端 | **Azure Functions .NET 10**（isolated、ASP.NET Core Integration），單一 `RouterFunction` + 集中式 `AppRouter` |
 | 資料存取 | **EF Core（寫入 + Migration）+ Dapper（讀取）雙軌**（2026-09-02 修訂，原為 Dapper 單軌） |
 | 資料庫 | **Azure SQL Database — Basic**（schema 權威＝EF Migration） |
-| 檔案儲存 | **Azure Blob Storage** |
+| 檔案儲存 | **Azure Blob Storage**（`stntiprod`／容器 `assets`，westus2） |
 | 3D 包裝客製 | **本期不納入**（Pacdora 廠商不提供技術崁入服務） |
 | AI 客服 | **本期不納入**（Claude API/AI Agent 暫緩） |
 
@@ -114,6 +115,12 @@ NTI/
 
   ```bash
   pnpm --filter admin build && pnpm --filter web build
+  ```
+
+  正式站要帶素材 base（否則圖片指向本機路徑）：
+
+  ```bash
+  NEXT_PUBLIC_MEDIA_BASE=https://stntiprod.blob.core.windows.net pnpm --filter web build
   ```
 
   web 的 build 會接著跑 `postbuild`（壓平 standalone + **SWA Free 250MB 閘**）。

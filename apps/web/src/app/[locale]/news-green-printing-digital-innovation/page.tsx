@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">Sustainability</span><span className="date">2025.09.16</span></span>
         <h1 className="sec-title reveal">Green printing and digital innovation at NTI Tainan</h1>
         <div className="sec-sub reveal">Green printing is not a tweak to the printing process &mdash; it is a whole-system approach to sustainability: cutting carbon, reducing VOC use, and choosing paper and ink that are kinder to the environment.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/green-printing-digital-innovation.jpg" alt="Green printing and digital innovation at NTI Tainan" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/green-printing-digital-innovation.jpg")} alt="Green printing and digital innovation at NTI Tainan" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Why it matters</div>

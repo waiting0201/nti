@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">Exhibition</span><span className="date">2025.05.09</span></span>
         <h1 className="sec-title reveal">Speaking up for the leopard cat: NTI joins the Animals of Tomorrow exhibition</h1>
         <div className="sec-sub reveal">NTI joined 72 Design on the Animals of Tomorrow paper-model exhibition, supporting conservation of the Formosan black bear and the leopard cat through FSC-certified paper and HP Indigo digital printing.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/animals-of-tomorrow.jpg" alt="Speaking up for the leopard cat: NTI joins the Animals of Tomorrow exhibition" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/animals-of-tomorrow.jpg")} alt="Speaking up for the leopard cat: NTI joins the Animals of Tomorrow exhibition" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Life on paper, design with care</div>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <>
-      <section className="fac-banner"><img src="/assets/fac-post-diecut.jpg" alt="Heidelberg Varimatrix 105 die-cutter" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/fac-post-diecut.jpg")} alt="Heidelberg Varimatrix 105 die-cutter" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><A href={l("/facility")}>Facilities &amp; Equipment</A><span>&rsaquo;</span><b>Post-Press Processing</b></div>
         <h1 className="sec-title reveal">Post-Press Processing</h1>
@@ -38,23 +39,23 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Equipment</div>
         <div className="pr-grid">
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-post-diecut.jpg" alt="Heidelberg Varimatrix 105" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-post-diecut.jpg")} alt="Heidelberg Varimatrix 105" loading="lazy" /></div>
             <div className="pr-body"><h3>Heidelberg Varimatrix 105</h3><p>Flat-bed die-cutting with non-stop feeder.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-post-laminate.jpg" alt="Intelligent laminating machine" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-post-laminate.jpg")} alt="Intelligent laminating machine" loading="lazy" /></div>
             <div className="pr-body"><h3>Intelligent laminating machine</h3><p>Solvent-free BOPP pre-coated film.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-post-window.jpg" alt="Digital window patching" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-post-window.jpg")} alt="Digital window patching" loading="lazy" /></div>
             <div className="pr-body"><h3>Digital window patching</h3><p>Alignment, creasing and splitting in one pass.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-post-gluer.jpg" alt="Universal folder-gluer" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-post-gluer.jpg")} alt="Universal folder-gluer" loading="lazy" /></div>
             <div className="pr-body"><h3>Universal folder-gluer</h3><p>Up to 200 metres per minute.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/fac-post-shrink.jpg" alt="Heat shrink wrap machine" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-post-shrink.jpg")} alt="Heat shrink wrap machine" loading="lazy" /></div>
             <div className="pr-body"><h3>Heat shrink wrap machine</h3><p>Full wrap protection for finished goods.</p></div>
           </article>
         </div>

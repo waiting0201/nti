@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -28,7 +29,7 @@ export default async function Page({ params }: Props) {
         </nav>
         <div className="pr-grid">
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-card-hangtag.jpg" alt="Paper Hang Tags &amp; Blister Back Cards" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-card-hangtag.jpg")} alt="Paper Hang Tags &amp; Blister Back Cards" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Paper Hang Tags &amp; Blister Back Cards</h3>
               <p>Custom-printed paper hang tags and blister back cards designed to enhance product presentation while providing clear product information and strong retail impact.</p>
@@ -36,7 +37,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-card-blister.jpg" alt="Blister Card Packaging" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-card-blister.jpg")} alt="Blister Card Packaging" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Blister Card Packaging</h3>
               <p>Blister card packaging combines two printed paperboards with a clear plastic blister to provide secure product protection, excellent visibility, and strong retail presentation.</p>
@@ -44,7 +45,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-card-hangtag.jpg" alt="Multi-Panel Hang Tags" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-card-hangtag.jpg")} alt="Multi-Panel Hang Tags" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Multi-Panel Hang Tags</h3>
               <p>Multi-panel hang tags provide additional space for product information, branding, and multilingual content while maintaining a compact retail presentation.</p>

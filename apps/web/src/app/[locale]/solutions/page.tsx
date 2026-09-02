@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { ProductShowcase } from '@/components/behaviors/ProductShowcase'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -17,7 +18,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <>
-      <section className="fac-banner"><img src="/assets/ref-sol-banner.png" alt="NTI custom printed packaging solutions" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/ref-sol-banner.png")} alt="NTI custom printed packaging solutions" /></section>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Custom Packaging &amp; Printing Solutions</h1>
         <h3 className="fac-sub reveal mt-s">Tailored Printing. Sustainable Design.</h3>
@@ -38,7 +39,7 @@ export default async function Page({ params }: Props) {
           <div className="ps-mediawrap">
             <div className="ex-media">
               <button className="ex-arrow" id="psPrev" aria-label="Previous"><svg width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="m15 18-6-6 6-6" /></svg></button>
-              <div className="ex-frame ps-frame"><img id="psImg" src="/assets/prod-box-gluing.jpg" alt="Gluing box" /></div>
+              <div className="ex-frame ps-frame"><img id="psImg" src={mediaUrl("/assets/prod-box-gluing.jpg")} alt="Gluing box" /></div>
               <button className="ex-arrow" id="psNext" aria-label="Next"><svg width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="m9 18 6-6-6-6" /></svg></button>
             </div>
             <p className="fac-cap" id="psName">Gluing Box <span className="fac-count">1 / 6</span></p>
@@ -50,7 +51,7 @@ export default async function Page({ params }: Props) {
         <h2 className="sec-title reveal">Projects</h2>
         <h3 className="fac-sub reveal mt-s">Real Projects. Real Impact.</h3>
       </div>
-      <div className="fac-banner reveal mt-m"><img src="/assets/ref-sol-mid3.png" alt="Range of NTI sustainably printed product packaging" /></div>
+      <div className="fac-banner reveal mt-m"><img src={mediaUrl("/assets/ref-sol-mid3.png")} alt="Range of NTI sustainably printed product packaging" /></div>
       <div className="wrap">
         <p className="prose wide reveal mt-m">From packaging to promotional materials, NTI collaborates with brands across industries to deliver sustainable, high-quality results &mdash; explore our custom box portfolio and packaging case study highlights below. Each project reflects our commitment to innovation, precision, and environmental responsibility.</p>
         <div className="dtitle reveal mt-m">Industries / Applications</div>
@@ -65,7 +66,7 @@ export default async function Page({ params }: Props) {
         <p className="prose wide reveal mt-s">NTI Printing integrates advanced pre-press, printing, and post-press systems inside our G7 certified printing plant &mdash; a printing factory in Taiwan designed for precision, efficiency and sustainability. We use Heidelberg and Man Roland presses with in-line varnishing and carbon-balanced systems, reducing energy use and emissions.</p>
         <div className="fe-grid four">
           <div className="fe-card reveal" data-d="1">
-            <div className="fe-img"><img src="/assets/ref-sol-mid5.png" alt="NTI technician handling freshly printed sheets" /></div>
+            <div className="fe-img"><img src={mediaUrl("/assets/ref-sol-mid5.png")} alt="NTI technician handling freshly printed sheets" /></div>
             <div className="fe-body">
               <span className="fe-step"><b>01</b>Prepress Equipment <span className="zh">印前設備</span></span>
               <h3>Direct to plate, in house</h3>
@@ -78,7 +79,7 @@ export default async function Page({ params }: Props) {
             </div>
           </div>
           <div className="fe-card reveal" data-d="2">
-            <div className="fe-img"><img src="/assets/ref-sol-mid4.png" alt="Heidelberg offset press line" /></div>
+            <div className="fe-img"><img src={mediaUrl("/assets/ref-sol-mid4.png")} alt="Heidelberg offset press line" /></div>
             <div className="fe-body">
               <span className="fe-step"><b>02</b>Environmentally Friendly Printing <span className="zh">環保印刷流程</span></span>
               <h3>German presses with in-line varnishing &mdash; including a carbon-balanced line</h3>
@@ -94,7 +95,7 @@ export default async function Page({ params }: Props) {
             </div>
           </div>
           <div className="fe-card reveal" data-d="3">
-            <div className="fe-img"><img src="/assets/ps-box1.jpg" alt="Cut and folded box sample" /></div>
+            <div className="fe-img"><img src={mediaUrl("/assets/ps-box1.jpg")} alt="Cut and folded box sample" /></div>
             <div className="fe-body">
               <span className="fe-step"><b>03</b>Post-Press Processing <span className="zh">印後加工</span></span>
               <h3>Die-cutting, gluing, window patching and wrapping &mdash; all in-house</h3>
@@ -107,7 +108,7 @@ export default async function Page({ params }: Props) {
             </div>
           </div>
           <div className="fe-card reveal" data-d="4">
-            <div className="fe-img"><img src="/assets/fac-qc-exact.png" alt="X-Rite eXact spectrophotometer used for press-side colour measurement" /></div>
+            <div className="fe-img"><img src={mediaUrl("/assets/fac-qc-exact.png")} alt="X-Rite eXact spectrophotometer used for press-side colour measurement" /></div>
             <div className="fe-body">
               <span className="fe-step"><b>04</b>Quality Inspection <span className="zh">品質檢驗</span></span>
               <h3>Quality You Can Measure</h3>

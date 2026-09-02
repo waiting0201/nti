@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -28,7 +29,7 @@ export default async function Page({ params }: Props) {
         </nav>
         <div className="pr-grid two">
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-uv-print.jpg" alt="UV Printing" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-uv-print.jpg")} alt="UV Printing" loading="lazy" /></div>
             <div className="pr-body">
               <h3>UV Printing</h3>
               <p>Lithographic printing cured instantly by UV &mdash; runs on plastics and glossy boards where ink will not air-dry: PE, PVC and PP films, metal foil and other non-absorbent materials. Post-press can start immediately, with no back-print, cutting production time and cost.</p>
@@ -36,7 +37,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src="/assets/prod-uv-special.jpg" alt="Special Printing" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-uv-special.jpg")} alt="Special Printing" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Special Printing</h3>
               <p>Foil embossing and logical-light embossment developed for anti-counterfeiting and standout product finishes.</p>

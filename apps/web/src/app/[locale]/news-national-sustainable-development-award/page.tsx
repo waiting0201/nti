@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">Awards</span><span className="date">2026.03.09</span></span>
         <h1 className="sec-title reveal">NTI receives the National Sustainable Development Award</h1>
         <div className="sec-sub reveal">Selected from 147 entrants, NTI was one of only seven SMEs in Taiwan to receive the award &mdash; recognition for its work on green printing and sustainable packaging.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/national-sustainable-development-award.jpg" alt="NTI receives the National Sustainable Development Award" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/national-sustainable-development-award.jpg")} alt="NTI receives the National Sustainable Development Award" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose wide mt-s">Chairman Cheng Chun-Ming attended in person to receive the gold trophy from Vice Premier Cheng Li-Chiun. The award recognises years of work on ESG and low-carbon processes, and belongs to the whole team.</p>

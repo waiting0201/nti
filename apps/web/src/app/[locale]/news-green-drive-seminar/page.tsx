@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">Event</span><span className="date">2025.07.01</span></span>
         <h1 className="sec-title reveal">Green Drive × Digital Innovation seminar wraps up</h1>
         <div className="sec-sub reveal">NTI&rsquo;s Green Drive × Digital Innovation seminar closed on 26 June 2025 &mdash; a day focused on low-carbon process, digital transformation and sustainable brands.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/green-drive-seminar.jpg" alt="Green Drive × Digital Innovation seminar wraps up" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/green-drive-seminar.jpg")} alt="Green Drive × Digital Innovation seminar wraps up" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">On the programme</div>

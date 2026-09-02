@@ -30,7 +30,18 @@ if (!existsSync(standalone)) {
 const appDir = existsSync(nested) ? nested : standalone
 
 cpSync(path.join(root, '.next', 'static'), path.join(appDir, '.next', 'static'), { recursive: true })
-cpSync(path.join(root, 'public'), path.join(appDir, 'public'), { recursive: true })
+// 素材已經在 Blob 上時就不要再打包一份 —— 這才是 250MB 額度真正省下來的地方。
+// 沒設 NEXT_PUBLIC_MEDIA_BASE（本機 build）時照舊整包複製，行為不變。
+const publicSrc = path.join(root, 'public')
+const assetsDir = path.join(publicSrc, 'assets')
+const onBlob = (process.env.NEXT_PUBLIC_MEDIA_BASE ?? '').trim() !== ''
+
+cpSync(publicSrc, path.join(appDir, 'public'), {
+  recursive: true,
+  filter: (src) => !(onBlob && (src === assetsDir || src.startsWith(assetsDir + path.sep))),
+})
+
+if (onBlob) console.log('[pack-standalone] 素材走 Blob，public/assets 未打包')
 
 if (appDir !== standalone) {
   // node_modules 已經在 standalone 根（tracing 從 repo 根複製進來的實體檔案），

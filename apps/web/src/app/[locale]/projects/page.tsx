@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { mediaUrl } from '@/lib/media'
 import { ProjectFilter } from '@/components/behaviors/ProjectFilter'
 import { pageMetadata, type Locale } from '@/lib/i18n'
 
@@ -31,7 +32,7 @@ export default async function Page({ params }: Props) {
         </div>
         <div className="pj-grid" id="pjGrid">
           <article className="pj-card reveal" data-tag="Food">
-            <div className="pj-img"><img src="/assets/hp-prod0.jpg" alt="" /><span className="pj-tag">Food</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
+            <div className="pj-img"><img src={mediaUrl("/assets/hp-prod0.jpg")} alt="" /><span className="pj-tag">Food</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
             <div className="pj-body">
               <h3>Export snack carton — 32% less carbon per unit</h3>
               <p>Migration-safe inks, FSC board and a right-weighted structure for a brand scaling into Japan and the EU.</p>
@@ -39,7 +40,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pj-card reveal" data-tag="Pharma">
-            <div className="pj-img"><img src="/assets/hp-prod1.jpg" alt="" /><span className="pj-tag">Pharma</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
+            <div className="pj-img"><img src={mediaUrl("/assets/hp-prod1.jpg")} alt="" /><span className="pj-tag">Pharma</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
             <div className="pj-body">
               <h3>Serialized pharma cartons, audit-ready</h3>
               <p>GMP-aligned inspection, batch traceability and tamper-evident structure for a regulated line.</p>
@@ -47,7 +48,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pj-card reveal" data-tag="ESG">
-            <div className="pj-img"><img src="/assets/diff-box.jpg" alt="" /><span className="pj-tag">ESG</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
+            <div className="pj-img"><img src={mediaUrl("/assets/diff-box.jpg")} alt="" /><span className="pj-tag">ESG</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
             <div className="pj-body">
               <h3>Mono-material redesign kept the shelf wow</h3>
               <p>Replaced plastic lamination with a recyclable coating — same gloss, single recycling stream.</p>
@@ -55,7 +56,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pj-card reveal" data-tag="Retail">
-            <div className="pj-img"><img src="/assets/hp-prod2.jpg" alt="" /><span className="pj-tag">Retail</span></div>
+            <div className="pj-img"><img src={mediaUrl("/assets/hp-prod2.jpg")} alt="" /><span className="pj-tag">Retail</span></div>
             <div className="pj-body">
               <h3>Holiday gift set with foil + emboss at volume</h3>
               <p>Hot foil and tactile coating across 400k units with color held to ΔE ≤ 2 through the run.</p>
@@ -63,7 +64,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pj-card reveal" data-tag="Food">
-            <div className="pj-img"><img src="/assets/ps-box1.jpg" alt="" /><span className="pj-tag">Food</span></div>
+            <div className="pj-img"><img src={mediaUrl("/assets/ps-box1.jpg")} alt="" /><span className="pj-tag">Food</span></div>
             <div className="pj-body">
               <h3>Frozen-food board that survives the cold chain</h3>
               <p>Moisture-resistant coating and flute selection validated with transit and freezer testing.</p>
@@ -71,7 +72,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pj-card reveal" data-tag="ESG">
-            <div className="pj-img"><img src="/assets/hp-casestudy.jpg" alt="" /><span className="pj-tag">ESG</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
+            <div className="pj-img"><img src={mediaUrl("/assets/hp-casestudy.jpg")} alt="" /><span className="pj-tag">ESG</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
             <div className="pj-body">
               <h3>Soy-ink corrugated shipper for a D2C brand</h3>
               <p>One-pass flexo on recycled kraft, printed inside and out for an unboxing moment.</p>

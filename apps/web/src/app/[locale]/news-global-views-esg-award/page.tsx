@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">Awards</span><span className="date">2026.06.30</span></span>
         <h1 className="sec-title reveal">NTI wins a 2026 Global Views ESG Award for low-carbon operations</h1>
         <div className="sec-sub reveal">The 22nd Global Views ESG Corporate Sustainability Awards were held on 7 May at the Shangri-La Far Eastern Plaza Hotel, Taipei. NTI took the Outstanding Project award in the Low-Carbon Operations, SME category.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/global-views-esg-award.jpg" alt="NTI wins a 2026 Global Views ESG Award for low-carbon operations" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/global-views-esg-award.jpg")} alt="NTI wins a 2026 Global Views ESG Award for low-carbon operations" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose wide mt-s">The ceremony was hosted by Global Views Magazine, with Minister of Environment Peng Chi-Ming among the guests, marking the progress Taiwanese companies have made on sustainable transition.</p>

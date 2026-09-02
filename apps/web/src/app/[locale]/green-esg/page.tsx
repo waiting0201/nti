@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <>
-      <section className="fac-banner"><img src="/assets/ref-green-mid4.png" alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-mid4.png")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/green-advantage")}>Sustainability</A><span>&rsaquo;</span><b>ESG &amp; Future Goals</b></div>
         <h1 className="sec-title reveal">ESG &amp; Future Goals</h1>
@@ -44,7 +45,7 @@ export default async function Page({ params }: Props) {
         <p className="prose wide">Green printing is a direction the industry is moving in, so materials and equipment are purchased on the premise that they reduce pollution and energy consumption.</p>
         <div className="flist mt-s"><p className="fi"><b>Eco-Friendly Material</b>Main materials &mdash; ink, varnish, lotions and solvents &mdash; comply with RoHS and REACH, and hold FSC&trade; Chain of Custody certification.</p><p className="fi"><b>Waste Treatment</b>Internal sewage treatment and a waste-solvent recovery system separate impurities and recycle what can be reused. Treated wastewater leaves at pH&nbsp;7&ndash;7.8.</p><p className="fi"><b>Energy &amp; Emissions</b>Energy saving and carbon reduction are managed across the continuous production process rather than at a single stage.</p></div>
       </div></section>
-      <section className="fac-banner reveal"><img src="/assets/ref-green-mid3.png" alt="Recovered paper and print waste sorted for recycling" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid3.png")} alt="Recovered paper and print waste sorted for recycling" /></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Employee Development</div>
         <p className="prose wide">To build both competitiveness and technical depth, NTI runs education and training for every department and supports staff attending outside lectures and exhibitions.</p>
@@ -56,9 +57,9 @@ export default async function Page({ params }: Props) {
         <div className="flist mt-s"><p className="fi"><b>Charity Bazaar</b>Charity events held through the year, with proceeds donated to related public-interest groups.</p><p className="fi"><b>Beach Cleanup</b>Coastal clean-up activity that keeps waste out of the ocean and raises awareness of marine debris in the community.</p></div>
       </div></section>
       <section className="section certs reveal"><div className="wrap certgrid">
-        <img src="/assets/cert-green.png" alt="NTI Green Printing" />
-        <img src="/assets/cert-fsc.png" alt="FSC certified" className="big" />
-        <img src="/assets/cert-esg.png" alt="ESG Environmental, Social, Governance" />
+        <img src={mediaUrl("/assets/cert-green.png")} alt="NTI Green Printing" />
+        <img src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" className="big" />
+        <img src={mediaUrl("/assets/cert-esg.png")} alt="ESG Environmental, Social, Governance" />
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>

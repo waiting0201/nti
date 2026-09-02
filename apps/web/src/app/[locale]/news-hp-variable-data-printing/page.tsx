@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
         <span className="news-meta reveal"><span className="cat">Digital Printing</span><span className="date">2025.03.21</span></span>
         <h1 className="sec-title reveal">HP variable data printing: small runs that still stand out</h1>
         <div className="sec-sub reveal">In a fast-moving market, flexible, quick, high-quality printing is how brands hold their position. That is why more clients are choosing digital printing.</div>
-        <div className="artimg reveal mt-l"><img src="/assets/news/hp-variable-data-printing.jpg" alt="HP variable data printing: small runs that still stand out" /></div>
+        <div className="artimg reveal mt-l"><img src={mediaUrl("/assets/news/hp-variable-data-printing.jpg")} alt="HP variable data printing: small runs that still stand out" /></div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Five reasons</div>

@@ -1,5 +1,6 @@
 import { A } from './A'
 import { withLocale, type Locale } from '@/lib/i18n'
+import { mediaUrl } from '@/lib/media'
 
 export function SiteFooter({ locale }: { locale: Locale }) {
   const l = withLocale(locale)
@@ -9,7 +10,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         <div className="fgrid">
           <div className="fbrand">
             <A href={l('/')} className="brand" aria-label="NTI Printing home">
-              <img className="logo-img" src="/assets/logo-white.svg" alt="NTI Printing" />
+              <img className="logo-img" src={mediaUrl('/assets/logo-white.svg')} alt="NTI Printing" />
             </A>
             <p>The Courage to Print Green — sustainable packaging printing from Tainan, Taiwan.</p>
             <div className="fsocial">

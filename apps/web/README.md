@@ -112,8 +112,8 @@ pnpm --filter web start:standalone   # 用實際要部署的產物起站（驗�
    `.next/standalone/apps/web/server.js`，SWA 找不到入口，部署會走到最後才回
    「Web app warm up timed out」。
 
-`check-size.mjs` 擋 SWA Free 的 250MB 單一環境上限（目前 135MB，其中
-`public/assets` 佔 63MB）。超標的話部署會失敗。
+`check-size.mjs` 擋 SWA Free 的 250MB 單一環境上限。素材走 Blob 時
+`pack-standalone.mjs` 不會打包 `public/assets`，產物 **135MB → 73MB**。
 
 > ⚠️ 三個不會出現在錯誤訊息裡的坑——`outputFileTracingRoot` 不可釘在 app 上、
 > CI 必須 `NPM_CONFIG_NODE_LINKER=hoisted` 安裝、middleware matcher 必須排除
@@ -121,9 +121,25 @@ pnpm --filter web start:standalone   # 用實際要部署的產物起站（驗�
 > `src/middleware.ts` 的註解，彙整在
 > [`docs/07-deployment.md`](../../docs/07-deployment.md) §7.1。
 
-> ⚠️ **目前還不能用 CI 部署。** `mockup/` 未進版控，而 `public/assets` 由它同步
-> 而來 —— GitHub Actions checkout 之後沒有素材，會建出一個缺圖但 build 成功的站。
-> 圖片轉 Blob Storage 之前，部署只能從有 `mockup/` 的機器手動執行。
+## 素材：本機 vs Blob
+
+素材網址一律經過 [`src/lib/media.ts`](src/lib/media.ts) 的 `mediaUrl()`，由
+`NEXT_PUBLIC_MEDIA_BASE` 決定前綴：
+
+| | 未設（本機、`verify:markup`） | 設為 Blob |
+|---|---|---|
+| 輸出 | `/assets/x.png`，由 `public/assets` 服務 | `https://stntiprod.blob.core.windows.net/assets/x.png` |
+| standalone | 135MB（含素材） | 73MB（`public/assets` 不打包） |
+| 需要 `mockup/` | 是（`sync:assets` 來源） | **否** |
+
+```bash
+NEXT_PUBLIC_MEDIA_BASE=https://stntiprod.blob.core.windows.net pnpm --filter web build
+```
+
+44 個頁面的 `src` 由 `build-pages.mjs` 產生成 `{mediaUrl("/assets/…")}`，
+`verify:markup` 讀同一個變數正規化 mockup 端的路徑，所以兩種模式下版面驗收閘都成立。
+
+素材更新後重新上傳：`AZ_STORAGE_ACCOUNT=stntiprod tools/upload-assets.sh`。
 
 ## 雙語現況
 

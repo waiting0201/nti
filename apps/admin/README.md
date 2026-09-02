@@ -34,6 +34,9 @@ dev 與 build 兩種形態的差別只有素材來源：
 | | `pnpm --filter admin dev` | `pnpm --filter admin build` |
 |---|---|---|
 | 素材 | `public/assets` symlink → `mockup/assets` | 共用公開站的 `/assets/`，不複製第二份 |
+
+設了 `VITE_MEDIA_BASE`（正式站＝`https://stntiprod.blob.core.windows.net`）時一律以它為前綴，蓋過上表兩種。
+
 | `publicDir` | `public` | `false`（見 `vite.config.ts`） |
 | `assetUrl()` 前綴 | `/admin` | 無（見 `src/lib/asset.ts`） |
 
