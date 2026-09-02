@@ -69,7 +69,15 @@
 `faq`、`trend`、`job`、`page`、`redirect`、`category`、`audit`、`order`、`dashboard`。
 
 > ⚠️ **三個待客戶確認的缺口**（在規劃書內、mockup 外）：**電子報**（含訂閱名單管理與舊站名單遷移）、**CSR 頁**、**首頁 Banner 影片**。
-> 三者皆需追加 schema 與單元，屬範圍變更；未確認前不納入本期估算。
+> 三者屬範圍變更，**未確認前不納入本期估算**（後台單元、前端與工時皆不含）。
+>
+> **schema 已先預留**（2026-09-02），客戶點頭後不必再動資料結構，只需補後台單元與權限碼：
+>
+> | 缺口 | 已預留 | 位置 |
+> |---|---|---|
+> | 電子報 | `NewsletterSubscriber` 表（double opt-in、`Source='Import'` 支援舊站名單匯入） | [08-database.md §4.15](08-database.md) |
+> | 首頁 Banner 影片 | `HomeBanner.MediaType` / `VideoPath` + 兩條 CHECK | [08-database.md §4.2](08-database.md) |
+> | CSR 頁 | `Page` 第 29 筆 `green-csr`（`HasRichBody = 1`、`IsIndexable = 0`） | [08-database.md §6.4](08-database.md) |
 
 ---
 
@@ -89,7 +97,7 @@
 | `client` | 客戶 Logo | 建議 **短邊 ≥300px 去背 PNG 或 SVG**｜≤100KB |
 | `facility` | 設備照 | 建議 **1200×1200px**（1:1）｜JPG／WebP｜≤300KB |
 | `vlog` | 縮圖覆蓋（選填） | 建議 **1280×720px**（16:9）｜未上傳將自動取 YouTube 官方縮圖 |
-| 各單元 | OG 分享圖（選填） | 建議 **1200×630px**（1.91:1）｜JPG／PNG｜≤300KB｜未上傳則沿用封面圖 |
+| `page`／`news`／`solution` | OG 分享圖（選填） | 建議 **1200×630px**（1.91:1）｜JPG／PNG｜≤300KB｜未上傳則沿用封面圖｜**僅此三個單元有此欄位**（§5.6；對應 `Page`／`News`／`Solution` 的 `OgImagePath`） |
 | `supplier-notice` | 公告附件（選填） | PDF｜≤20MB |
 | `supplier-download` | 下載檔 | PDF／XLSX／DOCX／ZIP｜≤20MB｜檔案類型與大小由系統自動帶入前台 |
 | （前台）`get-a-quote` | 設計稿上傳 | PDF／AI／PSD／JPG／PNG／ZIP｜單檔 ≤20MB｜最多 5 個檔案 |
@@ -108,7 +116,7 @@
 > 以下每個單元的欄位表中：**語** 欄位標 ✓ 表示中英各存一份；**必** 表示必填。共用操作與 UI 規則見 §5。
 
 ### 00 `dashboard` 待辦總覽
-唯讀首頁。四張數字卡：待回覆報價、待回覆聯絡訊息、**中英未對齊的內容筆數**、7 天內即將下架的內容。下方為最近 20 筆操作紀錄。點卡片直接跳到對應單元的已篩選清單。
+唯讀首頁。四張數字卡：待處理報價（`Status IN ('New','InProgress')`）、待處理聯絡訊息（`Status = 'New'`）、**中英未對齊的內容筆數**、7 天內即將下架的內容。下方為最近 20 筆操作紀錄。點卡片直接跳到對應單元的已篩選清單。
 
 ### 01 `home-banner` 首頁 Banner
 **前台**：`index.html` `#hero` 輪播（目前 3 張）。
@@ -238,7 +246,7 @@
 | 排序、上架 | — | | | |
 
 ### 15 `page` 頁面設定與 SEO
-**28 筆固定頁**（清單見 [08-database.md §6.4](08-database.md)），**不可新增／刪除**，只可編輯。
+**29 筆固定頁**（28 筆既有 + 預留的 `green-csr`；清單見 [08-database.md §6.4](08-database.md)），**不可新增／刪除**，只可編輯。
 
 | 欄位 | 型別 | 必 | 語 | 說明 |
 |------|------|----|----|------|
@@ -249,7 +257,7 @@
 | Canonical | 單行 | | ✓ | 留空則自動 |
 | OG 標題／描述／圖片 | — | | 文字 ✓ | 留空則沿用 SEO 欄位 |
 | 允許索引 | 開關 | | | 關閉 → `noindex` |
-| 頁面內容 | 富文本 | | ✓ | **僅 `privacy-legal` 顯示此欄位** |
+| 頁面內容 | 富文本 | | ✓ | **僅 `HasRichBody = 1` 者顯示此欄位**：`privacy-legal`，以及預留的 `green-csr` |
 
 ### 16 `redirect` 301 轉址
 來源路徑（唯一、小寫）／目標路徑／狀態碼（301／302／308）／啟用／命中次數（唯讀）。支援 **CSV 匯入匯出**（舊站 46 頁 + 80 篇文章的對照表）。儲存時檢查轉址鏈與迴圈並擋下。
@@ -346,7 +354,17 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 | 23 管理員與角色 | ✓ | — | — |
 | 24 操作紀錄 | ✓ | — | — |
 
-權限碼 `{單元代號}.{view|edit|publish|delete|export}`，存於 `RolePermission`。
+權限碼 `{單元代號}.{view|edit|publish|delete|export}`，存於 `RolePermission`。上表逐格展開為種子列共 **171 列**（SuperAdmin 83／Editor 67／Viewer 21），見 [`db/seed/110_role_permission.sql`](../db/seed/110_role_permission.sql)；**本表為權限的權威來源**，[08-database.md §6.1](08-database.md) 僅為摘要。
+
+矩陣描述到、但原本未定代號的三項（2026-09-02 補）：
+
+| 權限碼 | 對應矩陣列 | 角色 |
+|---|---|---|
+| `quote.download` | 17 報價：附件下載 | 僅 SuperAdmin |
+| `redirect.export` | 16 轉址：CSV 匯入匯出 | SuperAdmin、Editor |
+| `audit.resend` | 24 操作紀錄：`EmailLog` 重寄 | 僅 SuperAdmin |
+
+`SuperAdmin` 亦逐列展開、不使用 `system.*` 之類的萬用碼——RBAC 檢查邏輯保持單一（一律查 `RolePermission`）且可稽核。
 
 ---
 
@@ -388,5 +406,6 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 | 日期 | 修改者 | 摘要 |
 |------|--------|------|
 | 2026-09-01 | Tim（Claude Code） | 初版：依 mockup 44 頁與三條決議（單元式後台／無 Media Library／固定文字不進後台）定義 24 個後台單元、上傳尺寸總表、權限矩陣與固定文字清單 |
+| 2026-09-02 | Tim（Claude Code） | §3 上傳總表的 OG 分享圖列由「各單元」更正為 `page`／`news`／`solution`（與 §5.6 及 `OgImagePath` 實際欄位一致）｜配合 [`db/`](../db/) 建置腳本落地：§2.1 三個待確認缺口補記「schema 已預留」對照表（範圍與估算不變）；§6 權限矩陣確立為權威來源並補 `quote.download`／`redirect.export`／`audit.resend` 三個權限碼、註明展開後共 171 列；§15 固定頁 28 → 29 筆（含預留的 `green-csr`），富文本欄位不再僅限 `privacy-legal` |
 
-*最後更新：2026-09-01*
+*最後更新：2026-09-02*

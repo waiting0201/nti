@@ -31,7 +31,11 @@
 
 ### 2.2 URL 結構
 - 層級 **3–4 層**、**小寫**、**連字號** `-` 分隔、語意化、避免參數化。
-- 雙語以一致策略（`/zh`、`/en` 子路徑或 hreflang），每頁 `hreflang` 中英互指 + `x-default`。
+- 雙語採 **`/zh`、`/en` 子路徑**（非參數、非子網域），每頁 `hreflang` 中英互指 + `x-default`。
+- 固定頁的實際路徑登記在 `Page.RouteTemplate`（如 `/{lang}/about/facility/pre-press`），清單見 [`08-database.md` §6.4](08-database.md) 與 [`db/seed/140_page.sql`](../db/seed/140_page.sql)；動態內容（`news`／`solutions`）的最後一段取自 `*I18n.Slug`，允許中英不同 slug。
+- `hreflang` 不落資料庫欄位，由同一筆內容的兩列 i18n 推導（[`08-database.md` §2.7](08-database.md)）。
+
+> ⚠️ 路由細節待 [`02-frontend.md`](02-frontend.md) 定案；`db/seed/140_page.sql` 為現行提案值，改動只需更新該檔，不影響 schema。
 
 ### 2.3 結構化資料（JSON-LD）
 依頁型注入：`Website`、`Organization`、`BreadcrumbList`、`Product`（印刷方案）、`Article`（NEWS/Green Vlog）、`FAQPage`、必要時 `VideoObject`（案例/Vlog 影片）。
@@ -118,5 +122,6 @@
 | 2026-06-12 | Tim（Claude Code） | 初版：定義 SEO harness 作業書 |
 | 2026-06-12 | Tim（Claude Code） | 範圍限定公開站、CMS noindex；補 Next.js SSG+ISR 重生策略與 Pacdora 頁面說明 |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 Pacdora 頁面 SEO 說明 |
+| 2026-09-02 | Tim（Claude Code） | §2.2 雙語 URL 由「子路徑**或** hreflang」二選一收斂為明確採用 `/zh`、`/en` 子路徑，並指向 `Page.RouteTemplate` 與 [`db/seed/140_page.sql`](../db/seed/140_page.sql) 的實際清單（路由細節仍待 02-frontend 定案） |
 
-*最後更新：2026-06-16*
+*最後更新：2026-09-02*

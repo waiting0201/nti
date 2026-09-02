@@ -42,6 +42,8 @@ IsDeleted BIT NOT NULL DEFAULT 0
 
 下方 DDL 中以單行 `/* audit */` 代表這五個欄位（實作時展開）。`CreatedBy/UpdatedBy` 指向 `AdminUser.Id`，不建 FK（避免管理員刪除時的連鎖限制）。
 
+> 實際展開版本見 [`db/migrations/0002_init_schema.sql`](../db/migrations/0002_init_schema.sql)。該腳本另將所有 PK／FK／UNIQUE／CHECK／DEFAULT **一律具名**（`PK_`／`FK_`／`UQ_`／`CK_`／`DF_`）——匿名 inline 約束會產生帶隨機 hash 的名稱（`DF__HomeBanner__Sort__1B0907CE`），**每個環境都不同**，導致「改預設值」的遷移在 dev 跑得過、在 prod 炸掉。
+
 ### 2.4 上下架
 內容表統一四欄：`IsPublished BIT`、`PublishAt DATETIME2(0) NULL`、`UnpublishAt DATETIME2(0) NULL`、`SortOrder INT`。
 前台查詢一律套用：
@@ -84,7 +86,7 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 
 ## 3. 資料表一覽
 
-分區一覽（**31 張主表 + 16 張 `*I18n` 多語子表 = 47 張**）：
+分區一覽（**32 張主表 + 16 張 `*I18n` 多語子表 + 1 張系統表 = 49 張**）：
 
 | 區 | 資料表 |
 |----|--------|
@@ -95,7 +97,8 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 | 頁面／SEO | `Page`、`PageI18n`、`Redirect` |
 | 表單 | `QuoteRequest`、`QuoteAttachment`、`ContactMessage` |
 | 會員（P6） | `Member`、`MemberToken`、`Orders`、`OrderProgress` |
-| 系統 | `AdminUser`、`Role`、`RolePermission`、`AuditLog`、`EmailLog` |
+| 系統 | `AdminUser`、`Role`、`RolePermission`、`AuditLog`、`EmailLog`、`SchemaVersion` |
+| 預留（待客戶確認） | `NewsletterSubscriber` — 見 §4.15 |
 
 ---
 
@@ -145,19 +148,24 @@ CREATE TABLE dbo.SiteSetting (
 -- 首頁 Banner 輪播（mockup index.html #hero，目前 3 張）
 CREATE TABLE dbo.HomeBanner (
   Id INT IDENTITY(1,1) PRIMARY KEY,
-  ImagePath NVARCHAR(260) NOT NULL,        -- 桌機圖
+  ImagePath NVARCHAR(260) NOT NULL,        -- 桌機圖；MediaType='video' 時兼作 poster 與行動裝置 fallback
   ImagePathMobile NVARCHAR(260) NULL,      -- 手機圖，未填則用桌機圖
+  -- 預留（待客戶確認）：影片型 Banner，對應 09-cms-admin.md §2.1 缺口三
+  MediaType VARCHAR(10) NOT NULL DEFAULT 'image',   -- image|video
+  VideoPath NVARCHAR(260) NULL,            -- Blob 相對路徑，MP4(H.264) / WebM
   LinkUrl NVARCHAR(300) NULL,              -- 站內相對路徑或外部 URL
   OpenInNewTab BIT NOT NULL DEFAULT 0,
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1, PublishAt DATETIME2(0) NULL, UnpublishAt DATETIME2(0) NULL,
   /* audit */
+  CONSTRAINT CK_HomeBanner_MediaType CHECK (MediaType IN ('image','video')),
+  CONSTRAINT CK_HomeBanner_Video     CHECK (MediaType = 'image' OR VideoPath IS NOT NULL)
 );
 
 CREATE TABLE dbo.HomeBannerI18n (
   HomeBannerId INT NOT NULL REFERENCES dbo.HomeBanner(Id),
   Lang VARCHAR(5) NOT NULL,
-  ImageAlt NVARCHAR(200) NOT NULL,
+  ImageAlt NVARCHAR(200) NOT NULL,       -- MediaType='video' 時作為 <video> 的 aria-label
   CONSTRAINT PK_HomeBannerI18n PRIMARY KEY (HomeBannerId, Lang)
 );
 ```
@@ -491,7 +499,7 @@ CREATE TABLE dbo.Redirect (
 
 ### 4.12 表單
 
-> 建表順序：`QuoteRequest` 參照 `Member`，實際遷移腳本需先建 §4.13 的 `Member`，或先建表、後補 `ALTER TABLE ... ADD CONSTRAINT` 外鍵。
+> 建表順序：`QuoteRequest` 參照 `Member`。實際腳本 [`db/migrations/0002_init_schema.sql`](../db/migrations/0002_init_schema.sql) 已將 `Member`／`MemberToken` 上移至 `QuoteRequest` 之前；本節維持依功能分區敘述。
 
 ```sql
 CREATE TABLE dbo.QuoteRequest (
@@ -662,12 +670,76 @@ CREATE TABLE dbo.EmailLog (
 
 ---
 
+### 4.15 預留與系統表
+
+```sql
+-- 預留（待客戶確認）：電子報訂閱｜09-cms-admin.md §2.1 缺口一
+-- double opt-in 的 token 只存 SHA-256（比照 MemberToken）；Source='Import' 支援舊站名單遷移。
+-- 訂閱者無可翻譯欄位，故不設 *I18n 側表。EmailLog.MailType 無 CHECK，未來加 NewsletterConfirm 不需改 schema。
+CREATE TABLE dbo.NewsletterSubscriber (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  Email NVARCHAR(160) NOT NULL UNIQUE,
+  DisplayName NVARCHAR(80) NULL, Company NVARCHAR(120) NULL,
+  PreferredLang VARCHAR(5) NOT NULL DEFAULT 'en',
+  Status VARCHAR(20) NOT NULL DEFAULT 'Pending',   -- Pending|Subscribed|Unsubscribed|Bounced
+  Source VARCHAR(20) NOT NULL DEFAULT 'Website',   -- Website|Import|Admin
+  ConsentAt DATETIME2(0) NULL,                     -- 訂閱同意時間（個資法留存）
+  ConfirmToken VARBINARY(32) NULL, ConfirmTokenExpiresAt DATETIME2(0) NULL, ConfirmedAt DATETIME2(0) NULL,
+  UnsubscribeToken VARBINARY(32) NULL,             -- 退訂連結用，長期有效
+  UnsubscribedAt DATETIME2(0) NULL, UnsubscribeReason NVARCHAR(200) NULL,
+  LastSentAt DATETIME2(0) NULL, BounceCount TINYINT NOT NULL DEFAULT 0,
+  SourceIp VARCHAR(45) NULL, UserAgent NVARCHAR(400) NULL, SourceLang VARCHAR(5) NULL,
+  SubscribedAt DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
+  /* audit */
+  CONSTRAINT CK_NewsletterSubscriber_Status CHECK (Status IN ('Pending','Subscribed','Unsubscribed','Bounced')),
+  CONSTRAINT CK_NewsletterSubscriber_Source CHECK (Source IN ('Website','Import','Admin'))
+);
+
+-- 遷移記錄表（§8 的機制核心）。ScriptName / Applied 兩欄刻意與 DbUp 預設 journal 相容，
+-- 名稱與型別不可更動；其餘欄位皆可 NULL 或帶 DEFAULT，故不影響 DbUp 寫入。
+CREATE TABLE dbo.SchemaVersion (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  ScriptName NVARCHAR(255) NOT NULL UNIQUE,
+  Applied DATETIME NOT NULL DEFAULT GETDATE(),     -- DbUp 相容欄
+  AppliedUtc DATETIME2(0) NULL DEFAULT SYSUTCDATETIME(),
+  AppliedBy NVARCHAR(128) NULL DEFAULT SUSER_SNAME(),
+  Checksum CHAR(64) NULL                           -- 腳本 SHA-256；供 runner 偵測「已套用的檔被事後編輯」
+);
+```
+
+### 4.16 Category 型別安全（實作補充）
+
+`Category` 是全 schema 唯一的橫向共用主檔（九種 `CategoryType` 服務八個內容單元與報價表單）。
+單純的外鍵只保證「分類存在」、**不保證「型別正確」**——`News.CategoryId` 可以指到
+`CategoryType='Facility'` 的列而不被擋下。
+
+[`db/migrations/0002_init_schema.sql`](../db/migrations/0002_init_schema.sql) 因此在每個引用端加一個
+PERSISTED 常數計算欄，與 `CategoryId` 組成複合外鍵：
+
+```sql
+-- Category 端：供下游複合 FK 參照
+CONSTRAINT UQ_Category_Id_Type UNIQUE (Id, CategoryType)
+
+-- 各引用端（News 為例，其餘 Project／Vlog／Faq／Certification／FacilityItem／
+-- SupplierNotice／QuoteRequest 的兩個分類欄同理，共 9 條）
+CategoryTypeGuard AS CAST('News' AS VARCHAR(30)) PERSISTED,
+CONSTRAINT FK_News_Category FOREIGN KEY (CategoryId, CategoryTypeGuard)
+    REFERENCES dbo.Category(Id, CategoryType)
+```
+
+計算欄為常數、零維護成本；`CategoryId` 可為 NULL 時複合 FK 自動不檢查（MATCH SIMPLE 語意），
+故不影響 `Faq`／`Certification` 這類選填分類的單元。
+
+
+---
+
 ## 5. 索引
 
 Azure SQL **Basic（5 DTU / 2 GB）**，索引寧缺勿濫；下列為必要清單。
 
 ```sql
 -- slug 路由（前台每次詳細頁都會打）
+-- 刻意不含 IsDeleted：軟刪的內容仍永久佔用 slug。SEO 上舊網址不該被回收後指向不同內容。
 CREATE UNIQUE INDEX UX_NewsI18n_Lang_Slug ON dbo.NewsI18n(Lang, Slug);
 CREATE UNIQUE INDEX UX_SolutionI18n_Lang_Slug ON dbo.SolutionI18n(Lang, Slug);
 CREATE UNIQUE INDEX UX_PageI18n_Lang_Slug ON dbo.PageI18n(Lang, Slug);
@@ -690,9 +762,27 @@ CREATE INDEX IX_Contact_Status ON dbo.ContactMessage(Status, SubmittedAt DESC);
 
 -- 會員／轉址／稽核
 CREATE INDEX IX_MemberToken_Lookup ON dbo.MemberToken(TokenHash) INCLUDE(MemberId, ExpiresAt, UsedAt);
-CREATE INDEX IX_Redirect_From ON dbo.Redirect(FromPath) WHERE IsActive = 1;
 CREATE INDEX IX_AuditLog_Entity ON dbo.AuditLog(EntityName, EntityId, CreatedAt DESC);
+
+-- 轉址：一個索引同時做唯一性與覆蓋，取代原本的 FromPath UNIQUE + IX_Redirect_From
+-- （兩者對同一欄位重複建索引，在 Basic 層是純粹的浪費）
+CREATE UNIQUE INDEX UX_Redirect_FromPath ON dbo.Redirect(FromPath) INCLUDE(ToPath, StatusCode, IsActive);
+
+-- 全站僅一支主打影片（09-cms-admin.md §05 的業務規則，改由 DB 層保證）
+CREATE UNIQUE INDEX UX_Vlog_MainFeature ON dbo.Vlog(IsMainFeature) WHERE IsMainFeature = 1 AND IsDeleted = 0;
+
+-- 外鍵支撐索引：外鍵欄位若無索引，父表刪改時會全表掃描子表
+CREATE INDEX IX_SolutionItem_Solution   ON dbo.SolutionItem(SolutionId, SortOrder);
+CREATE INDEX IX_QuoteAttachment_Quote   ON dbo.QuoteAttachment(QuoteRequestId);
+CREATE INDEX IX_Orders_Member           ON dbo.Orders(MemberId, CreatedAt DESC);
+CREATE INDEX IX_OrderProgress_Order     ON dbo.OrderProgress(OrderId, HappenedAt);
+
+-- 預留（待客戶確認）：電子報後台清單
+CREATE INDEX IX_NewsletterSubscriber_Status ON dbo.NewsletterSubscriber(Status, SubscribedAt DESC)
+    INCLUDE(Email, PreferredLang);
 ```
+
+> `filtered index`（含 `WHERE` 子句者）建立時要求 `QUOTED_IDENTIFIER` 為 ON。sqlcmd 預設是 OFF，執行遷移務必帶 `-I`。
 
 ---
 
@@ -700,13 +790,19 @@ CREATE INDEX IX_AuditLog_Entity ON dbo.AuditLog(EntityName, EntityId, CreatedAt 
 
 ### 6.1 角色與權限
 
-| Role.Code | 名稱 | 權限 |
-|-----------|------|------|
-| `SuperAdmin` | 超級管理員 | 全部（含 `system.*`、`admin.*`） |
-| `Editor` | 內容編輯 | 所有內容單元 `view/edit/publish`；表單 `view/edit`；不含 `system.*`、`member.*` |
-| `Viewer` | 檢視者 | 全部 `view`；不可 `edit/publish/delete/export` |
+**權威來源為 [`09-cms-admin.md` §6](09-cms-admin.md) 的權限矩陣**，逐格展開為 `RolePermission` 種子列（見 [`db/seed/110_role_permission.sql`](../db/seed/110_role_permission.sql)）。
 
-權限碼格式 `{unit}.{action}`，`unit` 對應 [09-cms-admin.md](09-cms-admin.md) 的單元代號（如 `news.edit`、`quote.export`）。
+| Role.Code | 名稱 | 權限範圍 |
+|-----------|------|------|
+| `SuperAdmin` | 超級管理員 | 24 個單元全動作（83 列） |
+| `Editor` | 內容編輯 | 內容單元 01–14 的 `view/edit/publish/delete`；15 頁面 SEO 與 16 轉址；17 報價／18 聯絡的檢視與改狀態。**不可** `quote.download`／`quote.export`，不可觸及 19 會員、20 訂單、21 設定、22 分類、23 管理員、24 操作紀錄（67 列） |
+| `Viewer` | 檢視者 | 內容單元 01–14、15、16、17、18、21、22 的 `view`。**對 19 會員、20 訂單、23 管理員、24 操作紀錄無任何權限**（21 列） |
+
+權限碼格式 `{單元代號}.{action}`，`unit` 對應 [09-cms-admin.md](09-cms-admin.md) 的單元代號（如 `news.edit`、`quote.export`）。合計 **171 列**，由 `db/verify/verify.sql` 斷言。
+
+矩陣描述到、但原本未定代號的三項，本次補上：`quote.download`（報價附件下載）、`redirect.export`（轉址 CSV 匯入匯出）、`audit.resend`（`EmailLog` 重寄）。
+
+`SuperAdmin` 亦逐列展開、**不使用 `system.*` 之類的萬用碼**——RBAC 檢查邏輯保持單一（一律查 `RolePermission`）且可稽核；新增後台單元時只需在種子檔加一列。
 
 ### 6.2 分類（`Category`）
 
@@ -733,9 +829,15 @@ CREATE INDEX IX_AuditLog_Entity ON dbo.AuditLog(EntityName, EntityId, CreatedAt 
 | Mail | `mail.quote_notify_to`、`mail.contact_notify_to`、`mail.bcc` | email | — |
 
 ### 6.4 頁面（`Page`）
-28 筆固定頁（mockup 44 頁扣掉 12 支 `news-*` 與 4 支 `products-*`；後兩者的 SEO 由 `NewsI18n` / `SolutionI18n` 提供）：
+**29 筆**固定頁 = 28 筆既有（mockup 44 頁扣掉 12 支 `news-*` 與 4 支 `products-*`；後兩者的 SEO 由 `NewsI18n` / `SolutionI18n` 提供）+ 1 筆預留的 `green-csr`：
 
-`home`、`about-hub`(differences)、`about-difference`、`about-benefits`、`about-certifications`、`facility`、`facility-pre-press`、`facility-eco-printing`、`facility-post-press`、`facility-quality`、`facility-tour`、`solutions`、`projects`、`sustainability-hub`(green-advantage)、`green-our-advantage`、`green-carbon`、`green-materials`、`green-esg`、`insights`、`news-list`、`green-vlog`、`faq`、`industry-trends`、`careers`、`supplier-area`、`contact`、`get-a-quote`、`privacy-legal`（唯一 `HasRichBody = 1`）。
+`home`、`about-hub`(differences)、`about-difference`、`about-benefits`、`about-certifications`、`facility`、`facility-pre-press`、`facility-eco-printing`、`facility-post-press`、`facility-quality`、`facility-tour`、`solutions`、`projects`、`sustainability-hub`(green-advantage)、`green-our-advantage`、`green-carbon`、`green-materials`、`green-esg`、`green-csr`、`insights`、`news-list`、`green-vlog`、`faq`、`industry-trends`、`careers`、`supplier-area`、`contact`、`get-a-quote`、`privacy-legal`。
+
+`HasRichBody = 1` 者兩筆：`privacy-legal`（原生唯一可後台編輯全文的固定頁）與 `green-csr`。
+
+> **預留（待客戶確認）**：`green-csr` 對應 [09-cms-admin.md §2.1](09-cms-admin.md) 缺口二。設為 `HasRichBody = 1` 是為了讓客戶點頭後能直接在後台撰稿上線、不需改前端程式（09 §7 的擴充路徑）；同時設 `IsIndexable = 0`，避免未確認前的空頁被搜尋引擎索引。
+
+`RouteTemplate` 的實際值見 [`db/seed/140_page.sql`](../db/seed/140_page.sql)，依 [05-seo.md](05-seo.md) 的 `/zh` `/en` 子路徑策略與 IA 層級推導；02-frontend 路由定案後以該檔為準修改。
 
 ---
 
@@ -767,12 +869,25 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 
 寫入規則：主表 + i18n 兩表一律包在**同一個 transaction**；排序調整用單一 `UPDATE ... FROM (VALUES ...)` 批次寫回，不逐筆。
 
+> **定序注意**：資料庫定序為 `Latin1_General_100_CI_AS_SC`，與伺服器／tempdb 定序不同（本機與 Azure 皆然）。任何 `#temp` 表的字串欄位一律加 `COLLATE DATABASE_DEFAULT`，否則 JOIN 時會出現 `Cannot resolve the collation conflict`。
+
 ---
 
 ## 8. 遷移與環境
 
-- **Schema 版本控管**：`.sql` 遷移檔（`Migrations/0001_init.sql` …）＋ `SchemaVersion` 表，由部署流程順序執行；不用 EF Migrations（本專案用 Dapper）。
-- **環境**：dev / prod 兩套資料庫；prod 只由 pipeline 執行遷移。
+- **Schema 版本控管**：`.sql` 遷移檔 ＋ `SchemaVersion` 表（§4.15），由部署流程順序執行；不用 EF Migrations（本專案用 Dapper）。實作在 [`db/`](../db/)：
+
+  | 目錄 | 性質 |
+  |---|---|
+  | `db/local/` | **只在本機執行**：建庫／砍庫／dev 帳號。Azure 的資料庫由 `az sql db create` 建立，且不支援 `USE` 與 user database 下的 `CREATE DATABASE`，故刻意隔離、runner 不掃。 |
+  | `db/migrations/` | 一次性、依序（`NNNN_snake_case.sql`）。**套用後不可修改**，要改請新開一支；`SchemaVersion.Checksum` 供 runner 偵測竄改。 |
+  | `db/seed/` | run-always 冪等（`NNN_snake_case.sql`）。用 `VALUES` + `WHERE NOT EXISTS`（自然鍵），不用 `MERGE`。`Role`／`Solution`／`Page` 以 `IDENTITY_INSERT` 固定 Id，讓各環境一致。 |
+  | `db/verify/` | 建置後自我檢核，任一項 FAIL 即回傳非 0。 |
+
+  `SchemaVersion` 的 `ScriptName`／`Applied` 兩欄與 DbUp 預設 journal 相容，未來要換成 DbUp runner 只需一行 `.JournalToSqlTable("dbo","SchemaVersion")`。
+
+- **定序**：`Latin1_General_100_CI_AS_SC`（**建庫後不可更改**）。`_SC` 讓 `LEN()`／`SUBSTRING()` 正確處理 4-byte 字元（emoji、罕用漢字），否則後台「SEO Title 70 字」提示會算錯；`CI` 讓 slug 與 `Redirect.FromPath` 的大小寫視為相同。代價見 §7 的定序注意。
+- **環境**：dev / prod 兩套資料庫；prod 只由 pipeline 執行遷移。本機容器是 **Developer Edition**（等同 Enterprise 功能集），Basic 不支援的語法會「本機過、Azure 炸」——禁用清單見 [`db/README.md`](../db/README.md) 的相容性 checklist。另 `READ_COMMITTED_SNAPSHOT` 在 Azure 預設 ON、本機預設 OFF，建庫腳本已主動對齊。
 - **內容遷移（P8）**：舊站 WordPress 約 80 篇文章 → `News` + `NewsI18n`；同時產出 `Redirect` 對照。遷移腳本先跑 dev、比對筆數與媒體 checksum，再上 prod。
 - **備份**：Basic 層內建 7 天 PITR，另每月匯出 `.bacpac` 至 Blob。
 - **容量估算**：內容列 < 5,000 筆、富文本平均 < 20 KB → 資料庫本體 < 200 MB，Basic 2 GB 充裕；**圖檔一律在 Blob，不入庫**。
@@ -783,10 +898,12 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 
 > 僅列 schema 獨有項；安全／效能／可維運的通則見 [`03-backend.md` §5](03-backend.md)。
 
-- [ ] 所有內容表具備稽核五欄、上下架四欄與 `*I18n` 子表。
+- [ ] 所有內容表具備稽核五欄與 `*I18n` 子表（例外：`ClientLogo` 品牌名不翻譯故無 i18n）；需排程上下架者具備完整四欄（例外：`Faq`／`SolutionItem`／`Certification`／`ClientLogo`／`FacilityItem`／`SupplierSpec`／`SupplierDownload` 僅需 `IsPublished`）。
 - [ ] 有網址的實體（`Page`／`News`／`Solution`）具備完整 SEO 欄位組。
 - [ ] 每個圖片欄位都有對應的多語 `Alt` 欄位。
 - [ ] 遷移腳本可從空庫一次建置到位並帶入 §6 種子。
+- [ ] `db/verify/verify.sql` 全數 PASS（49 張表、35 條外鍵、0 個匿名約束、171 列權限、種子筆數相符）。
+- [ ] 冪等實測：`db/tools/run-local.sh` **連續跑兩次**零錯誤且 verify 輸出相同。
 
 ---
 
@@ -795,5 +912,6 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 日期 | 修改者 | 摘要 |
 |------|--------|------|
 | 2026-09-01 | Tim（Claude Code） | 初版：依 mockup 44 頁實際結構與三條專案決議（單元式後台／無 Media Library／固定文字不進後台）定義 31 張表、索引、種子與遷移策略 |
+| 2026-09-02 | Tim（Claude Code） | 產出可執行建置腳本 [`db/`](../db/)（本機 SQL Server 開發、語法相容 Azure SQL）：展開稽核五欄、約束全面具名、補 `SchemaVersion` DDL（§4.15）、重排建表順序（`Member` 前移）。新增 §4.16 Category 型別安全（複合外鍵，DB 層擋下「把 Facility 分類掛到 News」）。納入三個待客戶確認缺口的預留 schema（`NewsletterSubscriber`／`HomeBanner.MediaType`+`VideoPath`／`Page` 的 `green-csr`），表數 47 → 49。索引調整：移除與 UNIQUE 重複的 `IX_Redirect_From`、新增 `UX_Vlog_MainFeature` 與 4 條外鍵支撐索引。§6.1 權限改以 09 §6 矩陣為權威（修正 Editor 可 delete、Viewer 非「全部 view」兩處錯誤），補 `quote.download`／`redirect.export`／`audit.resend` 三個權限碼。§8 補定序決策與 Azure 相容性。 |
 
-*最後更新：2026-09-01*
+*最後更新：2026-09-02*

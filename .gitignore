@@ -2,3 +2,4 @@
 .DS_Store
 mockup/
 mockup2/
+db/.env.local

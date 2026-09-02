@@ -1,7 +1,7 @@
 # NTI Printing 官網 — Harness 文件總覽
 
 > 本檔整合三部分於一處：**A. Agent 編排總則**、**B. Claude Code 環境設定**、以及**分項作業書索引**。
-> 各建置領域（設計／前端／後端／API／SEO／GEO／部署）的細節，拆成同層的 7 份分項作業書（見下表）。
+> 各建置領域（設計／前端／後端／API／SEO／GEO／部署／資料庫／後台 CMS）的細節，拆成同層的 9 份分項作業書（見下表）。
 > 搭配[網站建置時程](../reference/網站建置時程.html)（PDF）一起閱讀。
 
 ---
@@ -149,11 +149,13 @@ NTI/
 ├── CLAUDE.md                  # 專案規範與索引（agent 每次載入）
 ├── .claude/
 │   └── settings.local.json    # 本機 harness 設定（權限等，不進版控）
-├── docs/                      # 文件區（本總覽 + 7 份分項作業書）
+├── docs/                      # 文件區（本總覽 + 9 份分項作業書）
 │   ├── README.md              # 本檔：Harness 總覽（編排總則 + 設定 + 索引）
-│   ├── 01-design.md … 07-deployment.md
+│   ├── 01-design.md … 09-cms-admin.md
+├── db/                        # 資料庫建置腳本（資料庫名 NTI）
+│   └── migrations / seed / verify / local / tools
 ├── reference/                 # 規劃案原始文件（客戶素材在 reference/sbk/）
-└── mockup/                    # 靜態切版稿（用過即丟）
+└── mockup/                    # 靜態切版稿（未進版控，見 .gitignore）
 ```
 
 ## B2. settings.local.json（權限設定）
@@ -190,13 +192,13 @@ Agent 具備檔案式持久記憶，位於使用者層級：
 
 - 文件一律放 `docs/`，規劃原始檔放 `reference/`（客戶素材 `reference/sbk/`）。
 - `CLAUDE.md` 為單一索引入口，新增重要文件時於其中補上連結。
-- 此專案目前**非 git repo**；若要進版控需先 `git init`。
+- 已納入 git 版控（`master` 分支）；`mockup/`、`mockup2/` 與 `db/.env.local` 不進版控（見 `.gitignore`）。
 
 ---
 
 ## 文件使用約定
 
-1. **單一事實來源**：各領域規格以對應分項文件（01–07）為準；本檔 §A 只保留編排層面的決策。兩者衝突時，先更新 §A 再回寫分項。
+1. **單一事實來源**：各領域規格以對應分項文件（01–09）為準；本檔 §A 只保留編排層面的決策。兩者衝突時，先更新 §A 再回寫分項。
 2. **每份文件都帶「變更紀錄」表**：任何修改（含他人代改）都要在該表補一列（日期 / 修改者 / 摘要），並同步更新本檔末端「最後更新」日期。詳見下方〈變更紀錄維護規範〉。
 3. **檔案放置**：harness engineering 文件一律放 `docs/`；產出的規劃／時程／設計檔放 `reference/`（見 [CLAUDE.md](../CLAUDE.md) 工作慣例）。
 
@@ -220,5 +222,6 @@ Agent 具備檔案式持久記憶，位於使用者層級：
 | 2026-06-12 | Tim（Claude Code） | 凍結技術選型（Next.js SSR/ISR + Azure Functions .NET10 + Azure SQL Basic + Blob + SWA）；AI 客服暫緩、納入 Pacdora 3D；資料存取定為 Dapper |
 | 2026-06-12 | Tim（Claude Code） | 整併 docs/：移除 harness/ 子資料夾、檔案攤平至 docs/；本檔吸收原 harness-engineering.md（編排總則）與 harness.md（Claude Code 設定）；競品分析併入 01-design.md |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 P7 整合 track、G 關卡、相關研究/職責/成本/風險 |
+| 2026-09-02 | Tim（Claude Code） | 新增 `db/` 資料庫建置腳本（資料庫名 NTI，migrations／seed／verify／local），08 與 09 同步回寫；更新目錄結構（7 → 9 份分項作業書、加入 `db/`）與版控狀態（已進 git） |
 
-*最後更新：2026-06-16｜對應時程：見 `reference/網站建置時程.html` 與 PDF。*
+*最後更新：2026-09-02｜對應時程：見 `reference/網站建置時程.html` 與 PDF。*

@@ -28,8 +28,9 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [05 SEO](docs/05-seo.md) | system-analyst + qa：SEO 規範與稽核 |
 | [06 GEO](docs/06-geo.md) | deep-research + system-analyst：生成式引擎優化 |
 | [07 部署](docs/07-deployment.md) | backend-engineer（DevOps）：Azure 部署地圖 |
-| [08 資料庫設計](docs/08-database.md) | system-analyst + backend-engineer：47 張表 DDL、多語策略、索引、種子、遷移 |
+| [08 資料庫設計](docs/08-database.md) | system-analyst + backend-engineer：49 張表 DDL、多語策略、索引、種子、遷移 |
 | [09 後台 CMS 功能](docs/09-cms-admin.md) | backend-engineer：24 個後台單元規格、上傳建議尺寸總表、權限矩陣 |
+| [資料庫建置腳本](db/README.md) | `db/`：可執行的 migrations／seed／verify（資料庫名 NTI，本機 SQL Server 開發、相容 Azure SQL） |
 | [網站建置時程（PDF）](reference/NTI_網站建置時程.pdf) | 建置時程 Gantt（2026/07–11，7 月啟動、11 月測試上線）、客戶確認控制點 |
 | [網站建置時程（HTML）](reference/網站建置時程.html) | 時程表原始檔（可編輯，產 PDF 用） |
 | [部署與環境區隔](reference/部署與環境區隔.md) | mockup 預覽部署（Cloudflare Pages）、與正式站的區隔策略、架構待決事項 |
@@ -45,6 +46,13 @@ NTI/
 ├── docs/              # harness 文件（攤平、無子資料夾）
 │   ├── README.md      # Harness 總覽：編排總則 + Claude Code 設定 + 索引
 │   └── 01~07.md       # 七份分項作業書（設計/前端/後端/API/SEO/GEO/部署）
+├── db/                # 資料庫建置腳本（資料庫名 NTI）
+│   ├── README.md      # 執行方式、Azure 相容性 checklist、已知缺口
+│   ├── local/         # 只在本機執行：建庫／砍庫／dev 帳號
+│   ├── migrations/    # 一次性、依序，由 SchemaVersion 記錄
+│   ├── seed/          # run-always 冪等種子（角色／權限／分類／設定／頁面／方案）
+│   ├── verify/        # 建置後自我檢核
+│   └── tools/         # run-local.sh 一鍵建置
 ├── mockup/            # 靜態 HTML 原型（44 頁，客戶已定案的設計版本）
 │   └── assets/        # 圖片、site.css、img-size.js
 ├── reference/         # 規劃案原始文件（規劃書、時程、IA、簡報）
@@ -74,6 +82,7 @@ NTI/
 
 ## 工作慣例
 
+- **資料庫**：schema 設計在 [docs/08-database.md](docs/08-database.md)，可執行腳本在 [`db/`](db/README.md)。本機一鍵建置：`cp db/.env.local.example db/.env.local && db/tools/run-local.sh`。
 - **檔案放置慣例**：`docs/` 僅放 **harness engineering 文件**；其他產出的 PDF／時程／規劃檔一律放 `reference/`，客戶提供的原始素材放 `reference/sbk/`。新增重要文件時，於上方「文件索引」補連結。
 - 前端開發優先使用 `frontend-design` skill；改動後用 `run`／`verify` skill 驗證。
 - 已納入 git 版控（`master` 分支）。
