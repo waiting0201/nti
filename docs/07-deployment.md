@@ -26,7 +26,7 @@
 |------|------|------|------|------|
 | **Mockup 預覽（現況）** | `mockup/` 靜態 mockup（完整站雛形）— **客戶採用版** | Cloudflare Pages 專案 `nti-mockup`（direct upload，**不連 git**） | 手動 `wrangler pages deploy` | 公開、免密碼，**設計定案後下線** |
 | ~~**Mockup2 預覽**~~（未採用） | `mockup2/` 靜態切版稿（`.dc.html` + `support.js`） | Cloudflare Pages 專案 `nti-mockup2`（direct upload，**不連 git**） | 已停止更新 | 公開、免密碼，**可即刻下線** |
-| **公開網站（前端）** | Next.js **SSR + ISR** | **Azure Static Web Apps**（Free 起，SSR 撞限制退 Container Apps） | push / CI 自動 build | 公開、需 SEO |
+| **公開網站（前端）** | Next.js **SSR + ISR** | **Azure Static Web Apps** `stapp-nti-prod`（RG `NTIUS`／westus2／Free）<br>`gray-river-0a6ae341e.5.azurestaticapps.net` | push `main` → `.github/workflows/web.yml` | 公開可達，**上線前 robots 擋全站**（見 §7.3） |
 | **CMS 後台（前端）** | 純 SPA（靜態） | **與公開站同一個 Static Web Apps**，掛在 `/admin/`（vite `build.outDir` 直接寫進 `apps/web/public/admin`） | CI 先 `pnpm --filter admin build` 再 `pnpm --filter web build` | 登入後台、**noindex**（`robots.txt` Disallow） |
 | **API** | Azure Functions **.NET 10**（isolated、Consumption） | Azure Functions | CI/CD | 公開讀免認證、會員/後台需認證 |
 | **資料庫** | **Azure SQL Database — Basic** | Azure（PaaS） | — | 受 Functions 存取 |
@@ -105,6 +105,24 @@
 | 金鑰外洩（SQL 連線字串） | Azure Key Vault / App settings、不進版控、`security-review` |
 | 切換當機 | staging 演練 + 可回滾部署 + DNS 低 TTL |
 
+### 7.3 上線前的 noindex 閘
+
+SWA 的網址公開可達，而規劃上線是 2026-11。中間若被搜尋引擎收錄，換到正式網域後
+會留下一批指向 `azurestaticapps.net` 的舊索引。
+
+`apps/web/src/app/robots.ts` 因此**預設輸出 `Disallow: /`**，要開放收錄必須在該次
+build 明確設 `NEXT_PUBLIC_ALLOW_INDEXING=1`。CI 從 repository variable
+`ALLOW_INDEXING` 帶入 —— 目前未設（＝空字串＝擋全站）。
+
+**上線當天要做的兩件事**：
+
+1. `gh variable set ALLOW_INDEXING -R waiting0201/nti -b 1`
+2. `gh variable set SITE_URL -R waiting0201/nti -b https://www.nti-printing.com`
+   （canonical 與 hreflang 由它決定，見 `apps/web/src/lib/i18n.ts`）
+
+然後重跑一次 workflow。**兩件都做完才算上線** —— 只開 indexing 而 SITE_URL 還指著
+azurestaticapps.net 的話，canonical 會把權重導到臨時網址。
+
 ### 7.2 素材與 Blob Storage
 
 mockup 的素材（126 檔、62MB）放在 `stntiprod` 的 `assets` 容器，公開讀取。
@@ -165,5 +183,6 @@ AZ_STORAGE_ACCOUNT=stntiprod tools/upload-assets.sh
 | 2026-09-02 | Tim（Claude Code） | **改為 pnpm workspace + `apps/{web,admin}`**（比照 EuniceMed）：後台 vite `build.outDir` 直接寫進 `apps/web/public/admin`，省掉複製步驟；middleware matcher 改用副檔名排除，並補上 **`.swa` 排除**（SWA 以 `/.swa/health.html` 驗證部署，被導向會判定部署失敗） |
 | 2026-09-02 | Tim（Claude Code） | 新增 §7.1 SWA Free 硬限制對策：`output: 'standalone'` + `pack-standalone.mjs`（壓平 workspace 巢狀）+ `check-size.mjs`（250MB 閘，目前 135MB）；記錄 `outputFileTracingRoot` 與 hoisted linker 兩個坑。**新增風險：`mockup/` 未進版控導致 CI 建不出有圖的站，圖片轉 Blob 前不寫 workflow** |
 | 2026-09-02 | Tim（Claude Code） | **素材轉 Azure Blob Storage**：建立 RG `NTIUS`／帳戶 `stntiprod`／容器 `assets`（westus2，公開讀取），上傳 126 檔 62MB。頁面素材改走 `mediaUrl()`（`NEXT_PUBLIC_MEDIA_BASE`），standalone 產物 135MB → 73MB。**CI 建置不再依賴 `mockup/`**，前一列的風險解除 |
+| 2026-09-02 | Tim（Claude Code） | **接上 SWA 自動部署**：建立 `stapp-nti-prod`（NTIUS／westus2／Free）與 `.github/workflows/web.yml`（push `main` 觸發，hoisted 安裝、先 admin 後 web、`skip_app_build`、concurrency group）。新增 §7.3：上線前 robots 預設擋全站，上線需設 `ALLOW_INDEXING` 與 `SITE_URL` 兩個 variable |
 
 *最後更新：2026-09-02*

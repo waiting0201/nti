@@ -121,6 +121,20 @@ pnpm --filter web start:standalone   # 用實際要部署的產物起站（驗�
 > `src/middleware.ts` 的註解，彙整在
 > [`docs/07-deployment.md`](../../docs/07-deployment.md) §7.1。
 
+## 部署
+
+`stapp-nti-prod`（Azure Static Web Apps，Free）＝ `gray-river-0a6ae341e.5.azurestaticapps.net`。
+公開站與後台在同一份產物裡（`/` 與 `/admin/`）。
+
+自動部署：`.github/workflows/web.yml`，push 到公開 repo 的 `main` 觸發。
+`main` 由 `tools/sync-public.sh` 從 `master` 產生，所以日常流程
+（commit → `sync-public.sh` → `push Remote_GitHub`）就會部署一次。
+
+> ⚠️ **上線前 robots 預設擋全站**（`src/app/robots.ts`）。上線要設兩個 repository
+> variable：`ALLOW_INDEXING=1` 與 `SITE_URL=https://www.nti-printing.com`。
+> 只開前者的話 canonical 還指著 azurestaticapps.net，權重會導到臨時網址。
+> 詳見 [`docs/07-deployment.md`](../../docs/07-deployment.md) §7.3。
+
 ## 素材：本機 vs Blob
 
 素材網址一律經過 [`src/lib/media.ts`](src/lib/media.ts) 的 `mediaUrl()`，由
