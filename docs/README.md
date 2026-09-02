@@ -1,7 +1,7 @@
 # NTI Printing 官網 — Harness 文件總覽
 
 > 本檔整合三部分於一處：**A. Agent 編排總則**、**B. Claude Code 環境設定**、以及**分項作業書索引**。
-> 各建置領域（設計／前端／後端／API／SEO／GEO／部署／資料庫／後台 CMS）的細節，拆成同層的 9 份分項作業書（見下表）。
+> 各建置領域（設計／前端／後端／API／SEO／GEO／部署／資料庫／後台 CMS／後端技術規範）的細節，拆成同層的 10 份分項作業書（見下表）。
 > 搭配[網站建置時程](../reference/網站建置時程.html)（PDF）一起閱讀。
 
 ---
@@ -19,6 +19,7 @@
 | 07 | 部署 Deployment | [07-deployment.md](07-deployment.md) | `backend-engineer`（DevOps 角色） | system-analyst | P11 |
 | 08 | 資料庫設計 Database | [08-database.md](08-database.md) | `system-analyst`（schema）+ `backend-engineer`（建置） | — | P1 / P4 |
 | 09 | 後台 CMS 功能 | [09-cms-admin.md](09-cms-admin.md) | `backend-engineer` | system-analyst | P4 / P6 |
+| 10 | 後端技術規範 Backend Design | [10-backend-design.md](10-backend-design.md) | `backend-engineer` | system-analyst、code-review-optimizer | P4 / P6 |
 
 > SEO／GEO 為**跨 agent 的交付驗收條件**，不是孤立階段——每個前台頁面與 CMS 模組完成前都需滿足其 DoD（見 §A4）。
 
@@ -31,7 +32,8 @@
 | 公開網站（前端） | **Next.js（SSR + ISR）** | 需 SEO + GEO；內容頁 ISR、會員/個人化頁 SSR/CSR |
 | 公開站 host | **Azure Static Web Apps**（Free 起，必要時 Standard；SSR 撞限制則退 Container Apps） | Next.js SSR/ISR 一級支援 |
 | CMS 後台（後端管理介面） | **純 SPA**（靜態），**不需 SEO** | 登入後台用，host 同 SWA Free / Blob 靜態 |
-| API | **Azure Functions .NET 10**（isolated、Consumption） | 唯一資料存取層，**Dapper** + Azure SQL |
+| API | **Azure Functions .NET 10**（isolated、ASP.NET Core Integration、Consumption） | 唯一資料存取層；單一 `RouterFunction` + 集中式 `AppRouter`，寫法見 [10-backend-design.md](10-backend-design.md) |
+| 資料存取 | **EF Core（寫入 + Migration）+ Dapper（讀取）雙軌** | 2026-09-02 修訂（原為 Dapper 單軌）；schema 權威為 EF Migration，[db/](../db/) 降為參考與交付腳本 |
 | 資料庫 | **Azure SQL Database — Basic 層** | 已定案 |
 | 媒體/檔案 | **Azure Blob Storage** | 設計稿、媒體 |
 | 3D 包裝客製 | **本期不納入** | 曾評估 Pacdora 整合，但廠商不提供技術崁入（embedding）服務，故本期不納入；如需 3D 客製改以樣板+人工報價或後續另案評估 |
@@ -149,11 +151,13 @@ NTI/
 ├── CLAUDE.md                  # 專案規範與索引（agent 每次載入）
 ├── .claude/
 │   └── settings.local.json    # 本機 harness 設定（權限等，不進版控）
-├── docs/                      # 文件區（本總覽 + 9 份分項作業書）
+├── docs/                      # 文件區（本總覽 + 10 份分項作業書）
 │   ├── README.md              # 本檔：Harness 總覽（編排總則 + 設定 + 索引）
 │   ├── 01-design.md … 09-cms-admin.md
-├── db/                        # 資料庫建置腳本（資料庫名 NTI）
+│   └── 10-backend-design.md   # 後端技術規範（P4 的施工標準）
+├── db/                        # 資料庫參考腳本與交付版（資料庫名 NTI）
 │   └── migrations / seed / verify / local / tools
+│                              # schema 權威為 EF Migration，見 10 §8
 ├── reference/                 # 規劃案原始文件（客戶素材在 reference/sbk/）
 └── mockup/                    # 靜態切版稿（未進版控，見 .gitignore）
 ```
@@ -223,5 +227,6 @@ Agent 具備檔案式持久記憶，位於使用者層級：
 | 2026-06-12 | Tim（Claude Code） | 整併 docs/：移除 harness/ 子資料夾、檔案攤平至 docs/；本檔吸收原 harness-engineering.md（編排總則）與 harness.md（Claude Code 設定）；競品分析併入 01-design.md |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 P7 整合 track、G 關卡、相關研究/職責/成本/風險 |
 | 2026-09-02 | Tim（Claude Code） | 新增 `db/` 資料庫建置腳本（資料庫名 NTI，migrations／seed／verify／local），08 與 09 同步回寫；更新目錄結構（7 → 9 份分項作業書、加入 `db/`）與版控狀態（已進 git） |
+| 2026-09-02 | Tim（Claude Code） | 新增 [10-backend-design.md](10-backend-design.md)（以 `Jabez/Api` 為範本的後端技術規範，9 → 10 份分項作業書）；技術選型表修訂資料存取為 **EF Core 寫 + Dapper 讀雙軌**（推翻 2026-06-12 的 Dapper 單軌）並新增 schema 權威＝EF Migration；03／04 同步回寫 |
 
 *最後更新：2026-09-02｜對應時程：見 `reference/網站建置時程.html` 與 PDF。*

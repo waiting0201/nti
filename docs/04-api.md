@@ -19,20 +19,48 @@
 | [`05-seo.md`](05-seo.md) | 內容型別需回傳的 SEO 欄位 |
 | [`08-database.md`](08-database.md) | ER Model／資料表欄位（endpoint 回傳欄位的來源） |
 | [`09-cms-admin.md`](09-cms-admin.md) | 後台 24 個單元 → `/admin/*` 資源與權限碼對照 |
+| [`10-backend-design.md`](10-backend-design.md) | **本契約的實作規格**：回應信封、錯誤碼、分頁、路由與授權的落地寫法 |
 | 過往案例（webservice/SAP RFC/SAP RFC 串接經驗） | 第三方串接模式參考 |
 
 ---
 
 ## 2. 契約規範
 
-- **執行環境**：**Azure Functions .NET 10（isolated）HTTP trigger**；每個資源群組以 Function 實作，路由用 `route` 屬性對應下列路徑。
-- **風格**：RESTful（資源導向）；JSON；版本前綴 `/api/v1`。
-- **語系**：以 `?lang=zh|en` 或 `Accept-Language` 提供雙語內容；列表回傳當前語系，必要時帶 `hreflang` 對應資訊。
-- **認證**：公開讀取（前台內容）免認證；會員 API 用 JWT/session；後台管理 API 需 RBAC（超管/編輯/檢視者）。
-- **錯誤格式**：統一 `{ code, message, details }`，HTTP 狀態語意正確。
-- **分頁**：清單一律 `page`/`pageSize` + `total`。
-- **檔案**：上傳走 multipart 或 **Azure Blob 預簽章（SAS）URL**；回傳 Blob 相對路徑（無資產表，見 [`08-database.md` §2.6](08-database.md)）。
-- **文件化**：OpenAPI/Swagger 為單一事實來源，與本文件對齊。
+> 本節定義**契約形狀**；對應的實作寫法（類別、middleware、Router）見 [`10-backend-design.md`](10-backend-design.md)。
+
+- **執行環境**：**Azure Functions .NET 10（isolated）+ ASP.NET Core Integration**。**單一 `RouterFunction` catch-all（`Route = "{*route}"`）+ `AppRouter` 集中式分派**，不是每個資源群組一支 Function —— 路由表與權限表集中在一處，便於與 [`09-cms-admin.md` §6](09-cms-admin.md) 的 171 列權限矩陣逐條對照。詳見 [`10-backend-design.md` §3](10-backend-design.md)。
+- **風格**：RESTful（資源導向）；JSON。
+- **路徑前綴**：**`/api/v1`**（`host.json` 的 `routePrefix`）。下方 §3 列出的路徑一律省略此前綴，例如 `GET /solutions` 的實際位址是 `GET /api/v1/solutions`。
+- **JSON 命名**：一律 **camelCase**（請求與回應皆然）。
+- **語系**：以 `?lang=zh|en` 或 `Accept-Language` 提供雙語內容；列表回傳當前語系，必要時帶 `hreflang` 對應資訊。**缺語系不 fallback**（[`08-database.md` §2.5](08-database.md)）—— 該語系無內容者不列出，詳細頁回 404。
+- **認證**：公開讀取（前台內容）免認證；會員 API 與後台 API 皆用 **JWT**，且**兩者的 audience 分離**（會員 token 不得存取 `/admin/*`）；後台另需 RBAC（超管／編輯／檢視者）。
+- **成功回應信封**：所有端點一律回傳統一信封，**不回裸 data**：
+
+  ```jsonc
+  { "success": true, "code": null, "data": { ... }, "message": "Success",
+    "errors": [], "timestamp": "2026-09-02T10:00:00.0000000+00:00" }
+  ```
+
+- **錯誤格式**：同一信封，`success: false` 並帶 `code`／`message`／`errors`，HTTP 狀態語意正確：
+
+  ```jsonc
+  { "success": false, "code": "VALIDATION_REQUIRED", "data": null,
+    "message": "缺少必填欄位。", "errors": ["email is required"], "timestamp": "..." }
+  ```
+
+  `code` 給程式判斷、`message` 給人看、`errors` 放細節。**前端一律以 `code` 分支，不得比對 `message` 字串**。錯誤碼值域見 [`10-backend-design.md` §5.4](10-backend-design.md)。
+- **分頁**：查詢參數 `page` / `pageSize`（`pageSize` 上限 **100**，預設 20）。**雙模式**：帶分頁參數時 `data` 為
+
+  ```jsonc
+  { "items": [ ... ], "totalCount": 137, "page": 1, "pageSize": 20, "totalPages": 7 }
+  ```
+
+  不帶分頁參數時 `data` 為平面陣列（供下拉選單與前台完整清單）。
+- **檔案**：上傳走 multipart；下載一律經後端代理路由 `/files/{container}/{*path}`（Blob 容器全為 private）。回傳 Blob 相對路徑（無資產表，見 [`08-database.md` §2.6](08-database.md)）。
+- **CORS**：allow-list 兩個 origin（公開站、CMS SPA），**不使用 `*`**。
+- **公開寫入端點防護**：`POST /quotes`、`POST /contacts`、`/auth/*` 需通過 **Turnstile** 驗證並受 rate limit（超限回 429 `RATE_LIMITED`）。
+- **快取**：前台唯讀端點帶 `s-maxage` + `stale-while-revalidate` 供 Next.js ISR 消費；後台與會員端點一律 `no-store`。
+- **文件化**：OpenAPI/Swagger 為單一事實來源，與本文件對齊（產生方式待定，見 [`10-backend-design.md` §13](10-backend-design.md)）。
 
 ---
 
@@ -88,6 +116,7 @@
 
 - 非 CRUD 的動作端點與其權限碼：`GET /admin/quote/export`（`quote.export`，**須寫入 `AuditLog`**）、`GET /admin/quote/{id}/attachments/{attId}`（`quote.download`，`ScanStatus <> 'Clean'` 者拒絕）、`GET|POST /admin/redirect/export|import`（`redirect.export`）、`POST /admin/audit/emails/{id}/resend`（`audit.resend`）。
 - 中英對照無獨立端點（`/admin/i18n` 已移除），兩語系隨各資源一併讀寫。
+- **未列於上表與權限對照的 `/admin/*` 路徑一律拒絕（403）**。新增後台端點時必須同步補進路由表與權限表，否則不會靜默放行（[`10-backend-design.md` §7.5](10-backend-design.md)）。
 
 > 本期不含 AI 客服端點（原 `/ai/chat` 已移除），亦不含 Pacdora／3D 包裝客製端點（廠商不提供技術崁入服務）。
 
@@ -97,7 +126,7 @@
 
 1. **P1 契約凍結 v1**：ER Model + OpenAPI 草稿，經 Gate 簽核。
 2. **Mock server**：供 frontend 解耦開發。
-3. **P4 實作對齊**：backend-engineer 實作，逐 endpoint 與契約 diff。
+3. **P4 實作對齊**：backend-engineer 依 [`10-backend-design.md`](10-backend-design.md) 實作，逐 endpoint 與契約 diff。
 4. **契約變更流程**：任何欄位/路徑變更 → 更新 OpenAPI + 本文件 §3 + 通知前後端 + 補變更紀錄。
 
 ---
@@ -138,5 +167,6 @@
 | 2026-09-01 | Tim（Claude Code） | 上游輸入補 08（DDL）／09（後台單元）；ER Model 權威來源改指向 `08-database.md` |
 | 2026-09-01 | Tim（Claude Code） | §3.1 依 mockup 44 頁對齊（移除 `/projects/{slug}`、`/green-vlog/{slug}`；`/nti-difference`、`/advantages` 併入 `/pages/{pageKey}`；新增 faq／industry-trends／careers／certifications／clients／site-settings）；檔案上傳由「預簽章 URL（S3）」更正為 Azure Blob SAS；`/admin/i18n` 移除 |
 | 2026-09-02 | Tim（Claude Code） | 對齊 08／09 修正四處契約缺口：`POST /contacts` 刪除不存在的「主旨」、補回「公司」（依 `ContactMessage` 與 `mockup/contact.html`）；`POST /quotes` 欄位補齊為完整清單（產業／尺寸／材質／目標日期／永續建議勾選／同意時間）；新增 `GET /categories?type=`（前台下拉選項來源，原為契約缺口）與 `POST /supplier/downloads/{id}/hit`；§3.4 `/admin/{resource}` 改為 `{unit}` 並附完整路徑↔單元↔權限碼對照表（不再單複數混用、`/admin/users` 更正為 `/admin/admin`），補列非 CRUD 動作端點；固定頁 28 → 29 |
+| 2026-09-02 | Tim（Claude Code） | 以 `Jabez/Api` 為範本補齊契約缺口：新增成功回應信封與錯誤碼欄位 `code`（原僅有 `{code,message,details}` 形狀）、分頁回應形狀與雙模式、`pageSize` 上限 100；執行環境由「每資源群組一支 Function」改為**單一 `RouterFunction` + 集中式 `AppRouter`**；明訂 §3 路徑省略的前綴為 `/api/v1`；補 camelCase、CORS 雙 origin、Turnstile／rate limit、快取標頭、會員與後台 audience 分離；§3.4 補「未列出的 `/admin/*` 預設拒絕」；新增 [`10-backend-design.md`](10-backend-design.md) 為實作規格 |
 
 *最後更新：2026-09-02*

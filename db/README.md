@@ -1,9 +1,32 @@
-# db／ — NTI 資料庫建置腳本
+# db／ — NTI 資料庫參考腳本
 
 資料庫名稱 **NTI**。設計來源為 [docs/08-database.md](../docs/08-database.md)（schema）與
 [docs/09-cms-admin.md](../docs/09-cms-admin.md)（後台單元與權限矩陣）；本目錄是它們的**可執行版本**。
 
 目前以本機 SQL Server 開發，語法同時相容 Azure SQL Database（Basic）。
+
+---
+
+> ## ⚠️ 定位聲明（2026-09-02 起）
+>
+> 後端資料存取已定案為 **EF Core（寫入 + Migration）+ Dapper（讀取）雙軌**，
+> **schema 的權威來源改為 `Api/Data/Migrations/`**（見 [docs/10-backend-design.md §8](../docs/10-backend-design.md)）。
+>
+> 本目錄自此由「權威建置腳本」降為 **參考實作與交付腳本**：
+>
+> | 用途 | 是否仍有效 |
+> |---|---|
+> | 本機一鍵建庫（`tools/run-local.sh`）供 P4 前的設計驗證與資料比對 | ✅ 有效 |
+> | 交付給客戶／DBA 的可讀 DDL 與種子腳本 | ✅ 有效 |
+> | **`verify/verify.sql` 的 24 項斷言** | ✅ **保留為 EF Migration 產出的驗收閘** —— 這些斷言獨立於 schema 由誰產生，價值不變 |
+> | 〈Azure SQL 相容性 checklist〉（禁用語法表 + 預設值差異表） | ✅ **繼續適用**，檢查對象改為 `dotnet ef migrations script` 的輸出 |
+> | 作為 P4 之後 schema 變更的落點 | ❌ 已失效 —— schema 變更一律寫 EF Migration，再視需要回頭同步本目錄 |
+>
+> **P4 的第一項工作**是把 `migrations/`（3 支）與 `seed/`（6 支）搬遷為
+> `Data/Configurations/<Entity>Configuration.cs` + `HasData`。
+> 各項規格（具名約束、Category 型別安全的 9 條 PERSISTED 計算欄、filtered unique index、
+> 固定 Id 種子）的 EF Core 表達方式，對照表見
+> [docs/10-backend-design.md §8.5](../docs/10-backend-design.md)。
 
 ---
 
@@ -148,6 +171,9 @@ GO
 `Category`(44) 客戶可能增刪，維持自然鍵 + 自動 Id。
 
 ### 接上 DbUp
+
+> 定位變更後，正式環境的 schema 由 `Program.cs` 啟動時的 `MigrateAsync()` 套用（見 10 §4／§11）；
+> 本節保留供「以本目錄腳本交付」的情境使用。
 
 `SchemaVersion` 的 `ScriptName` / `Applied` 兩欄刻意與 DbUp 預設 journal 相容
 （名稱與型別不可更動），其餘欄位皆可 NULL 或帶 DEFAULT。對接只需：

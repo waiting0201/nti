@@ -20,6 +20,7 @@
 | [`05-seo.md`](05-seo.md) | CMS 需提供的 SEO 欄位（meta/slug/alt/canonical/hreflang） |
 | [`08-database.md`](08-database.md) | **資料表 DDL、多語策略、索引、種子**（本文件 §4.1 的落地規格） |
 | [`09-cms-admin.md`](09-cms-admin.md) | **後台 24 個單元的欄位／操作／權限規格**（本文件 §3 的落地規格） |
+| [`10-backend-design.md`](10-backend-design.md) | **後端技術規範**：分層、命名、回應信封、資料存取、設定與 Coding Checklist（本文件 §2 的落地規格） |
 
 ---
 
@@ -27,12 +28,14 @@
 
 | 項目 | 選定 | 備註 |
 |------|------|------|
-| 後端框架 | **Azure Functions .NET 10**（isolated worker） | HTTP trigger API，唯一資料存取層 |
-| 資料存取 | **Dapper**（micro-ORM、手寫 SQL） | 對應 Azure SQL，效能優先；避免 N+1、查詢可控 |
+| 後端框架 | **Azure Functions .NET 10**（isolated worker，ASP.NET Core Integration） | 單一 `RouterFunction` catch-all + 集中式 `AppRouter`，唯一資料存取層 |
+| 資料存取 | **EF Core（寫入 + Migration）+ Dapper（讀取）雙軌** | 寫入要交易與關聯完整性、讀取要可控 SQL 與 DTO 投影；分工鐵律見 [`10-backend-design.md` §8](10-backend-design.md)。**取代 2026-06-12 的 Dapper 單軌決策** |
+| schema 權威 | **EF Core Migration**（`Api/Data/Migrations/`） | [`db/`](../db/) 由權威降為參考實作與交付腳本；`db/verify/verify.sql` 保留為驗收閘 |
 | 資料庫 | **Azure SQL Database — Basic 層** | 已定案；ER Model 與 DDL 見 [`08-database.md`](08-database.md) |
 | 檔案儲存 | **Azure Blob Storage** | 媒體/設計稿上傳（預簽章 URL） |
 | CMS 後台前端 | **純 SPA（靜態）**，不需 SEO、不需 SSR | 與公開站分開部署 |
 | AI 客服 | **本期不納入** | Claude API/AI Agent 暫緩，後續再評估 |
+| 施工標準 | [`10-backend-design.md`](10-backend-design.md) | 分層鐵律、命名、`ApiResponse` 信封、錯誤碼、JWT、設定管理、Coding Checklist |
 
 ---
 
@@ -59,9 +62,11 @@
 
 ## 4. 工作分解
 
-1. **資料層**（P4）：依 [`08-database.md`](08-database.md) 建表（**49 張表**：內容模型 + 多語 i18n 子表 + 會員 + 報價/聯絡 + RBAC + `SchemaVersion` + 預留的 `NewsletterSubscriber`）。可執行腳本已備妥於 [`db/`](../db/)，本機一鍵建置 `db/tools/run-local.sh`。
+1. **資料層**（P4）：依 [`08-database.md`](08-database.md) 建立 **49 張表**（內容模型 + 多語 i18n 子表 + 會員 + 報價/聯絡 + RBAC + 版本表 + 預留的 `NewsletterSubscriber`）。
+   **schema 權威為 EF Core Migration**：既有 [`db/`](../db/) 的 3 支 migration 與 6 支 seed 需搬遷為 `Data/Configurations/<Entity>Configuration.cs` + `HasData`（表達方式對照表見 [`10-backend-design.md` §8.5](10-backend-design.md)），這是 P4 的第一項工作。
+   `db/` 保留為參考實作與交付腳本（本機一鍵建置 `db/tools/run-local.sh` 仍可用）；`db/verify/verify.sql` 的 24 項斷言保留為 EF Migration 產出的驗收閘。
 2. **CMS 後台**：依 [`09-cms-admin.md`](09-cms-admin.md) 的 24 個單元實作 CRUD + 排序 + 上下架排程 + 富文本 + 欄位級檔案上傳（Azure Blob，**不做 Media Library**）+ 角色權限。
-3. **API 實作**：對齊 04-api 契約（前台讀取 + 後台管理 + 表單 + 會員）。
+3. **API 實作**：對齊 [`04-api.md`](04-api.md) 契約（前台讀取 + 後台管理 + 表單 + 會員），寫法依 [`10-backend-design.md`](10-backend-design.md)。
 4. **會員與表單**（P6）：認證（JWT/session）、密碼雜湊、信件通知、檔案上傳防護。
 5. **內容遷移**（P8）：WordPress → 新 CMS（含媒體、分類、上架狀態），配合 301 對照表（見 05-seo）。
 
@@ -107,5 +112,6 @@
 | 2026-09-01 | Tim（Claude Code） | 拆出 [`08-database.md`](08-database.md)（DDL）與 [`09-cms-admin.md`](09-cms-admin.md)（後台單元規格）；本文件保留領域編排，細節改為引用 |
 | 2026-09-01 | Tim（Claude Code） | §3 內容維護清單（照抄規劃書、已被 IA 改版取代）改為指向 09 §2／§2.1；修正規劃書路徑 `planning/` → `reference/` |
 | 2026-09-02 | Tim（Claude Code） | §3 對齊 08／09：報價狀態 3 態 → 5 態（另補聯絡表單 4 態）、刪除已廢除的「語系管理」獨立模組、權限指向 09 §6 矩陣、補「後台不可查看會員密碼」；§4 表數 47 → 49 並指向可執行腳本 [`db/`](../db/) |
+| 2026-09-02 | Tim（Claude Code） | 以 `Jabez/Api` 為範本定調實作路線：§2 資料存取由 **Dapper 單軌改為 EF Core（寫）+ Dapper（讀）雙軌**（推翻 2026-06-12 凍結決策）、後端框架註明 ASP.NET Core Integration 與集中式 `AppRouter`、新增「schema 權威＝EF Migration」與「施工標準＝10」兩列；§4 資料層改為以 EF Migration 為權威、`db/` 降為參考與交付用；新增 [`10-backend-design.md`](10-backend-design.md) |
 
 *最後更新：2026-09-02*

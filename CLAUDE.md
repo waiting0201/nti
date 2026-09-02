@@ -30,7 +30,8 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [07 部署](docs/07-deployment.md) | backend-engineer（DevOps）：Azure 部署地圖 |
 | [08 資料庫設計](docs/08-database.md) | system-analyst + backend-engineer：49 張表 DDL、多語策略、索引、種子、遷移 |
 | [09 後台 CMS 功能](docs/09-cms-admin.md) | backend-engineer：24 個後台單元規格、上傳建議尺寸總表、權限矩陣 |
-| [資料庫建置腳本](db/README.md) | `db/`：可執行的 migrations／seed／verify（資料庫名 NTI，本機 SQL Server 開發、相容 Azure SQL） |
+| [10 後端技術規範](docs/10-backend-design.md) | backend-engineer：**P4 的施工標準**——分層鐵律、`ApiResponse` 信封、錯誤碼、JWT/RBAC、EF+Dapper 雙軌、Coding Checklist（範本：`Jabez/Api`） |
+| [資料庫建置腳本](db/README.md) | `db/`：參考實作與交付腳本 migrations／seed／verify（資料庫名 NTI）。**schema 權威為 EF Migration**，見 10 §8 |
 | [網站建置時程（PDF）](reference/NTI_網站建置時程.pdf) | 建置時程 Gantt（2026/07–11，7 月啟動、11 月測試上線）、客戶確認控制點 |
 | [網站建置時程（HTML）](reference/網站建置時程.html) | 時程表原始檔（可編輯，產 PDF 用） |
 | [部署與環境區隔](reference/部署與環境區隔.md) | mockup 預覽部署（Cloudflare Pages）、與正式站的區隔策略、架構待決事項 |
@@ -45,8 +46,8 @@ NTI/
 ├── CLAUDE.md          # 本檔：規範與索引
 ├── docs/              # harness 文件（攤平、無子資料夾）
 │   ├── README.md      # Harness 總覽：編排總則 + Claude Code 設定 + 索引
-│   └── 01~07.md       # 七份分項作業書（設計/前端/後端/API/SEO/GEO/部署）
-├── db/                # 資料庫建置腳本（資料庫名 NTI）
+│   └── 01~10.md       # 十份分項作業書（設計/前端/後端/API/SEO/GEO/部署/資料庫/CMS/後端規範）
+├── db/                # 資料庫參考腳本與交付版（資料庫名 NTI）
 │   ├── README.md      # 執行方式、Azure 相容性 checklist、已知缺口
 │   ├── local/         # 只在本機執行：建庫／砍庫／dev 帳號
 │   ├── migrations/    # 一次性、依序，由 SchemaVersion 記錄
@@ -74,15 +75,17 @@ NTI/
 |------|------|
 | 公開網站（前端） | **Next.js（React）SSR + ISR** → Azure Static Web Apps |
 | CMS 後台 | 自建管理後台，**純 SPA（靜態、不需 SEO）** |
-| API／後端 | **Azure Functions .NET 10**（isolated）+ **Dapper** |
-| 資料庫 | **Azure SQL Database — Basic** |
+| API／後端 | **Azure Functions .NET 10**（isolated、ASP.NET Core Integration），單一 `RouterFunction` + 集中式 `AppRouter` |
+| 資料存取 | **EF Core（寫入 + Migration）+ Dapper（讀取）雙軌**（2026-09-02 修訂，原為 Dapper 單軌） |
+| 資料庫 | **Azure SQL Database — Basic**（schema 權威＝EF Migration） |
 | 檔案儲存 | **Azure Blob Storage** |
 | 3D 包裝客製 | **本期不納入**（Pacdora 廠商不提供技術崁入服務） |
 | AI 客服 | **本期不納入**（Claude API/AI Agent 暫緩） |
 
 ## 工作慣例
 
-- **資料庫**：schema 設計在 [docs/08-database.md](docs/08-database.md)，可執行腳本在 [`db/`](db/README.md)。本機一鍵建置：`cp db/.env.local.example db/.env.local && db/tools/run-local.sh`。
+- **後端開發**：一律先讀 [docs/10-backend-design.md](docs/10-backend-design.md)（分層鐵律、回應信封、錯誤碼、授權），再看 [docs/04-api.md](docs/04-api.md)（要寫哪些端點）。範本專案為 `/Users/tim/webapps/Jabez/Api`。
+- **資料庫**：schema 設計在 [docs/08-database.md](docs/08-database.md)；**權威來源為 EF Core Migration**（`Api/Data/Migrations/`，表達方式對照見 10 §8.5）。[`db/`](db/README.md) 為參考實作與交付腳本，本機一鍵建置：`cp db/.env.local.example db/.env.local && db/tools/run-local.sh`；`db/verify/verify.sql` 保留為驗收閘。
 - **檔案放置慣例**：`docs/` 僅放 **harness engineering 文件**；其他產出的 PDF／時程／規劃檔一律放 `reference/`，客戶提供的原始素材放 `reference/sbk/`。新增重要文件時，於上方「文件索引」補連結。
 - 前端開發優先使用 `frontend-design` skill；改動後用 `run`／`verify` skill 驗證。
 - 已納入 git 版控（`master` 分支）。
