@@ -15,6 +15,7 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 
 | 文件 | 說明 |
 |------|------|
+| [**專案進度總表**](STATUS.md) | **做到哪裡了**的單一真相來源：已完成／未開工／被擋住的項目，與上線前 checklist |
 | [規劃書（md）](reference/NTI_Printing_官網規劃書.md) | 完整官網規劃：前端頁面、後端功能、sitemap、技術建議 |
 | [規劃書（pdf）](reference/NTI_Printing_官網規劃書.pdf) | 規劃書 PDF 版 |
 | [規劃書（pptx）](reference/NTI_Printing_官網規劃書.pptx) | 規劃書簡報版 |
@@ -46,6 +47,7 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 ```
 NTI/
 ├── CLAUDE.md          # 本檔：規範與索引
+├── STATUS.md          # 進度總表：做到哪裡了（狀態的單一真相來源）
 ├── docs/              # harness 文件（攤平、無子資料夾）
 │   ├── README.md      # Harness 總覽：編排總則 + Claude Code 設定 + 索引
 │   └── 01~10.md       # 十份分項作業書（設計/前端/後端/API/SEO/GEO/部署/資料庫/CMS/後端規範）
