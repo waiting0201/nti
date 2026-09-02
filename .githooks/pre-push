@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
-# 安全網：絕不讓含 reference/（約 2.5GB）的 ref 推向 Remote_GitHub。
-# 會撞上 GitHub 的 2GB 單次推送上限，且該目錄為客戶素材與設計原檔，只放 NAS。
+# 安全網：絕不讓含非公開路徑的 ref 推向 Remote_GitHub。
+#   reference/  約 2.5GB，會撞上 GitHub 的 2GB 單次推送上限
+#   db/local/   本機建庫腳本，含 dev 管理員帳號雜湊
 remote="$1"
 [ "$remote" = "Remote_GitHub" ] || exit 0
 
 z40=0000000000000000000000000000000000000000
 while read -r local_ref local_sha remote_ref remote_sha; do
     [ "$local_sha" = "$z40" ] && continue
-    if git ls-tree --name-only "$local_sha" | grep -qx 'reference'; then
+    hit=$(git ls-tree -r --name-only "$local_sha" \
+          | grep -E '^(reference/|db/local/)' | head -3 || true)
+    if [ -n "$hit" ]; then
         echo "" >&2
-        echo "pre-push 拒絕：$local_ref 含 reference/，不得推向 Remote_GitHub。" >&2
-        echo "  reference/ 約 2.5GB，只推 Remote_NAS。" >&2
-        echo "  GitHub 請推 public 分支： tools/sync-public.sh && git push Remote_GitHub public:main" >&2
+        echo "pre-push 拒絕：$local_ref 含不應公開的路徑，不得推向 Remote_GitHub。" >&2
+        echo "$hit" | sed 's/^/    /' >&2
+        echo "  GitHub 請推 public 分支： tools/sync-public.sh && git push Remote_GitHub" >&2
         echo "" >&2
         exit 1
     fi

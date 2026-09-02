@@ -96,8 +96,15 @@ NTI/
 
   | 分支 | 內容 | 推向 | 體積 |
   |------|------|------|------|
-  | `master` | 完整（含 `reference/`） | `Remote_NAS`（`/Volumes/public/Repo/NTI`） | 2,527 MB / 111 檔 |
-  | `public` | master 去掉 `reference/` | `Remote_GitHub`（`waiting0201/nti`） | 0.3 MB / 32 檔 |
+  | `master` | 完整 | `Remote_NAS`（`/Volumes/public/Repo/NTI`） | 2,527 MB / 111 檔 |
+  | `public` | master 去掉 `reference/` 與 `db/local/` | `Remote_GitHub`（`waiting0201/nti`，**public repo**） | 0.3 MB / ~28 檔 |
+
+  **`public` 分支的排除項**（`tools/sync-public.sh` 的 `EXCLUDE`）：
+  - `reference/` —— 設計 PSD 與客戶素材，約 2.5GB
+  - `db/local/` —— 只在本機執行的建庫腳本，含 dev 管理員帳號雜湊
+
+  > ⚠️ `waiting0201/nti` 是 **public repo**。新增檔案時先想清楚是否適合公開；
+  > 客戶未上線的素材、任何憑證與個資一律放進排除項，或根本不要進版控。
 
   **日常流程**：一律 commit 在 `master` → `git push Remote_NAS` → `tools/sync-public.sh` → `git push Remote_GitHub`。
   兩個 remote 的預設 refspec 已設好，裸的 `git push <remote>` 就會推對的分支到對的地方。
@@ -111,5 +118,4 @@ NTI/
 
 ## 聯絡資訊
 
-- 電話：04-2436-6659｜Email：tim@weypro.com
-- 地址：406 台中市北屯區東山路一段192巷56弄18號
+專案聯絡窗口與客戶聯絡資料見 `reference/`（未進 GitHub 公開版）。

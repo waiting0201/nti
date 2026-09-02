@@ -49,7 +49,9 @@ db/tools/run-local.sh
 `/opt/mssql-tools18/bin/sqlcmd`。GUI 檢視可用 DBeaver 或 VS Code 的 `ms-mssql` 擴充
 （`localhost,1433` / `sa`）。
 
-dev 管理員帳號：`admin@nti.local` / `NtiDev@2026`（僅本機，見 `local/910_seed_dev_admin.sql`）。
+dev 管理員帳號為 `admin@nti.local`，密碼見 `local/910_seed_dev_admin.sql` 檔頭註解。
+**`local/` 只在本機執行、不會出現在 GitHub 公開版**（見 [CLAUDE.md](../CLAUDE.md) 版控與雙 remote），
+需要時向專案內部版（NAS）索取。
 
 ---
 

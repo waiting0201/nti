@@ -3,3 +3,4 @@
 mockup/
 mockup2/
 db/.env.local
+.claude/projects/
