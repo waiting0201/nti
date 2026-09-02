@@ -9,7 +9,7 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 
 - 品牌標語（PES）：PROFESSIONALS | EFFECTIVENESS | SERVICE
 - 需求：中／英雙語官網 + 自建 CMS 後台 + 會員系統 + 報價／聯絡表單 + AI 客服
-- 目前狀態：**原型階段**（`mockup/` 靜態 HTML 原型 44 頁，客戶已定案並持續依客戶稿件迭代；Next.js／CMS 正式開發尚未啟動）
+- 目前狀態：**前端切版 + 後台介面完成**（`web/` Next.js 1:1 承接 `mockup/` 全部 44 頁、雙語路由就緒；`admin/` 24 個後台單元可操作，接本機 mock；API／DB 正式開發尚未啟動）
 
 ## 文件索引
 
@@ -38,6 +38,8 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [官網資訊架構 IA](reference/官網資訊架構_IA.md) | 依客戶 sitemap 的完整節點→mockup 頁面對照、footer/浮動鈕、對齊異動紀錄 |
 | [品牌簡報：首頁版型](reference/NTI_Brand_Deck_首頁版型.pptx) | 客戶 2026-09-01 版首頁內容順序與 What We Do／Why NTI／Proof 三區塊的文案與配色稿 |
 | [現有網站盤點與內容遷移](reference/現有網站盤點與內容遷移.md) | 舊站 nti-printing.com 頁面/內容盤點、新舊頁面對應、缺漏頁面與待製內容、待決策點 |
+| [前端專案說明](web/README.md) | `web/`：Next.js 公開站——結構、素材同步、版面一致性怎麼保證、`verify:markup` 驗收閘 |
+| [後台專案說明](admin/README.md) | `admin/`：React + Vite 管理後台——24 個單元、權限矩陣、mock 資料來源、接 API 時要改哪裡 |
 
 ## 目錄結構
 
@@ -54,8 +56,17 @@ NTI/
 │   ├── seed/          # run-always 冪等種子（角色／權限／分類／設定／頁面／方案）
 │   ├── verify/        # 建置後自我檢核
 │   └── tools/         # run-local.sh 一鍵建置
-├── mockup/            # 靜態 HTML 原型（44 頁，客戶已定案的設計版本）
+├── mockup/            # 靜態 HTML 原型（44 頁，客戶已定案的設計版本）— 切版的權威來源
 │   └── assets/        # 圖片、site.css、img-size.js
+├── web/               # Next.js 公開站（App Router），1:1 承接 mockup 全部 44 頁
+│   ├── src/app/       # globals.css＝site.css 原檔；[locale]/ 下 44 個 page.tsx
+│   ├── src/components/# Header/Footer/浮動鈕＋各頁行為（自 mockup inline script 移植）
+│   ├── scripts/       # sync-assets / build-pages（codegen）/ verify-markup（驗收閘）
+│   └── public/assets/ # 由 mockup/assets 同步而來，**不進版控**（76MB）
+├── admin/             # 管理後台（React + Vite 純 SPA，靜態、noindex）
+│   ├── src/units/     # docs/09 的 24 個單元宣告（欄位、清單欄、權限、上傳提示）
+│   ├── src/api/       # client.ts＝唯一的資料存取層；種子自 db/seed 與 mockup 產生
+│   └── src/pages/     # 通用清單／編輯 + 儀表板、設定、分類、角色、操作紀錄
 ├── reference/         # 規劃案原始文件（規劃書、時程、IA、簡報）— 約 2.5GB，**只進 NAS**
 │   └── sbk/           # 客戶提供的原始素材（sitemap、CIS、需求書）
 ├── tools/
@@ -91,6 +102,13 @@ NTI/
 - **後端開發**：一律先讀 [docs/10-backend-design.md](docs/10-backend-design.md)（分層鐵律、回應信封、錯誤碼、授權），再看 [docs/04-api.md](docs/04-api.md)（要寫哪些端點）。範本專案為 `/Users/tim/webapps/Jabez/Api`。
 - **資料庫**：schema 設計在 [docs/08-database.md](docs/08-database.md)；**權威來源為 EF Core Migration**（`Api/Data/Migrations/`，表達方式對照見 10 §8.5）。[`db/`](db/README.md) 為參考實作與交付腳本，本機一鍵建置：`cp db/.env.local.example db/.env.local && db/tools/run-local.sh`；`db/verify/verify.sql` 保留為驗收閘。
 - **檔案放置慣例**：`docs/` 僅放 **harness engineering 文件**；其他產出的 PDF／時程／規劃檔一律放 `reference/`，客戶提供的原始素材放 `reference/sbk/`。新增重要文件時，於上方「文件索引」補連結。
+- **前端切版**：版面與 CSS **一律以 `mockup/` 為準**（客戶已確認），不做視覺重新詮釋。
+  `web/src/app/globals.css` 是 `mockup/assets/site.css` 的原檔複製，要改樣式請先改 mockup 再同步。
+  頁面由 `web/scripts/build-pages.mjs` 從 mockup 機械式產生；改動後務必跑驗收閘：
+  `cd web && npm run build && npm run start`，另一終端 `npm run verify:markup`（應輸出「全部 44 頁與 mockup 一致」）。
+- **後台開發**：先讀 [docs/09-cms-admin.md](docs/09-cms-admin.md)（24 個單元、上傳尺寸總表、共用 UI 規則、權限矩陣）。
+  權限矩陣的權威展開在 [`db/seed/110_role_permission.sql`](db/README.md)（171 列）；
+  `admin/src/lib/permissions.ts` 與它一對一，數字對不上時開發模式的 console 會直接報錯。
 - 前端開發優先使用 `frontend-design` skill；改動後用 `run`／`verify` skill 驗證。
 - **版控與雙 remote（重要）**：git 無法對不同 remote 過濾路徑，因此用**兩條分支**分流：
 

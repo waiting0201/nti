@@ -1,0 +1,6 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# 素材以 symlink 指向 mockup/assets（正式站走 Blob Storage）
+public/assets

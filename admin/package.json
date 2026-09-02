@@ -1,0 +1,27 @@
+{
+  "name": "nti-admin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "node scripts/build-seed.mjs",
+    "dev": "vite --port 3300",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --port 3300",
+    "typecheck": "tsc -b --noEmit",
+    "check:units": "node scripts/check-units.mjs"
+  },
+  "dependencies": {
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-router-dom": "^7.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  }
+}
