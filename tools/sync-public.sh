@@ -4,19 +4,25 @@
 # 為什麼需要這支腳本：git 無法對不同 remote 過濾路徑，同一分支推到哪裡內容都一樣。
 # 因此維持兩條分支：master（完整）→ Remote_NAS；public（精簡）→ Remote_GitHub。
 #
-# 排除項（EXCLUDE）：
-#   reference/  設計 PSD 與客戶素材，約 2.5GB —— 會撞上 GitHub 的 2GB 單次推送上限
-#   db/local/   只在本機執行的建庫腳本，含 dev 管理員帳號雜湊，不應公開
+# ⚠️ EXCLUDE 必須涵蓋「歷史上出現過的路徑」，不只是現在的路徑：
+#   reference/   設計 PSD 與客戶素材（約 2.5GB）—— 會撞上 GitHub 的 2GB 單次推送上限
+#   planning/    reference/ 的前身（2026-06 改名前），同一批 PSD 與客戶品牌識別檔（2,479MB）
+#   mockup/      靜態切版稿與圖片（66MB，今已 gitignore，但舊 commit 仍帶著）
+#   mockup2/     同上，未採用的版本
+#   .wrangler/   Cloudflare 部署快取
+#   db/local/    只在本機執行的建庫腳本，含 dev 管理員帳號雜湊
 #
-# 作法：用暫存 index 重建 tree，不動工作目錄（毫秒級，不會複製 2.5GB）。
-# 每個 public commit 保留來源的訊息、作者與日期，並在結尾加 X-Source-Commit 標記，
-# 供下次同步判斷進度。**append-only，永遠不需要 force push。**
+# 結尾的 MAX_MB 斷言才是真正的安全網：路徑清單永遠可能漏掉某個歷史目錄，體積檢查不會。
+#
+# 作法：用暫存 index 重建 tree，不動工作目錄。每個 public commit 保留來源的訊息、
+# 作者與日期，並加註 X-Source-Commit 供下次判斷進度。append-only，永不需要 force push。
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
 SRC=master
 DST=public
-EXCLUDE="reference db/local"
+EXCLUDE="reference planning mockup mockup2 .wrangler db/local"
+MAX_MB=20
 
 if git rev-parse --verify -q "refs/heads/$DST" >/dev/null; then
     parent=$(git rev-parse "$DST")
@@ -72,6 +78,19 @@ X-Source-Commit: $c"
         "$(git log -1 --format=%s "$c")"
 done
 
+total_mb=$(git rev-list --objects "$parent" | awk '{print $1}' \
+    | git cat-file --batch-check='%(objectsize)' 2>/dev/null \
+    | awk '{s+=$1} END {printf "%.1f", s/1048576}')
+
+if [ "$(printf '%.0f' "$total_mb")" -gt "$MAX_MB" ]; then
+    echo "" >&2
+    echo "中止：$DST 全歷史可達物件 ${total_mb} MB，超過上限 ${MAX_MB} MB。" >&2
+    echo "  代表 EXCLUDE 漏掉了某個（可能只存在於舊 commit 的）大目錄。" >&2
+    echo "  查法：git rev-list <sha> | while read c; do git ls-tree --name-only \$c; done | sort -u" >&2
+    echo "  $DST 分支未更新。" >&2
+    exit 1
+fi
+
 git update-ref "refs/heads/$DST" "$parent"
-echo "已同步 $n 個 commit 到 ${DST}（$(git rev-parse --short "$DST")）。"
+echo "已同步 $n 個 commit 到 ${DST}（$(git rev-parse --short "$DST")），全歷史 ${total_mb} MB。"
 echo "推送：git push Remote_GitHub"

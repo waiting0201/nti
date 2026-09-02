@@ -1,20 +1,36 @@
 #!/usr/bin/env bash
-# 安全網：絕不讓含非公開路徑的 ref 推向 Remote_GitHub。
-#   reference/  約 2.5GB，會撞上 GitHub 的 2GB 單次推送上限
-#   db/local/   本機建庫腳本，含 dev 管理員帳號雜湊
+# 安全網：絕不讓不該公開的內容推向 Remote_GitHub（public repo）。
+#
+# 兩道檢查：
+#   1. 路徑：reference/ planning/ mockup/ mockup2/ .wrangler/ db/local/
+#      （planning/ 是 reference/ 的前身，只存在於舊 commit —— 光看現在的樹會漏掉）
+#   2. 體積：全歷史可達物件 > 20MB 即拒絕。路徑清單可能漏，體積不會。
 remote="$1"
 [ "$remote" = "Remote_GitHub" ] || exit 0
 
 z40=0000000000000000000000000000000000000000
 while read -r local_ref local_sha remote_ref remote_sha; do
     [ "$local_sha" = "$z40" ] && continue
-    hit=$(git ls-tree -r --name-only "$local_sha" \
-          | grep -E '^(reference/|db/local/)' | head -3 || true)
+
+    hit=$(git rev-list --objects "$local_sha" \
+          | grep -E ' (reference|planning|mockup|mockup2|\.wrangler|db/local)(/|$)' \
+          | head -3 || true)
     if [ -n "$hit" ]; then
         echo "" >&2
-        echo "pre-push 拒絕：$local_ref 含不應公開的路徑，不得推向 Remote_GitHub。" >&2
-        echo "$hit" | sed 's/^/    /' >&2
-        echo "  GitHub 請推 public 分支： tools/sync-public.sh && git push Remote_GitHub" >&2
+        echo "pre-push 拒絕：$local_ref 的歷史含不應公開的路徑。" >&2
+        echo "$hit" | sed 's/^[0-9a-f]* /    /' >&2
+        echo "  請用 tools/sync-public.sh 產生 public 分支後再推。" >&2
+        echo "" >&2
+        exit 1
+    fi
+
+    mb=$(git rev-list --objects "$local_sha" | awk '{print $1}' \
+         | git cat-file --batch-check='%(objectsize)' 2>/dev/null \
+         | awk '{s+=$1} END {printf "%.0f", s/1048576}')
+    if [ "${mb:-0}" -gt 20 ]; then
+        echo "" >&2
+        echo "pre-push 拒絕：$local_ref 全歷史可達物件 ${mb} MB，超過 20MB 上限。" >&2
+        echo "  公開版應只有 docs/db/tools，約 1MB。請檢查 EXCLUDE 是否漏了歷史目錄。" >&2
         echo "" >&2
         exit 1
     fi
