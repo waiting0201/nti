@@ -8,8 +8,12 @@
  *   公開站的 `public/assets`，不補前綴、也不複製第二份素材（vite.config.ts 關掉 publicDir）。
  *
  * 設了 `VITE_MEDIA_BASE`（Azure Blob Storage）時一律以它為前綴，蓋過上面兩種。
- * 資料庫接上之後，圖片欄位會直接存 Blob 的完整 URL，那時走下面的原樣回傳。
+ *
+ * 接了 API（`VITE_API_BASE`）之後，後台上傳的圖片存的是 media 容器內的相對路徑，
+ * 而那個容器是 private——一律改走 `/files/media/*` 代理路由取檔。
  */
+import { API_BASE } from '@/api/http'
+
 const mediaBase = (import.meta.env.VITE_MEDIA_BASE ?? '').replace(/\/$/, '')
 const assetBase = mediaBase || (import.meta.env.DEV ? import.meta.env.BASE_URL.replace(/\/$/, '') : '')
 
@@ -18,5 +22,10 @@ export function assetUrl(src: unknown): string {
   if (!s) return ''
   if (/^(https?:|blob:|data:)/.test(s)) return s
   if (s.startsWith('/assets/')) return assetBase + s
+
+  // 接了 API 之後，圖片欄位存的是 Blob 的**相對路徑**（`2026/09/{guid}.webp`）。
+  // media 容器是 private，拿不到可直連的 URL，一律走後端的代理路由。
+  if (API_BASE) return `${API_BASE}/files/media/${s.replace(/^\/+/, '')}`
+
   return s
 }

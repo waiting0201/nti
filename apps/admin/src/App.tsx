@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { AuthProvider, useAuth } from '@/lib/auth'
 import { Shell } from '@/pages/Shell'
-import { Login } from '@/pages/Login'
+import { ChangePassword, Login } from '@/pages/Login'
 import { Dashboard } from '@/pages/Dashboard'
 import { ListPage } from '@/pages/ListPage'
 import { EditPage } from '@/pages/EditPage'
@@ -31,7 +31,13 @@ function UnitRoute() {
 
 function Guarded({ children }: { children: React.ReactNode }) {
   const { session } = useAuth()
-  return session ? <>{children}</> : <Navigate to="/login" replace />
+  if (!session) return <Navigate to="/login" replace />
+
+  // 首登或管理員產生的密碼：改完之前不讓進後台（docs/09 §23）。
+  // 後端那邊 /auth/admin/change-password 刻意不要求權限碼，否則這裡會卡死。
+  if (session.mustChangePassword) return <ChangePassword />
+
+  return <>{children}</>
 }
 
 export default function App() {

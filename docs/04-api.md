@@ -173,4 +173,6 @@
 
 | 2026-09-04 | Tim（Claude Code） | §3.2／§3.3／§3.4 實作完成。契約補充四處：(1) 新增**後台認證** `POST /auth/admin/login`、`POST /auth/admin/change-password`——原 §3.3 只涵蓋前台會員，後台無登入端點；(2) 後台圖片上傳掛在各單元底下 `POST /admin/{unit}/upload` 並沿用 `{unit}.edit`，避免新增權限碼破壞 171 列矩陣；(3) 內容單元補 `PATCH /admin/{unit}/{id}/publish`（對應既有的 `{unit}.publish`）與 `PUT /admin/{unit}/sort`；(4) `POST /admin/member/{id}/resend-verify`、`POST /admin/order/{id}/progress`。**已知缺口**：docs/10 §7.3 的 refresh token rotation 未實作——schema 無對應資料表，且 §3.3 端點清單未列 `/auth/refresh` |
 
+| 2026-09-04 | Tim（Claude Code） | 後台接上 API 時補齊三處：(1) **`GET /files/media/{*path}`** —— §2 早就寫明「下載一律經後端代理路由」，但 §3 漏了這支；只開 media 容器，報價附件另有帶授權的路徑。(2) `/admin/{unit}` 清單改回**主表整列 + i18n**（原本只回標題，後台清單需要縮圖、分類、日期等欄位）；i18n 刻意排除 `nvarchar(max)` 欄位，內文只在單筆端點出現。(3) `/admin/category` 清單補 `usageCount`（刪除前要顯示前台影響，且 UI 是同步取值）。另：DB 約束違反（FK／CHECK／唯一鍵）改回 409 而非 500 |
+
 *最後更新：2026-09-04*

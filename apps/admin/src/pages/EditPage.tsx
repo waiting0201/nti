@@ -146,7 +146,7 @@ export function EditPage() {
               <div className="card-b">
                 <fieldset disabled={!canEdit} style={{ border: 0 }}>
                   {neutralFields.filter(showField).map((f) => (
-                    <FieldInput key={f.key} field={f} value={row[f.key]} onChange={(v) => setNeutral(f.key, v)} />
+                    <FieldInput key={f.key} field={f} value={row[f.key]} onChange={(v) => setNeutral(f.key, v)} unit={unit.code} />
                   ))}
                 </fieldset>
               </div>
@@ -181,6 +181,7 @@ export function EditPage() {
                     field={f}
                     value={row.i18n?.[locale]?.[f.key] ?? ''}
                     onChange={(v) => setLocalised(f.key, v)}
+                    unit={unit.code}
                   />
                 ))}
               </fieldset>

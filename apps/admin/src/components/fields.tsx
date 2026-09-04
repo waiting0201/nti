@@ -3,6 +3,7 @@ import type { Field, Locale } from '@/lib/types'
 import { Hint } from './ui'
 import { assetUrl } from '@/lib/asset'
 import * as api from '@/api/client'
+import { ApiError, api as http, hasApi } from '@/api/http'
 import type { Row } from '@/api/types'
 
 /* ── 分類快取（給 select 型欄位用） ───────────────────── */
@@ -138,10 +139,13 @@ function Uploader({
   field,
   value,
   onChange,
+  unit,
 }: {
   field: Field
   value: string
   onChange: (v: string) => void
+  /** 上傳端點掛在單元底下（`POST /admin/{unit}/upload`），沿用該單元的 edit 權限 */
+  unit?: string
 }) {
   const isImage = field.type === 'image'
   const [warn, setWarn] = useState('')
@@ -150,21 +154,40 @@ function Uploader({
     const input = document.createElement('input')
     input.type = 'file'
     input.accept = isImage ? 'image/*' : '.pdf,.xlsx,.docx,.zip'
-    input.onchange = () => {
+    input.onchange = async () => {
       const file = input.files?.[0]
       if (!file) return
-      const url = URL.createObjectURL(file)
+
       if (isImage) {
-        // docs §3：超過建議尺寸不擋、只提醒；不足一半則擋下
+        // docs §3：超過建議尺寸不擋、只提醒
         const img = new Image()
-        img.onload = () => {
-          setWarn(`已選擇 ${img.naturalWidth}×${img.naturalHeight}。正式站會在上傳後比對建議尺寸並提示。`)
-        }
-        img.src = url
+        const preview = URL.createObjectURL(file)
+        img.onload = () => setWarn(`已選擇 ${img.naturalWidth}×${img.naturalHeight}`)
+        img.src = preview
       } else {
         setWarn(`已選擇 ${file.name}（${(file.size / 1024 / 1024).toFixed(1)} MB）`)
       }
-      onChange(url)
+
+      // 示範模式沒有後端可以收檔，用 object URL 做本機預覽
+      if (!hasApi || !unit) return onChange(URL.createObjectURL(file))
+
+      const form = new FormData()
+      form.append('file', file)
+
+      try {
+        setWarn('上傳中…')
+        // 回的是 Blob 相對路徑（不是可直連的 URL）——容器是 private，DB 也只存相對路徑
+        const { path } = await http.upload<{ path: string }>(`/admin/${unit}/upload`, form)
+        onChange(path)
+        setWarn(`已上傳：${path}`)
+      } catch (err) {
+        const code = err instanceof ApiError ? err.code : 'INTERNAL'
+        setWarn(
+          code === 'UPLOAD_TYPE' ? '檔案格式不符（伺服器會檢查實際檔頭，不只看副檔名）。'
+          : code === 'UPLOAD_SIZE' ? '檔案太大。'
+          : `上傳失敗：${(err as Error).message}`,
+        )
+      }
     }
     input.click()
   }
@@ -208,11 +231,14 @@ export function FieldInput({
   value,
   onChange,
   error,
+  unit,
 }: {
   field: Field
   value: unknown
   onChange: (v: unknown) => void
   error?: string
+  /** 上傳欄位需要知道自己屬於哪個單元 */
+  unit?: string
 }) {
   const categories = useCategories(field.categoryType)
   const str = typeof value === 'string' ? value : value == null ? '' : String(value)
@@ -244,7 +270,7 @@ export function FieldInput({
         return <RichText value={str} onChange={onChange} />
       case 'image':
       case 'file':
-        return <Uploader field={field} value={str} onChange={onChange} />
+        return <Uploader field={field} value={str} onChange={onChange} unit={unit} />
       case 'switch':
         return (
           <label className="switch">

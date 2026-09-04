@@ -71,7 +71,7 @@ export function RecordView({
           <div className="card-b">
             <fieldset disabled={!canEdit} style={{ border: 0 }}>
               {unit.fields.map((f) => (
-                <FieldInput key={f.key} field={f} value={row[f.key]} onChange={(v) => onChange(f.key, v)} />
+                <FieldInput key={f.key} field={f} value={row[f.key]} onChange={(v) => onChange(f.key, v)} unit={unit.code} />
               ))}
             </fieldset>
             {unit.code === 'member' && (

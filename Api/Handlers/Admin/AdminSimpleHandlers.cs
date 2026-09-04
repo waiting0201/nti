@@ -194,9 +194,14 @@ public sealed class AdminCategoryHandler(AppDbContext db)
             .Select(i => new { i.CategoryId, i.Lang, i.Name })
             .ToListAsync();
 
+        // 每個分類被幾筆內容引用。後台刪除前要顯示前台影響（docs/09 §5.7），
+        // 而且 UI 是在 render 時同步取這個數字，不能讓它變成另一次往返。
+        var usage = await CountUsageAsync(ids);
+
         var rows = categories.Select(c => new
         {
             c.Id, c.CategoryType, c.Code, c.SortOrder, c.IsActive,
+            usageCount = usage.GetValueOrDefault(c.Id),
             i18n = names.Where(n => n.CategoryId == c.Id).ToDictionary(n => n.Lang, n => n.Name),
         });
 
@@ -286,6 +291,42 @@ public sealed class AdminCategoryHandler(AppDbContext db)
 
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok("已刪除。"));
+    }
+
+    /// <summary>
+    /// 各分類的引用筆數。逐表 GROUP BY 再合併，而不是每個分類跑八個子查詢——
+    /// 44 個分類 × 8 張表會變成 352 次查詢，Basic 的 5 DTU 撐不住。
+    /// </summary>
+    private async Task<Dictionary<int, int>> CountUsageAsync(List<int> ids)
+    {
+        var totals = new Dictionary<int, int>();
+
+        async Task AddAsync(IQueryable<int> categoryIds)
+        {
+            var groups = await categoryIds
+                .GroupBy(id => id)
+                .Select(g => new { CategoryId = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            foreach (var g in groups)
+                totals[g.CategoryId] = totals.GetValueOrDefault(g.CategoryId) + g.Count;
+        }
+
+        await AddAsync(db.News.Where(x => !x.IsDeleted && ids.Contains(x.CategoryId)).Select(x => x.CategoryId));
+        await AddAsync(db.Project.Where(x => !x.IsDeleted && ids.Contains(x.CategoryId)).Select(x => x.CategoryId));
+        await AddAsync(db.Vlog.Where(x => !x.IsDeleted && ids.Contains(x.CategoryId)).Select(x => x.CategoryId));
+        await AddAsync(db.FacilityItem.Where(x => !x.IsDeleted && ids.Contains(x.CategoryId)).Select(x => x.CategoryId));
+        await AddAsync(db.SupplierNotice.Where(x => !x.IsDeleted && ids.Contains(x.CategoryId)).Select(x => x.CategoryId));
+        await AddAsync(db.Faq.Where(x => !x.IsDeleted && x.CategoryId != null && ids.Contains(x.CategoryId.Value))
+                             .Select(x => x.CategoryId!.Value));
+        await AddAsync(db.Certification.Where(x => !x.IsDeleted && x.CategoryId != null && ids.Contains(x.CategoryId.Value))
+                             .Select(x => x.CategoryId!.Value));
+        await AddAsync(db.QuoteRequest.Where(x => !x.IsDeleted && x.IndustryCategoryId != null && ids.Contains(x.IndustryCategoryId.Value))
+                             .Select(x => x.IndustryCategoryId!.Value));
+        await AddAsync(db.QuoteRequest.Where(x => !x.IsDeleted && x.MaterialCategoryId != null && ids.Contains(x.MaterialCategoryId.Value))
+                             .Select(x => x.MaterialCategoryId!.Value));
+
+        return totals;
     }
 
     private async Task<bool> IsInUseAsync(int id) =>

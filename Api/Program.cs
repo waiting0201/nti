@@ -115,6 +115,7 @@ var host = new HostBuilder()
         services.AddScoped<PageHandler>();
         services.AddScoped<SettingHandler>();
         services.AddScoped<CategoryHandler>();
+        services.AddScoped<FileHandler>();
 
         // 認證與公開表單（04-api §3.2、§3.3）
         services.AddScoped<AuthHandler>();

@@ -41,8 +41,9 @@ public sealed partial class AppRouter
                 ContentPermission(method, unit, segments),
 
             // ── 15 page：29 筆固定頁不可增刪，故無 delete ────────────────
-            ("GET",            ["admin", "page", ..]) => PermissionCodes.PageView,
-            ("PUT" or "PATCH", ["admin", "page", _])  => PermissionCodes.PageEdit,
+            ("POST",           ["admin", "page", "upload"]) => PermissionCodes.PageEdit,
+            ("GET",            ["admin", "page", ..])       => PermissionCodes.PageView,
+            ("PUT" or "PATCH", ["admin", "page", _])        => PermissionCodes.PageEdit,
 
             // ── 16 redirect ──────────────────────────────────────────────
             ("GET",            ["admin", "redirect", "export"]) => PermissionCodes.RedirectExport,
@@ -74,8 +75,9 @@ public sealed partial class AppRouter
             ("POST",           ["admin", "order", _, "progress"])  => PermissionCodes.OrderEdit,
 
             // ── 21 setting ───────────────────────────────────────────────
-            ("GET",            ["admin", "setting"]) => PermissionCodes.SettingView,
-            ("PUT" or "PATCH", ["admin", "setting"]) => PermissionCodes.SettingEdit,
+            ("POST",           ["admin", "setting", "upload"]) => PermissionCodes.SettingEdit,
+            ("GET",            ["admin", "setting"])           => PermissionCodes.SettingView,
+            ("PUT" or "PATCH", ["admin", "setting"])           => PermissionCodes.SettingEdit,
 
             // ── 22 category ──────────────────────────────────────────────
             ("GET",            ["admin", "category", ..]) => PermissionCodes.CategoryView,
@@ -144,6 +146,7 @@ public sealed partial class AppRouter
             ("POST",           ["admin", "client", "upload"]) => await adminMedia.UploadAsync(req),
 
             // ── 15 page ──────────────────────────────────────────────────
+            ("POST",           ["admin", "page", "upload"])  => await adminMedia.UploadAsync(req),
             ("GET",            ["admin", "page"])           => await adminPages.GetListAsync(req),
             ("GET",            ["admin", "page", var key])  => await adminPages.GetByKeyAsync(req, key),
             ("PUT" or "PATCH", ["admin", "page", var key])  => await adminPages.UpdateAsync(req, key),
@@ -183,6 +186,7 @@ public sealed partial class AppRouter
             ("POST",           ["admin", "order", var id, "progress"]) => await adminOrders.AddProgressAsync(req, id),
 
             // ── 21 setting ───────────────────────────────────────────────
+            ("POST",           ["admin", "setting", "upload"]) => await adminMedia.UploadAsync(req),
             ("GET",            ["admin", "setting"]) => await adminSettings.GetListAsync(req),
             ("PUT" or "PATCH", ["admin", "setting"]) => await adminSettings.UpdateAsync(req),
 

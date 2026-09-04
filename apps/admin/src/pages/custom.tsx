@@ -75,6 +75,7 @@ export function SettingPage() {
                   }}
                   value={read(f.key, f.i18n)}
                   onChange={(v) => set(f.key, String(v ?? ''), f.i18n)}
+                  unit="setting"
                 />
               ))}
             </fieldset>

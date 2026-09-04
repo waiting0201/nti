@@ -45,6 +45,10 @@ jobs:
         run: pnpm --filter admin build
         env:
           VITE_MEDIA_BASE: ${{ vars.MEDIA_BASE }}
+          # 後台的資料來源開關：沒設就走本機 mock（localStorage，可以操作給客戶看），
+          # 設了就打真的 API 並要求 Email + 密碼登入。
+          # Azure 的 Function App 開好之後設這個 variable，後台就自動接上去。
+          VITE_API_BASE: ${{ vars.API_BASE }}
 
       # 素材走 Blob（stntiprod）。少了這個變數，頁面會指向 /assets/... 而
       # public/assets 在 CI 上根本不存在（mockup/ 未進版控）—— 站台會整片缺圖，

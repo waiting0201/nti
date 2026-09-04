@@ -16,9 +16,9 @@
 push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內容都是從 mockup 與 `db/seed`
 產生的種子資料——**資料庫與業務端點都還沒做**。
 
-**P4 後端完成**：端點、三支 Timer Function、OpenAPI 與 CI workflow 都到位並實測通過。
-**唯一還沒做的是開 Azure 資源**（Function App 與 SQL），指令與 OIDC 設定寫在 docs/07 §7.4。
-前端目前還沒指向 API——`apps/web` 內容寫死、`apps/admin` 接本機 mock。
+**P4 後端完成，後台也接上了**：`apps/admin` 的資料存取層可切換到真 API（設 `VITE_API_BASE`），
+21 項整合測試對真後端全數通過。**唯一還沒做的是開 Azure 資源**（Function App 與 SQL），
+指令與 OIDC 設定寫在 docs/07 §7.4。`apps/web` 的內容仍寫死，尚未接 API。
 
 ---
 
@@ -96,13 +96,30 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 - **權限矩陣**與 [`db/seed/110_role_permission.sql`](db/README.md) 一對一（171 列），數字對不上時 dev 模式 console 直接報錯
 - **角色切換登入**（SuperAdmin／Editor／Viewer）用來驗權限矩陣
 
+### ✅ 已接上 API（2026-09-04）
+
+資料存取層改成兩套實作、同一組簽章，由 `VITE_API_BASE` 決定用哪一套：
+
+| | 沒設（現況部署） | 設了 |
+|---|---|---|
+| 實作 | `client.mock.ts`（localStorage） | `client.api.ts`（打 `/api/v1/admin/*`） |
+| 登入 | 選角色即進入 | Email + 密碼，首登強制改密碼 |
+| 權限 | 查本地 171 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
+| 圖片 | 本機素材 | 上傳 Blob，經 `/files/media/*` 代理取回 |
+
+保留 mock 是因為後台已部署在 SWA 的 `/admin/` 供客戶操作，而 API 資源還沒開——
+硬切會讓那個站當場壞掉。CI 已接上 `vars.API_BASE`，資源開好設定它即可切換。
+
+**整合測試 21 項對真後端全數通過**：欄位改名雙向、內文只在單筆端點、
+存檔、新增、缺語系上架被擋（409）、型別不符的分類被擋（409）、軟刪、
+分類引用數、設定的單語／多語判斷。
+
 ### 🟡 有缺口
 
 | 項目 | 現況 |
 |---|---|
-| 資料來源 | `src/api/client.ts` 接的是 `seed.generated.ts`（自 `db/seed` 與 mockup 產生）。**改動不落地，重整即還原** |
-| 登入 | 點角色卡片即進入，無密碼。正式版為 Email + 密碼、首登強制改密碼、連錯 5 次鎖 15 分鐘 |
-| 檔案上傳 | 欄位與尺寸提示齊備，實際上傳無後端 |
+| 6 個欄位存不進去 | `ogImageAlt`、vlog `thumbAlt`、contact `assignee`、member `internalNote`、order `memberEmail`／`quoteNo` —— UI 有、schema 沒有對應欄位，列在 `src/api/mapping.ts` |
+| 清單搜尋 | 關鍵字目前在前端過濾當頁資料。後端還沒有搜尋參數（04 §3.4 未列），跨頁搜尋不準 |
 
 ---
 
@@ -256,7 +273,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 
 - **Azure 資源尚未開設**：Function App 與 Azure SQL。指令、OIDC 設定與 GitHub
   secrets／variables 清單見 [`docs/07 §7.4`](docs/07-deployment.md)。**會產生費用**
-- **前端尚未接上 API**：`apps/web` 內容仍寫死、`apps/admin` 仍接 `seed.generated.ts`
+- **`apps/web` 尚未接上 API**：44 頁的內容仍寫死在 `page.tsx`（後台已接上，見 §三）
 - **refresh token rotation**（docs/10 §7.3）：schema 無對應資料表，且 04 §3.3 的端點清單
   未列 `/auth/refresh`。目前只發 access token（後台 60 分鐘、會員 120 分鐘）
 - 附件病毒掃描：`ScanStatus` 寫入後恆為 `Pending`，未接掃描服務。

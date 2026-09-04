@@ -41,6 +41,9 @@ public sealed partial class AppRouter
             ("GET",  ["pages", _]) or
             ("GET",  ["site-settings"]) or
 
+            // Blob 代理。只開 media 容器——報價附件另有帶授權的路徑（見 FileHandler）
+            ("GET",  ["files", "media", ..]) or
+
             // ── 04-api §3.2 表單（Turnstile + rate limit 擋在 Handler 裡）──
             ("POST", ["quotes"]) or
             ("POST", ["contacts"]) or
@@ -95,6 +98,7 @@ public sealed partial class AppRouter
             // ── 頁面 SEO 與全站設定 ───────────────────────────────────────
             ("GET",  ["pages", var pageKey])      => await pages.GetByKeyAsync(req, pageKey),
             ("GET",  ["site-settings"])           => await settings.GetPublicAsync(req),
+            ("GET",  ["files", "media", .. var mediaPath]) => await files.GetMediaAsync(req, string.Join("/", mediaPath)),
 
             // ── 表單（§3.2）───────────────────────────────────────────────
             ("POST", ["quotes"])                  => await forms.CreateQuoteAsync(req),

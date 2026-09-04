@@ -37,6 +37,7 @@ public sealed partial class AppRouter(
     PageHandler           pages,
     SettingHandler        settings,
     CategoryHandler       categories,
+    FileHandler           files,
 
     // ── 認證與表單（04-api §3.2、§3.3）────────────────────────────────
     AuthHandler           auth,

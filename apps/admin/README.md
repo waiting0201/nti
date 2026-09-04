@@ -1,7 +1,7 @@
 # admin — NTI Printing 管理後台（React + Vite SPA）
 
 依 [`docs/09-cms-admin.md`](../docs/09-cms-admin.md) 實作的 **24 個後台單元**。
-純 SPA、靜態輸出、`noindex`，資料一律走 `/api/v1/admin/*`（尚未上線，目前接本機 mock）。
+純 SPA、靜態輸出、`noindex`。資料來源有兩種，由 `VITE_API_BASE` 決定——見下方〈資料從哪來〉。
 
 ## 快速開始
 
@@ -11,8 +11,41 @@ pnpm --filter admin seed     # 從 db/seed/*.sql 與 mockup/*.html 產生種子�
 pnpm --filter admin dev      # http://localhost:3300/admin/
 ```
 
-登入頁選一個角色即可進入。任何網址加上 `?as=SuperAdmin` / `?as=Editor` / `?as=Viewer`
-可直接以該角色開啟——把不同角色看到的畫面丟連結給客戶時很方便。
+登入頁選一個角色即可進入（mock 模式）。任何網址加上 `?as=SuperAdmin` / `?as=Editor` /
+`?as=Viewer` 可直接以該角色開啟——把不同角色看到的畫面丟連結給客戶時很方便。
+⚠ 這個捷徑**只在 mock 模式有效**，接了 API 之後會繞過真正的登入，所以程式裡擋掉了。
+
+接真 API 跑：
+
+```bash
+cd Api && func start                                   # 另一個終端，需 Azurite（上傳用）
+VITE_API_BASE=http://localhost:7071/api/v1 pnpm --filter admin dev
+```
+
+## 資料從哪來
+
+| | 沒設 `VITE_API_BASE` | 設了 |
+|---|---|---|
+| 實作 | `src/api/client.mock.ts`（localStorage） | `src/api/client.api.ts`（打 `/api/v1/admin/*`） |
+| 登入 | 選角色即進入 | Email + 密碼，首登強制改密碼 |
+| 權限 | 查本地的 171 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
+| 圖片 | `public/assets` 或 `VITE_MEDIA_BASE` | 上傳到 Blob，經 `/files/media/*` 代理取回 |
+
+兩者**簽章完全一樣**，上層的清單／編輯畫面不知道資料從哪來（`src/api/client.ts` 是門面）。
+
+保留 mock 不是為了偷懶：後台已經部署在 SWA 的 `/admin/` 供客戶操作，而 API 的 Azure
+資源還沒開；硬切過去會讓那個站當場壞掉。CI 已經接上 `vars.API_BASE`，資源開好設定它即可。
+
+### 欄位命名為什麼要對照
+
+UI 的欄位 key 對應 [docs/09 §3](../../docs/09-cms-admin.md)（`check:units` 驗的是那份），
+API 的欄位名對應 [docs/08](../../docs/08-database.md) 的資料表欄位，兩邊各有各的權威來源。
+差異集中在 [`src/api/mapping.ts`](src/api/mapping.ts) 一張表裡（例如 `imageDesktop` ↔ `imagePath`、
+`newWindow` ↔ `openInNewTab`）。統一成任一邊都會讓另一邊的驗收失去意義。
+
+那份對照表同時記錄了 **6 個 UI 有、schema 沒有的欄位**（`ogImageAlt`、vlog 的 `thumbAlt`、
+contact 的 `assignee`、member 的 `internalNote`、order 的 `memberEmail`／`quoteNo`）——
+它們目前存不進去，是已知缺口而不是 bug。
 
 > 圖片來自 `public/assets`（指向 `../../mockup/assets` 的 symlink，不進版控）。
 > 正式站的圖片會放 Azure Blob Storage。
