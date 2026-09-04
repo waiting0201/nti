@@ -14,6 +14,21 @@ export function Login() {
   return hasApi ? <PasswordLogin /> : <DemoLogin />
 }
 
+/** 三個畫面共用的標頭：品牌小標 + 標題 +（可選）副標。
+ *  獨立成元件是為了讓「標題與欄位的距離」只有一個地方要對齊（見 styles.css .login-head）。 */
+function LoginHead({ title, sub }: { title: string; sub?: React.ReactNode }) {
+  return (
+    <div className="login-head">
+      <div className="login-brand">
+        <span className="login-brand-mark" aria-hidden="true" />
+        <span className="login-brand-name">NTI Printing</span>
+      </div>
+      <h1>{title}</h1>
+      {sub && <p className="sub">{sub}</p>}
+    </div>
+  )
+}
+
 /** 接了 API：Email + 密碼。連續 5 次失敗鎖 15 分鐘（後端擋，docs/09 §23）。 */
 function PasswordLogin() {
   const { loginWithPassword } = useAuth()
@@ -48,27 +63,48 @@ function PasswordLogin() {
   return (
     <div className="login-wrap">
       <form className="login-card" onSubmit={submit}>
-        <h1>NTI Printing 管理後台</h1>
+        <LoginHead title="管理後台" />
 
-        <label className="field">
-          <span>Email</span>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
-        </label>
+        <div className="login-fields">
+          <div className="field">
+            <label htmlFor="login-email">Email</label>
+            <input
+              id="login-email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoFocus
+            />
+          </div>
 
-        <label className="field">
-          <span>密碼</span>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </label>
+          <div className="field">
+            <label htmlFor="login-password">密碼</label>
+            <input
+              id="login-password"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+        </div>
 
-        {error && <p className="sub" style={{ color: 'var(--danger, #c0392b)' }}>{error}</p>}
+        {error && (
+          <p className="notice danger" role="alert">
+            {error}
+          </p>
+        )}
 
-        <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={busy}>
-          {busy ? '登入中…' : '登入'}
-        </button>
+        <div className="login-actions">
+          <button className="btn btn-primary" disabled={busy}>
+            {busy ? '登入中…' : '登入'}
+          </button>
+        </div>
 
-        <p className="sub" style={{ marginTop: 16, marginBottom: 0 }}>
-          連續 5 次失敗會鎖定 15 分鐘。忘記密碼請聯絡超級管理員重設。
-        </p>
+        <p className="login-foot">連續 5 次失敗會鎖定 15 分鐘。忘記密碼請聯絡超級管理員重設。</p>
       </form>
     </div>
   )
@@ -98,12 +134,17 @@ function DemoLogin() {
   return (
     <div className="login-wrap">
       <form className="login-card" onSubmit={submit}>
-        <h1>NTI Printing 管理後台</h1>
-        <p className="sub">
-          目前為本機示範（未設定 <code>VITE_API_BASE</code>）—— 選一個角色即可進入，
-          用來檢視各角色實際看得到什麼。
-        </p>
-        <div className="role-pick">
+        <LoginHead
+          title="管理後台"
+          sub={
+            <>
+              目前為本機示範（未設定 <code>VITE_API_BASE</code>）—— 選一個角色即可進入，
+              用來檢視各角色實際看得到什麼。
+            </>
+          }
+        />
+
+        <div className="role-pick" role="radiogroup" aria-label="選擇角色">
           {(Object.keys(ROLE_DESC) as RoleCode[]).map((r) => {
             const account = accounts.find((a) => a.role === r)
             return (
@@ -118,10 +159,14 @@ function DemoLogin() {
             )
           })}
         </div>
-        <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} type="submit">
-          進入後台
-        </button>
-        <p className="sub" style={{ marginTop: 16, marginBottom: 0 }}>
+
+        <div className="login-actions">
+          <button className="btn btn-primary" type="submit">
+            進入後台
+          </button>
+        </div>
+
+        <p className="login-foot">
           設定 <code>VITE_API_BASE</code> 後這裡會變成 Email + 密碼登入。
         </p>
       </form>
@@ -159,31 +204,62 @@ export function ChangePassword() {
   return (
     <div className="login-wrap">
       <form className="login-card" onSubmit={submit}>
-        <h1>請先設定新密碼</h1>
-        <p className="sub">這是你第一次登入，或密碼是由管理員產生的。設定完成後才能使用後台。</p>
+        <LoginHead
+          title="設定新密碼"
+          sub="這是你第一次登入，或密碼是由管理員產生的。設定完成後才能使用後台。"
+        />
 
-        <label className="field">
-          <span>目前密碼</span>
-          <input type="password" value={current} onChange={(e) => setCurrent(e.target.value)} required autoFocus />
-        </label>
-        <label className="field">
-          <span>新密碼（至少 8 碼）</span>
-          <input type="password" value={next} onChange={(e) => setNext(e.target.value)} required />
-        </label>
-        <label className="field">
-          <span>再輸入一次</span>
-          <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
-        </label>
+        <div className="login-fields">
+          <div className="field">
+            <label htmlFor="cp-current">目前密碼</label>
+            <input
+              id="cp-current"
+              type="password"
+              autoComplete="current-password"
+              value={current}
+              onChange={(e) => setCurrent(e.target.value)}
+              required
+              autoFocus
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="cp-next">新密碼（至少 8 碼）</label>
+            <input
+              id="cp-next"
+              type="password"
+              autoComplete="new-password"
+              value={next}
+              onChange={(e) => setNext(e.target.value)}
+              required
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="cp-confirm">再輸入一次</label>
+            <input
+              id="cp-confirm"
+              type="password"
+              autoComplete="new-password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              required
+            />
+          </div>
+        </div>
 
-        {error && <p className="sub" style={{ color: 'var(--danger, #c0392b)' }}>{error}</p>}
+        {error && (
+          <p className="notice danger" role="alert">
+            {error}
+          </p>
+        )}
 
-        <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={busy}>
-          {busy ? '更新中…' : '設定新密碼'}
-        </button>
-
-        <button type="button" className="btn" style={{ width: '100%', justifyContent: 'center', marginTop: 8 }} onClick={logout}>
-          改用其他帳號登入
-        </button>
+        <div className="login-actions">
+          <button className="btn btn-primary" disabled={busy}>
+            {busy ? '更新中…' : '設定新密碼'}
+          </button>
+          <button type="button" className="btn" onClick={logout}>
+            改用其他帳號登入
+          </button>
+        </div>
       </form>
     </div>
   )

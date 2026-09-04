@@ -300,18 +300,65 @@ tr.drop-target td { box-shadow: inset 0 2px 0 var(--green); }
 
 .empty { padding: 44px 20px; text-align: center; color: var(--grey-2); font-size: 13px; }
 
-.login-wrap { min-height: 100%; display: grid; place-items: center; background: var(--deep); padding: 20px; }
-.login-card { background: #fff; border-radius: 14px; padding: 30px 32px; width: min(400px, 100%); box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.6); }
-.login-card h1 { font-size: 18px; margin-bottom: 4px; color: #26332b; }
-.login-card .sub { font-size: 12.5px; color: var(--grey-2); margin-bottom: 20px; }
-.role-pick { display: grid; gap: 8px; margin-bottom: 18px; }
+.login-wrap {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--deep);
+  /* 頂部一抹極淡的 teal 光暈，呼應永續品牌色；color-mix 算不出來的舊瀏覽器就退回純色 --deep。 */
+  background-image: radial-gradient(900px 480px at 50% -10%, color-mix(in srgb, var(--teal) 40%, var(--deep)) 0%, var(--deep) 65%);
+}
+.login-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 44px 40px 38px;
+  width: min(440px, 100%);
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.6);
+}
+
+/* 標頭區：品牌小標＋標題＋（可選）副標，內部用 gap 統一控制，
+   外層固定 margin-bottom 跟欄位區保持距離 —— 不依賴「有沒有 .sub」，
+   避免舊版那樣沒有副標時標題直接貼著第一個欄位。 */
+.login-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 30px; }
+.login-brand { display: flex; align-items: center; gap: 8px; }
+.login-brand-mark { width: 9px; height: 9px; border-radius: 3px; background: var(--green); flex: 0 0 9px; }
+.login-brand-name { font-size: 12.5px; font-weight: 700; color: var(--grey-2); }
+.login-card h1 { font-size: 21px; font-weight: 800; color: var(--deep); line-height: 1.35; }
+.login-card .sub { font-size: 12.5px; color: var(--grey-2); line-height: 1.6; }
+
+/* 欄位區：用 flex + gap 給每個欄位固定的呼吸空間，蓋掉 .field 預設的 16px，
+   只在登入卡片內生效，不影響 EditPage／fields.tsx 共用的 .field。 */
+.login-fields { display: flex; flex-direction: column; gap: 20px; margin-bottom: 6px; }
+.login-fields .field { margin-bottom: 0; }
+.login-fields .field > label { font-size: 13px; }
+.login-fields .field input { padding: 11px 14px; font-size: 14.5px; border-radius: 9px; }
+
+.login-card .notice { margin: 18px 0 4px; }
+
+/* 動作區：按鈕群統一等寬置中；非 primary（改密碼頁的「改用其他帳號」）
+   降成無邊框的輕量次要動作，避免兩顆按鈕一樣重、分不出主次。 */
+.login-actions { margin-top: 26px; display: flex; flex-direction: column; gap: 10px; }
+.login-actions .btn { width: 100%; justify-content: center; }
+.login-actions .btn-primary { padding: 12px 18px; font-size: 14.5px; border-radius: 10px; }
+.login-actions .btn:not(.btn-primary) {
+  background: none; border-color: transparent; color: var(--grey-2); font-weight: 700;
+}
+.login-actions .btn:not(.btn-primary):hover:not(:disabled) { background: #f4f6f5; color: var(--grey); }
+
+/* 註腳區：跟動作區之間拉一條細線，標示「以下是輔助資訊，不是表單的一部分」。 */
+.login-foot { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line-2); font-size: 12px; color: var(--grey-2); line-height: 1.6; }
+.login-foot code { background: #eef1ef; padding: 1px 5px; border-radius: 4px; font-size: 11px; }
+
+.role-pick { display: grid; gap: 10px; margin-bottom: 26px; }
 .role-pick label {
-  display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px;
+  display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px;
   border: 1px solid var(--line); border-radius: 9px; cursor: pointer;
 }
 .role-pick label:hover { background: #f8faf8; }
 .role-pick input:checked ~ span b { color: var(--green); }
 .role-pick label:has(input:checked) { border-color: var(--green); background: #f4f9f0; }
+.role-pick span { display: grid; gap: 2px; }
 .role-pick span b { display: block; font-size: 13.5px; }
 .role-pick span small { color: var(--grey-2); font-size: 11.5px; }
 
