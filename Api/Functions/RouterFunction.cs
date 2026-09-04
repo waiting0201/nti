@@ -16,7 +16,7 @@ public sealed class RouterFunction(AppRouter router)
     public Task<IActionResult> Run(
         [HttpTrigger(
             AuthorizationLevel.Anonymous,
-            "get", "post", "put", "patch", "delete", "options",
+            "get", "head", "post", "put", "patch", "delete", "options",
             Route = "{*route}")] HttpRequest req,
         string? route)
         => router.RouteAsync(req, route ?? string.Empty);

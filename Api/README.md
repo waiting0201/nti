@@ -76,9 +76,20 @@ Api/
 - **種子**：角色 3／權限 171／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)，
   由 `Data/Seed/SeedData.cs` 的 `HasData` 寫入，Id 硬編、跨環境一致
 
-未完成：所有業務端點（04 §3.1 前台 18／§3.2 表單 2／§3.3 會員 4／§3.4 後台 24 單元）、
-Dapper ReadService、Blob／Email／Turnstile／rate limit 服務、三支 Timer Function、CI/CD。
+- **前台唯讀端點**（04 §3.1）：20 支，15 個單元的 Dapper ReadService + Handler
+
+未完成：§3.2 表單（2）、§3.3 會員（4）、§3.4 後台 CRUD（24 單元）、
+Blob／Email／Turnstile／rate limit 服務、三支 Timer Function、CI/CD。
 進度見 [`STATUS.md`](../STATUS.md) §五。
+
+## 本機要有東西看
+
+各內容表剛建好是空的，端點會回 200 但都是空陣列。灌假內容：
+
+```bash
+db/tools/sqlcmd.sh NTI < db/local/920_dev_content.sql        # 每個單元一筆
+db/tools/sqlcmd.sh NTI < db/local/930_dev_content_clear.sql  # 清除並還原
+```
 
 ## 資料層的四個地雷（都已寫成程式碼註解）
 

@@ -17,9 +17,24 @@ namespace Nti.Api.Routing;
 /// </para>
 /// </summary>
 public sealed partial class AppRouter(
-    ILogger<AppRouter> logger,
-    IJwtService        jwt,
-    HealthHandler      health)
+    ILogger<AppRouter>    logger,
+    IJwtService           jwt,
+    HealthHandler         health,
+    ContentHandler        content,
+    SolutionHandler       solutions,
+    ProjectHandler        projects,
+    NewsHandler           news,
+    VlogHandler           vlogs,
+    FaqHandler            faqs,
+    TrendHandler          trends,
+    CertificationHandler  certifications,
+    ClientHandler         clients,
+    FacilityHandler       facility,
+    JobHandler            jobs,
+    SupplierHandler       supplier,
+    PageHandler           pages,
+    SettingHandler        settings,
+    CategoryHandler       categories)
 {
     /// <summary>
     /// <see cref="GetRequiredPermission"/> 的預設回傳值：<b>未列在權限表的 /admin/* 一律拒絕</b>。
@@ -40,6 +55,10 @@ public sealed partial class AppRouter(
         // CORS preflight：實際的 allow-list 在平台層（docs/10 §9.7），程式內只放行 OPTIONS
         if (method == "OPTIONS") return new OkResult();
 
+        // HEAD 一律當 GET 走：CDN 與監控會用 HEAD 探測，不對應的話它們拿到的是 404
+        // （ASP.NET Core 會自己把 body 丟掉，只回標頭）
+        if (method == "HEAD") method = "GET";
+
         if (segments is ["admin", ..])
         {
             // 後台：只收 nti-admin audience 的 token；會員 token 打 /admin/* 一律擋下
@@ -56,6 +75,14 @@ public sealed partial class AppRouter(
                 ?? throw AppException.Unauthorized("缺少或無效的會員憑證。");
 
             req.HttpContext.User = principal;
+        }
+        else if (req.Headers.ContainsKey("Authorization"))
+        {
+            // 公開路由的選擇性登入：有帶會員 token 就掛上去，沒帶或無效也照樣放行。
+            // POST /supplier/downloads/{id}/hit 需要這個——多數下載不需登入，
+            // 只有 RequireLogin = 1 的受控文件要，那個判斷在 Handler 裡（04-api §3.1）。
+            var principal = jwt.ValidateRequest(req, TokenAudiences.Web);
+            if (principal is not null) req.HttpContext.User = principal;
         }
 
         // docs/10 §9.3：/admin/* 的寫入操作要在分派完成後統一寫 AuditLog（不由各 Handler 各寫一次）。

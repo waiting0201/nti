@@ -16,9 +16,8 @@
 push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內容都是從 mockup 與 `db/seed`
 產生的種子資料——**資料庫與業務端點都還沒做**。
 
-**P4 後端進行中**：`Api/` 骨架與**資料層**完成——48 張表的 Entity、`InitialSchema`
-Migration（schema + 種子）本機實測通過，與 `db/` 腳本建出來的庫逐欄逐約束一致。
-下一步是 3.1 前台 18 支唯讀端點。
+**P4 後端進行中**：`Api/` 骨架、資料層、**3.1 前台唯讀端點**皆完成並本機實測通過。
+公開站已經有 API 可接（內容仍需客戶提供）。下一步是 3.2 表單與 3.4 後台 CRUD。
 
 ---
 
@@ -41,7 +40,7 @@ Migration（schema + 種子）本機實測通過，與 `db/` 腳本建出來的�
 | P1 | 系統分析／架構 | ✅ | 技術選型 2026-06-12 凍結，2026-09-02 修訂為 EF+Dapper 雙軌 |
 | P2 | UI/UX 設計 + 原型 | ✅ | `mockup/` 44 頁，客戶已定案（`mockup2/` 未採用） |
 | P3 | 前端框架／元件 | ✅ | Next.js App Router，共用元件與各頁行為自 mockup 移植 |
-| P4 | 後端／CMS API | 🟡 | **進行中**。骨架 + 資料層完成（見 §四、§五）；業務端點未做 |
+| P4 | 後端／CMS API | 🟡 | **進行中**。骨架 + 資料層 + 前台唯讀端點完成（見 §四、§五）；表單／會員／後台 CRUD 未做 |
 | P5 | 前台頁面開發 | 🟡 | 44 頁切版完成；內容仍為靜態，未接 API |
 | P6 | 會員／報價／聯絡 | 🟡 | 表單已切版（`PageForm`），無後端 |
 | P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語路由就緒，**中文文案未提供**；sitemap 與結構化資料未做 |
@@ -171,18 +170,43 @@ Migration（schema + 種子）本機實測通過，與 `db/` 腳本建出來的�
 | 會員 token 打 `/admin/*` | 401（audience 分離生效） |
 | 不存在的路由 | 404 `NOT_FOUND` |
 
-### ⬜ 業務端點
+### ✅ 3.1 前台內容端點（2026-09-04）
+
+20 支端點全部實作並實機打過（`func start` + curl），皆回 200 且信封正確：
+
+`/content/home`（首頁五組資料一次給）、`/solutions`、`/solutions/{slug}`、`/projects`、
+`/facility?group=`、`/certifications`、`/clients`、`/categories?type=`、`/news`、`/news/{slug}`、
+`/green-vlog`、`/faq`、`/industry-trends`、`/careers`、`/supplier/notices`、`/supplier/specs`、
+`/supplier/downloads`、`POST /supplier/downloads/{id}/hit`、`/pages/{pageKey}`、`/site-settings`
+
+實測驗到的行為：
+
+| 驗證項 | 結果 |
+|---|---|
+| 缺語系不 fallback | 只有英文的消息不出現在 `/zh` 清單，詳細頁 404 |
+| 上下架時間窗 | `PublishAt` 在未來的消息不出現，直接打 slug 也 404 |
+| 語系解析 | `?lang=` 優先，其次 `Accept-Language`（`zh-Hant-TW` 可解），皆無則 `zh` |
+| hreflang | 由同一 Id 的兩筆 i18n 推導，回傳 `{en, zh}` slug 對照 |
+| 分頁雙模式 | 帶 `page`／`pageSize` 回 `PagedResult`，不帶回平面陣列 |
+| 值域驗證 | `?type=Bogus` 回 400 `VALIDATION_FORMAT`（不是靜默的空陣列） |
+| 快取標頭 | 內容 `s-maxage=300`、設定與分類 `3600`、寫入端點 `no-store` |
+| 內部設定不外洩 | `/site-settings` 濾掉 `Mail` 群組（15 → 12 筆） |
+| 受控文件 | `RequireLogin = 1` 的下載未帶會員憑證回 401 |
+
+本機假內容 fixture：`db/local/920_dev_content.sql`（各單元一筆 + 三個邊界案例）。
+
+### ⬜ 其餘業務端點
 
 | 群組 | 規劃端點數 | 狀態 |
 |---|---|---|
-| 3.1 前台內容（公開唯讀） | 18 | ⬜ |
-| 3.2 表單（公開寫入） | 2 | ⬜ |
-| 3.3 會員（認證） | 4 | ⬜ |
+| 3.1 前台內容（公開唯讀） | 20 | ✅ |
+| 3.2 表單（公開寫入） | 2 | ⬜ 需先做 Blob／Email／Turnstile／rate limit |
+| 3.3 會員（認證） | 4 | ⬜ P6 |
 | 3.4 後台管理（RBAC） | 24 單元 CRUD + 5 支動作端點 | ⬜ |
 
 ### ⬜ 其他未做
 
-- Dapper ReadService、Blob／Email／Turnstile／rate limit 服務
+- Blob／Email／Turnstile／rate limit 服務
 - 三支 Timer Function（`PublishSchedule`／`RetentionCleanup`／`OrphanMedia`）
 - `/admin/*` 寫入的 AuditLog 統一寫入（位置已在 `AppRouter` 標好，待 AuditLog entity）
 - Azure Function App 資源與 CI/CD（OIDC 登入，隨 P4 一起）

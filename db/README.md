@@ -69,6 +69,25 @@ db/tools/sqlcmd.sh master < db/local/900_drop_database.sql
 db/tools/run-local.sh
 ```
 
+**改用 EF Migration 建庫**（P4 之後的正常做法）：
+
+```bash
+db/tools/sqlcmd.sh master < db/local/900_drop_database.sql
+db/tools/sqlcmd.sh master < db/local/000_create_database.sql   # collation 必須一致
+cd Api && dotnet ef database update                            # schema + 種子
+db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql               # 應全數 PASS
+```
+
+灌一批本機假內容（各內容表建好之後是空的，接前端時看不出東西）：
+
+```bash
+db/tools/sqlcmd.sh NTI < db/local/920_dev_content.sql          # 每個單元一筆
+db/tools/sqlcmd.sh NTI < db/local/930_dev_content_clear.sql    # 清除並還原
+```
+
+`920` 刻意佈了三個邊界案例：未來排程的消息（驗上下架時間窗）、只有英文的消息
+（驗缺語系不 fallback）、`RequireLogin = 1` 的下載（驗受控文件要憑證）。
+
 本機無需安裝 sqlcmd —— `db/tools/sqlcmd.sh` 透過 `docker exec` 使用容器內的
 `/opt/mssql-tools18/bin/sqlcmd`。GUI 檢視可用 DBeaver 或 VS Code 的 `ms-mssql` 擴充
 （`localhost,1433` / `sa`）。

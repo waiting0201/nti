@@ -169,4 +169,6 @@
 | 2026-09-02 | Tim（Claude Code） | 對齊 08／09 修正四處契約缺口：`POST /contacts` 刪除不存在的「主旨」、補回「公司」（依 `ContactMessage` 與 `mockup/contact.html`）；`POST /quotes` 欄位補齊為完整清單（產業／尺寸／材質／目標日期／永續建議勾選／同意時間）；新增 `GET /categories?type=`（前台下拉選項來源，原為契約缺口）與 `POST /supplier/downloads/{id}/hit`；§3.4 `/admin/{resource}` 改為 `{unit}` 並附完整路徑↔單元↔權限碼對照表（不再單複數混用、`/admin/users` 更正為 `/admin/admin`），補列非 CRUD 動作端點；固定頁 28 → 29 |
 | 2026-09-02 | Tim（Claude Code） | 以 `Jabez/Api` 為範本補齊契約缺口：新增成功回應信封與錯誤碼欄位 `code`（原僅有 `{code,message,details}` 形狀）、分頁回應形狀與雙模式、`pageSize` 上限 100；執行環境由「每資源群組一支 Function」改為**單一 `RouterFunction` + 集中式 `AppRouter`**；明訂 §3 路徑省略的前綴為 `/api/v1`；補 camelCase、CORS 雙 origin、Turnstile／rate limit、快取標頭、會員與後台 audience 分離；§3.4 補「未列出的 `/admin/*` 預設拒絕」；新增 [`10-backend-design.md`](10-backend-design.md) 為實作規格 |
 
-*最後更新：2026-09-02*
+| 2026-09-04 | Tim（Claude Code） | §3.1 實作完成（20 支）。三處契約明確化：`/facility` 的 `?group=` 收 `Category.Code`（前端子頁路徑本身就是 code）、其餘清單的分類篩選統一為 `?categoryId=`（id 由 `/categories?type=` 取得）、`/content/home` 另含 `featuredNews`（`IsFeaturedHome = 1` 取三筆）。`/site-settings` 明確排除 `Mail` 群組。HEAD 一律當 GET 處理（CDN 與監控探測用） |
+
+*最後更新：2026-09-04*

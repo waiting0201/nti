@@ -4,11 +4,13 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nti.Api.Common;
 using Nti.Api.Data;
 using Nti.Api.Handlers;
 using Nti.Api.Middleware;
 using Nti.Api.Routing;
 using Nti.Api.Services;
+using Nti.Api.Services.Dapper;
 using System.Data;
 using System.Text.Json;
 
@@ -67,10 +69,46 @@ var host = new HostBuilder()
         services.AddScoped<AppRouter>();
         services.AddHttpContextAccessor();
 
+        // ── Dapper 讀取服務（一單元一支，Scoped：依賴 IDbConnection）────────
+        services.AddScoped<ICategoryReadService, CategoryReadService>();
+        services.AddScoped<ISiteSettingReadService, SiteSettingReadService>();
+        services.AddScoped<IHomeBannerReadService, HomeBannerReadService>();
+        services.AddScoped<ISolutionReadService, SolutionReadService>();
+        services.AddScoped<IProjectReadService, ProjectReadService>();
+        services.AddScoped<INewsReadService, NewsReadService>();
+        services.AddScoped<IVlogReadService, VlogReadService>();
+        services.AddScoped<IFaqReadService, FaqReadService>();
+        services.AddScoped<ITrendReadService, TrendReadService>();
+        services.AddScoped<ICertificationReadService, CertificationReadService>();
+        services.AddScoped<IClientReadService, ClientReadService>();
+        services.AddScoped<IFacilityReadService, FacilityReadService>();
+        services.AddScoped<IJobReadService, JobReadService>();
+        services.AddScoped<ISupplierReadService, SupplierReadService>();
+        services.AddScoped<IPageReadService, PageReadService>();
+
         // ── Handlers（一個單元一個，隨 P4 逐步補上）──────────────────────────
         services.AddScoped<HealthHandler>();
+        services.AddScoped<ContentHandler>();
+        services.AddScoped<SolutionHandler>();
+        services.AddScoped<ProjectHandler>();
+        services.AddScoped<NewsHandler>();
+        services.AddScoped<VlogHandler>();
+        services.AddScoped<FaqHandler>();
+        services.AddScoped<TrendHandler>();
+        services.AddScoped<CertificationHandler>();
+        services.AddScoped<ClientHandler>();
+        services.AddScoped<FacilityHandler>();
+        services.AddScoped<JobHandler>();
+        services.AddScoped<SupplierHandler>();
+        services.AddScoped<PageHandler>();
+        services.AddScoped<SettingHandler>();
+        services.AddScoped<CategoryHandler>();
     })
     .Build();
+
+// Dapper 的 DateOnly 對應（DATE 欄位）。少了這行，有資料的查詢會在執行期炸
+// 「Error parsing column」，而且空結果集不會觸發——最容易漏到上線才發現的那種。
+DateOnlyTypeHandler.Register();
 
 // schema 權威在 Api/Data/Migrations/：啟動時套用 pending migration，CI 不另外跑（docs/10 §11）
 using (var scope = host.Services.CreateScope())
