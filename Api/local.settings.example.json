@@ -1,0 +1,37 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+
+    "Jwt__Secret": "REPLACE_WITH_AT_LEAST_32_CHARS_RANDOM_STRING",
+    "Jwt__Issuer": "nti-api",
+    "Jwt__AudienceAdmin": "nti-admin",
+    "Jwt__AudienceWeb": "nti-web",
+    "Jwt__ExpiryMinutes": "60",
+    "Jwt__ExpiryMinutesWeb": "120",
+    "Jwt__RefreshExpiryDays": "7",
+
+    "BlobStorageConnection": "UseDevelopmentStorage=true",
+
+    "Smtp__Host": "REPLACE_WITH_SMTP_HOST",
+    "Smtp__Port": "587",
+    "Smtp__User": "REPLACE_WITH_SMTP_USER",
+    "Smtp__Password": "REPLACE_WITH_SMTP_PASSWORD",
+    "Smtp__From": "REPLACE_WITH_FROM_ADDRESS",
+
+    "Turnstile__SecretKey": "REPLACE_WITH_TURNSTILE_SECRET",
+
+    "PublishScheduleCron": "0 */5 * * * *",
+    "RetentionCleanupCron": "0 30 3 * * *",
+    "OrphanMediaCron": "0 0 4 * * 0"
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost,1433;Database=NTI;User Id=sa;Password=YOUR_SQL_PASSWORD;TrustServerCertificate=True;"
+  },
+  "Host": {
+    "LocalHttpPort": 7071,
+    "CORS": "*",
+    "CORSCredentials": false
+  }
+}

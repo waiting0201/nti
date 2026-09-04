@@ -39,6 +39,7 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [官網資訊架構 IA](reference/官網資訊架構_IA.md) | 依客戶 sitemap 的完整節點→mockup 頁面對照、footer/浮動鈕、對齊異動紀錄 |
 | [品牌簡報：首頁版型](reference/NTI_Brand_Deck_首頁版型.pptx) | 客戶 2026-09-01 版首頁內容順序與 What We Do／Why NTI／Proof 三區塊的文案與配色稿 |
 | [現有網站盤點與內容遷移](reference/現有網站盤點與內容遷移.md) | 舊站 nti-printing.com 頁面/內容盤點、新舊頁面對應、缺漏頁面與待製內容、待決策點 |
+| [**後端專案說明**](Api/README.md) | `Api/`：Azure Functions .NET 10 API——本機執行、結構、預設拒絕授權與雙 audience 的注意事項 |
 | [前端專案說明](apps/web/README.md) | `apps/web/`：Next.js 公開站——結構、素材同步、版面一致性怎麼保證、`verify:markup` 驗收閘 |
 | [後台專案說明](apps/admin/README.md) | `apps/admin/`：React + Vite 管理後台——24 個單元、權限矩陣、mock 資料來源、接 API 時要改哪裡 |
 
@@ -58,6 +59,13 @@ NTI/
 │   ├── seed/          # run-always 冪等種子（角色／權限／分類／設定／頁面／方案）
 │   ├── verify/        # 建置後自我檢核
 │   └── tools/         # run-local.sh 一鍵建置
+├── Api/               # 後端 API（Azure Functions .NET 10 isolated，namespace Nti.Api）
+│   ├── Functions/         # RouterFunction：唯一 HTTP entry point（catch-all）
+│   ├── Routing/           # AppRouter 三個 partial：分派＋公開白名單＋後台權限表（預設拒絕）
+│   ├── Handlers/          # 一單元一個；Services/Dapper/ 為純讀 ReadService
+│   ├── Data/              # AppDbContext + Configurations + Migrations（**schema 權威**）
+│   ├── Common/            # ApiResponse／ErrorCodes／Constants／Clock／LangResolver
+│   └── local.settings.json # **不進版控**；範本為 local.settings.example.json
 ├── mockup/            # 靜態 HTML 原型（44 頁，客戶已定案的設計版本）— 切版的權威來源
 │   └── assets/        # 圖片、site.css、img-size.js
 ├── pnpm-workspace.yaml # pnpm workspace：packages = apps/*
@@ -107,6 +115,9 @@ NTI/
 ## 工作慣例
 
 - **後端開發**：一律先讀 [docs/10-backend-design.md](docs/10-backend-design.md)（分層鐵律、回應信封、錯誤碼、授權），再看 [docs/04-api.md](docs/04-api.md)（要寫哪些端點）。範本專案為 `/Users/tim/webapps/Jabez/Api`。
+  程式在 [`Api/`](Api/README.md)，本機 `cd Api && func start` → `http://localhost:7071/api/v1/{*route}`。
+  ⚠️ 兩個預設拒絕：未登記於 `AppRouter.Admin.cs` 權限表的 `/admin/*` 直接 403；
+  未登記於 `AppRouter.Public.cs` 白名單的前台路由會被要求 token。新增端點時兩張表都要補。
 - **資料庫**：schema 設計在 [docs/08-database.md](docs/08-database.md)；**權威來源為 EF Core Migration**（`Api/Data/Migrations/`，表達方式對照見 10 §8.5）。[`db/`](db/README.md) 為參考實作與交付腳本，本機一鍵建置：`cp db/.env.local.example db/.env.local && db/tools/run-local.sh`；`db/verify/verify.sql` 保留為驗收閘。
 - **檔案放置慣例**：`docs/` 僅放 **harness engineering 文件**；其他產出的 PDF／時程／規劃檔一律放 `reference/`，客戶提供的原始素材放 `reference/sbk/`。新增重要文件時，於上方「文件索引」補連結。
 - **套件管理**：**pnpm workspace**（`pnpm-workspace.yaml`，packages = `apps/*`），repo 根 `pnpm install` 一次裝完。

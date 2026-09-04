@@ -5,3 +5,8 @@ mockup2/
 db/.env.local
 .claude/projects/
 node_modules/
+
+# Api（.NET）
+Api/bin/
+Api/obj/
+Api/local.settings.json

@@ -1,0 +1,23 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Nti.Api.Routing;
+
+namespace Nti.Api.Functions;
+
+/// <summary>
+/// 唯一的 HTTP entry point（docs/10 §3）。
+/// <c>Route = "{*route}"</c> 捕捉所有 <c>/api/v1/*</c> 請求，交由 <see cref="AppRouter"/> 分派。
+/// <para>Function 這一層只做 trigger binding，不放任何邏輯。</para>
+/// </summary>
+public sealed class RouterFunction(AppRouter router)
+{
+    [Function("Router")]
+    public Task<IActionResult> Run(
+        [HttpTrigger(
+            AuthorizationLevel.Anonymous,
+            "get", "post", "put", "patch", "delete", "options",
+            Route = "{*route}")] HttpRequest req,
+        string? route)
+        => router.RouteAsync(req, route ?? string.Empty);
+}

@@ -5,7 +5,7 @@
 > 分工：本檔記錄**狀態**；[`docs/`](docs/README.md) 的十份作業書記錄各領域的**規格與施工標準**；
 > [`CLAUDE.md`](CLAUDE.md) 記錄**專案規範與索引**。三份不要互相抄，各司其職。
 
-**最後更新**：2026-09-02
+**最後更新**：2026-09-04
 
 ---
 
@@ -13,10 +13,11 @@
 
 **前端切版、後台介面、部署管線三條線已完成並在 Azure 上運作**——
 公開站 44 頁與後台 24 單元同站部署於 `stapp-nti-prod`，素材走 Blob，
-push 到 GitHub 即自動部署。**API 與資料庫尚未開工**，後台目前接的是本機 mock，
-所有內容都是從 mockup 與 `db/seed` 產生的種子資料。
+push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內容都是從 mockup 與 `db/seed`
+產生的種子資料——**資料庫與業務端點都還沒做**。
 
-下一段主線是 **P4 後端**（Azure Functions .NET 10 + EF/Dapper 雙軌）。
+**P4 後端已開工**：`Api/` 骨架完成（統一信封、例外處理、JWT 雙 audience、
+集中式路由與預設拒絕授權、`GET /health` 本機實測通過）；下一步是 Entity 與 EF Migration。
 
 ---
 
@@ -39,7 +40,7 @@ push 到 GitHub 即自動部署。**API 與資料庫尚未開工**，後台目�
 | P1 | 系統分析／架構 | ✅ | 技術選型 2026-06-12 凍結，2026-09-02 修訂為 EF+Dapper 雙軌 |
 | P2 | UI/UX 設計 + 原型 | ✅ | `mockup/` 44 頁，客戶已定案（`mockup2/` 未採用） |
 | P3 | 前端框架／元件 | ✅ | Next.js App Router，共用元件與各頁行為自 mockup 移植 |
-| P4 | 後端／CMS API | ⬜ | **下一段主線**。`Api/` 尚未建立 |
+| P4 | 後端／CMS API | 🟡 | **進行中**。骨架完成（見 §五）；Entity／Migration／業務端點未做 |
 | P5 | 前台頁面開發 | 🟡 | 44 頁切版完成；內容仍為靜態，未接 API |
 | P6 | 會員／報價／聯絡 | 🟡 | 表單已切版（`PageForm`），無後端 |
 | P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語路由就緒，**中文文案未提供**；sitemap 與結構化資料未做 |
@@ -115,14 +116,43 @@ push 到 GitHub 即自動部署。**API 與資料庫尚未開工**，後台目�
 ### ⬜ 未做
 
 - **EF Core Migration**——schema 的**權威來源**是它，不是 `db/`（見 [`docs/10`](docs/10-backend-design.md) §8）。
-  `Api/Data/Migrations/` 尚未建立。
+  `Api/Data/AppDbContext.cs` 已就緒（稽核欄位統一填寫、軟刪改寫、`ApplyConfigurationsFromAssembly`），
+  但 **49 張表的 Entity 與 `Api/Data/Migrations/` 尚未建立**——這是 P4 的下一步。
 - Azure SQL Database 實例尚未開設
 
 ---
 
-## 五、API（尚未開工）
+## 五、API（骨架完成，業務端點未開工）
 
-`Api/` 尚未建立。契約規範在 [`docs/04-api.md`](docs/04-api.md)，施工標準在 [`docs/10-backend-design.md`](docs/10-backend-design.md)（範本專案：`/Users/tim/webapps/Jabez/Api`）。
+`Api/`（namespace `Nti.Api`）已建立，施工標準見 [`docs/10-backend-design.md`](docs/10-backend-design.md)，
+契約見 [`docs/04-api.md`](docs/04-api.md)。專案說明：[`Api/README.md`](Api/README.md)。
+
+### ✅ 骨架（2026-09-04）
+
+- **執行模型**：Functions v4 isolated + ASP.NET Core Integration（`ConfigureFunctionsWebApplication`），
+  `routePrefix = api/v1`，單一 `RouterFunction` catch-all
+- **統一信封** `ApiResponse<T>`（含 `code`）＋ **錯誤碼 18 個**（`ErrorCodes`）＋ `PagedResult<T>`
+  ＋ `Paging`（`pageSize` 強制 `Clamp(1,100)`）
+- **`ExceptionMiddleware`**：`AppException` → 對應 status + code；`ReadFormAsync` 的 Content-Type
+  例外單獨接住；其餘一律 500 `INTERNAL`，堆疊不外洩
+- **JWT 雙 audience**（`nti-admin`／`nti-web`），互打對方路由一律 401
+- **集中式 `AppRouter`**（三個 partial）＋ **授權預設拒絕**：未登記於權限表的 `/admin/*` 直接 403
+- **`Common/` 常數**：權限碼 83 個（＝ `db/seed/110` 的 SuperAdmin 授權範圍）、CategoryType 9、
+  PageKey 29、角色 3、報價／聯絡狀態、`Clock`（Asia/Taipei）、`LangResolver`
+- **`AppDbContext`**：稽核五欄統一填寫、`Remove()` 自動改寫為軟刪
+- **`GET /health`** 本機實測通過（`func start` + `dotnet build` 0 warning／0 error）
+
+本機實測（port 7072）：
+
+| 情境 | 結果 |
+|---|---|
+| `GET /api/v1/health` | 200，信封正確、camelCase、時間為台北時區 |
+| 無憑證打 `/admin/*` | 401 `AUTH_TOKEN_INVALID` |
+| 後台 token 打未登記的 `/admin/news` | 403 `FORBIDDEN`（預設拒絕生效） |
+| 會員 token 打 `/admin/*` | 401（audience 分離生效） |
+| 不存在的路由 | 404 `NOT_FOUND` |
+
+### ⬜ 業務端點
 
 | 群組 | 規劃端點數 | 狀態 |
 |---|---|---|
@@ -131,7 +161,12 @@ push 到 GitHub 即自動部署。**API 與資料庫尚未開工**，後台目�
 | 3.3 會員（認證） | 4 | ⬜ |
 | 3.4 後台管理（RBAC） | 24 單元 CRUD + 5 支動作端點 | ⬜ |
 
-> 開工前必讀順序：`docs/10`（分層鐵律、`ApiResponse` 信封、錯誤碼、JWT/RBAC）→ `docs/04`（要寫哪些端點）。
+### ⬜ 其他未做
+
+- Entity 與 EF Migration（見 §四）、Blob／Email／Turnstile／rate limit 服務
+- 三支 Timer Function（`PublishSchedule`／`RetentionCleanup`／`OrphanMedia`）
+- `/admin/*` 寫入的 AuditLog 統一寫入（位置已在 `AppRouter` 標好，待 AuditLog entity）
+- Azure Function App 資源與 CI/CD（OIDC 登入，隨 P4 一起）
 
 ---
 
