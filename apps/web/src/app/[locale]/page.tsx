@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { CertificationLogos, ClientLogos, HeroSlides } from '@/components/cms'
+import { getHome } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { HeroSlider } from '@/components/behaviors/HeroSlider'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -17,15 +19,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const home = await getHome(locale)
   const l = withLocale(locale)
   return (
     <>
 
       {/* ============ HERO ============ */}
       <section className="hero" id="hero" aria-label="Featured highlights">
+        {home?.banners.length ? (
+          <HeroSlides items={home.banners} locale={locale} />
+        ) : (
+        <>
         <A className="slide on" href={l("/green-advantage")}><img src={mediaUrl("/assets/ref-home-banner1.png")} alt="The courage to print green? — NTI Printing" /></A>{' '}
         <A className="slide" href={l("/solutions")}><img src={mediaUrl("/assets/ref-home-banner2.png")} alt="NTI custom printed packaging solutions" /></A>{' '}
         <A className="slide" href={l("/differences")}><img src={mediaUrl("/assets/ref-home-mid2.png")} alt="NTI printing facility — Heidelberg press line in Tainan" /></A>{' '}
+        </>
+        )}
         <button className="sbtn prev" aria-label="Previous slide"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M15 5l-7 7 7 7" /></svg></button>{' '}
         <button className="sbtn next" aria-label="Next slide"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M9 5l7 7-7 7" /></svg></button>
         <div className="dots"></div>
@@ -152,6 +161,11 @@ export default async function Page({ params }: Props) {
       <section className="proof" id="proof">
         <div className="wrap">
           <h2 className="proof-h reveal"><b>Proof</b><span>&mdash; Through action, not words.</span></h2>
+          {home?.certifications.length ? (
+            <div className="cert-wall reveal" data-d="1">
+              <CertificationLogos items={home.certifications} />
+            </div>
+          ) : (
           <div className="cert-wall reveal" data-d="1">
             <img src={mediaUrl("/assets/cert-g7.png")} alt="G7 Master Qualified Facility" />
             <img src={mediaUrl("/assets/cert-gmi.png")} alt="GMI Certified Print Facility" />
@@ -168,6 +182,7 @@ export default async function Page({ params }: Props) {
             <img className="wide" src={mediaUrl("/assets/cert-sedex.png")} alt="Sedex Member" />
             <img className="lockup" src={mediaUrl("/assets/cert-esci.png")} alt="Energy Smart Communities Initiative" />
           </div>
+          )}
         </div>
       </section>
 
@@ -178,6 +193,17 @@ export default async function Page({ params }: Props) {
           <p className="lead reveal">Trusted by leading domestic and international brands.</p>
           <div className="carousel reveal" data-d="1" aria-label="Trusted by Target, CVS pharmacy, Walgreens, Lowe&rsquo;s, Academy Sports + Outdoors, and The Home Depot">
             <div className="logo-track">
+              {home?.clients.length ? (
+                <>
+                  <div className="logo-set">
+                    <ClientLogos items={home.clients} />
+                  </div>
+                  <div className="logo-set" aria-hidden="true">
+                    <ClientLogos items={home.clients} />
+                  </div>
+                </>
+              ) : (
+              <>
               <div className="logo-set">
                 <img src={mediaUrl("/assets/client-target.png")} alt="Target" />
                 <img src={mediaUrl("/assets/client-cvs.png")} alt="CVS pharmacy" />
@@ -194,6 +220,8 @@ export default async function Page({ params }: Props) {
                 <img src={mediaUrl("/assets/client-academy.png")} alt="" />
                 <img src={mediaUrl("/assets/client-homedepot.png")} alt="" />
               </div>
+              </>
+              )}
             </div>
           </div>
         </div>

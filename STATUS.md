@@ -16,9 +16,9 @@
 push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內容都是從 mockup 與 `db/seed`
 產生的種子資料——**資料庫與業務端點都還沒做**。
 
-**P4 後端完成，後台也接上了**：`apps/admin` 的資料存取層可切換到真 API（設 `VITE_API_BASE`），
-21 項整合測試對真後端全數通過。**唯一還沒做的是開 Azure 資源**（Function App 與 SQL），
-指令與 OIDC 設定寫在 docs/07 §7.4。`apps/web` 的內容仍寫死，尚未接 API。
+**前後端都接完了**：後台與公開站都能切換到真 API（`VITE_API_BASE`／`NEXT_PUBLIC_API_BASE`），
+沒設就維持現在的樣子。**唯一還沒做的是開 Azure 資源**（Function App 與 SQL），
+指令與 OIDC 設定寫在 docs/07 §7.4。內容與中文文案仍待客戶提供。
 
 ---
 
@@ -76,11 +76,36 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | 內容來源 | 全部寫死在 `page.tsx`，未接 API（P5 尾段） |
 | 表單送出 | `PageForm` 只有前端行為，送出無後端（P6） |
 
+### ✅ 已接上 API（2026-09-04）
+
+由 `NEXT_PUBLIC_API_BASE` 決定，**兩種模式的版面完全相同**：沒設就渲染各頁寫死的
+mockup 內容（現況部署），設了就改吃 CMS。
+
+| 接上的部分 | 來源 |
+|---|---|
+| **全部 44 頁的 `<head>`** | 固定頁 SEO（對照表 `src/lib/pages.ts`）。含 noindex 開關與 OG 欄位 |
+| 首頁 | Banner、Proof 認證牆、客戶 logo |
+| `/news` + **新增的 `/news/{slug}`** | 消息列表與詳細頁 |
+| `/projects`、`/faq`、`/green-vlog`、`/industry-trends`、`/careers` | 各內容單元 |
+| `/about-certifications`、`/supplier-area` | 認證牆／公告、規範、下載 |
+| `/facility-*`（4）、`/products-*`（3） | 設備卡、方案品項卡 |
+
+其餘頁面只接 SEO——它們的內容是固定文案（docs/08 決議 3）。
+
+**`verify:markup` 仍然 44 頁全過**：沒設 API 時輸出與 mockup 逐字相同。
+接了 API 之後逐頁實測，各頁確實改吃 CMS（含「缺語系不 fallback」：
+只有英文的消息在 `/zh` 不出現、詳細頁 404）。
+
+⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
+清單在該腳本的 `HAND_MAINTAINED`。
+
 ### ⬜ 未做
 
 - `sitemap.ts`（`robots.ts` 已有）
 - 結構化資料（JSON-LD）
 - 舊站 301 轉址對照表（盤點在 `reference/現有網站盤點與內容遷移.md`）
+- `/solutions` 的 explorer 互動元件仍是寫死的四個方案（它不是卡片列表，
+  是有 `data-set` 切換行為的自訂元件；四筆方案的代號固定，之後要接再說）
 
 ---
 
@@ -273,7 +298,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 
 - **Azure 資源尚未開設**：Function App 與 Azure SQL。指令、OIDC 設定與 GitHub
   secrets／variables 清單見 [`docs/07 §7.4`](docs/07-deployment.md)。**會產生費用**
-- **`apps/web` 尚未接上 API**：44 頁的內容仍寫死在 `page.tsx`（後台已接上，見 §三）
+- **內容與中文文案仍待客戶提供**：CMS 接好了但裡面是空的
 - **refresh token rotation**（docs/10 §7.3）：schema 無對應資料表，且 04 §3.3 的端點清單
   未列 `/auth/refresh`。目前只發 access token（後台 60 分鐘、會員 120 分鐘）
 - 附件病毒掃描：`ScanStatus` 寫入後恆為 `Pending`，未接掃描服務。

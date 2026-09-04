@@ -3,6 +3,51 @@
 `mockup/` 的 44 頁靜態切版稿，1:1 搬進 Next.js App Router。
 **版面與 CSS 完全依 mockup**（客戶已確認的版本），本專案不做視覺重新詮釋。
 
+## 內容從哪來
+
+由 `NEXT_PUBLIC_API_BASE` 決定，兩種模式的**版面完全相同**：
+
+| | 沒設（現況部署） | 設了 |
+|---|---|---|
+| 集合型內容 | 各頁寫死的 mockup 內容 | CMS（`/api/v1/*`） |
+| 固定頁 SEO | 各頁寫死的 title/description | 後台「固定頁」單元 |
+| 圖片 | `public/assets` 或 `NEXT_PUBLIC_MEDIA_BASE` | CMS 上傳的走 `/files/media/*` 代理 |
+
+沒設就整層停用（`src/lib/api.ts`）。這不是權宜：客戶的內容與中文文案都還沒進 CMS，
+而公開站已經部署在 SWA 上——接了空的資料庫只會讓整站變空白。
+
+接 API 跑：
+
+```bash
+cd Api && func start                                       # 另一個終端
+NEXT_PUBLIC_API_BASE=http://localhost:7071/api/v1 pnpm --filter web dev
+```
+
+⚠ `NEXT_PUBLIC_*` 是 **build 時內嵌**的，換 base 要重新 build。
+另外 Next 的 fetch 快取存在 `.next/cache`，**重啟服務不會清掉**——
+改了 CMS 內容卻看不到變化時，先確認是不是還在 300 秒的 ISR window 內，
+或直接 `rm -rf .next/cache`。
+
+### 哪些頁接了 CMS
+
+| 頁面 | 來源 |
+|---|---|
+| 全部 44 頁的 `<head>` | 固定頁 SEO（`/pages/{pageKey}`，對照表在 `src/lib/pages.ts`） |
+| 首頁 | Banner、Proof 認證牆、客戶 logo |
+| `/news`、`/news/{slug}` | 消息列表與詳細頁（詳細頁是新增的動態路由） |
+| `/projects`、`/faq`、`/green-vlog`、`/industry-trends`、`/careers` | 各自的內容單元 |
+| `/about-certifications`、`/supplier-area` | 認證牆／公告、規範、下載 |
+| `/facility-*`（4 頁）、`/products-*`（3 頁） | 設備卡、方案品項卡 |
+
+其餘頁面的內容是**固定文案**（docs/08 決議 3：固定頁的內容寫死在前端，
+CMS 只管 SEO），所以它們只接 SEO。
+
+> `mockup/` 那 12 篇 `/news-*` 是設計稿附的示範文章，保留著——
+> CMS 沒有內容時列表會連到它們，有內容時列表改連 `/news/{slug}`。
+
+⚠ **接了 CMS 的頁面不再由 `build-pages.mjs` 產生**（會洗掉接線）。
+清單在該腳本的 `HAND_MAINTAINED`。
+
 ## 快速開始
 
 ```bash

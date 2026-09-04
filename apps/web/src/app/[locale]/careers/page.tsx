@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { JobList } from '@/components/cms'
+import { getJobs } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -15,6 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const jobs = await getJobs(locale)
   const l = withLocale(locale)
   return (
     <>
@@ -28,6 +31,10 @@ export default async function Page({ params }: Props) {
       </div></section>
       <section className="section tight"><div className="wrap">
         <div className="dtitle reveal">Open positions</div>
+        {jobs?.length ? (
+          <JobList items={jobs} />
+        ) : (
+        <>
         <div className="faq-list reveal mt-s">
           <details className="faq" open><summary><span>Offset Press Operator &mdash; Tainan plant</span></summary><p>Run and maintain sheet-fed offset presses to ISO&nbsp;12647-2 colour standards. Experience on Heidelberg equipment preferred; we will train the right candidate on our colour management workflow. Shift allowance applies.</p></details>
           <details className="faq"><summary><span>Prepress / Colour Management Engineer</span></summary><p>Own CTP output, proofing and dot calibration. You will work with the Jazzy colour system and X-Rite instruments, and be the last check before a job reaches the press.</p></details>
@@ -35,6 +42,8 @@ export default async function Page({ params }: Props) {
           <details className="faq"><summary><span>ESG &amp; Sustainability Specialist</span></summary><p>Maintain our carbon accounting, certification evidence and customer ESG reporting. Suits someone comfortable with both a spreadsheet and a pressroom floor.</p></details>
           <details className="faq"><summary><span>International Sales Representative</span></summary><p>Develop and service accounts in Japan, the EU and North America. Business-level English required; packaging or print background an advantage.</p></details>
         </div>
+        </>
+        )}
         <div className="faq-cta reveal mt-l">
           <div><h3>Nothing matching your skills?</h3><p>Send us your CV anyway &mdash; we hire ahead of the posting when someone is right.</p></div>
           <A href={l("/contact")} className="btn btn-solid">Contact us</A>

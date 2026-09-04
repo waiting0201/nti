@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { FacilityGrid } from '@/components/cms'
+import { getFacility } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -14,6 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const equipment = await getFacility(locale, 'quality')
   const l = withLocale(locale)
   return (
     <>
@@ -36,6 +39,9 @@ export default async function Page({ params }: Props) {
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Measurement &amp; Test Equipment</div>
+        {equipment?.length ? (
+          <FacilityGrid items={equipment} />
+        ) : (
         <div className="pr-grid">
           <article className="pr-card reveal">
             <div className="pr-img"><img src={mediaUrl("/assets/fac-qc-i1io.png")} alt="X-Rite i1iO" loading="lazy" /></div>
@@ -70,6 +76,7 @@ export default async function Page({ params }: Props) {
             <div className="pr-body"><h3>Blister strength tester</h3><p>Gluing strength for blister components.</p></div>
           </article>
         </div>
+        )}
         <p className="prose wide reveal mt-l">Our goal: every print that leaves NTI meets international standards &mdash; and your expectations.</p>
       </div></section>
       <section className="section tight"><div className="wrap reveal">

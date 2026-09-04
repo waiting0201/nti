@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { NewsList } from '@/components/cms'
+import { getNews } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -14,6 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const news = await getNews(locale)
   const l = withLocale(locale)
   return (
     <>
@@ -21,6 +24,10 @@ export default async function Page({ params }: Props) {
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">News <span className="ti-slash">/</span> <span className="ti-alt">Latest news &amp; insights</span></h1>
         <div className="sec-sub reveal">Stay connected with NTI Printing&rsquo;s latest green printing innovations, sustainable packaging initiatives, company news, and industry achievements.</div>
+        {news?.length ? (
+          <NewsList items={news} locale={locale} />
+        ) : (
+        <>
         <A href={l("/news-global-views-esg-award")} className="news-feature reveal mt-l">
           <div className="nf-img"><img src={mediaUrl("/assets/news/global-views-esg-award.jpg")} alt="NTI wins a 2026 Global Views ESG Award for low-carbon operations" /></div>
           <div className="nf-body">
@@ -120,6 +127,8 @@ export default async function Page({ params }: Props) {
             </div>
           </A>
         </div>
+        </>
+        )}
       </div></section>
     </>
   )

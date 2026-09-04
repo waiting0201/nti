@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { TrendSections } from '@/components/cms'
+import { getTrends } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -15,6 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const trends = await getTrends(locale)
   const l = withLocale(locale)
   return (
     <>
@@ -25,6 +28,10 @@ export default async function Page({ params }: Props) {
         <div className="sec-sub reveal">What brand owners are asking us for, and what the regulations, materials and machines are about to make standard.</div>
         <p className="prose wide reveal mt-s">We sit between brand owners and the pressroom, so we see requirement changes early &mdash; usually a year or two before they land in a tender document. These are the shifts our customers are planning around right now.</p>
       </div></section>
+      {trends?.length ? (
+        <TrendSections items={trends} />
+      ) : (
+      <>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Regulation is setting the pace</div>
         <p className="prose wide">Packaging rules in the EU, Japan and North America are converging on recyclability, recycled content and disclosure. Design decisions that used to be aesthetic &mdash; a laminate, a foil, a window &mdash; are now compliance decisions.</p>
@@ -54,6 +61,8 @@ export default async function Page({ params }: Props) {
           <A href={l("/get-a-quote")} className="btn btn-solid">Get a quote</A>
         </div>
       </div></section>
+      </>
+      )}
     </>
   )
 }

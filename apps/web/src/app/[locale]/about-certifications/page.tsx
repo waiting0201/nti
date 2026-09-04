@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { CertificationWall } from '@/components/cms'
+import { getCertifications } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -14,6 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const certs = await getCertifications(locale)
   const l = withLocale(locale)
   return (
     <>
@@ -33,13 +36,17 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Certifications</div>
         <p className="prose wide">NTI has built its reputation on printing quality, and our clients hold us to it. We keep applying for further certification so that every customer gets the same assurance of product quality &mdash; audited by an outside body rather than asserted by us. Alongside the international standards below, we developed the NTI Green Printing Certificate, a mark our clients can display on their packaging as proof of an eco-conscious process.</p>
       </div></section>
-      <section className="section certs reveal"><div className="wrap certgrid">
+      <section className="section certs reveal">{certs?.length ? (
+          <CertificationWall items={certs} />
+        ) : (
+        <div className="wrap certgrid">
         <img src={mediaUrl("/assets/cert-green.png")} alt="NTI Green Printing" />
         <img src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" className="big" />
         <img src={mediaUrl("/assets/cert-leed.png")} alt="LEED Leadership in Energy and Environmental Design" />
         <img src={mediaUrl("/assets/cert-mof.png")} alt="Mineral Oil Free" />
         <img src={mediaUrl("/assets/cert-esg.png")} alt="ESG Environmental, Social, Governance" />
-      </div></section>
+      </div>
+        )}</section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Printing &amp; Colour Standards</div>
         <div className="flist mt-s"><p className="fi"><b>G7 Master Colorspace</b>Developed by Idealliance, a globally recognized colour calibration methodology based on ISO&nbsp;12647-2, ensuring consistent, accurate colour reproduction across every print run.</p><p className="fi"><b>ISO&nbsp;12647-2</b>The standard litho production procedure our colour management runs to, with spot colours matched to swatch under controlled viewing conditions.</p></div>

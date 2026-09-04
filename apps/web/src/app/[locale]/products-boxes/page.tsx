@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { SolutionItems } from '@/components/cms'
+import { getSolutionByCode } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -14,6 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const solution = await getSolutionByCode(locale, 'boxes')
   const l = withLocale(locale)
   return (
     <>
@@ -27,6 +30,9 @@ export default async function Page({ params }: Props) {
           <A href={l("/products-uv")}>UV Printing</A>{' '}
           <A href={l("/products-other")}>Other Printing</A>
         </nav>
+        {solution?.items.length ? (
+          <SolutionItems items={solution.items} />
+        ) : (
         <div className="pr-grid">
           <article className="pr-card reveal">
             <div className="pr-img"><img src={mediaUrl("/assets/prod-box-gluing.jpg")} alt="Gluing Box" loading="lazy" /></div>
@@ -77,6 +83,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
         </div>
+        )}
         <div className="faq-cta reveal mt-l">
           <div><h3>Have a spec in mind?</h3><p>Send the brief &mdash; a packaging engineer replies within one business day.</p></div>
           <A href={l("/get-a-quote")} className="btn btn-solid">Get a quote</A>

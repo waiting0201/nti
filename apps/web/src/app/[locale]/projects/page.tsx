@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { mediaUrl } from '@/lib/media'
+import { ProjectGrid } from '@/components/cms'
+import { getProjects } from '@/lib/api'
 import { ProjectFilter } from '@/components/behaviors/ProjectFilter'
 import { pageMetadata, type Locale } from '@/lib/i18n'
 
@@ -14,6 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const projects = await getProjects(locale)
   return (
     <>
       <section className="section"><div className="wrap">
@@ -23,6 +26,10 @@ export default async function Page({ params }: Props) {
         <div className="dtitle reveal mt-m" id="industries">Industries / Applications</div>
         <div className="flist plain cols3 reveal mt-s"><p className="fi">Food &amp; Beverage</p><p className="fi">Electronics</p><p className="fi">Beauty &amp; Skincare</p><p className="fi">Medical &amp; Healthcare</p><p className="fi">Luxury &amp; Gift Packaging</p><p className="fi">Hardware &amp; Hand Tools</p><p className="fi">Automotive</p><p className="fi">Publishing &amp; Stationery</p><p className="fi">Home &amp; Lifestyle</p><p className="fi">Industrial &amp; Consumer Goods</p></div>
         <div className="dtitle reveal mt-m" id="cases">Case Studies &amp; Photos</div>
+        {projects?.length ? (
+          <ProjectGrid items={projects} />
+        ) : (
+        <>
         <div className="filter-row reveal" id="pjFilters">
           <button className="fbtn active" data-f="All">All projects</button>{' '}
           <button className="fbtn" data-f="Food">Food</button>{' '}
@@ -80,6 +87,8 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
         </div>
+        </>
+        )}
         <p className="prose wide reveal mt-l">Explore how global brands trust NTI to print greener &mdash; without compromise.</p>
       </div></section>
       <ProjectFilter />

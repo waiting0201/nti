@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { VlogGrid } from '@/components/cms'
+import { getVlogs } from '@/lib/api'
 import { pageMetadata, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -13,11 +15,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const vlogs = await getVlogs(locale)
   return (
     <>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Green Vlog <span className="ti-slash">/</span> <span className="ti-alt">Green knowledge hub</span></h1>
         <div className="sec-sub reveal">Explore practical insights, industry trends, and sustainable packaging and eco friendly printing solutions that help brands build a greener future.</div>
+        {vlogs?.length ? (
+          <VlogGrid items={vlogs} />
+        ) : (
+        <>
         <div className="video-frame reveal mt-l">
           <iframe src="https://www.youtube.com/embed/plgjH8Jw8pE" title="The Perfect Partner for Packaging Printing — NTI Printing" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
         </div>
@@ -35,6 +42,8 @@ export default async function Page({ params }: Props) {
             <span><span className="vl-ep">Awards</span><h3>2024 SME Benchmark Enterprise Award</h3></span>
           </A>
         </div>
+        </>
+        )}
       </div></section>
     </>
   )

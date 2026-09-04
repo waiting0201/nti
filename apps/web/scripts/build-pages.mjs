@@ -232,10 +232,38 @@ function extract(html) {
   }
 }
 
+/**
+ * 已改為手動維護的頁面：它們在寫死的 mockup 內容之外，另外接了 CMS
+ * （`{cms?.length ? <元件/> : 原本內容}`）。重跑本腳本會把那些接線洗掉，
+ * 所以一律跳過——檔頭那句「之後若改為手動維護頁面內容，請停用本腳本」
+ * 就是指這件事，只是現在是逐頁停用而不是整支停用。
+ *
+ * 要重新從 mockup 產生某一頁，先把它從這份清單移除，產完再手動接回 CMS。
+ */
+const HAND_MAINTAINED = new Set([
+  'index',                  // Hero／認證牆／客戶 logo
+  'news',                   // 消息列表
+  'projects',               // 案例格線
+  'green-vlog',             // 影片
+  'faq',                    // 問答與分組
+  'industry-trends',        // 趨勢段落
+  'careers',                // 職缺
+  'about-certifications',   // 認證牆
+  'supplier-area',          // 公告／規範／下載
+  'facility-pre-press', 'facility-eco-printing', 'facility-post-press', 'facility-quality',
+  'products-boxes', 'products-cardboard', 'products-other',
+])
+
 const files = readdirSync(mockupDir).filter((f) => f.endsWith('.html')).sort()
 let count = 0
+let skipped = 0
 for (const file of files) {
   const slug = file.replace(/\.html$/, '')
+
+  if (HAND_MAINTAINED.has(slug)) {
+    skipped++
+    continue
+  }
   const isHome = slug === 'index'
   const routePath = isHome ? '/' : '/' + slug
   const { title, desc, body } = extract(readFileSync(path.join(mockupDir, file), 'utf8'))
@@ -294,4 +322,4 @@ ${behaviorTags}    </>
   writeFileSync(path.join(dir, 'page.tsx'), src)
   count++
 }
-console.log(`已產生 ${count} 個頁面 → ${appDir}`)
+console.log(`已產生 ${count} 個頁面 → ${appDir}` + `，跳過 ${skipped} 頁（已接 CMS，見 HAND_MAINTAINED）`)

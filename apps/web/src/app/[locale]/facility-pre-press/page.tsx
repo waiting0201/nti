@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { FacilityGrid } from '@/components/cms'
+import { getFacility } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -14,6 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const equipment = await getFacility(locale, 'pre-press')
   const l = withLocale(locale)
   return (
     <>
@@ -37,6 +40,9 @@ export default async function Page({ params }: Props) {
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Equipment</div>
+        {equipment?.length ? (
+          <FacilityGrid items={equipment} />
+        ) : (
         <div className="pr-grid">
           <article className="pr-card reveal">
             <div className="pr-img"><img src={mediaUrl("/assets/fac-pre-ctp.jpg")} alt="Heidelberg Suprasetter 105 S CTP" loading="lazy" /></div>
@@ -55,6 +61,7 @@ export default async function Page({ params }: Props) {
             <div className="pr-body"><h3>Z&Uuml;ND CCD high-speed cutter</h3><p>Auto-registration cutting for box samples.</p></div>
           </article>
         </div>
+        )}
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>

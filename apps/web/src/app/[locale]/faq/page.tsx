@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { A } from '@/components/A'
+import { FaqList } from '@/components/cms'
+import { getFaqs } from '@/lib/api'
 import { FaqFilter } from '@/components/behaviors/FaqFilter'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -15,11 +17,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { locale } = await params
   const l = withLocale(locale)
+
+  // CMS 有內容就用 CMS 的，沒有就是下面寫死的 mockup 內容（見 lib/api.ts）
+  const faqs = await getFaqs(locale)
+
+  const faqCta = (
+    <div className="faq-cta reveal">
+      <div><h3>Didn&rsquo;t find your answer?</h3><p>Our team replies within one business day.</p></div>
+      <A href={l("/contact")} className="btn btn-solid">Contact us</A>
+    </div>
+  )
+
   return (
     <>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">FAQ <span className="ti-slash">/</span> <span className="ti-alt">Your questions answered</span></h1>
         <div className="sec-sub reveal">Find answers to common questions about green printing, packaging, certifications, sustainability, and working with NTI.</div>
+        {faqs?.length ? (
+          <FaqList items={faqs}>{faqCta}</FaqList>
+        ) : (
         <div className="faq-layout">
           <nav className="faq-nav reveal" id="faqNav" aria-label="FAQ categories">
             <button className="active" data-c="All">All questions</button>{' '}
@@ -39,12 +55,10 @@ export default async function Page({ params }: Props) {
           <details className="faq" data-c="Services"><summary><span>Do you support structural design and prototyping?</span></summary><p>Yes. Our pre-press team provides dielines, white samples and printed mockups, plus drop and transit testing for shipping structures before mass production.</p></details>
           <details className="faq" data-c="International"><summary><span>Can international clients work with you?</span></summary><p>Absolutely — a large share of our output ships to Japan, the EU and North America. We handle export cartons, documentation and freight coordination from the Tainan plant.</p></details>
         </div>
-        <div className="faq-cta reveal">
-          <div><h3>Didn&rsquo;t find your answer?</h3><p>Our team replies within one business day.</p></div>
-          <A href={l("/contact")} className="btn btn-solid">Contact us</A>
-        </div>
+        {faqCta}
           </div>
         </div>
+        )}
       </div></section>
       <FaqFilter />
     </>

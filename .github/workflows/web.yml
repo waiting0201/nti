@@ -58,6 +58,9 @@ jobs:
         env:
           NEXT_PUBLIC_MEDIA_BASE: ${{ vars.MEDIA_BASE }}
           NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+          # 公開站的內容來源開關。沒設就渲染各頁寫死的 mockup 內容（現況），
+          # 設了就改吃 CMS。與後台的 VITE_API_BASE 是同一個 variable。
+          NEXT_PUBLIC_API_BASE: ${{ vars.API_BASE }}
           # 上線前一律 noindex（apps/web/src/app/robots.ts）。
           # 正式上線那次才把這個 variable 設成 1。
           NEXT_PUBLIC_ALLOW_INDEXING: ${{ vars.ALLOW_INDEXING }}
