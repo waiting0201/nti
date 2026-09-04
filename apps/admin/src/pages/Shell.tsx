@@ -2,6 +2,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { UNITS, UNIT_BY_CODE } from '@/units'
 import { useAuth, ROLE_LABEL } from '@/lib/auth'
 import { ToastHost } from '@/components/ui'
+import { hasApi } from '@/api/http'
 import type { UnitGroup } from '@/lib/types'
 
 export function Shell() {
@@ -47,8 +48,12 @@ export function Shell() {
               ))}
           </div>
         ))}
+        {/*
+          這行以前是寫死的「尚未串接 API」，接上 API 之後就變成謊話。
+          改讀 hasApi（＝有沒有 VITE_API_BASE），資料來源是什麼就顯示什麼。
+        */}
         <div className="sidebar-foot">
-          資料為本機示範用，尚未串接 API
+          {hasApi ? '資料來自 CMS API' : '資料為本機示範用，尚未串接 API'}
           <br />
           docs/09-cms-admin.md · 儀表板 + 24 個單元
         </div>
