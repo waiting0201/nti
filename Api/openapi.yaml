@@ -1,0 +1,1036 @@
+# NTI Printing API — OpenAPI 3.1
+#
+# 這份是手寫的，不是產生的。原因見 docs/10-backend-design.md §13：
+# 本專案用單一 RouterFunction catch-all + 集中式 AppRouter，
+# Functions 的 OpenAPI 擴充套件只看得到「一個接受所有路徑的 Function」，
+# 內省不出任何端點。
+#
+# ⚠ 因為是手寫的，它會漂移。新增或修改端點時，PR 必須同時改這裡與
+#   docs/04-api.md §3（docs/10 §12 的 checklist 有列）。
+openapi: 3.1.0
+
+info:
+  title: NTI Printing API
+  version: 1.0.0
+  description: |
+    NTI Printing 官網後端。前台內容公開唯讀，會員與後台以 JWT 認證且 audience 分離。
+
+    - 契約定義：`docs/04-api.md`
+    - 實作規格：`docs/10-backend-design.md`
+    - 錯誤碼值域：`Api/Common/ErrorCodes.cs`
+
+servers:
+  - url: https://func-nti-prod.azurewebsites.net/api/v1
+    description: 正式
+  - url: http://localhost:7071/api/v1
+    description: 本機（func start）
+
+tags:
+  - name: 前台內容
+    description: 公開唯讀，供 Next.js ISR 消費（帶 s-maxage 快取標頭）
+  - name: 表單
+    description: 公開寫入，受 Turnstile 與 rate limit 保護
+  - name: 會員
+    description: audience 為 nti-web
+  - name: 後台認證
+  - name: 後台內容單元
+    description: 01–14，CRUD 形狀一致
+  - name: 後台其他單元
+    description: 15–24 與 dashboard
+
+security: []   # 預設不需認證；需要的端點各自宣告
+
+paths:
+  /health:
+    get:
+      tags: [前台內容]
+      summary: 存活檢查
+      description: 刻意不碰資料庫——Azure SQL Basic 只有 5 DTU，健康檢查不該吃它。
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  # ══════════════════ 04-api §3.1 前台內容 ══════════════════
+  /content/home:
+    get:
+      tags: [前台內容]
+      summary: 首頁聚合（Banner／方案卡／認證牆／客戶 logo／精選消息）
+      description: |
+        一次回傳五組資料。拆成五支端點會讓 ISR 的重新驗證變成五個時間點，
+        首頁可能出現「認證牆更新了、Banner 還是舊的」。
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /solutions:
+    get:
+      tags: [前台內容]
+      summary: 方案清單
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /solutions/{slug}:
+    get:
+      tags: [前台內容]
+      summary: 方案詳細頁（含品項卡與 SEO）
+      description: slug 是分語系的；該語系沒有這筆就是 404，不會退回另一個語系。
+      parameters:
+        - { $ref: '#/components/parameters/Lang' }
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /projects:
+    get:
+      tags: [前台內容]
+      summary: 案例實績（無詳細頁，卡片即完整內容）
+      parameters:
+        - { $ref: '#/components/parameters/Lang' }
+        - { $ref: '#/components/parameters/CategoryId' }
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/PageSize' }
+      responses:
+        '200': { $ref: '#/components/responses/OkPagedOrArray' }
+
+  /facility:
+    get:
+      tags: [前台內容]
+      summary: 設備卡
+      parameters:
+        - { $ref: '#/components/parameters/Lang' }
+        - name: group
+          in: query
+          description: Category.Code（pre-press／eco-printing／post-press／quality／tour）。用 code 而非 id，因為前端五個子頁的路徑本身就是 code。
+          schema: { type: string }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /certifications:
+    get:
+      tags: [前台內容]
+      summary: 認證／夥伴／獎項
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /clients:
+    get:
+      tags: [前台內容]
+      summary: 客戶 logo（品牌名不翻譯，無 lang 參數效果）
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /categories:
+    get:
+      tags: [前台內容]
+      summary: 分類（篩選器與下拉選單的來源）
+      parameters:
+        - { $ref: '#/components/parameters/Lang' }
+        - name: type
+          in: query
+          description: 不帶則回全部。值不在值域內回 400，而不是靜默的空陣列。
+          schema: { $ref: '#/components/schemas/CategoryType' }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /news:
+    get:
+      tags: [前台內容]
+      summary: 最新消息
+      parameters:
+        - { $ref: '#/components/parameters/Lang' }
+        - { $ref: '#/components/parameters/CategoryId' }
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/PageSize' }
+      responses:
+        '200': { $ref: '#/components/responses/OkPagedOrArray' }
+
+  /news/{slug}:
+    get:
+      tags: [前台內容]
+      summary: 消息詳細頁
+      parameters:
+        - { $ref: '#/components/parameters/Lang' }
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /green-vlog:
+    get:
+      tags: [前台內容]
+      summary: Green Vlog（無詳細頁，外連 YouTube；主打影片排最前）
+      parameters:
+        - { $ref: '#/components/parameters/Lang' }
+        - { $ref: '#/components/parameters/CategoryId' }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /faq:
+    get:
+      tags: [前台內容]
+      summary: 常見問題
+      parameters:
+        - { $ref: '#/components/parameters/Lang' }
+        - { $ref: '#/components/parameters/CategoryId' }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /industry-trends:
+    get:
+      tags: [前台內容]
+      summary: 產業趨勢
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /careers:
+    get:
+      tags: [前台內容]
+      summary: 職缺
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /supplier/notices:
+    get:
+      tags: [前台內容]
+      summary: 供應商公告
+      parameters:
+        - { $ref: '#/components/parameters/Lang' }
+        - { $ref: '#/components/parameters/CategoryId' }
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/PageSize' }
+      responses:
+        '200': { $ref: '#/components/responses/OkPagedOrArray' }
+
+  /supplier/specs:
+    get:
+      tags: [前台內容]
+      summary: 供應商規範
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /supplier/downloads:
+    get:
+      tags: [前台內容]
+      summary: 供應商下載
+      description: 回傳的是 Blob 相對路徑，不是可直連的 URL——容器全為 private。
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /supplier/downloads/{id}/hit:
+    post:
+      tags: [前台內容]
+      summary: 累計下載次數
+      description: |
+        公開端點。`RequireLogin = 1` 的受控文件需要會員憑證——
+        整條路由要求 token 的話一般下載也會被擋。
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /pages/{pageKey}:
+    get:
+      tags: [前台內容]
+      summary: 固定頁的 SEO 欄位
+      description: 29 個固定頁。`hasRichBody = true` 的兩頁（privacy-legal、green-csr）另含 bodyHtml。
+      parameters:
+        - { $ref: '#/components/parameters/Lang' }
+        - { name: pageKey, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /site-settings:
+    get:
+      tags: [前台內容]
+      summary: 全站設定
+      description: |
+        值已依語系解析完成。**`Mail` 群組（信件收件者等內部設定）不會出現在回應中。**
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  # ══════════════════ 04-api §3.2 表單 ══════════════════
+  /quotes:
+    post:
+      tags: [表單]
+      summary: 送出報價需求
+      description: |
+        JSON 或 multipart 皆可；有附件時必須用 multipart。
+        受 Turnstile 與 rate limit（10 次／小時／IP）保護。
+        **回應只給 quoteNo，不回內部 Id。**
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuoteCreate' }
+          multipart/form-data:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/QuoteCreate'
+                - type: object
+                  properties:
+                    attachments:
+                      type: array
+                      description: 設計稿。PDF/AI/PSD/JPG/PNG/ZIP，單檔 ≤20MB、最多 5 個，且驗 magic bytes。
+                      items: { type: string, format: binary }
+      responses:
+        '200':
+          description: 已受理
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties: { quoteNo: { type: string, examples: ['Q20260901-0001'] } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /contacts:
+    post:
+      tags: [表單]
+      summary: 送出聯絡訊息
+      description: 刻意無「主旨」欄位。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ContactCreate' }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  # ══════════════════ 04-api §3.3 會員 ══════════════════
+  /auth/register:
+    post:
+      tags: [會員]
+      summary: 註冊
+      description: 建立後狀態為 Pending，須完成 Email 驗證才能登入。
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Register' } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /auth/login:
+    post:
+      tags: [會員]
+      summary: 會員登入
+      description: |
+        帳號不存在與密碼錯誤回同一個 `AUTH_INVALID_CREDENTIALS`——分開回等於提供帳號列舉工具。
+        連續失敗 5 次鎖 15 分鐘。
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Login' } } } }
+      responses:
+        '200':
+          description: 登入成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties: { data: { $ref: '#/components/schemas/AuthToken' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { description: 帳號未驗證或已停用, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } }
+
+  /auth/forgot-password:
+    post:
+      tags: [會員]
+      summary: 忘記密碼
+      description: 信箱不存在也回成功——回「查無此帳號」等於提供帳號列舉。
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { email: { type: string }, turnstileToken: { type: string } } } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /auth/reset-password:
+    post:
+      tags: [會員]
+      summary: 重設密碼
+      description: token 一次性、24 小時到期；DB 只存 SHA-256，明碼僅在信裡。
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [token, newPassword], properties: { token: { type: string }, newPassword: { type: string, minLength: 8 } } } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me:
+    get:
+      tags: [會員]
+      summary: 帳戶設定
+      security: [{ MemberAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    put:
+      tags: [會員]
+      summary: 更新帳戶設定
+      description: email 不可自行修改（會繞過驗證流程）；密碼走重設流程。
+      security: [{ MemberAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { displayName: { type: string }, company: { type: string }, phone: { type: string }, preferredLang: { $ref: '#/components/schemas/Lang' } } } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/quotes:
+    get:
+      tags: [會員]
+      summary: 我的報價紀錄
+      security: [{ MemberAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/orders:
+    get:
+      tags: [會員]
+      summary: 我的訂單
+      security: [{ MemberAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/orders/{id}:
+    get:
+      tags: [會員]
+      summary: 訂單生產進度
+      description: 查詢一定帶會員條件——否則換個 id 就能看別人的訂單。
+      security: [{ MemberAuth: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ══════════════════ 後台認證（契約原本沒有，2026-09-04 補）══════════════════
+  /auth/admin/login:
+    post:
+      tags: [後台認證]
+      summary: 後台登入
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Login' } } } }
+      responses:
+        '200':
+          description: 登入成功。回應含 roleCode、permissions[] 與 mustChangePassword。
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties: { data: { $ref: '#/components/schemas/AuthToken' } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { description: 帳號鎖定或停用 }
+
+  /auth/admin/change-password:
+    post:
+      tags: [後台認證]
+      summary: 後台改密碼
+      description: |
+        需要有效的後台 token 但**不需要任何權限碼**——
+        `mustChangePassword = true` 的使用者還沒有權限可用，要求權限碼會讓首登卡死。
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [currentPassword, newPassword], properties: { currentPassword: { type: string }, newPassword: { type: string, minLength: 8 } } } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  # ══════════════════ 04-api §3.4 後台 ══════════════════
+  /admin/dashboard:
+    get:
+      tags: [後台其他單元]
+      summary: 待辦總覽
+      description: 權限碼 `dashboard.view`（三個角色都有）。
+      security: [{ AdminAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /admin/{unit}:
+    parameters: [{ $ref: '#/components/parameters/ContentUnit' }]
+    get:
+      tags: [後台內容單元]
+      summary: 清單（權限 `{unit}.view`）
+      description: |
+        一律分頁。回傳含 `titleZh`／`titleEn`／`hasZh`／`hasEn`——後台用 LEFT JOIN 兩語系，
+        缺哪一邊要標示出來（中英完成度 badge），與前台的 INNER JOIN 相反。
+      security: [{ AdminAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      tags: [後台內容單元]
+      summary: 新增（權限 `{unit}.edit`）
+      description: |
+        `solution` 不開放新增（固定 4 筆）。Id 與稽核欄位會忽略請求送來的值。
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ContentUpsert' } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /admin/{unit}/{id}:
+    parameters:
+      - { $ref: '#/components/parameters/ContentUnit' }
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    get:
+      tags: [後台內容單元]
+      summary: 單筆（權限 `{unit}.view`）
+      security: [{ AdminAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [後台內容單元]
+      summary: 修改（權限 `{unit}.edit`）
+      description: 只更新請求有帶的欄位，沒帶的保持原值。
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ContentUpsert' } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [後台內容單元]
+      summary: 刪除（權限 `{unit}.delete`，一律軟刪）
+      security: [{ AdminAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /admin/{unit}/{id}/publish:
+    patch:
+      tags: [後台內容單元]
+      summary: 上下架（權限 `{unit}.publish`）
+      description: |
+        **上架前檢查兩語系齊備**，缺則 409 `CONFLICT_STATE`——
+        只有單一語系就上架，另一個語系的前台頁面會直接 404 而且沒人會發現。
+      security: [{ AdminAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/ContentUnit' }
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { isPublished: { type: boolean }, publishAt: { type: string, format: date-time, nullable: true }, unpublishAt: { type: string, format: date-time, nullable: true } } } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /admin/{unit}/sort:
+    put:
+      tags: [後台內容單元]
+      summary: 批次排序（權限 `{unit}.edit`）
+      description: |
+        一次送整批，避免逐筆 PATCH 造成中間狀態。
+        `news` 與 `supplier-notice` 沒有 SortOrder（照日期排），呼叫會回 409。
+      security: [{ AdminAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ContentUnit' }]
+      requestBody: { required: true, content: { application/json: { schema: { type: array, items: { type: object, properties: { id: { type: integer }, sortOrder: { type: integer } } } } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /admin/{unit}/upload:
+    post:
+      tags: [後台內容單元]
+      summary: 圖片上傳（權限 `{unit}.edit`）
+      description: |
+        掛在各單元底下並沿用該單元的 edit 權限——另開 `media.*` 權限碼會讓
+        171 列的權限矩陣對不上。JPG/PNG/WebP/SVG，≤10MB，驗 magic bytes。
+        回傳的是 Blob **相對路徑**，直接存進對應的 `*Path` 欄位。
+      security: [{ AdminAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ContentUnit' }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: { type: object, properties: { file: { type: string, format: binary } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /admin/page:
+    get: { tags: [後台其他單元], summary: '固定頁清單（page.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/page/{pageKey}:
+    parameters: [{ name: pageKey, in: path, required: true, schema: { type: string } }]
+    get: { tags: [後台其他單元], summary: '固定頁單筆（page.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' }, '404': { $ref: '#/components/responses/NotFound' } } }
+    put:
+      tags: [後台其他單元]
+      summary: 修改固定頁 SEO（page.edit）
+      description: |
+        29 筆固定頁不可增刪，權限矩陣也沒有 `page.delete`。
+        `pageKey` 與 `routeTemplate` 不可改；內文只有 `hasRichBody = true` 的兩頁能編。
+        SEO 欄位超長回 400 `VALIDATION_RANGE`（不靜默截斷）。
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /admin/redirect:
+    get:  { tags: [後台其他單元], summary: '轉址清單（redirect.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+    post: { tags: [後台其他單元], summary: '新增轉址（redirect.edit）', security: [{ AdminAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Redirect' } } } }, responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } } }
+
+  /admin/redirect/{id}:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    put:    { tags: [後台其他單元], summary: '修改轉址（redirect.edit）', security: [{ AdminAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Redirect' } } } }, responses: { '200': { $ref: '#/components/responses/Ok' } } }
+    delete: { tags: [後台其他單元], summary: '刪除轉址（redirect.delete）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/redirect/export:
+    get:
+      tags: [後台其他單元]
+      summary: 匯出轉址 CSV（redirect.export）
+      security: [{ AdminAuth: [] }]
+      responses:
+        '200': { description: CSV（UTF-8 with BOM）, content: { text/csv: { schema: { type: string } } } }
+
+  /admin/redirect/import:
+    post:
+      tags: [後台其他單元]
+      summary: 匯入轉址 CSV（redirect.export）
+      description: 已存在的 fromPath 更新、沒有的新增——重跑同一份檔案不會產生重複。
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { multipart/form-data: { schema: { type: object, properties: { file: { type: string, format: binary } } } } } }
+      responses:
+        '200': { description: '回傳 created／updated／skipped 筆數', content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } }
+
+  /admin/quote:
+    get:
+      tags: [後台其他單元]
+      summary: 報價清單（quote.view）
+      security: [{ AdminAuth: [] }]
+      parameters:
+        - { name: status, in: query, schema: { $ref: '#/components/schemas/QuoteStatus' } }
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/PageSize' }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /admin/quote/{id}:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    get: { tags: [後台其他單元], summary: '報價單筆與附件清單（quote.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+    patch:
+      tags: [後台其他單元]
+      summary: 改狀態／指派／內部註記（quote.edit）
+      description: 客戶填寫的內容一律唯讀，只能改這四個欄位。
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/FormStatus' } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /admin/quote/export:
+    get:
+      tags: [後台其他單元]
+      summary: 匯出報價 CSV（quote.export，僅超管）
+      description: |
+        **唯讀但必須寫 AuditLog 的三個動作之一**——匯出等於把一整份客戶個資帶出系統。
+      security: [{ AdminAuth: [] }]
+      responses:
+        '200': { description: CSV（UTF-8 with BOM）, content: { text/csv: { schema: { type: string } } } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /admin/quote/{id}/attachments/{attachmentId}:
+    get:
+      tags: [後台其他單元]
+      summary: 下載報價附件（quote.download，僅超管）
+      description: |
+        **`scanStatus` 非 `Clean` 一律拒絕（403 `UPLOAD_UNSCANNED`）**——
+        附件是外部上傳的檔案，沒掃過就給後台人員下載等於用自己的電腦當沙箱。
+        同樣屬於「唯讀但必須留痕」的動作。
+      security: [{ AdminAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: attachmentId, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200': { description: 檔案內容, content: { application/octet-stream: { schema: { type: string, format: binary } } } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /admin/contact:
+    get: { tags: [後台其他單元], summary: '聯絡訊息清單（contact.view）', security: [{ AdminAuth: [] }], parameters: [{ name: status, in: query, schema: { $ref: '#/components/schemas/ContactStatus' } }, { $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/contact/{id}:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    get:   { tags: [後台其他單元], summary: '聯絡訊息單筆（contact.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+    patch: { tags: [後台其他單元], summary: '改狀態（contact.edit）', security: [{ AdminAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/FormStatus' } } } }, responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/member:
+    get: { tags: [後台其他單元], summary: '會員清單（member.view）', security: [{ AdminAuth: [] }], parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/member/{id}:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    get: { tags: [後台其他單元], summary: '會員單筆（member.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+    patch:
+      tags: [後台其他單元]
+      summary: 啟用／停用（member.edit）
+      description: |
+        **後台不可查看或設定會員密碼**（docs/03 §3），密碼雜湊也不出現在任何回應裡。
+        只能改狀態或觸發重設信。
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { status: { $ref: '#/components/schemas/MemberStatus' } } } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /admin/member/{id}/resend-verify:
+    post: { tags: [後台其他單元], summary: '重寄驗證信（member.edit）', security: [{ AdminAuth: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/order:
+    get:  { tags: [後台其他單元], summary: '訂單清單（order.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+    post: { tags: [後台其他單元], summary: '新增訂單（order.edit）', security: [{ AdminAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { type: object } } } }, responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/order/{id}:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    get: { tags: [後台其他單元], summary: '訂單與進度（order.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+    put: { tags: [後台其他單元], summary: '修改訂單（order.edit）', security: [{ AdminAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { type: object } } } }, responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/order/{id}/progress:
+    post: { tags: [後台其他單元], summary: '新增生產進度（order.edit）', security: [{ AdminAuth: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { stage: { $ref: '#/components/schemas/OrderStage' }, stageStatus: { $ref: '#/components/schemas/StageStatus' }, happenedAt: { type: string, format: date-time }, note: { type: string } } } } } }, responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/setting:
+    get: { tags: [後台其他單元], summary: '全站設定（setting.view）。後台看得到 Mail 群組', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+    put:
+      tags: [後台其他單元]
+      summary: 整批更新設定（setting.edit）
+      description: 後台的設定頁一次送出整張表單，逐筆 PUT 會留下半套設定。
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: array, items: { type: object, properties: { settingKey: { type: string }, valueZh: { type: string, nullable: true }, valueEn: { type: string, nullable: true } } } } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /admin/category:
+    get:  { tags: [後台其他單元], summary: '分類清單（category.view）', security: [{ AdminAuth: [] }], parameters: [{ name: type, in: query, schema: { $ref: '#/components/schemas/CategoryType' } }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+    post: { tags: [後台其他單元], summary: '新增分類（category.edit）', security: [{ AdminAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CategoryUpsert' } } } }, responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } } }
+
+  /admin/category/{id}:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    put:
+      tags: [後台其他單元]
+      summary: 修改分類（category.edit）
+      description: '`categoryType` 與 `code` 建立後不可改——下游內容用複合外鍵綁著型別。'
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CategoryUpsert' } } } }
+      responses: { '200': { $ref: '#/components/responses/Ok' } }
+    delete:
+      tags: [後台其他單元]
+      summary: 刪除分類（category.delete）
+      description: 仍有內容使用時回 409——軟刪主檔會讓那些內容在前台整筆消失（INNER JOIN）。
+      security: [{ AdminAuth: [] }]
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } }
+
+  /admin/admin:
+    get:
+      tags: [後台其他單元]
+      summary: 管理員清單（admin.view）
+      security: [{ AdminAuth: [] }]
+      responses: { '200': { $ref: '#/components/responses/Ok' } }
+    post:
+      tags: [後台其他單元]
+      summary: 新增管理員（admin.edit）
+      description: |
+        密碼由系統產生後寄啟用信，**不接受請求指定密碼**；建立的帳號帶 `mustChangePassword`。
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [email, displayName, roleId], properties: { email: { type: string }, displayName: { type: string }, roleId: { type: integer } } } } } }
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } }
+
+  /admin/admin/roles:
+    get: { tags: [後台其他單元], summary: '角色與權限碼（admin.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/admin/{id}:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    patch:
+      tags: [後台其他單元]
+      summary: 修改管理員（admin.edit）
+      description: 不能停用自己的帳號——停完就再也登不進來改回去。
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { displayName: { type: string }, roleId: { type: integer }, isActive: { type: boolean } } } } } }
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } }
+    delete:
+      tags: [後台其他單元]
+      summary: 刪除管理員（admin.delete）
+      description: 不能刪自己，也不能刪掉最後一位可用的超管。
+      security: [{ AdminAuth: [] }]
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } }
+
+  /admin/audit:
+    get: { tags: [後台其他單元], summary: '操作紀錄（audit.view）。保留 12 個月', security: [{ AdminAuth: [] }], parameters: [{ name: entityName, in: query, schema: { type: string } }, { $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/audit/emails:
+    get: { tags: [後台其他單元], summary: '寄信紀錄（audit.view）', security: [{ AdminAuth: [] }], parameters: [{ name: status, in: query, schema: { type: string, enum: [Sent, Failed] } }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
+
+  /admin/audit/emails/{id}/resend:
+    post:
+      tags: [後台其他單元]
+      summary: 重寄信件（audit.resend）
+      description: 唯讀但必須留痕的第三個動作——重寄會把內容再送一次到某個信箱。
+      security: [{ AdminAuth: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer, format: int64 } }]
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '404': { $ref: '#/components/responses/NotFound' } }
+
+components:
+  securitySchemes:
+    AdminAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        後台 token，audience 為 `nti-admin`。**會員 token 打 `/admin/*` 一律 401**。
+        權限檢查集中在 AppRouter：未登記於權限表的 `/admin/*` 直接 403（預設拒絕）。
+    MemberAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 會員 token，audience 為 `nti-web`。後台 token 打 `/me/*` 一律 401。
+
+  parameters:
+    Lang:
+      name: lang
+      in: query
+      description: |
+        `zh` 或 `en`。不帶則看 `Accept-Language`，再沒有則 `zh`。
+        **缺語系不 fallback**：該語系沒有內容者不會出現在清單，詳細頁回 404。
+      schema: { $ref: '#/components/schemas/Lang' }
+    CategoryId:
+      name: categoryId
+      in: query
+      description: 分類篩選。id 由 `/categories?type=` 取得。
+      schema: { type: integer }
+    Page:
+      name: page
+      in: query
+      description: 帶了才會分頁（雙模式）。
+      schema: { type: integer, minimum: 1, default: 1 }
+    PageSize:
+      name: pageSize
+      in: query
+      description: 上限 100，超過會被夾到 100（Basic 只有 5 DTU）。
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    ContentUnit:
+      name: unit
+      in: path
+      required: true
+      description: docs/09 §2 的單元代號原字串，與權限碼逐字對應。
+      schema:
+        type: string
+        enum: [home-banner, solution, project, news, vlog, faq, trend, certification,
+               client, facility, job, supplier-notice, supplier-spec, supplier-download]
+
+  responses:
+    Ok:
+      description: 成功
+      content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } }
+    OkPagedOrArray:
+      description: |
+        成功。帶 `page`／`pageSize` 時 `data` 為 PagedResult，否則為平面陣列（雙模式）。
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ApiResponse'
+              - type: object
+                properties:
+                  data:
+                    oneOf:
+                      - { type: array, items: { type: object } }
+                      - $ref: '#/components/schemas/PagedResult'
+    BadRequest:
+      description: 驗證失敗（VALIDATION_REQUIRED／VALIDATION_FORMAT／VALIDATION_RANGE／UPLOAD_*／BOT_CHECK_FAILED）
+      content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } }
+    Unauthorized:
+      description: 未授權（AUTH_TOKEN_INVALID／AUTH_INVALID_CREDENTIALS）
+      content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } }
+    Forbidden:
+      description: 權限不足（FORBIDDEN／AUTH_ACCOUNT_INACTIVE／UPLOAD_UNSCANNED）
+      content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } }
+    NotFound:
+      description: 不存在、已軟刪或未上架（NOT_FOUND）
+      content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } }
+    Conflict:
+      description: CONFLICT_DUPLICATE／CONFLICT_STATE
+      content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } }
+    RateLimited:
+      description: 超過頻率限制（RATE_LIMITED）
+      content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } }
+
+  schemas:
+    ApiResponse:
+      type: object
+      description: |
+        統一回應信封。**所有端點都回這個結構，不回裸 data。**
+        `code` 給程式判斷、`message` 給人看、`errors` 放細節；
+        **前端一律以 `code` 分支，不得比對 `message` 字串。**
+      required: [success, data, message, errors, timestamp]
+      properties:
+        success:   { type: boolean }
+        code:      { $ref: '#/components/schemas/ErrorCode' }
+        data:      { description: 成功時的內容；失敗時為 null }
+        message:   { type: string }
+        errors:    { type: array, items: { type: string } }
+        timestamp: { type: string, format: date-time }
+
+    ErrorCode:
+      type: [string, 'null']
+      description: 成功時為 null。值域見 `Api/Common/ErrorCodes.cs` 與 docs/10 §5.4。
+      enum: [null, VALIDATION_REQUIRED, VALIDATION_FORMAT, VALIDATION_RANGE,
+             AUTH_INVALID_CREDENTIALS, AUTH_TOKEN_INVALID, AUTH_MUST_CHANGE_PASSWORD,
+             AUTH_ACCOUNT_INACTIVE, FORBIDDEN, NOT_FOUND, CONFLICT_DUPLICATE, CONFLICT_STATE,
+             UPLOAD_TYPE, UPLOAD_SIZE, UPLOAD_UNSCANNED, RATE_LIMITED, BOT_CHECK_FAILED, INTERNAL]
+
+    PagedResult:
+      type: object
+      properties:
+        items:      { type: array, items: { type: object } }
+        totalCount: { type: integer }
+        page:       { type: integer }
+        pageSize:   { type: integer }
+        totalPages: { type: integer }
+
+    Lang:         { type: string, enum: [zh, en] }
+    CategoryType: { type: string, enum: [News, Project, Vlog, Faq, Certification, Facility, SupplierNotice, Industry, QuoteMaterial] }
+    QuoteStatus:  { type: string, enum: [New, InProgress, Quoted, Closed, Spam] }
+    ContactStatus: { type: string, enum: [New, Replied, Closed, Spam] }
+    MemberStatus: { type: string, enum: [Pending, Active, Suspended] }
+    OrderStage:   { type: string, enum: [Design, PrePress, Printing, PostPress, QC, Shipping] }
+    StageStatus:  { type: string, enum: [Pending, Doing, Done] }
+
+    Seo:
+      type: object
+      description: 有自己網址的實體（Page／News／Solution）都回這組（docs/08 §2.7）。
+      properties:
+        slug:           { type: string }
+        seoTitle:       { type: string, nullable: true, maxLength: 70 }
+        seoDescription: { type: string, nullable: true, maxLength: 180 }
+        canonicalUrl:   { type: string, nullable: true }
+        ogTitle:        { type: string, nullable: true, maxLength: 90 }
+        ogDescription:  { type: string, nullable: true, maxLength: 200 }
+        ogImagePath:    { type: string, nullable: true, description: 未填時沿用封面 }
+        hreflang:
+          type: object
+          description: 語系 → slug。由同一 Id 的兩筆 i18n 推導，不落欄位。
+          additionalProperties: { type: string }
+
+    QuoteCreate:
+      type: object
+      required: [fullName, company, email, quantity, requirement, consent]
+      properties:
+        fullName:               { type: string, maxLength: 80 }
+        company:                { type: string, maxLength: 120 }
+        email:                  { type: string, maxLength: 160 }
+        phone:                  { type: string, maxLength: 40 }
+        solutionId:             { type: integer, nullable: true }
+        industryCategoryId:     { type: integer, nullable: true, description: 'Category(Industry) 的 id' }
+        quantity:               { type: string, maxLength: 60 }
+        sizeText:               { type: string, maxLength: 100, description: 'L×W×H mm' }
+        materialCategoryId:     { type: integer, nullable: true, description: 'Category(QuoteMaterial) 的 id' }
+        targetDate:             { type: string, format: date, nullable: true }
+        needsSustainableAdvice: { type: boolean, default: false }
+        requirement:            { type: string }
+        consent:                { type: boolean, description: 必須為 true。伺服器端另記同意時間、IP、UA、來源語系。 }
+        turnstileToken:         { type: string }
+
+    ContactCreate:
+      type: object
+      required: [name, email, message, consent]
+      properties:
+        name:           { type: string, maxLength: 80 }
+        email:          { type: string, maxLength: 160 }
+        company:        { type: string, maxLength: 120 }
+        phone:          { type: string, maxLength: 40 }
+        message:        { type: string }
+        consent:        { type: boolean }
+        turnstileToken: { type: string }
+
+    Login:
+      type: object
+      required: [email, password]
+      properties:
+        email:          { type: string }
+        password:       { type: string }
+        turnstileToken: { type: string }
+
+    Register:
+      type: object
+      required: [email, password, displayName, consent]
+      properties:
+        email:          { type: string }
+        password:       { type: string, minLength: 8 }
+        displayName:    { type: string }
+        company:        { type: string }
+        phone:          { type: string }
+        preferredLang:  { $ref: '#/components/schemas/Lang' }
+        consent:        { type: boolean }
+        turnstileToken: { type: string }
+
+    AuthToken:
+      type: object
+      description: |
+        **沒有 refresh token**：schema 無對應資料表，04 §3.3 的端點清單也未列 `/auth/refresh`。
+      properties:
+        accessToken:        { type: string }
+        expiresInMinutes:   { type: integer, description: 後台 60、會員 120 }
+        displayName:        { type: string }
+        email:              { type: string }
+        roleCode:           { type: string, nullable: true, description: 僅後台 }
+        permissions:        { type: array, nullable: true, items: { type: string }, description: 僅後台。前端據此決定畫面顯示，真正的把關在 API。 }
+        mustChangePassword: { type: boolean, description: true 時前端必須先導向改密碼 }
+
+    ContentUpsert:
+      type: object
+      description: |
+        內容單元的新增／修改。主表欄位平鋪在最上層，兩語系放在 `i18n`
+        （04 §3.4：中英對照無獨立端點，隨資源一併讀寫）。
+      properties:
+        i18n:
+          type: object
+          description: 語系 → 該語系的 i18n 欄位。語系不在 zh/en 值域內回 400。
+          additionalProperties: { type: object }
+      additionalProperties: true
+      examples:
+        - categoryId: 1
+          publishDate: '2026-03-13'
+          coverImagePath: '2026/03/abc123.webp'
+          i18n:
+            zh: { title: 'NTI 攜手文策院', bodyHtml: '<p>內文</p>', coverAlt: '簽約典禮', slug: 'nti-taicca' }
+            en: { title: 'NTI joins TAICCA', bodyHtml: '<p>Body</p>', coverAlt: 'Signing', slug: 'nti-joins-taicca' }
+
+    CategoryUpsert:
+      type: object
+      properties:
+        categoryType: { $ref: '#/components/schemas/CategoryType' }
+        code:         { type: string, description: 程式用固定碼，建立後不可改 }
+        sortOrder:    { type: integer }
+        isActive:     { type: boolean }
+        i18n:
+          type: object
+          description: '語系 → 名稱，例如 { "zh": "最新消息", "en": "News" }'
+          additionalProperties: { type: string }
+
+    Redirect:
+      type: object
+      required: [fromPath, toPath]
+      properties:
+        fromPath:   { type: string, description: 一律小寫、含前導斜線（伺服器端會正規化） }
+        toPath:     { type: string }
+        statusCode: { type: integer, enum: [301, 302, 308], default: 301 }
+        isActive:   { type: boolean, default: true }
+
+    FormStatus:
+      type: object
+      description: 後台唯一能改的四個欄位。
+      properties:
+        status:       { type: string }
+        assigneeId:   { type: integer, nullable: true, description: 'AdminUser.Id（僅報價）' }
+        internalNote: { type: string, nullable: true }
+        markReplied:  { type: boolean, description: true 時把 repliedAt 設為現在 }

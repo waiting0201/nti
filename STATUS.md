@@ -16,8 +16,9 @@
 push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內容都是從 mockup 與 `db/seed`
 產生的種子資料——**資料庫與業務端點都還沒做**。
 
-**P4 後端的端點已全部完成**：3.1 前台唯讀、3.2 表單、3.3 會員、3.4 後台 24 單元
-皆實作並本機實測通過（權限矩陣三個角色逐項驗過）。剩下三支 Timer Function 與 CI/CD。
+**P4 後端完成**：端點、三支 Timer Function、OpenAPI 與 CI workflow 都到位並實測通過。
+**唯一還沒做的是開 Azure 資源**（Function App 與 SQL），指令與 OIDC 設定寫在 docs/07 §7.4。
+前端目前還沒指向 API——`apps/web` 內容寫死、`apps/admin` 接本機 mock。
 
 ---
 
@@ -40,7 +41,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | P1 | 系統分析／架構 | ✅ | 技術選型 2026-06-12 凍結，2026-09-02 修訂為 EF+Dapper 雙軌 |
 | P2 | UI/UX 設計 + 原型 | ✅ | `mockup/` 44 頁，客戶已定案（`mockup2/` 未採用） |
 | P3 | 前端框架／元件 | ✅ | Next.js App Router，共用元件與各頁行為自 mockup 移植 |
-| P4 | 後端／CMS API | 🟡 | 端點全數完成（見 §五）；剩 Timer Function 與 CI/CD |
+| P4 | 後端／CMS API | 🟡 | 程式全數完成（見 §五）；**Azure 資源尚未開設**，前端尚未接上 |
 | P5 | 前台頁面開發 | 🟡 | 44 頁切版完成；內容仍為靜態，未接 API |
 | P6 | 會員／報價／聯絡 | 🟡 | 表單已切版（`PageForm`），無後端 |
 | P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語路由就緒，**中文文案未提供**；sitemap 與結構化資料未做 |
@@ -225,14 +226,41 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | 寄信失敗不影響提交 | SMTP 未設定 → EmailLog 記 `Failed`，但表單仍回 200 |
 | AuditLog | 後台寫入全數留痕，另含匯出 CSV 與附件下載兩個唯讀動作 |
 
+### ✅ Timer Function（2026-09-04）
+
+三支都實測跑過（把 cron 調成每 10 秒觀察行為），皆遵守「`IsPastDue` 時不 return」與冪等閘：
+
+| Function | 工作 | 實測 |
+|---|---|---|
+| `PublishScheduleFunction` | `UnpublishAt` 到期的內容改為下架 | 過期那筆被下架，第二輪不重複動作 |
+| `RetentionCleanupFunction` | `AuditLog` 保留 12 個月，分批刪 | 13 個月前那筆被清、當天那筆保留 |
+| `OrphanMediaFunction` | 孤兒檔清除 | 掃描含富文本 `<img src>`；7 天內的新檔不視為孤兒 |
+
+> ⚠ `OrphanMedia` **預設只報告不刪除**，要真的刪必須設 `OrphanMediaDeleteEnabled=true`。
+> 判斷「哪些算孤兒」依賴那份欄位清單是否完整——新增 `*Path` 欄位卻忘了補進去，
+> 就會把正在用的圖當成孤兒。建議先看幾輪報告再打開。
+>
+> `EmailLog` 的保留期仍未定義（`db/README` 缺口 #3），刻意不動它。
+
+### ✅ OpenAPI 與 CI（2026-09-04）
+
+- [`Api/openapi.yaml`](Api/README.md)：66 個路徑、83 個 operation，手寫
+  （catch-all 路由讓自動產生器無從內省，docs/10 §13 的待決項已定案）
+- [`tools/check-openapi.mjs`](tools/check-openapi.mjs)：漂移檢查。靜態比對路徑 segment
+  是否存在於 `AppRouter`，`--live` 另外實打全部 47 個 GET 端點。**目前全數通過**
+- [`.github/workflows/api.yml`](.github/workflows/api.yml)：觸發於 `Api/**`，OIDC 登入
+  （Flex Consumption 不支援 publish profile），含 health 冒煙測試與
+  「產物不得含 `local.settings.json`」的斷言
+
 ### ⬜ 其他未做
 
-- 三支 Timer Function（`PublishSchedule`／`RetentionCleanup`／`OrphanMedia`）
-- Azure Function App 資源與 CI/CD（OIDC 登入）
+- **Azure 資源尚未開設**：Function App 與 Azure SQL。指令、OIDC 設定與 GitHub
+  secrets／variables 清單見 [`docs/07 §7.4`](docs/07-deployment.md)。**會產生費用**
+- **前端尚未接上 API**：`apps/web` 內容仍寫死、`apps/admin` 仍接 `seed.generated.ts`
 - **refresh token rotation**（docs/10 §7.3）：schema 無對應資料表，且 04 §3.3 的端點清單
   未列 `/auth/refresh`。目前只發 access token（後台 60 分鐘、會員 120 分鐘）
-- 附件病毒掃描：`ScanStatus` 目前寫入後恆為 `Pending`，未接掃描服務（未掃過的一律拒絕下載）
-- OpenAPI 文件（docs/10 §13 的待決項）
+- 附件病毒掃描：`ScanStatus` 寫入後恆為 `Pending`，未接掃描服務。
+  **後台目前下載不到任何報價附件**（未掃過的一律拒絕）
 
 ---
 

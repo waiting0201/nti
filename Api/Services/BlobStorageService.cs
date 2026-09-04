@@ -44,6 +44,18 @@ public sealed class BlobStorageService : IBlobStorageService
         return path;
     }
 
+    public async Task<IReadOnlyList<(string Path, DateTimeOffset? CreatedOn)>> ListAsync(string container)
+    {
+        var client = _client.GetBlobContainerClient(container);
+        if (!await client.ExistsAsync()) return [];
+
+        var items = new List<(string, DateTimeOffset?)>();
+        await foreach (var blob in client.GetBlobsAsync())
+            items.Add((blob.Name, blob.Properties.CreatedOn));
+
+        return items;
+    }
+
     public async Task DeleteAsync(string container, string relativePath) =>
         await _client.GetBlobContainerClient(container).GetBlobClient(relativePath).DeleteIfExistsAsync();
 

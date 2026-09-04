@@ -17,6 +17,9 @@ public interface IBlobStorageService
 
     Task DeleteAsync(string container, string relativePath);
 
+    /// <summary>列出容器內所有 blob 的相對路徑與建立時間（孤兒檔清除用）。</summary>
+    Task<IReadOnlyList<(string Path, DateTimeOffset? CreatedOn)>> ListAsync(string container);
+
     /// <summary>下載；找不到回 null（讓上層回 404 而不是 500）。</summary>
     Task<(Stream Content, string ContentType)?> DownloadAsync(string container, string relativePath);
 }

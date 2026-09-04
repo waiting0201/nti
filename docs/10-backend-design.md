@@ -660,7 +660,7 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 - [ ] 上傳有副檔名白名單 + 大小限制 + **magic bytes 驗證**
 - [ ] 公開寫入端點有 Turnstile + rate limit
 - [ ] `/admin/*` 寫入操作有 AuditLog
-- [ ] 新增／修改端點已同步更新 [`04-api.md`](04-api.md) §3 與 OpenAPI，並補變更紀錄
+- [ ] 新增／修改端點已同步更新 [`04-api.md`](04-api.md) §3 與 `Api/openapi.yaml`，並補變更紀錄（`node tools/check-openapi.mjs` 應通過）
 - [ ] `dotnet ef migrations script` 已對照 §8.6 的 Azure SQL Basic checklist
 - [ ] 日誌無密碼／token／個資
 
@@ -670,7 +670,7 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 
 | 項目 | 現況 | 待決 |
 |---|---|---|
-| **OpenAPI** | Jabez 無 Swagger，靠手寫 `docs/api-routes.md`。但 04 §5 DoD 要求「OpenAPI 為單一事實來源」 | 決定：手寫 `openapi.yaml` 進版控，或引入 `Microsoft.Azure.Functions.Worker.Extensions.OpenApi`（catch-all 路由下自動產生能力有限）。**P1 契約凍結前需定案** |
+| **OpenAPI** | **已定案（2026-09-04）：手寫 [`Api/openapi.yaml`](../Api/openapi.yaml) 進版控** | 不用 `Extensions.OpenApi`：catch-all 路由下它只看得到「一支接受所有路徑的 Function」，內省不出任何端點。代價是手寫會漂移，故加了 [`tools/check-openapi.mjs`](../tools/check-openapi.mjs)——靜態比對每個路徑的字面 segment 是否存在於 `AppRouter`，`--live` 另外實打所有 GET 端點 |
 | **`AppRouter` 檔案膨脹** | Jabez 的 `AppRouter.cs` 已達 62KB | NTI 端點量約其 1/3，先拆 `AppRouter.Public.cs` / `AppRouter.Admin.cs` 兩個 partial 即可 |
 | **測試專案** | Jabez 完全沒有測試，靠 checklist 人工自檢 | NTI 是否補單元測試（至少涵蓋權限判定表與 `PublicFilter`）待定 |
 | **Rate limit 儲存** | Consumption 多實例，`MemoryCache` 不可用 | 用 DB 表或 Blob；若量小可先用 DB，上線後看 DTU 再評估 |
@@ -686,5 +686,7 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 | 2026-09-02 | Tim（Claude Code） | 初版：以 `/Users/tim/webapps/Jabez/Api` 及其 `docs/backend-design.md` 為範本，建立 NTI 後端技術規範。定案四項：資料存取改 **EF Core 寫 + Dapper 讀**雙軌、路由改**集中式 `AppRouter`**、schema 權威改 **EF Migration**、授權**預設拒絕**。補齊 04 缺口：成功回應信封、錯誤碼值域、分頁回應形狀。新增 Jabez 無先例的 NTI 特有規範：多語 i18n 查詢、兩套身分、CORS 雙 origin、Turnstile／rate limit、快取標頭、AuditLog／EmailLog 慣例 |
 
 | 2026-09-04 | Tim（Claude Code） | P4 開工。修正 §9.1 與 08 §2.2 的時區衝突：**持久化一律 UTC**（`Clock.UtcNow`），`Clock.Now` 僅供顯示，§8.2／§8.4 範例同步更正。補 §8.5 兩條 EF 實作要點：`UseNamedDefaultConstraints()`（對應 verify 的「匿名約束數 = 0」）、移除 `ForeignKeyIndexConvention` 並把「預設值為 true 的 bool 欄位」設為 `ValueGenerated.Never`。新增 `db/verify/verify-ef.sql` 為 EF 版驗收閘 |
+
+| 2026-09-04 | Tim（Claude Code） | §13 的 OpenAPI 待決項定案：**手寫 `Api/openapi.yaml`**（catch-all 路由讓自動產生器無從內省），另附 `tools/check-openapi.mjs` 做漂移檢查。三支 Timer Function 完成並實測（含 `IsPastDue` 不 return、冪等閘）；孤兒檔清除預設只報告不刪除，並有 7 天寬限期 |
 
 *最後更新：2026-09-04*

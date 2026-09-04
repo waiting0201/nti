@@ -88,8 +88,24 @@ Api/
 - **支援服務**：BCrypt 密碼、Blob、Email（+EmailLog）、Turnstile、rate limit、AuditLog、
   報價單號、第一位超管的 bootstrap
 
-未完成：三支 Timer Function、CI/CD、refresh token rotation（需先加一張表）、
-附件病毒掃描、OpenAPI。進度見 [`STATUS.md`](../STATUS.md) §五。
+- **三支 Timer Function**：上下架排程、AuditLog 12 個月清除、孤兒檔清除
+- **[`openapi.yaml`](openapi.yaml)**：66 路徑／83 operation，手寫（catch-all 路由下
+  自動產生器內省不出東西）。改端點時跑 `node tools/check-openapi.mjs` 檢查有沒有漂移
+- **[CI](../.github/workflows/api.yml)**：觸發於 `Api/**`，OIDC 登入 + health 冒煙測試
+
+未完成：Azure 資源尚未開設（指令見 [docs/07 §7.4](../docs/07-deployment.md)）、
+前端尚未接上 API、refresh token rotation（需先加一張表）、附件病毒掃描。
+進度見 [`STATUS.md`](../STATUS.md) §五。
+
+## 排程
+
+三支 Timer，cron 由 app setting 注入（`PublishScheduleCron` 等）。本機要測的話把 cron
+改成 `*/10 * * * * *` 觀察，記得改回去。
+
+⚠ **`OrphanMediaFunction` 預設只報告不刪除。** 要真的刪要設 `OrphanMediaDeleteEnabled=true`。
+它判斷「哪些算孤兒」靠的是 `CollectReferencedPathsAsync` 裡那份欄位清單——
+**新增任何 `*Path` 或 `*Html` 欄位時要一起補**，漏了就會把正在用的圖當成孤兒刪掉。
+另有 7 天寬限期，擋住「上傳了但還沒按儲存」的檔案。
 
 ## 第一次要能登入後台
 

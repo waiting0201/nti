@@ -1,0 +1,85 @@
+# 後端 API → Azure Functions（.NET 10 isolated）
+#
+# 觸發：Api/** 或本檔變更時。公開站的 web.yml 是另一條線，兩者互不影響——
+# 改前端不會重新部署 API，改 API 也不會重跑前端那條要 10 分鐘的 build。
+#
+# ⚠ 用 OIDC 聯合身分登入，不是 publish profile：Flex Consumption 不支援
+#   publish profile（Jabez 已驗證），而且 OIDC 沒有長期憑證要保管。
+name: api
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Api/**'
+      - 'global.json'
+      - '.github/workflows/api.yml'
+  workflow_dispatch:
+
+# OIDC 需要這兩個權限。少了 id-token 會在 azure/login 步驟拿不到 token，
+# 錯誤訊息是「Unable to get ACTIONS_ID_TOKEN_REQUEST_URL」，不會指向這裡。
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: api-deploy
+  cancel-in-progress: false   # 部署中途取消會留下半套版本，寧可排隊
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  OUTPUT_PATH: ${{ github.workspace }}/output
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # 0 warning 是合併門檻（docs/10 §12），csproj 已設 TreatWarningsAsErrors，
+      # 所以這一步同時是品質閘
+      - name: Build
+        run: dotnet build Api/Api.csproj -c Release --nologo
+
+      - name: Publish
+        run: dotnet publish Api/Api.csproj -c Release -o ${{ env.OUTPUT_PATH }} --nologo
+
+      # local.settings.json 設了 CopyToPublishDirectory=Never，這裡再確認一次：
+      # 它含連線字串與 JWT secret，跟著產物上去就等於把密鑰放進 App Service 的檔案系統
+      - name: Assert no local settings in output
+        run: |
+          if [ -f "${{ env.OUTPUT_PATH }}/local.settings.json" ]; then
+            echo "::error::local.settings.json 出現在部署產物中，請檢查 csproj 的 CopyToPublishDirectory。"
+            exit 1
+          fi
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ vars.FUNCTION_APP_NAME }}
+          package: ${{ env.OUTPUT_PATH }}
+
+      # Migration 由 Program.cs 啟動時 MigrateAsync() 套用（docs/10 §11），
+      # CI 不另外跑。這一步只確認站起來了——啟動失敗最常見的原因就是 migration
+      # 掛掉，而部署本身仍會顯示成功。
+      - name: Smoke test
+        run: |
+          for i in $(seq 1 12); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "https://${{ vars.FUNCTION_APP_NAME }}.azurewebsites.net/api/v1/health" || true)
+            if [ "$code" = "200" ]; then echo "health 回應 200"; exit 0; fi
+            echo "等待啟動…（第 $i 次，收到 $code）"; sleep 10
+          done
+          echo "::error::health 端點在 2 分鐘內沒有回應 200，請檢查 App Insights 的啟動日誌。"
+          exit 1

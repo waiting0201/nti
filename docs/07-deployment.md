@@ -149,6 +149,89 @@ AZ_STORAGE_ACCOUNT=stntiprod tools/upload-assets.sh
 > `verify:markup` 讀同一個環境變數來正規化 mockup 端的路徑，所以兩種模式下
 > 這個閘都成立 —— 已分別以「未設」與「指向 Blob」兩種模式驗過 44 頁一致。
 
+### 7.4 API 與資料庫的資源建立（尚未執行）
+
+程式碼與 CI 已就緒（[`.github/workflows/api.yml`](../.github/workflows/api.yml)），**Azure 資源尚未開設**。
+下列指令會產生費用，執行前請先確認訂閱與預算。
+
+```bash
+RG=NTIUS; LOC=westus2; APP=func-nti-prod; SQLSRV=sql-nti-prod
+
+# ── Azure SQL：collation 必須與本機一致，之後才比對得了 schema ──────────
+az sql server create -g $RG -n $SQLSRV -l $LOC \
+  --admin-user ntiadmin --admin-password '<強密碼>'
+az sql db create -g $RG -s $SQLSRV -n NTI \
+  --service-objective Basic --collation Latin1_General_100_CI_AS_SC
+
+# Functions 的出口 IP 不固定，開放 Azure 服務存取（Basic 沒有 VNet 整合）
+az sql server firewall-rule create -g $RG -s $SQLSRV -n AllowAzure \
+  --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
+
+# ── Function App（.NET 10 isolated）─────────────────────────────────
+az functionapp create -g $RG -n $APP -l $LOC \
+  --storage-account stntiprod --consumption-plan-location $LOC \
+  --runtime dotnet-isolated --runtime-version 10 --functions-version 4
+
+# ── App settings（key 名稱與 local.settings.json 完全相同，雙底線慣例）──
+az functionapp config appsettings set -g $RG -n $APP --settings \
+  "ConnectionStrings__DefaultConnection=<Azure SQL 連線字串>" \
+  "Jwt__Secret=<32 字以上亂數>" "Jwt__Issuer=nti-api" \
+  "Jwt__AudienceAdmin=nti-admin" "Jwt__AudienceWeb=nti-web" \
+  "Jwt__ExpiryMinutes=60" "Jwt__ExpiryMinutesWeb=120" \
+  "BlobStorageConnection=<stntiprod 連線字串>" \
+  "Smtp__Host=<...>" "Smtp__Port=587" "Smtp__User=<...>" \
+  "Smtp__Password=<...>" "Smtp__From=<...>" \
+  "Turnstile__SecretKey=<...>" \
+  "PublishScheduleCron=0 */5 * * * *" \
+  "RetentionCleanupCron=0 30 3 * * *" \
+  "OrphanMediaCron=0 0 4 * * 0"
+
+# ── CORS：兩個 origin，禁用 *（會員與後台端點帶憑證）──────────────────
+az functionapp cors add -g $RG -n $APP \
+  --allowed-origins https://gray-river-0a6ae341e.5.azurestaticapps.net
+```
+
+**第一位超級管理員**（docs/10 §7.4）：把 `BOOTSTRAP_SUPERADMIN=true` 與
+`BOOTSTRAP_SUPERADMIN_EMAIL`／`_PASSWORD` 設上去，重啟一次 Function App，
+**跑完立刻改回 false 並移除密碼設定**。它只在 `AdminUser` 表為空時動作。
+
+**OIDC 聯合身分**（`api.yml` 用它登入，不用 publish profile）：
+
+```bash
+az ad app create --display-name nti-github-oidc          # 取得 appId
+az ad sp create --id <appId>
+az role assignment create --assignee <appId> --role Contributor \
+  --scope /subscriptions/<subId>/resourceGroups/$RG
+az ad app federated-credential create --id <appId> --parameters '{
+  "name":"nti-main",
+  "issuer":"https://token.actions.githubusercontent.com",
+  "subject":"repo:waiting0201/nti:ref:refs/heads/main",
+  "audiences":["api://AzureADTokenExchange"]
+}'
+```
+
+GitHub 端要設定：
+
+| 類型 | 名稱 | 值 |
+|---|---|---|
+| secret | `AZURE_CLIENT_ID` | 上面的 appId |
+| secret | `AZURE_TENANT_ID` | 租用戶 Id |
+| secret | `AZURE_SUBSCRIPTION_ID` | 訂閱 Id |
+| variable | `FUNCTION_APP_NAME` | `func-nti-prod` |
+
+部署後跑一次 schema 驗收閘（docs/10 §11）：
+
+```bash
+sqlcmd -S $SQLSRV.database.windows.net -d NTI -U ntiadmin -P '<密碼>' \
+  -I -b -i db/verify/verify-ef.sql        # 應輸出「verify-ef 全數 PASS。」
+```
+
+> ⚠ **前端還沒有指向 API 的設定**。`apps/web` 與 `apps/admin` 目前都不打 API
+> （前者內容寫死、後者接本機 mock），資源開好之後還要補 `NEXT_PUBLIC_API_BASE`
+> 之類的變數並改前端資料來源，才算真的接上。
+
+---
+
 ### 7.1 SWA Free 的四條硬限制
 
 | 限制 | 對策 | 寫在哪 |
@@ -184,5 +267,7 @@ AZ_STORAGE_ACCOUNT=stntiprod tools/upload-assets.sh
 | 2026-09-02 | Tim（Claude Code） | 新增 §7.1 SWA Free 硬限制對策：`output: 'standalone'` + `pack-standalone.mjs`（壓平 workspace 巢狀）+ `check-size.mjs`（250MB 閘，目前 135MB）；記錄 `outputFileTracingRoot` 與 hoisted linker 兩個坑。**新增風險：`mockup/` 未進版控導致 CI 建不出有圖的站，圖片轉 Blob 前不寫 workflow** |
 | 2026-09-02 | Tim（Claude Code） | **素材轉 Azure Blob Storage**：建立 RG `NTIUS`／帳戶 `stntiprod`／容器 `assets`（westus2，公開讀取），上傳 126 檔 62MB。頁面素材改走 `mediaUrl()`（`NEXT_PUBLIC_MEDIA_BASE`），standalone 產物 135MB → 73MB。**CI 建置不再依賴 `mockup/`**，前一列的風險解除 |
 | 2026-09-02 | Tim（Claude Code） | **接上 SWA 自動部署**：建立 `stapp-nti-prod`（NTIUS／westus2／Free）與 `.github/workflows/web.yml`（push `main` 觸發，hoisted 安裝、先 admin 後 web、`skip_app_build`、concurrency group）。新增 §7.3：上線前 robots 預設擋全站，上線需設 `ALLOW_INDEXING` 與 `SITE_URL` 兩個 variable |
+| 2026-09-04 | Tim（Claude Code） | 新增 §7.4：API 與資料庫的資源建立指令、OIDC 聯合身分設定、GitHub secrets／variables 清單、部署後的 schema 驗收閘。CI 為 `.github/workflows/api.yml`（觸發於 `Api/**`，含 health 冒煙測試與「產物不得含 local.settings.json」的斷言）。資源本身尚未開設 |
 
-*最後更新：2026-09-02*
+*最後更新：2026-09-04*
+
