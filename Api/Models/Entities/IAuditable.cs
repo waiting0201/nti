@@ -16,11 +16,20 @@ public interface IAuditable
 
 /// <summary>
 /// 上下架四欄（docs/08 §2.4）。前台查詢一律套 <c>PublicFilter</c>（docs/10 §8.2）。
+/// <para>
+/// 注意 <c>SortOrder</c> 不在這裡——有些單元（News、SupplierNotice）用日期排序而無 SortOrder，
+/// 有些（SolutionItem、ClientLogo）有 SortOrder 卻無上下架時間窗。兩者是獨立的欄位組。
+/// </para>
 /// </summary>
 public interface IPublishable
 {
     bool      IsPublished { get; set; }
     DateTime? PublishAt   { get; set; }
     DateTime? UnpublishAt { get; set; }
-    int       SortOrder   { get; set; }
+}
+
+/// <summary>多語子表（docs/08 §2.5）。PK 一律 (<c>{Entity}Id</c>, <c>Lang</c>)，值域 zh/en，缺語系不 fallback。</summary>
+public interface II18n
+{
+    string Lang { get; set; }
 }

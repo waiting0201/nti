@@ -440,7 +440,7 @@ public sealed class NewsReadService(IDbConnection db) : INewsReadService
 
     public async Task<PagedResult<NewsListDto>> GetPagedAsync(string lang, int page, int pageSize)
     {
-        var p = new { Lang = lang, Now = Clock.Now, Skip = (page - 1) * pageSize, Take = pageSize };
+        var p = new { Lang = lang, Now = Clock.UtcNow, Skip = (page - 1) * pageSize, Take = pageSize };
         var countSql = $"SELECT COUNT(*) FROM News n INNER JOIN NewsI18n i ON i.NewsId = n.Id AND i.Lang = @Lang {PublicFilter}";
         var sql = $"""
             {BaseSelect}
@@ -475,7 +475,7 @@ public sealed class NewsReadService(IDbConnection db) : INewsReadService
 
 override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3 的稽核五欄：
 
-- 新增 → `CreatedAt = Clock.Now`、`CreatedBy = 目前 AdminUser.Id`
+- 新增 → `CreatedAt = Clock.UtcNow`、`CreatedBy = 目前 AdminUser.Id`
 - 修改 → `UpdatedAt` / `UpdatedBy`
 - 刪除 → 一律**軟刪**（`IsDeleted = 1`），禁止 `Remove()` 硬刪內容表
 - 目前使用者由 `IHttpContextAccessor` 取 `sub` claim
@@ -494,6 +494,9 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 | 時間欄 `DATETIME2(0)` 存 UTC | `HasColumnType("datetime2(0)")` |
 | 狀態欄 `VARCHAR(20)` + `CHECK` | `HasColumnType("varchar(20)")` + `HasCheckConstraint` |
 | `SchemaVersion` 表 | 由 EF 的 `__EFMigrationsHistory` 取代；`db/` 版保留供交付腳本使用 |
+| 具名 DEFAULT 約束（`DF_*`） | `modelBuilder.UseNamedDefaultConstraints()`，自動命名為 `DF_<表>_<欄>`。少了這行，EF 產出的是匿名約束，`verify` 的「匿名約束數 = 0」會直接 FAIL |
+| 索引寧缺勿濫（Basic 5 DTU） | EF 預設**每條外鍵自動建索引**（35 條 FK ＝ 35 個多餘索引）。`ConfigureConventions` 移除 `ForeignKeyIndexConvention`，索引只留 08 §5 明列的 20 條 |
+| 預設值為 `true` 的 bool 欄位 | 必須設 `ValueGenerated.Never`。`HasDefaultValue(true)` 會讓 EF 在值等於 CLR 預設（`false`）時**把整欄從 INSERT 拿掉**，於是 `IsPublished = false` 進 DB 變成 1 且無錯誤訊息——「先建好、暫不上架」會被靜默上架。`AppDbContext` 以迴圈掃全模型統一處理 |
 
 ### 8.6 Azure SQL Basic 相容性
 
@@ -514,7 +517,14 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 
 ### 9.1 時間
 
-`Common/Clock.cs` 提供 `Clock.Now`（Asia/Taipei）。**業務邏輯禁用 `DateTime.Now` / `DateTime.UtcNow`** —— 例外只有 JWT 有效期、DB 預設值、cron 判定三處。上下架排程與 `PublishDate` 比較全走 `Clock.Now`。
+`Common/Clock.cs` 是唯一時間源，**業務邏輯禁用 `DateTime.Now` / `DateTime.UtcNow`**（例外只有 JWT 有效期與 cron 判定）。它提供兩個時間，用途不可互換：
+
+| | 用途 |
+|---|---|
+| `Clock.UtcNow` | **所有寫進 DB 與拿來比較 DB 時間欄的值**：稽核五欄、上下架時間窗、`SubmittedAt`／`ConsentAt`、`PublicFilter` 的 `@Now` |
+| `Clock.Now`／`Clock.Today` | 台北時區，**只給顯示與營業日判定**；不得寫入 DB |
+
+> ⚠ 本節初版寫「稽核欄位與上下架比較一律 `Clock.Now`」，與 [`08-database.md` §2.2](08-database.md)（時間欄存 UTC、DDL 預設值為 `SYSUTCDATETIME()`）相衝突：EF 寫入會是台北時間、DB 預設值會是 UTC，同一欄兩種時區，上下架時間窗還會整整差 8 小時。**儲存語意屬 schema 規範，以 08 為準**，故持久化一律 UTC。
 
 ### 9.2 常數
 
@@ -641,7 +651,7 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 - [ ] Handler 內無 SQL；ReadService 內無寫入；Service 內無 `IActionResult`
 - [ ] Handler 內無權限碼檢查（授權在 Router）；新 `/admin/*` 端點已補進 `GetRequiredPermission`
 - [ ] 所有 SQL 完全參數化，無字串串接使用者輸入
-- [ ] 無 `DateTime.Now` / `DateTime.UtcNow`（JWT／DB 預設值／cron 除外）
+- [ ] 無 `DateTime.Now` / `DateTime.UtcNow`（JWT／cron 除外）；寫入 DB 與比較 DB 時間欄一律 `Clock.UtcNow`，`Clock.Now` 只用於顯示
 - [ ] 無字面值狀態碼／權限碼／`CategoryType`／`PageKey`（一律用 `Constants`）
 - [ ] 前台查詢帶 `PublicFilter`（`IsDeleted` + `IsPublished` + 上下架時間窗）
 - [ ] 前台 i18n 用 `INNER JOIN`（不 fallback）；後台用 `LEFT JOIN`
@@ -675,4 +685,6 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 |------|--------|------|
 | 2026-09-02 | Tim（Claude Code） | 初版：以 `/Users/tim/webapps/Jabez/Api` 及其 `docs/backend-design.md` 為範本，建立 NTI 後端技術規範。定案四項：資料存取改 **EF Core 寫 + Dapper 讀**雙軌、路由改**集中式 `AppRouter`**、schema 權威改 **EF Migration**、授權**預設拒絕**。補齊 04 缺口：成功回應信封、錯誤碼值域、分頁回應形狀。新增 Jabez 無先例的 NTI 特有規範：多語 i18n 查詢、兩套身分、CORS 雙 origin、Turnstile／rate limit、快取標頭、AuditLog／EmailLog 慣例 |
 
-*最後更新：2026-09-02*
+| 2026-09-04 | Tim（Claude Code） | P4 開工。修正 §9.1 與 08 §2.2 的時區衝突：**持久化一律 UTC**（`Clock.UtcNow`），`Clock.Now` 僅供顯示，§8.2／§8.4 範例同步更正。補 §8.5 兩條 EF 實作要點：`UseNamedDefaultConstraints()`（對應 verify 的「匿名約束數 = 0」）、移除 `ForeignKeyIndexConvention` 並把「預設值為 true 的 bool 欄位」設為 `ValueGenerated.Never`。新增 `db/verify/verify-ef.sql` 為 EF 版驗收閘 |
+
+*最後更新：2026-09-04*

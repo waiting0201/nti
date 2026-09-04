@@ -16,8 +16,9 @@
 push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內容都是從 mockup 與 `db/seed`
 產生的種子資料——**資料庫與業務端點都還沒做**。
 
-**P4 後端已開工**：`Api/` 骨架完成（統一信封、例外處理、JWT 雙 audience、
-集中式路由與預設拒絕授權、`GET /health` 本機實測通過）；下一步是 Entity 與 EF Migration。
+**P4 後端進行中**：`Api/` 骨架與**資料層**完成——48 張表的 Entity、`InitialSchema`
+Migration（schema + 種子）本機實測通過，與 `db/` 腳本建出來的庫逐欄逐約束一致。
+下一步是 3.1 前台 18 支唯讀端點。
 
 ---
 
@@ -40,7 +41,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | P1 | 系統分析／架構 | ✅ | 技術選型 2026-06-12 凍結，2026-09-02 修訂為 EF+Dapper 雙軌 |
 | P2 | UI/UX 設計 + 原型 | ✅ | `mockup/` 44 頁，客戶已定案（`mockup2/` 未採用） |
 | P3 | 前端框架／元件 | ✅ | Next.js App Router，共用元件與各頁行為自 mockup 移植 |
-| P4 | 後端／CMS API | 🟡 | **進行中**。骨架完成（見 §五）；Entity／Migration／業務端點未做 |
+| P4 | 後端／CMS API | 🟡 | **進行中**。骨架 + 資料層完成（見 §四、§五）；業務端點未做 |
 | P5 | 前台頁面開發 | 🟡 | 44 頁切版完成；內容仍為靜態，未接 API |
 | P6 | 會員／報價／聯絡 | 🟡 | 表單已切版（`PageForm`），無後端 |
 | P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語路由就緒，**中文文案未提供**；sitemap 與結構化資料未做 |
@@ -113,12 +114,20 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 - [`db/`](db/README.md) 參考實作：`migrations/`（0001–0003）、`seed/`（100–150 共 6 支）、`verify/`、`tools/run-local.sh`
 - 本機一鍵建置：`cp db/.env.local.example db/.env.local && db/tools/run-local.sh`
 
+- **EF Core Migration（schema 權威來源）已建立**（2026-09-04）：
+  48 個 Entity + Configuration、`Api/Data/Migrations/InitialSchema`（schema + 種子）。
+  `db/` 自此為參考實作與交付腳本。
+  - 種子由 `Api/Data/Seed/SeedData.cs` 的 `HasData` 寫入，Id 硬編、跨環境一致：
+    角色 3／權限 171／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)
+  - 驗收閘 [`db/verify/verify-ef.sql`](db/README.md)：結構 11 項 + 種子 16 項，本機**全數 PASS**
+  - 與 `db/migrations/` 建出來的庫逐欄逐約束比對，差異只有 `SchemaVersion` ↔
+    `__EFMigrationsHistory` 與四個 DEFAULT 約束的名稱縮寫（以 EF 為準）
+
 ### ⬜ 未做
 
-- **EF Core Migration**——schema 的**權威來源**是它，不是 `db/`（見 [`docs/10`](docs/10-backend-design.md) §8）。
-  `Api/Data/AppDbContext.cs` 已就緒（稽核欄位統一填寫、軟刪改寫、`ApplyConfigurationsFromAssembly`），
-  但 **49 張表的 Entity 與 `Api/Data/Migrations/` 尚未建立**——這是 P4 的下一步。
 - Azure SQL Database 實例尚未開設
+- 本機 `NTI` 庫目前仍是 `db/` 腳本建的版本；要切成 EF 版需先砍庫重建
+  （`db/local/900_drop_database.sql` → `dotnet ef database update`）
 
 ---
 
@@ -142,6 +151,16 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 - **`AppDbContext`**：稽核五欄統一填寫、`Remove()` 自動改寫為軟刪
 - **`GET /health`** 本機實測通過（`func start` + `dotnet build` 0 warning／0 error）
 
+### ✅ 資料層（2026-09-04）
+
+48 張表的 Entity、Configuration 與 Migration，詳見 §四。三個踩到的坑已寫成程式碼註解：
+
+| 坑 | 後果 | 處置 |
+|---|---|---|
+| `Clock.Now`（台北）vs DDL 的 `SYSUTCDATETIME()`（UTC） | 同一欄兩種時區，上下架時間窗差 8 小時 | 持久化一律 `Clock.UtcNow`；docs/10 §9.1 已更正 |
+| 預設值為 `true` 的 bool 欄位存不進 `false` | 「暫不上架」被靜默上架、預留的 `green-csr` 從 noindex 變成可索引 | 掃全模型設 `ValueGenerated.Never` |
+| EF 自動幫每條外鍵建索引 | Basic 5 DTU 多出 35 個沒用的索引 | 移除 `ForeignKeyIndexConvention`，只留明列的 20 條 |
+
 本機實測（port 7072）：
 
 | 情境 | 結果 |
@@ -163,7 +182,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 
 ### ⬜ 其他未做
 
-- Entity 與 EF Migration（見 §四）、Blob／Email／Turnstile／rate limit 服務
+- Dapper ReadService、Blob／Email／Turnstile／rate limit 服務
 - 三支 Timer Function（`PublishSchedule`／`RetentionCleanup`／`OrphanMedia`）
 - `/admin/*` 寫入的 AuditLog 統一寫入（位置已在 `AppRouter` 標好，待 AuditLog entity）
 - Azure Function App 資源與 CI/CD（OIDC 登入，隨 P4 一起）
@@ -238,7 +257,7 @@ gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌�
 |---|---|---|
 | **中文文案** | 客戶未提供 | `/zh` 全站是英文佔位，雙語驗收無法進行 |
 | 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 301 對照表、缺漏頁面內容 |
-| Azure SQL 開設 | 隨 P4 一起，尚未開工 | 後台無法脫離 mock |
+| Azure SQL 開設 | 資源尚未開設（schema 與種子已就緒，`dotnet ef database update` 即可建） | 後台無法脫離 mock |
 | 正式網域 | 客戶端 DNS | 上線 checklist 卡住 |
 
 ---

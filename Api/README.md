@@ -67,11 +67,49 @@ Api/
 
 ## 現況
 
-已完成：專案骨架、統一信封與錯誤碼、例外處理、JWT（雙 audience）、集中式路由與預設拒絕授權、
-`Common/` 常數（權限碼 83／CategoryType 9／PageKey 29）、`AppDbContext`（稽核欄位統一填寫、
-軟刪改寫）、`GET /health`。
+已完成：
 
-未完成：**Entity 與 EF Migration**（schema 權威，`Data/Migrations/` 尚未建立）、
-所有業務端點（04 §3.1 前台 18／§3.2 表單 2／§3.3 會員 4／§3.4 後台 24 單元）、
-Blob／Email／Turnstile／rate limit 服務、三支 Timer Function、CI/CD。
+- **骨架**：統一信封與錯誤碼、例外處理、JWT（雙 audience）、集中式路由與預設拒絕授權、
+  `Common/` 常數（權限碼 83／CategoryType 9／PageKey 29）、`GET /health`
+- **資料層**：48 張表的 Entity 與 Configuration、`InitialSchema` Migration（schema + 種子）、
+  `AppDbContext`（稽核欄位統一填寫、軟刪改寫）
+- **種子**：角色 3／權限 171／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)，
+  由 `Data/Seed/SeedData.cs` 的 `HasData` 寫入，Id 硬編、跨環境一致
+
+未完成：所有業務端點（04 §3.1 前台 18／§3.2 表單 2／§3.3 會員 4／§3.4 後台 24 單元）、
+Dapper ReadService、Blob／Email／Turnstile／rate limit 服務、三支 Timer Function、CI/CD。
 進度見 [`STATUS.md`](../STATUS.md) §五。
+
+## 資料層的四個地雷（都已寫成程式碼註解）
+
+1. **`Clock.UtcNow` 才是寫 DB 用的。** `Clock.Now` 是台北時區、只給顯示。
+   混用的話上下架時間窗會整整差 8 小時（docs/08 §2.2）。
+
+2. **預設值為 `true` 的 bool 欄位，`false` 存不進去。** `HasDefaultValue(true)` 會讓 EF
+   在值等於 CLR 預設（`false`）時把整欄從 INSERT 拿掉、改用 DB 預設值——
+   「先建好、暫不上架」會被靜默上架。`AppDbContext.AlwaysWriteColumnsWithDefaults` 統一修掉。
+
+3. **EF 預設每條外鍵都建索引。** 35 條 FK 就是 35 個索引，Basic 只有 5 DTU。
+   `ConfigureConventions` 移除了 `ForeignKeyIndexConvention`，索引只留 docs/08 §5 明列的 20 條。
+
+4. **約束一定要具名。** `UseNamedDefaultConstraints()` 少了這行，DEFAULT 會拿到隨機名稱
+   （`DF__HomeBanner__Sort__1B0907CE`），每個環境都不同，之後「改預設值」的 migration
+   在 dev 跑得過、在 prod 炸掉。`db/verify/verify-ef.sql` 會斷言「匿名約束數 = 0」。
+
+## Schema 怎麼驗
+
+```bash
+# 建庫（本機；Azure 由 az sql db create 建，collation 必須一致）
+docker exec -i sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PW" -C -d master \
+  < db/local/000_create_database.sql
+
+cd Api && dotnet ef database update      # 或直接 func start，啟動時會自動套用
+
+# 驗收閘：結構 11 項 + 種子 16 項
+docker exec -i sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$SA_PW" -C -I -b -d NTI \
+  < db/verify/verify-ef.sql            # 應輸出「verify-ef 全數 PASS。」
+```
+
+`db/migrations/` 的手寫 DDL 已降為**參考實作**：schema 的權威是 `Api/Data/Migrations/`。
+兩者已逐欄逐約束比對過，除了 `SchemaVersion` ↔ `__EFMigrationsHistory` 與四個 DEFAULT
+約束名稱的縮寫差異（EF 一律 `DF_<表>_<欄>`）之外完全一致。

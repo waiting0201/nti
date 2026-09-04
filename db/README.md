@@ -18,15 +18,39 @@
 > |---|---|
 > | 本機一鍵建庫（`tools/run-local.sh`）供 P4 前的設計驗證與資料比對 | ✅ 有效 |
 > | 交付給客戶／DBA 的可讀 DDL 與種子腳本 | ✅ 有效 |
-> | **`verify/verify.sql` 的 24 項斷言** | ✅ **保留為 EF Migration 產出的驗收閘** —— 這些斷言獨立於 schema 由誰產生，價值不變 |
+> | **`verify/verify.sql` 的 24 項斷言** | ✅ 仍是 `db/` 這條路徑的驗收閘。EF 建出來的庫請改跑 **[`verify/verify-ef.sql`](verify/verify-ef.sql)**（見下方） |
 > | 〈Azure SQL 相容性 checklist〉（禁用語法表 + 預設值差異表） | ✅ **繼續適用**，檢查對象改為 `dotnet ef migrations script` 的輸出 |
 > | 作為 P4 之後 schema 變更的落點 | ❌ 已失效 —— schema 變更一律寫 EF Migration，再視需要回頭同步本目錄 |
 >
-> **P4 的第一項工作**是把 `migrations/`（3 支）與 `seed/`（6 支）搬遷為
-> `Data/Configurations/<Entity>Configuration.cs` + `HasData`。
-> 各項規格（具名約束、Category 型別安全的 9 條 PERSISTED 計算欄、filtered unique index、
-> 固定 Id 種子）的 EF Core 表達方式，對照表見
+> **搬遷已於 2026-09-04 完成**：`migrations/`（3 支）與 `seed/`（6 支）已表達為
+> `Api/Data/Configurations/*.cs` + `Api/Data/Seed/SeedData.cs` 的 `HasData`，
+> 產出 `Api/Data/Migrations/` 的 `InitialSchema`（schema + 種子）。
+> 兩邊建出來的庫已逐欄逐約束比對過，差異只有兩處，皆為預期：
+>
+> - `SchemaVersion`（只在 `db/`）↔ `__EFMigrationsHistory`（只在 EF）
+> - 四個 DEFAULT 約束的名稱縮寫：`DF_QuoteRequest_NeedsAdvice`／`DF_NewsletterSubscriber_Bounce`／
+>   `_Lang`／`_SubAt` ——EF 一律用完整的 `DF_<表>_<欄>`。**以 EF 的名稱為準**（它是權威來源）。
+>
+> 各項規格的 EF Core 表達方式對照表見
 > [docs/10-backend-design.md §8.5](../docs/10-backend-design.md)。
+
+---
+
+## 兩個 verify 腳本
+
+| 腳本 | 檢核對象 | 斷言數 |
+|---|---|---|
+| [`verify/verify.sql`](verify/verify.sql) | `db/migrations/` + `db/seed/` 建出來的庫（含 `SchemaVersion`） | 24 |
+| [`verify/verify-ef.sql`](verify/verify-ef.sql) | **EF Migration 建出來的庫**（含 `__EFMigrationsHistory`），正式環境用這支 | 27 |
+
+兩份斷言逐條對應，數字有異動時要一起改。`verify-ef.sql` 另外多守三件 EF 特有的事：
+非 PK/UQ 索引數必須是 20（EF 會自動幫每條外鍵建索引，`AppDbContext` 已移除該慣例）、
+`green-csr` 必須是 noindex、四筆 Solution 必須未上架
+（後兩者是「預設值為 true 的 bool 欄位存不進 false」那個坑的哨兵）。
+
+```bash
+sqlcmd -S localhost -U sa -P "$PW" -C -I -b -d NTI -i db/verify/verify-ef.sql
+```
 
 ---
 
