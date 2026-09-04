@@ -92,7 +92,7 @@ db/tools/sqlcmd.sh NTI < db/local/930_dev_content_clear.sql    # 清除並還原
 `/opt/mssql-tools18/bin/sqlcmd`。GUI 檢視可用 DBeaver 或 VS Code 的 `ms-mssql` 擴充
 （`localhost,1433` / `sa`）。
 
-dev 管理員帳號為 `admin@nti.local`，密碼見 `local/910_seed_dev_admin.sql` 檔頭註解。
+dev 管理員帳號為 `sa@system.local` / `Admin@123`（BCrypt 雜湊，與 API 的 `PasswordHasher` 一致）。
 **`local/` 只在本機執行、不會出現在 GitHub 公開版**（見 [CLAUDE.md](../CLAUDE.md) 版控與雙 remote），
 需要時向專案內部版（NAS）索取。
 
