@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nti.Api.Common;
 using Nti.Api.Handlers;
+using Nti.Api.Handlers.Admin;
 using Nti.Api.Services;
 using System.Security.Claims;
 
@@ -19,6 +20,7 @@ namespace Nti.Api.Routing;
 public sealed partial class AppRouter(
     ILogger<AppRouter>    logger,
     IJwtService           jwt,
+    IAuditService         audit,
     HealthHandler         health,
     ContentHandler        content,
     SolutionHandler       solutions,
@@ -34,7 +36,40 @@ public sealed partial class AppRouter(
     SupplierHandler       supplier,
     PageHandler           pages,
     SettingHandler        settings,
-    CategoryHandler       categories)
+    CategoryHandler       categories,
+
+    // ── 認證與表單（04-api §3.2、§3.3）────────────────────────────────
+    AuthHandler           auth,
+    MemberHandler         members,
+    FormHandler           forms,
+
+    // ── 後台 24 個單元（04-api §3.4）──────────────────────────────────
+    AdminDashboardHandler        dashboard,
+    AdminHomeBannerHandler       adminBanners,
+    AdminSolutionHandler         adminSolutions,
+    AdminSolutionItemHandler     adminSolutionItems,
+    AdminProjectHandler          adminProjects,
+    AdminNewsHandler             adminNews,
+    AdminVlogHandler             adminVlogs,
+    AdminFaqHandler              adminFaqs,
+    AdminTrendHandler            adminTrends,
+    AdminCertificationHandler    adminCertifications,
+    AdminClientHandler           adminClients,
+    AdminFacilityHandler         adminFacility,
+    AdminJobHandler              adminJobs,
+    AdminSupplierNoticeHandler   adminSupplierNotices,
+    AdminSupplierSpecHandler     adminSupplierSpecs,
+    AdminSupplierDownloadHandler adminSupplierDownloads,
+    AdminPageHandler             adminPages,
+    AdminRedirectHandler         adminRedirects,
+    AdminFormHandler             adminForms,
+    AdminMemberHandler           adminMembers,
+    AdminOrderHandler            adminOrders,
+    AdminSettingHandler          adminSettings,
+    AdminCategoryHandler         adminCategories,
+    AdminAccountHandler          adminAccounts,
+    AdminAuditHandler            adminAudits,
+    AdminMediaHandler            adminMedia)
 {
     /// <summary>
     /// <see cref="GetRequiredPermission"/> 的預設回傳值：<b>未列在權限表的 /admin/* 一律拒絕</b>。
@@ -59,13 +94,16 @@ public sealed partial class AppRouter(
         // （ASP.NET Core 會自己把 body 丟掉，只回標頭）
         if (method == "HEAD") method = "GET";
 
-        if (segments is ["admin", ..])
+        if (segments is ["admin", ..] || IsAdminAuthRoute(method, segments))
         {
             // 後台：只收 nti-admin audience 的 token；會員 token 打 /admin/* 一律擋下
             var principal = jwt.ValidateRequest(req, TokenAudiences.Admin)
                 ?? throw AppException.Unauthorized("缺少或無效的後台憑證。");
 
-            RequirePermission(principal, GetRequiredPermission(method, segments));
+            // /auth/admin/change-password 不需權限碼（見 IsAdminAuthRoute 的說明）
+            if (segments is ["admin", ..])
+                RequirePermission(principal, GetRequiredPermission(method, segments));
+
             req.HttpContext.User = principal;
         }
         else if (!IsPublicRoute(method, segments))
@@ -85,11 +123,60 @@ public sealed partial class AppRouter(
             if (principal is not null) req.HttpContext.User = principal;
         }
 
-        // docs/10 §9.3：/admin/* 的寫入操作要在分派完成後統一寫 AuditLog（不由各 Handler 各寫一次）。
-        // 待 AuditLog entity 建立後接在這裡。
-        return await RoutePublicAsync(req, method, segments)
+        var result = await RoutePublicAsync(req, method, segments)
             ?? await RouteAdminAsync(req, method, segments)
             ?? NotFound(method, route);
+
+        // 稽核在分派完成後統一寫（docs/10 §9.3），不由各 Handler 各寫一次——
+        // 後者只要有一支忘了寫就會留下查不到的操作，而且不會有任何症狀。
+        // 走到這裡代表沒有拋例外；拋了的話 middleware 會接手，那些請求本來就不該記成已完成。
+        await WriteAuditIfNeededAsync(req, method, segments, result);
+
+        return result;
+    }
+
+    /// <summary>
+    /// 是否需要寫 AuditLog：<c>/admin/*</c> 的寫入操作，外加三個「唯讀但必須留痕」的動作
+    /// （04-api §3.4）——匯出報價 CSV、下載報價附件、重寄信件。
+    /// 這三個都會把資料帶出系統或再送出去一次，誰做的必須查得到。
+    /// </summary>
+    private static bool ShouldAudit(string method, string[] segments)
+    {
+        if (segments is not ["admin", ..]) return false;
+
+        if (method is "POST" or "PUT" or "PATCH" or "DELETE") return true;
+
+        return (method, segments) is
+            ("GET", ["admin", "quote", "export"]) or
+            ("GET", ["admin", "quote", _, "attachments", _]);
+    }
+
+    private async Task WriteAuditIfNeededAsync(
+        HttpRequest req, string method, string[] segments, IActionResult result)
+    {
+        if (!ShouldAudit(method, segments)) return;
+
+        // 找不到路由的 404 不記：那不是一次操作
+        if (result is NotFoundObjectResult) return;
+
+        var action = (method, segments) switch
+        {
+            ("POST", ["admin", "audit", "emails", _, "resend"]) => "Resend",
+            ("GET",  ["admin", "quote", "export"])              => "Export",
+            ("GET",  _)                                         => "Download",
+            ("PATCH", [.., "publish"])                          => "Publish",
+            ("POST", _)                                         => "Create",
+            ("DELETE", _)                                       => "Delete",
+            _                                                   => "Update",
+        };
+
+        // EntityName 用單元代號（docs/09 §2），與權限碼同一組字串，查詢時對得起來
+        var entityName = segments.Length > 1 ? segments[1] : "admin";
+        var entityId   = segments.Length > 2 && int.TryParse(segments[2], out var id) ? id : (int?)null;
+
+        await audit.WriteAsync(
+            RequestContext.UserId(req.HttpContext.User),
+            action, entityName, entityId, RequestContext.SourceIp(req));
     }
 
     /// <summary>檢查 JWT 的 permissions claim；<c>is_superadmin</c> 自動通過（docs/10 §7.5）。</summary>

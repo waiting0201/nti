@@ -3,7 +3,6 @@
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-
     "Jwt__Secret": "REPLACE_WITH_AT_LEAST_32_CHARS_RANDOM_STRING",
     "Jwt__Issuer": "nti-api",
     "Jwt__AudienceAdmin": "nti-admin",
@@ -11,17 +10,17 @@
     "Jwt__ExpiryMinutes": "60",
     "Jwt__ExpiryMinutesWeb": "120",
     "Jwt__RefreshExpiryDays": "7",
-
+    "_comment_bootstrap": "第一位超管：跑過一次就把 BOOTSTRAP_SUPERADMIN 改回 false（只在 AdminUser 表為空時動作）",
+    "BOOTSTRAP_SUPERADMIN": "false",
+    "BOOTSTRAP_SUPERADMIN_EMAIL": "REPLACE_WITH_FIRST_ADMIN_EMAIL",
+    "BOOTSTRAP_SUPERADMIN_PASSWORD": "REPLACE_WITH_STRONG_PASSWORD",
     "BlobStorageConnection": "UseDevelopmentStorage=true",
-
     "Smtp__Host": "REPLACE_WITH_SMTP_HOST",
     "Smtp__Port": "587",
     "Smtp__User": "REPLACE_WITH_SMTP_USER",
     "Smtp__Password": "REPLACE_WITH_SMTP_PASSWORD",
     "Smtp__From": "REPLACE_WITH_FROM_ADDRESS",
-
     "Turnstile__SecretKey": "REPLACE_WITH_TURNSTILE_SECRET",
-
     "PublishScheduleCron": "0 */5 * * * *",
     "RetentionCleanupCron": "0 30 3 * * *",
     "OrphanMediaCron": "0 0 4 * * 0"

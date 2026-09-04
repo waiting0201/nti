@@ -6,7 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nti.Api.Common;
 using Nti.Api.Data;
+using Microsoft.Extensions.Configuration;
+using Nti.Api.Data.Seed;
 using Nti.Api.Handlers;
+using Nti.Api.Handlers.Admin;
 using Nti.Api.Middleware;
 using Nti.Api.Routing;
 using Nti.Api.Services;
@@ -63,11 +66,20 @@ var host = new HostBuilder()
 
         // ── Singleton：只讀設定、無 per-request 狀態 ──────────────────────────
         services.AddSingleton<IJwtService, JwtService>();
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddSingleton<IBlobStorageService, BlobStorageService>();
+
+        // 顯式短 timeout：Turnstile 正常 < 1s，異常時寧可快速失敗也不要讓表單卡住
+        services.AddHttpClient<ITurnstileService, TurnstileService>(c => c.Timeout = TimeSpan.FromSeconds(8));
 
         // ── Scoped：碰 AppDbContext / IDbConnection 的一律 Scoped，沒有例外 ────
         //    誤設 Singleton 會捕獲已釋放的 DbContext，且只在高併發下才浮現（docs/10 §4.1）
         services.AddScoped<AppRouter>();
         services.AddHttpContextAccessor();
+        services.AddScoped<IAuditService, AuditService>();
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IRateLimitService, RateLimitService>();
+        services.AddScoped<IQuoteNumberGenerator, QuoteNumberGenerator>();
 
         // ── Dapper 讀取服務（一單元一支，Scoped：依賴 IDbConnection）────────
         services.AddScoped<ICategoryReadService, CategoryReadService>();
@@ -103,6 +115,39 @@ var host = new HostBuilder()
         services.AddScoped<PageHandler>();
         services.AddScoped<SettingHandler>();
         services.AddScoped<CategoryHandler>();
+
+        // 認證與公開表單（04-api §3.2、§3.3）
+        services.AddScoped<AuthHandler>();
+        services.AddScoped<MemberHandler>();
+        services.AddScoped<FormHandler>();
+
+        // 後台 24 個單元（04-api §3.4）
+        services.AddScoped<AdminDashboardHandler>();
+        services.AddScoped<AdminHomeBannerHandler>();
+        services.AddScoped<AdminSolutionHandler>();
+        services.AddScoped<AdminSolutionItemHandler>();
+        services.AddScoped<AdminProjectHandler>();
+        services.AddScoped<AdminNewsHandler>();
+        services.AddScoped<AdminVlogHandler>();
+        services.AddScoped<AdminFaqHandler>();
+        services.AddScoped<AdminTrendHandler>();
+        services.AddScoped<AdminCertificationHandler>();
+        services.AddScoped<AdminClientHandler>();
+        services.AddScoped<AdminFacilityHandler>();
+        services.AddScoped<AdminJobHandler>();
+        services.AddScoped<AdminSupplierNoticeHandler>();
+        services.AddScoped<AdminSupplierSpecHandler>();
+        services.AddScoped<AdminSupplierDownloadHandler>();
+        services.AddScoped<AdminPageHandler>();
+        services.AddScoped<AdminRedirectHandler>();
+        services.AddScoped<AdminFormHandler>();
+        services.AddScoped<AdminMemberHandler>();
+        services.AddScoped<AdminOrderHandler>();
+        services.AddScoped<AdminSettingHandler>();
+        services.AddScoped<AdminCategoryHandler>();
+        services.AddScoped<AdminAccountHandler>();
+        services.AddScoped<AdminAuditHandler>();
+        services.AddScoped<AdminMediaHandler>();
     })
     .Build();
 
@@ -113,7 +158,15 @@ DateOnlyTypeHandler.Register();
 // schema 權威在 Api/Data/Migrations/：啟動時套用 pending migration，CI 不另外跑（docs/10 §11）
 using (var scope = host.Services.CreateScope())
 {
-    await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+
+    // 第一位超管由部署流程建立（docs/10 §7.4）：只在 AdminUser 表是空的時候動作，
+    // 旗標忘了關也不會覆蓋既有帳號。跑完請把 BOOTSTRAP_SUPERADMIN 關掉。
+    await SuperAdminBootstrapper.RunAsync(
+        db,
+        scope.ServiceProvider.GetRequiredService<IConfiguration>(),
+        scope.ServiceProvider.GetRequiredService<IPasswordHasher>());
 }
 
 await host.RunAsync();

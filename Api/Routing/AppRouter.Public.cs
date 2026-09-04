@@ -39,7 +39,30 @@ public sealed partial class AppRouter
             // 整條路由要求 token 會讓一般下載也打不到）
             ("POST", ["supplier", "downloads", _, "hit"]) or
             ("GET",  ["pages", _]) or
-            ("GET",  ["site-settings"]);
+            ("GET",  ["site-settings"]) or
+
+            // ── 04-api §3.2 表單（Turnstile + rate limit 擋在 Handler 裡）──
+            ("POST", ["quotes"]) or
+            ("POST", ["contacts"]) or
+
+            // ── 04-api §3.3 會員：未登入才會用到的四支 ────────────────────
+            ("POST", ["auth", "register"]) or
+            ("POST", ["auth", "login"]) or
+            ("POST", ["auth", "forgot-password"]) or
+            ("POST", ["auth", "reset-password"]) or
+
+            // 後台登入。改密碼不在這裡——它需要有效的後台 token（見 IsAdminAuthRoute）
+            ("POST", ["auth", "admin", "login"]);
+
+    /// <summary>
+    /// 需要**後台** token 但不需要任何權限碼的路由。
+    /// <para>
+    /// 目前只有改密碼：<c>MustChangePassword = 1</c> 的使用者本來就還沒有任何權限可用，
+    /// 要求權限碼會讓首登直接卡死。
+    /// </para>
+    /// </summary>
+    private static bool IsAdminAuthRoute(string method, string[] segments) =>
+        (method, segments) is ("POST", ["auth", "admin", "change-password"]);
 
     /// <summary>前台分派；無對應路由回 null 交給下一張表。</summary>
     private async Task<IActionResult?> RoutePublicAsync(HttpRequest req, string method, string[] segments) =>
@@ -72,6 +95,26 @@ public sealed partial class AppRouter
             // ── 頁面 SEO 與全站設定 ───────────────────────────────────────
             ("GET",  ["pages", var pageKey])      => await pages.GetByKeyAsync(req, pageKey),
             ("GET",  ["site-settings"])           => await settings.GetPublicAsync(req),
+
+            // ── 表單（§3.2）───────────────────────────────────────────────
+            ("POST", ["quotes"])                  => await forms.CreateQuoteAsync(req),
+            ("POST", ["contacts"])                => await forms.CreateContactAsync(req),
+
+            // ── 會員（§3.3）───────────────────────────────────────────────
+            ("POST", ["auth", "register"])        => await members.RegisterAsync(req),
+            ("POST", ["auth", "login"])           => await members.LoginAsync(req),
+            ("POST", ["auth", "forgot-password"]) => await members.ForgotPasswordAsync(req),
+            ("POST", ["auth", "reset-password"])  => await members.ResetPasswordAsync(req),
+
+            ("GET",  ["me"])                      => await members.GetMeAsync(req),
+            ("PUT" or "PATCH", ["me"])            => await members.UpdateMeAsync(req),
+            ("GET",  ["me", "quotes"])            => await members.GetMyQuotesAsync(req),
+            ("GET",  ["me", "orders"])            => await members.GetMyOrdersAsync(req),
+            ("GET",  ["me", "orders", var id])    => await members.GetMyOrderAsync(req, id),
+
+            // ── 後台登入與改密碼 ─────────────────────────────────────────
+            ("POST", ["auth", "admin", "login"])           => await auth.AdminLoginAsync(req),
+            ("POST", ["auth", "admin", "change-password"]) => await auth.AdminChangePasswordAsync(req),
 
             _ => null,
         };

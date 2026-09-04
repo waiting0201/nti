@@ -171,4 +171,6 @@
 
 | 2026-09-04 | Tim（Claude Code） | §3.1 實作完成（20 支）。三處契約明確化：`/facility` 的 `?group=` 收 `Category.Code`（前端子頁路徑本身就是 code）、其餘清單的分類篩選統一為 `?categoryId=`（id 由 `/categories?type=` 取得）、`/content/home` 另含 `featuredNews`（`IsFeaturedHome = 1` 取三筆）。`/site-settings` 明確排除 `Mail` 群組。HEAD 一律當 GET 處理（CDN 與監控探測用） |
 
+| 2026-09-04 | Tim（Claude Code） | §3.2／§3.3／§3.4 實作完成。契約補充四處：(1) 新增**後台認證** `POST /auth/admin/login`、`POST /auth/admin/change-password`——原 §3.3 只涵蓋前台會員，後台無登入端點；(2) 後台圖片上傳掛在各單元底下 `POST /admin/{unit}/upload` 並沿用 `{unit}.edit`，避免新增權限碼破壞 171 列矩陣；(3) 內容單元補 `PATCH /admin/{unit}/{id}/publish`（對應既有的 `{unit}.publish`）與 `PUT /admin/{unit}/sort`；(4) `POST /admin/member/{id}/resend-verify`、`POST /admin/order/{id}/progress`。**已知缺口**：docs/10 §7.3 的 refresh token rotation 未實作——schema 無對應資料表，且 §3.3 端點清單未列 `/auth/refresh` |
+
 *最後更新：2026-09-04*

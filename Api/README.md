@@ -53,7 +53,7 @@ Api/
 └── Common/                       # ApiResponse / AppException / ErrorCodes / Constants / Clock / …
 ```
 
-## 三個一開始就會踩到的點
+## 五個一開始就會踩到的點
 
 1. **授權是預設拒絕的。** `AppRouter.Admin.cs` 的 `GetRequiredPermission` 沒登記的 `/admin/*`
    一律 403（不是放行）。新增後台端點時要同時補路由表與權限表兩處。
@@ -64,6 +64,13 @@ Api/
 
 3. **camelCase 要設兩處。** `Program.cs` 的 `Configure<JsonOptions>`（回應）與
    `ConfigureHttpJsonOptions`（`ReadFromJsonAsync`）少設一邊，就會出現半邊 PascalCase。
+
+4. **稽核與權限都不在 Handler 裡。** AuditLog 由 `AppRouter` 在分派完成後統一寫，
+   權限也在 Router 檢查。Handler 裡再寫一次不會出錯，但會變成兩個真相來源。
+
+5. **內容單元 01–14 共用 `AdminContentHandler<TEntity, TI18n>`。** 這 14 個單元的
+   CRUD 形狀完全一樣，各單元只宣告自己的清單標題欄位。要改 CRUD 行為請改基底，
+   不要在單一單元裡另外處理。
 
 ## 現況
 
@@ -76,11 +83,46 @@ Api/
 - **種子**：角色 3／權限 171／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)，
   由 `Data/Seed/SeedData.cs` 的 `HasData` 寫入，Id 硬編、跨環境一致
 
-- **前台唯讀端點**（04 §3.1）：20 支，15 個單元的 Dapper ReadService + Handler
+- **端點全部完成**：§3.1 前台唯讀 20 支、§3.2 表單 2 支、§3.3 會員 9 支、
+  §3.4 後台 24 單元，外加契約原本沒有的後台認證 2 支
+- **支援服務**：BCrypt 密碼、Blob、Email（+EmailLog）、Turnstile、rate limit、AuditLog、
+  報價單號、第一位超管的 bootstrap
 
-未完成：§3.2 表單（2）、§3.3 會員（4）、§3.4 後台 CRUD（24 單元）、
-Blob／Email／Turnstile／rate limit 服務、三支 Timer Function、CI/CD。
-進度見 [`STATUS.md`](../STATUS.md) §五。
+未完成：三支 Timer Function、CI/CD、refresh token rotation（需先加一張表）、
+附件病毒掃描、OpenAPI。進度見 [`STATUS.md`](../STATUS.md) §五。
+
+## 第一次要能登入後台
+
+`AdminUser` 表建好是空的，得先有第一位超管。在 `local.settings.json` 設：
+
+```jsonc
+"BOOTSTRAP_SUPERADMIN": "true",
+"BOOTSTRAP_SUPERADMIN_EMAIL": "you@example.com",
+"BOOTSTRAP_SUPERADMIN_PASSWORD": "<夠強的密碼>"
+```
+
+`func start` 時會建立帳號（帶 `MustChangePassword = 1`），**跑完把旗標改回 false**。
+它只在 `AdminUser` 表為空時動作，忘了關也不會覆蓋既有帳號。
+
+```bash
+curl -s localhost:7071/api/v1/auth/admin/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"you@example.com","password":"<密碼>"}'
+```
+
+回應帶 `accessToken`、`roleCode`、`permissions[]` 與 `mustChangePassword`。
+`mustChangePassword` 為 true 時前端要先導向 `POST /auth/admin/change-password`。
+
+## 本機還需要 Azurite
+
+檔案上傳與附件下載走 Blob，本機用 Azurite（`BlobStorageConnection` 已設
+`UseDevelopmentStorage=true`）：
+
+```bash
+azurite --silent --location /tmp/azurite --blobPort 10000 &
+```
+
+沒開的話上傳端點會 500；其餘端點不受影響。
 
 ## 本機要有東西看
 

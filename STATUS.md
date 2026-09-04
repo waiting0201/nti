@@ -16,8 +16,8 @@
 push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內容都是從 mockup 與 `db/seed`
 產生的種子資料——**資料庫與業務端點都還沒做**。
 
-**P4 後端進行中**：`Api/` 骨架、資料層、**3.1 前台唯讀端點**皆完成並本機實測通過。
-公開站已經有 API 可接（內容仍需客戶提供）。下一步是 3.2 表單與 3.4 後台 CRUD。
+**P4 後端的端點已全部完成**：3.1 前台唯讀、3.2 表單、3.3 會員、3.4 後台 24 單元
+皆實作並本機實測通過（權限矩陣三個角色逐項驗過）。剩下三支 Timer Function 與 CI/CD。
 
 ---
 
@@ -40,7 +40,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | P1 | 系統分析／架構 | ✅ | 技術選型 2026-06-12 凍結，2026-09-02 修訂為 EF+Dapper 雙軌 |
 | P2 | UI/UX 設計 + 原型 | ✅ | `mockup/` 44 頁，客戶已定案（`mockup2/` 未採用） |
 | P3 | 前端框架／元件 | ✅ | Next.js App Router，共用元件與各頁行為自 mockup 移植 |
-| P4 | 後端／CMS API | 🟡 | **進行中**。骨架 + 資料層 + 前台唯讀端點完成（見 §四、§五）；表單／會員／後台 CRUD 未做 |
+| P4 | 後端／CMS API | 🟡 | 端點全數完成（見 §五）；剩 Timer Function 與 CI/CD |
 | P5 | 前台頁面開發 | 🟡 | 44 頁切版完成；內容仍為靜態，未接 API |
 | P6 | 會員／報價／聯絡 | 🟡 | 表單已切版（`PageForm`），無後端 |
 | P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語路由就緒，**中文文案未提供**；sitemap 與結構化資料未做 |
@@ -195,21 +195,44 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 
 本機假內容 fixture：`db/local/920_dev_content.sql`（各單元一筆 + 三個邊界案例）。
 
-### ⬜ 其餘業務端點
+### ✅ 3.2 表單／3.3 會員／3.4 後台（2026-09-04）
 
-| 群組 | 規劃端點數 | 狀態 |
+| 群組 | 端點數 | 狀態 |
 |---|---|---|
 | 3.1 前台內容（公開唯讀） | 20 | ✅ |
-| 3.2 表單（公開寫入） | 2 | ⬜ 需先做 Blob／Email／Turnstile／rate limit |
-| 3.3 會員（認證） | 4 | ⬜ P6 |
-| 3.4 後台管理（RBAC） | 24 單元 CRUD + 5 支動作端點 | ⬜ |
+| 3.2 表單（公開寫入） | 2 | ✅ 含 Turnstile、rate limit、附件上傳與 magic bytes 驗證 |
+| 3.3 會員（認證） | 9 | ✅ 註冊／登入／忘記密碼／重設／`/me`／報價與訂單紀錄 |
+| 3.4 後台管理（RBAC） | 24 單元 + 動作端點 | ✅ 含 dashboard、上傳、匯出入、稽核 |
+| 後台認證（契約原本沒有） | 2 | ✅ `/auth/admin/login`、`/auth/admin/change-password` |
+
+支援服務：`PasswordHasher`（BCrypt）、`BlobStorageService`、`EmailService`（+EmailLog）、
+`TurnstileService`、`RateLimitService`、`AuditService`、`QuoteNumberGenerator`、
+`SuperAdminBootstrapper`（第一位超管由部署流程建立）。
+
+實測結果（`func start` + Azurite，51 項自動化斷言 + 逐項手驗）：
+
+| 驗證項 | 結果 |
+|---|---|
+| 權限矩陣 | SuperAdmin 83／Editor 67／Viewer 21 逐項驗過：Viewer 可讀不可寫、Editor 沒有 `quote.export`／`admin.*`／`audit.*` |
+| 預設拒絕 | 未登記的 `/admin/*` 回 403（不是靜默放行） |
+| audience 分離 | 會員 token 打 `/admin/*` 401，後台 token 打 `/me` 401 |
+| 上架前兩語系檢查 | 只有中文就上架回 409 `CONFLICT_STATE`，補上英文後成功 |
+| 帳號列舉防護 | 帳號不存在與密碼錯誤回同一個 `AUTH_INVALID_CREDENTIALS`；忘記密碼一律回成功 |
+| 首登強制改密碼 | 改完 `mustChangePassword=false`，舊密碼失效 |
+| magic bytes | 副檔名改成 `.png` 的文字檔被擋（400 `UPLOAD_TYPE`） |
+| 附件授權 | `ScanStatus=Pending` 拒絕下載（403），改 `Clean` 後下載且內容位元一致 |
+| rate limit | 公開表單第 10 次起回 429 `RATE_LIMITED` |
+| 寄信失敗不影響提交 | SMTP 未設定 → EmailLog 記 `Failed`，但表單仍回 200 |
+| AuditLog | 後台寫入全數留痕，另含匯出 CSV 與附件下載兩個唯讀動作 |
 
 ### ⬜ 其他未做
 
-- Blob／Email／Turnstile／rate limit 服務
 - 三支 Timer Function（`PublishSchedule`／`RetentionCleanup`／`OrphanMedia`）
-- `/admin/*` 寫入的 AuditLog 統一寫入（位置已在 `AppRouter` 標好，待 AuditLog entity）
-- Azure Function App 資源與 CI/CD（OIDC 登入，隨 P4 一起）
+- Azure Function App 資源與 CI/CD（OIDC 登入）
+- **refresh token rotation**（docs/10 §7.3）：schema 無對應資料表，且 04 §3.3 的端點清單
+  未列 `/auth/refresh`。目前只發 access token（後台 60 分鐘、會員 120 分鐘）
+- 附件病毒掃描：`ScanStatus` 目前寫入後恆為 `Pending`，未接掃描服務（未掃過的一律拒絕下載）
+- OpenAPI 文件（docs/10 §13 的待決項）
 
 ---
 
@@ -281,7 +304,7 @@ gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌�
 |---|---|---|
 | **中文文案** | 客戶未提供 | `/zh` 全站是英文佔位，雙語驗收無法進行 |
 | 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 301 對照表、缺漏頁面內容 |
-| Azure SQL 開設 | 資源尚未開設（schema 與種子已就緒，`dotnet ef database update` 即可建） | 後台無法脫離 mock |
+| Azure SQL 開設 | 資源尚未開設（schema、種子與 API 都已就緒） | 後台無法脫離 mock |
 | 正式網域 | 客戶端 DNS | 上線 checklist 卡住 |
 
 ---
