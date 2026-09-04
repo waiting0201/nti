@@ -16,9 +16,9 @@
 push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內容都是從 mockup 與 `db/seed`
 產生的種子資料——**資料庫與業務端點都還沒做**。
 
-**前後端接完，內容也進去了**：mockup 的 111 筆內容已匯入 CMS，中英雙語，
-`/zh` 不再是英文佔位。**唯一還沒做的是開 Azure 資源**（Function App 與 SQL），
-指令與 OIDC 設定寫在 docs/07 §7.4。
+**整條線已經在 Azure 上跑起來了**：API、資料庫、111 筆內容都上線，公開站與後台
+都已切換到 CMS，客戶現在可以在線上後台改內容、在線上公開站看到結果。
+剩下的是上線前的收尾（正式網域、Turnstile、SMTP、中文校閱）。
 ⚠ **中文是機器翻譯初稿，上線前必須由客戶校閱**（見 db/content/README）。
 
 ---
@@ -42,7 +42,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | P1 | 系統分析／架構 | ✅ | 技術選型 2026-06-12 凍結，2026-09-02 修訂為 EF+Dapper 雙軌 |
 | P2 | UI/UX 設計 + 原型 | ✅ | `mockup/` 44 頁，客戶已定案（`mockup2/` 未採用） |
 | P3 | 前端框架／元件 | ✅ | Next.js App Router，共用元件與各頁行為自 mockup 移植 |
-| P4 | 後端／CMS API | 🟡 | 程式全數完成（見 §五）；**Azure 資源尚未開設**，前端尚未接上 |
+| P4 | 後端／CMS API | ✅ | 程式、資源、內容、CI 全數完成並上線（見 §五、§六） |
 | P5 | 前台頁面開發 | 🟡 | 44 頁切版完成；內容仍為靜態，未接 API |
 | P6 | 會員／報價／聯絡 | 🟡 | 表單已切版（`PageForm`），無後端 |
 | P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語路由就緒，**中文文案未提供**；sitemap 與結構化資料未做 |
@@ -309,15 +309,20 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ## 六、部署與維運 ✅
 
-### 正式環境（2026-09-02 起運作）
+### 正式環境
 
-| 資源 | 值 |
-|---|---|
-| Static Web App | `stapp-nti-prod`（RG `NTIUS`／westus2／**Free**） |
-| 網址 | `gray-river-0a6ae341e.5.azurestaticapps.net` |
-| Blob Storage | `stntiprod`／容器 `assets`（126 檔 62MB，公開讀取） |
-| CI | `.github/workflows/web.yml`，push 公開 repo 的 `main` 觸發 |
-| standalone 產物 | **73MB**（上限 250MB） |
+| 資源 | 值 | 起用 |
+|---|---|---|
+| Static Web App | `stapp-nti-prod`（RG `NTIUS`／westus2／**Free**）<br>`gray-river-0a6ae341e.5.azurestaticapps.net` | 09-02 |
+| Blob Storage | `stntiprod`／容器 `assets`（公開讀取）＋ `media`、`quote-attachments`（private） | 09-02 |
+| **Function App** | `func-nti-prod`（**Flex Consumption FC1**）<br>`https://func-nti-prod.azurewebsites.net/api/v1` | **09-04** |
+| **Azure SQL** | `nti-sql-prod`／資料庫 `NTI`（**Basic**，定序 `Latin1_General_100_CI_AS_SC`） | **09-04** |
+| **App Insights** | `ai-nti-prod` | **09-04** |
+| CI | `web.yml`（前端）＋ `api.yml`（後端，OIDC 登入），push `main` 觸發 | 09-04 |
+| 月費 | 約 **US$5–8**（SQL Basic 約 $5，Flex Consumption 依用量） | |
+
+**內容已上線**：111 筆 mockup 內容（中英雙語）已匯入 Azure SQL，
+`vars.API_BASE` 已設，公開站與後台都改吃 CMS。
 
 公開站與後台**在同一份產物裡**（`/` 與 `/admin/`），只需一個 SWA。
 
@@ -346,8 +351,10 @@ git push Remote_GitHub    # ← 這一步才觸發部署
 
 ### ⬜ 未做
 
-- 正式網域 `www.nti-printing.com` 綁定（custom domain + DNS）
-- Azure Functions 與 Azure SQL 的資源與 pipeline（隨 P4 一起）
+- 正式網域 `www.nti-printing.com` 綁定（custom domain + DNS，卡客戶端）
+- **SMTP 未設定**：`Smtp__Host`／`Port` 已填 Brevo，還缺 `Smtp__User`／`Password`／`From`。
+  表單照常收得到資料，只是通知信寄不出去（EmailLog 記 `Failed`，可在後台重寄）
+- **Turnstile 未設定**：兩支公開表單目前只靠 rate limit（10 次/小時/IP）擋。**上線前必補**
 - mockup 預覽站（Cloudflare Pages `nti-mockup`）**設計定案後下線**
 
 ---

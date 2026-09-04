@@ -149,10 +149,24 @@ AZ_STORAGE_ACCOUNT=stntiprod tools/upload-assets.sh
 > `verify:markup` 讀同一個環境變數來正規化 mockup 端的路徑，所以兩種模式下
 > 這個閘都成立 —— 已分別以「未設」與「指向 Blob」兩種模式驗過 44 頁一致。
 
-### 7.4 API 與資料庫的資源建立（尚未執行）
+### 7.4 API 與資料庫的資源（2026-09-04 已開設）
 
-程式碼與 CI 已就緒（[`.github/workflows/api.yml`](../.github/workflows/api.yml)），**Azure 資源尚未開設**。
-下列指令會產生費用，執行前請先確認訂閱與預算。
+| 資源 | 值 |
+|---|---|
+| Function App | `func-nti-prod`（RG `NTIUS`／westus2／**Flex Consumption FC1**）<br>`https://func-nti-prod.azurewebsites.net/api/v1` |
+| Azure SQL | `nti-sql-prod.database.windows.net`／資料庫 `NTI`（**Basic**） |
+| 定序 | **`Latin1_General_100_CI_AS_SC`** —— 與本機、`db/verify` 一致 |
+| Application Insights | `ai-nti-prod` |
+| 執行儲存體 | 重用 `stntiprod`（同 RG 同區，少一份要顧的金鑰） |
+| CORS | 只允許 SWA 網域；未授權的 origin 拿不到 `access-control-allow-origin` |
+
+防火牆兩條：`AllowAzureServices`（0.0.0.0，Functions 出口 IP 不固定）與
+`DevMachine`（開發機 IP，跑 `verify-ef.sql` 與內容匯入用）。
+
+> ⚠ `AllowAzureServices` 讓**任何** Azure 租用戶的服務連得到這台 SQL server。
+> 這是與姊妹專案一致的取捨；要收緊得用 VNet 整合 + 私人端點，每月多約 $7。
+
+**下列為當初的建立指令，保留供重建或開 staging 用。**
 
 ```bash
 RG=NTIUS; LOC=westus2; APP=func-nti-prod; SQLSRV=sql-nti-prod
@@ -226,9 +240,30 @@ sqlcmd -S $SQLSRV.database.windows.net -d NTI -U ntiadmin -P '<密碼>' \
   -I -b -i db/verify/verify-ef.sql        # 應輸出「verify-ef 全數 PASS。」
 ```
 
-> ⚠ **前端還沒有指向 API 的設定**。`apps/web` 與 `apps/admin` 目前都不打 API
-> （前者內容寫死、後者接本機 mock），資源開好之後還要補 `NEXT_PUBLIC_API_BASE`
-> 之類的變數並改前端資料來源，才算真的接上。
+#### OIDC 的一個坑
+
+`api.yml` 的 job 宣告了 `environment: production`，GitHub 送出的 OIDC subject
+就**不是** `repo:OWNER/REPO:ref:refs/heads/main`，而是 environment 形式。
+更麻煩的是這個 repo 拿到的是 GitHub 的**不可變 ID 格式**：
+
+```
+repo:waiting0201@5709750/nti@1354276527:environment:production
+```
+
+錯誤訊息（`AADSTS700213: No matching federated identity record`）不會告訴你該註冊
+哪一個，只會回報它收到的 subject —— **照它回報的字串註冊就對了**。
+目前註冊了三組聯合憑證（ref 形式、environment 名稱形式、environment 不可變 ID 形式），
+實際生效的是最後一組；另外兩組留著，以免 GitHub 之後改回名稱格式。
+
+#### 前端切換
+
+`vars.API_BASE` 同時餵給 `apps/web`（`NEXT_PUBLIC_API_BASE`）與
+`apps/admin`（`VITE_API_BASE`）。**兩者都是 build 時內嵌**，所以：
+
+- 改這個變數要重跑 `web.yml` 才生效
+- 公開站建置當下會真的去打 API 取 SEO 與內容 —— **API 必須先活著、內容必須先進去**，
+  否則會建出一個空的站
+- 要退回寫死的內容：`gh variable delete API_BASE` 再重跑 workflow，約 3 分鐘
 
 ---
 
@@ -267,6 +302,7 @@ sqlcmd -S $SQLSRV.database.windows.net -d NTI -U ntiadmin -P '<密碼>' \
 | 2026-09-02 | Tim（Claude Code） | 新增 §7.1 SWA Free 硬限制對策：`output: 'standalone'` + `pack-standalone.mjs`（壓平 workspace 巢狀）+ `check-size.mjs`（250MB 閘，目前 135MB）；記錄 `outputFileTracingRoot` 與 hoisted linker 兩個坑。**新增風險：`mockup/` 未進版控導致 CI 建不出有圖的站，圖片轉 Blob 前不寫 workflow** |
 | 2026-09-02 | Tim（Claude Code） | **素材轉 Azure Blob Storage**：建立 RG `NTIUS`／帳戶 `stntiprod`／容器 `assets`（westus2，公開讀取），上傳 126 檔 62MB。頁面素材改走 `mediaUrl()`（`NEXT_PUBLIC_MEDIA_BASE`），standalone 產物 135MB → 73MB。**CI 建置不再依賴 `mockup/`**，前一列的風險解除 |
 | 2026-09-02 | Tim（Claude Code） | **接上 SWA 自動部署**：建立 `stapp-nti-prod`（NTIUS／westus2／Free）與 `.github/workflows/web.yml`（push `main` 觸發，hoisted 安裝、先 admin 後 web、`skip_app_build`、concurrency group）。新增 §7.3：上線前 robots 預設擋全站，上線需設 `ALLOW_INDEXING` 與 `SITE_URL` 兩個 variable |
+| 2026-09-04 | Tim（Claude Code） | **資源已開設並上線**：`func-nti-prod`（Flex Consumption FC1）、`nti-sql-prod`／`NTI`（Basic，定序 `Latin1_General_100_CI_AS_SC`）、`ai-nti-prod`；內容匯入 111 筆；`API_BASE` 已設，公開站與後台改吃 CMS。§7.4 補記 OIDC 的 environment／不可變 ID subject 坑 |
 | 2026-09-04 | Tim（Claude Code） | 新增 §7.4：API 與資料庫的資源建立指令、OIDC 聯合身分設定、GitHub secrets／variables 清單、部署後的 schema 驗收閘。CI 為 `.github/workflows/api.yml`（觸發於 `Api/**`，含 health 冒煙測試與「產物不得含 local.settings.json」的斷言）。資源本身尚未開設 |
 
 *最後更新：2026-09-04*
