@@ -15,7 +15,19 @@ export function middleware(req: NextRequest) {
    *
    * 資產（有副檔名）不會進到這裡，matcher 已經排除。
    */
-  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+  /*
+   * 裸的 /admin 先導到 /admin/ —— 後台只有一個正規網址，帶斜線的那個。
+   * 少了這一步，SPA 的 basename 比對會落空而 render 出一片空白（見
+   * apps/admin/src/main.tsx 的註解），而且 HTML／JS 都是 200，看起來像壞掉的白畫面。
+   * 後台自己也已改成兩種寫法都吃，這裡再導一次是為了網址本身的一致性。
+   */
+  if (pathname === '/admin') {
+    const url = req.nextUrl.clone()
+    url.pathname = '/admin/'
+    return NextResponse.redirect(url)
+  }
+
+  if (pathname.startsWith('/admin/')) {
     return NextResponse.rewrite(new URL('/admin/index.html', req.url))
   }
 
