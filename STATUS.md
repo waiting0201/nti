@@ -16,9 +16,10 @@
 push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內容都是從 mockup 與 `db/seed`
 產生的種子資料——**資料庫與業務端點都還沒做**。
 
-**前後端都接完了**：後台與公開站都能切換到真 API（`VITE_API_BASE`／`NEXT_PUBLIC_API_BASE`），
-沒設就維持現在的樣子。**唯一還沒做的是開 Azure 資源**（Function App 與 SQL），
-指令與 OIDC 設定寫在 docs/07 §7.4。內容與中文文案仍待客戶提供。
+**前後端接完，內容也進去了**：mockup 的 111 筆內容已匯入 CMS，中英雙語，
+`/zh` 不再是英文佔位。**唯一還沒做的是開 Azure 資源**（Function App 與 SQL），
+指令與 OIDC 設定寫在 docs/07 §7.4。
+⚠ **中文是機器翻譯初稿，上線前必須由客戶校閱**（見 db/content/README）。
 
 ---
 
@@ -298,7 +299,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 - **Azure 資源尚未開設**：Function App 與 Azure SQL。指令、OIDC 設定與 GitHub
   secrets／variables 清單見 [`docs/07 §7.4`](docs/07-deployment.md)。**會產生費用**
-- **內容與中文文案仍待客戶提供**：CMS 接好了但裡面是空的
+- **中文文案待客戶校閱**：CMS 內容已用 mockup 的實際內容填入（見 §十）
 - **refresh token rotation**（docs/10 §7.3）：schema 無對應資料表，且 04 §3.3 的端點清單
   未列 `/auth/refresh`。目前只發 access token（後台 60 分鐘、會員 120 分鐘）
 - 附件病毒掃描：`ScanStatus` 寫入後恆為 `Pending`，未接掃描服務。
@@ -372,7 +373,7 @@ gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌�
 
 | 項目 | 擋在哪 | 影響 |
 |---|---|---|
-| **中文文案** | 客戶未提供 | `/zh` 全站是英文佔位，雙語驗收無法進行 |
+| **中文文案** | 客戶未提供正式文案 | 已用機器翻譯初稿填滿（111 筆內容，`/zh` 可以驗收了），但**上線前需客戶校閱**。公司中文名與董事長姓名沒有依據，刻意保留 `NTI`／「鄭董事長」 |
 | 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 301 對照表、缺漏頁面內容 |
 | Azure SQL 開設 | 資源尚未開設（schema、種子與 API 都已就緒） | 後台無法脫離 mock |
 | 正式網域 | 客戶端 DNS | 上線 checklist 卡住 |
@@ -386,3 +387,37 @@ gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌�
 - 決策異動（不只是進度）要同時寫進對應 `docs/` 作業書的**變更紀錄**表——
   本檔只記狀態，不記決策理由。
 - 踩到不會出現在錯誤訊息裡的坑時，**先寫成程式碼註解**，再在 §六摘要一行。
+
+---
+
+## 十、內容（2026-09-04）
+
+`mockup/` 的頁面內容已匯入 CMS：[`db/content/200_mockup_content.sql`](db/content/README.md)，
+由 [`tools/build-content-sql.mjs`](tools/build-content-sql.mjs) 產生，冪等、可重跑。
+
+| 單元 | 筆數 | 單元 | 筆數 | 單元 | 筆數 |
+|---|---|---|---|---|---|
+| 首頁 Banner | 3 | 消息 | 12 | 設備 | 24 |
+| 方案品項 | 15 | 影片 | 4 | 職缺 | 5 |
+| 案例 | 6 | 常見問題 | 8 | 供應商公告 | 5 |
+| 認證 | 14 | 產業趨勢 | 5 | 供應商規範 | 4 |
+| 客戶 logo | 6 | | | | **合計 111** |
+
+四筆固定方案的封面與文案一併補上並上架（種子原本刻意設為未上架）。
+
+**逐頁實測**：中文站各頁確實顯示中文內容、英文站維持英文，
+中英 slug 不同的消息詳細頁互打對方語系會 404（缺語系不 fallback）。
+沒設 `NEXT_PUBLIC_API_BASE` 時 `verify:markup` 仍然 44 頁全過。
+
+### ⚠ 中文是初稿
+
+`tools/content-zh.mjs` 的繁中翻譯是機器產出的初稿，**不是客戶核可的文案**。
+兩個沒有依據、刻意不編的專有名詞：**公司中文名**（保留 `NTI`）與
+**董事長中文姓名**（用「鄭董事長」）。
+
+### 產生器回報、需要人決定的兩件事
+
+1. **3 篇消息的 SEO 標題超過 70 字元** —— 留空而不是截斷（截斷會把沒寫完的
+   標題送進搜尋結果）。請在後台補一個夠短的。
+2. **2 個 mockup 標籤對不到 `db/seed` 的分類** —— `Project:esg`／`Project:retail`
+   是設計稿的示範標籤，已對到最接近的既有分類（其他／禮品）。

@@ -122,7 +122,11 @@ INSERT @r (Item, Expected, Actual) SELECT N'  └ HasRichBody=1（privacy-legal�
    「bool 預設值為 true 時 false 存不進去」那個坑（見 AppDbContext 的說明）。 */
 INSERT @r (Item, Expected, Actual) SELECT N'  └ green-csr 為 noindex', N'0', CAST(CAST(IsIndexable AS INT) AS NVARCHAR(20)) FROM dbo.Page WHERE PageKey = 'green-csr';
 INSERT @r (Item, Expected, Actual) SELECT N'Solution（固定 4 筆）', N'4', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Solution;
-INSERT @r (Item, Expected, Actual) SELECT N'  └ 皆未上架（待素材與文案）', N'4', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Solution WHERE IsPublished = 0;
+/* 這裡曾經斷言「四筆方案皆未上架」。那是**內容狀態**不是 schema 狀態——
+   db/content/200_mockup_content.sql 補上封面與文案之後就會把它們上架，
+   斷言因此失效。「預設值為 true 的 bool 欄位存不進 false」那個坑改由下面
+   green-csr 的 noindex 斷言把關（同一個機制，而 green-csr 是種子的一部分，
+   不會被內容匯入改動）。 */
 INSERT @r (Item, Expected, Actual) SELECT N'SolutionI18n',   N'8',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SolutionI18n;
 INSERT @r (Item, Expected, Actual) SELECT N'已套用的 Migration 數', N'1', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.__EFMigrationsHistory;
 
