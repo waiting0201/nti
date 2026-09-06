@@ -1,5 +1,41 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { defaultLocale, locales } from '@/lib/i18n'
+import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n'
+
+/** 記住使用者選過的語系。名稱沿用 Next 的慣例，一年後過期 */
+const LOCALE_COOKIE = 'NEXT_LOCALE'
+const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
+
+/**
+ * 沒有語系前綴時要導去哪一個語系。
+ *
+ * 順序與後端 `Common/LangResolver.cs` 一致：使用者選過的優先，其次 Accept-Language，
+ * 都沒有才用預設。差別只在前台的預設是 `en`（客戶的主要客群是國際品牌），
+ * 而 API 的預設是 `zh`。
+ */
+function resolveLocale(req: NextRequest): Locale {
+  const saved = req.cookies.get(LOCALE_COOKIE)?.value
+  if (saved && isLocale(saved)) return saved
+
+  // "zh-Hant-TW,zh;q=0.9,en;q=0.8" → 依 q 值排序後取第一個我們支援的
+  const header = req.headers.get('accept-language')
+  if (header) {
+    const tags = header
+      .split(',')
+      .map((part) => {
+        const [tag, ...params] = part.trim().split(';')
+        const q = params.find((p) => p.startsWith('q='))
+        return { tag: tag.toLowerCase(), q: q ? Number(q.slice(2)) : 1 }
+      })
+      .sort((a, b) => b.q - a.q)
+
+    for (const { tag } of tags) {
+      if (tag.startsWith('zh')) return 'zh'
+      if (tag.startsWith('en')) return 'en'
+    }
+  }
+
+  return defaultLocale
+}
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
@@ -31,12 +67,28 @@ export function middleware(req: NextRequest) {
     return NextResponse.rewrite(new URL('/admin/index.html', req.url))
   }
 
-  /** 根路徑與缺語系的路徑，一律導到預設語系 */
-  const hasLocale = locales.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
-  if (hasLocale) return NextResponse.next()
+  /*
+   * 有語系前綴：照常放行，順便把這個語系記下來。
+   * 使用者是從 header 的語系選單過來的，這一步就等於「記住他選了什麼」，
+   * 不必在 client 另外寫一段 set-cookie。
+   */
+  const current = locales.find((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
+  if (current) {
+    const res = NextResponse.next()
+    if (req.cookies.get(LOCALE_COOKIE)?.value !== current) {
+      res.cookies.set(LOCALE_COOKIE, current, {
+        path: '/',
+        maxAge: LOCALE_COOKIE_MAX_AGE,
+        sameSite: 'lax',
+      })
+    }
+    return res
+  }
 
+  /** 根路徑與缺語系的路徑：導到使用者選過的／瀏覽器偏好的語系 */
+  const locale = resolveLocale(req)
   const url = req.nextUrl.clone()
-  url.pathname = `/${defaultLocale}${pathname === '/' ? '' : pathname}`
+  url.pathname = `/${locale}${pathname === '/' ? '' : pathname}`
   return NextResponse.redirect(url)
 }
 
