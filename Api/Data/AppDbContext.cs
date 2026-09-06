@@ -70,10 +70,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAc
     public DbSet<ContactMessage>  ContactMessage  => Set<ContactMessage>();
 
     // ── 會員與訂單（§4.13，P6）──────────────────────────────────────────────
-    public DbSet<Member>        Member        => Set<Member>();
-    public DbSet<MemberToken>   MemberToken   => Set<MemberToken>();
-    public DbSet<Order>         Order         => Set<Order>();
-    public DbSet<OrderProgress> OrderProgress => Set<OrderProgress>();
 
     // ── 預留（§4.15，待客戶確認）────────────────────────────────────────────
     public DbSet<NewsletterSubscriber> NewsletterSubscriber => Set<NewsletterSubscriber>();

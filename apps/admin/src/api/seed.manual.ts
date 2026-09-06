@@ -2,7 +2,7 @@ import type { Row } from './types'
 
 /**
  * mockup 與 db/seed 裡沒有對應內容的單元，用示意資料開場。
- * 供應商下載檔、301 轉址、報價／聯絡／會員／訂單（P6，前台表單尚未接 API）、
+ * 供應商下載檔、301 轉址、報價／聯絡（前台表單尚未接 API）、
  * 管理員、操作紀錄、信件紀錄、網站設定。
  */
 
@@ -12,26 +12,22 @@ export const MANUAL_SEED: Record<string, Row[]> = {
   'supplier-download': [
     {
       id: '1', sortOrder: 10, isPublished: true,
-      file: '/files/supplier-handbook-2026.pdf', fileMeta: 'PDF｜2.4 MB',
-      requireLogin: false, downloadCount: 148,
+      file: '/files/supplier-handbook-2026.pdf', fileMeta: 'PDF｜2.4 MB', downloadCount: 148,
       i18n: bi({ displayName: '供應商作業手冊 2026（中文）' }, { displayName: 'Supplier Handbook 2026 (EN)' }),
     },
     {
       id: '2', sortOrder: 20, isPublished: true,
-      file: '/files/board-spec-2026.xlsx', fileMeta: 'XLSX｜318 KB',
-      requireLogin: false, downloadCount: 92,
+      file: '/files/board-spec-2026.xlsx', fileMeta: 'XLSX｜318 KB', downloadCount: 92,
       i18n: bi({ displayName: '紙板規格對照表' }, { displayName: 'Board Specification Sheet' }),
     },
     {
       id: '3', sortOrder: 30, isPublished: true,
-      file: '/files/esg-data-template.xlsx', fileMeta: 'XLSX｜204 KB',
-      requireLogin: true, downloadCount: 37,
+      file: '/files/esg-data-template.xlsx', fileMeta: 'XLSX｜204 KB', downloadCount: 37,
       i18n: bi({ displayName: 'ESG 數據申報範本' }, { displayName: 'ESG Data Reporting Template' }),
     },
     {
       id: '4', sortOrder: 40, isPublished: false,
-      file: '/files/coa-format.docx', fileMeta: 'DOCX｜96 KB',
-      requireLogin: false, downloadCount: 0,
+      file: '/files/coa-format.docx', fileMeta: 'DOCX｜96 KB', downloadCount: 0,
       i18n: bi({ displayName: '批次 COA 格式說明' }, { displayName: 'Batch COA Format Guide' }),
     },
   ],
@@ -106,45 +102,10 @@ export const MANUAL_SEED: Record<string, Row[]> = {
     { id: '6', name: '許哲瑋', email: 'chewei.hsu@example.com.tw', company: '瑋昇實業', phone: '05-2233445', message: '詢問 UV 印刷的最小起訂量。', status: 'New', assignee: '', internalNote: '', submittedAt: '2026-09-01T23:48:00Z' },
   ],
 
-  member: [
-    { id: '1', email: 'peihsuan.lin@heyi-foods.com.tw', name: '林佩璇', company: '合翊食品', isActive: true, registeredAt: '2026-05-11', lastLoginAt: '2026-09-01', internalNote: '' },
-    { id: '2', email: 'erin@northwind-cosmetics.com', name: 'Erin Vasquez', company: 'Northwind Cosmetics', isActive: true, registeredAt: '2026-06-02', lastLoginAt: '2026-08-29', internalNote: '' },
-    { id: '3', email: 'bhchen@yaosheng.com.tw', name: '陳柏勳', company: '曜盛電子', isActive: true, registeredAt: '2026-06-28', lastLoginAt: '2026-08-26', internalNote: '' },
-    { id: '4', email: 'yuting.huang@hokuang-bio.com', name: '黃于庭', company: '禾光生技', isActive: true, registeredAt: '2026-07-14', lastLoginAt: '2026-08-18', internalNote: '' },
-    { id: '5', email: 'old.account@example.com', name: '停用測試帳號', company: '', isActive: false, registeredAt: '2026-04-02', lastLoginAt: '2026-04-03', internalNote: '客戶要求停用。' },
-  ],
-
-  order: [
-    { id: '1', orderNo: 'SO-2026-0088', memberEmail: 'yuting.huang@hokuang-bio.com', quoteNo: 'Q-2026-0140', productName: '保健食品外盒 15,000 只', status: 'Producing', etaDate: '2026-11-20' },
-    { id: '2', orderNo: 'SO-2026-0087', memberEmail: 'bhchen@yaosheng.com.tw', quoteNo: 'Q-2026-0141', productName: '吊卡背板 50,000 張', status: 'Pending', etaDate: '2026-10-08' },
-    { id: '3', orderNo: 'SO-2026-0086', memberEmail: 'peihsuan.lin@heyi-foods.com.tw', quoteNo: 'Q-2026-0128', productName: '外銷餅乾禮盒 12,000 只', status: 'Shipped', etaDate: '2026-08-22' },
-    { id: '4', orderNo: 'SO-2026-0085', memberEmail: 'erin@northwind-cosmetics.com', quoteNo: 'Q-2026-0119', productName: 'Recyclable carton 6,000 pcs', status: 'Closed', etaDate: '2026-07-30' },
-  ],
-
   adminUser: [
     { id: '1', email: 'tim@nti-printing.com', displayName: 'Tim（系統管理）', role: 'SuperAdmin', isActive: true, lastLoginAt: '2026-09-02T00:41:00Z' },
     { id: '2', email: 'sinting.wang@nti-printing.com', displayName: '王思婷', role: 'Editor', isActive: true, lastLoginAt: '2026-09-01T06:20:00Z' },
     { id: '3', email: 'yun.li@nti-printing.com', displayName: '李昀', role: 'Viewer', isActive: true, lastLoginAt: '2026-08-30T09:05:00Z' },
-  ],
-}
-
-/** 生產進度：階段 × 狀態（docs §20） */
-export const ORDER_PROGRESS: Record<string, Array<{ stage: string; state: string; at: string; note: string }>> = {
-  '1': [
-    { stage: '設計', state: '完成', at: '2026-08-20', note: '刀模與版面確認' },
-    { stage: '印前', state: '完成', at: '2026-08-26', note: 'CTP 出版、數位打樣通過' },
-    { stage: '印刷', state: '進行中', at: '2026-09-01', note: 'CD-102 排程中' },
-    { stage: '印後', state: '未開始', at: '', note: '' },
-    { stage: '品檢', state: '未開始', at: '', note: '' },
-    { stage: '出貨', state: '未開始', at: '', note: '' },
-  ],
-  '3': [
-    { stage: '設計', state: '完成', at: '2026-07-02', note: '' },
-    { stage: '印前', state: '完成', at: '2026-07-10', note: '' },
-    { stage: '印刷', state: '完成', at: '2026-07-24', note: '' },
-    { stage: '印後', state: '完成', at: '2026-08-05', note: '貼窗、糊盒' },
-    { stage: '品檢', state: '完成', at: '2026-08-15', note: '條碼等級 A' },
-    { stage: '出貨', state: '完成', at: '2026-08-22', note: '已交高雄港' },
   ],
 }
 

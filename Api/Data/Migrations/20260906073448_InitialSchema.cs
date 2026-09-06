@@ -229,42 +229,6 @@ namespace Nti.Api.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Member",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(160)", maxLength: 160, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    DisplayName = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
-                    Company = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
-                    PreferredLang = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false, defaultValue: "zh")
-                        .Annotation("Relational:DefaultConstraintName", "DF_Member_PreferredLang"),
-                    Status = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false, defaultValue: "Pending")
-                        .Annotation("Relational:DefaultConstraintName", "DF_Member_Status"),
-                    EmailConfirmedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    LastLoginAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    FailedLoginCount = table.Column<byte>(type: "tinyint", nullable: false, defaultValue: (byte)0)
-                        .Annotation("Relational:DefaultConstraintName", "DF_Member_FailedLoginCount"),
-                    LockoutEndAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: false, defaultValueSql: "SYSUTCDATETIME()")
-                        .Annotation("Relational:DefaultConstraintName", "DF_Member_CreatedAt"),
-                    CreatedBy = table.Column<int>(type: "int", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
-                        .Annotation("Relational:DefaultConstraintName", "DF_Member_IsDeleted")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Member", x => x.Id);
-                    table.UniqueConstraint("UQ_Member_Email", x => x.Email);
-                    table.CheckConstraint("CK_Member_PreferredLang", "[PreferredLang] IN ('zh','en')");
-                    table.CheckConstraint("CK_Member_Status", "[Status] IN ('Pending','Active','Suspended')");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "NewsletterSubscriber",
                 columns: table => new
                 {
@@ -443,8 +407,6 @@ namespace Nti.Api.Data.Migrations
                     FilePath = table.Column<string>(type: "nvarchar(260)", maxLength: 260, nullable: false),
                     FileExt = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
                     FileSizeBytes = table.Column<long>(type: "bigint", nullable: false),
-                    RequireLogin = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
-                        .Annotation("Relational:DefaultConstraintName", "DF_SupplierDownload_RequireLogin"),
                     DownloadCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                         .Annotation("Relational:DefaultConstraintName", "DF_SupplierDownload_DownloadCount"),
                     SortOrder = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
@@ -811,32 +773,6 @@ namespace Nti.Api.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MemberToken",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    MemberId = table.Column<int>(type: "int", nullable: false),
-                    TokenType = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    TokenHash = table.Column<byte[]>(type: "varbinary(32)", nullable: false),
-                    ExpiresAt = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
-                    UsedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: false, defaultValueSql: "SYSUTCDATETIME()")
-                        .Annotation("Relational:DefaultConstraintName", "DF_MemberToken_CreatedAt")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MemberToken", x => x.Id);
-                    table.CheckConstraint("CK_MemberToken_Type", "[TokenType] IN ('EmailVerify','PasswordReset')");
-                    table.ForeignKey(
-                        name: "FK_MemberToken_Member",
-                        column: x => x.MemberId,
-                        principalTable: "Member",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PageI18n",
                 columns: table => new
                 {
@@ -925,7 +861,6 @@ namespace Nti.Api.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     QuoteNo = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    MemberId = table.Column<int>(type: "int", nullable: true),
                     FullName = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
                     Company = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(160)", maxLength: 160, nullable: false),
@@ -976,12 +911,6 @@ namespace Nti.Api.Data.Migrations
                         columns: x => new { x.MaterialCategoryId, x.MaterialTypeGuard },
                         principalTable: "Category",
                         principalColumns: new[] { "Id", "CategoryType" },
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_QuoteRequest_Member",
-                        column: x => x.MemberId,
-                        principalTable: "Member",
-                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_QuoteRequest_Solution",
@@ -1253,46 +1182,6 @@ namespace Nti.Api.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderNo = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    MemberId = table.Column<int>(type: "int", nullable: false),
-                    QuoteRequestId = table.Column<int>(type: "int", nullable: true),
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Status = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false, defaultValue: "Confirmed")
-                        .Annotation("Relational:DefaultConstraintName", "DF_Orders_Status"),
-                    ExpectedShipDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: false, defaultValueSql: "SYSUTCDATETIME()")
-                        .Annotation("Relational:DefaultConstraintName", "DF_Orders_CreatedAt"),
-                    CreatedBy = table.Column<int>(type: "int", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
-                        .Annotation("Relational:DefaultConstraintName", "DF_Orders_IsDeleted")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
-                    table.UniqueConstraint("UQ_Orders_OrderNo", x => x.OrderNo);
-                    table.CheckConstraint("CK_Order_Status", "[Status] IN ('Confirmed','InProduction','Shipped','Completed','Cancelled')");
-                    table.ForeignKey(
-                        name: "FK_Orders_Member",
-                        column: x => x.MemberId,
-                        principalTable: "Member",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Orders_QuoteRequest",
-                        column: x => x.QuoteRequestId,
-                        principalTable: "QuoteRequest",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "QuoteAttachment",
                 columns: table => new
                 {
@@ -1338,34 +1227,6 @@ namespace Nti.Api.Data.Migrations
                         name: "FK_SolutionItemI18n_SolutionItem",
                         column: x => x.SolutionItemId,
                         principalTable: "SolutionItem",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OrderProgress",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
-                    Stage = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    StageStatus = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    HappenedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
-                    Note = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: false, defaultValueSql: "SYSUTCDATETIME()")
-                        .Annotation("Relational:DefaultConstraintName", "DF_OrderProgress_CreatedAt"),
-                    CreatedBy = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrderProgress", x => x.Id);
-                    table.CheckConstraint("CK_OrderProgress_Stage", "[Stage] IN ('Design','PrePress','Printing','PostPress','QC','Shipping')");
-                    table.CheckConstraint("CK_OrderProgress_StageStatus", "[StageStatus] IN ('Pending','Doing','Done')");
-                    table.ForeignKey(
-                        name: "FK_OrderProgress_Orders",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1700,14 +1561,10 @@ namespace Nti.Api.Data.Migrations
                     { "job.edit", 1 },
                     { "job.publish", 1 },
                     { "job.view", 1 },
-                    { "member.edit", 1 },
-                    { "member.view", 1 },
                     { "news.delete", 1 },
                     { "news.edit", 1 },
                     { "news.publish", 1 },
                     { "news.view", 1 },
-                    { "order.edit", 1 },
-                    { "order.view", 1 },
                     { "page.edit", 1 },
                     { "page.view", 1 },
                     { "project.delete", 1 },
@@ -1881,12 +1738,6 @@ namespace Nti.Api.Data.Migrations
                 columns: new[] { "IsDeleted", "IsPublished", "SortOrder" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_MemberToken_Lookup",
-                table: "MemberToken",
-                column: "TokenHash")
-                .Annotation("SqlServer:Include", new[] { "MemberId", "ExpiresAt", "UsedAt" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_News_List",
                 table: "News",
                 columns: new[] { "IsDeleted", "IsPublished", "PublishDate" },
@@ -1905,17 +1756,6 @@ namespace Nti.Api.Data.Migrations
                 columns: new[] { "Status", "SubscribedAt" },
                 descending: new[] { false, true })
                 .Annotation("SqlServer:Include", new[] { "Email", "PreferredLang" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderProgress_Order",
-                table: "OrderProgress",
-                columns: new[] { "OrderId", "HappenedAt" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_Member",
-                table: "Orders",
-                columns: new[] { "MemberId", "CreatedAt" },
-                descending: new[] { false, true });
 
             migrationBuilder.CreateIndex(
                 name: "UX_PageI18n_Lang_Slug",
@@ -2011,16 +1851,10 @@ namespace Nti.Api.Data.Migrations
                 name: "JobPostingI18n");
 
             migrationBuilder.DropTable(
-                name: "MemberToken");
-
-            migrationBuilder.DropTable(
                 name: "NewsI18n");
 
             migrationBuilder.DropTable(
                 name: "NewsletterSubscriber");
-
-            migrationBuilder.DropTable(
-                name: "OrderProgress");
 
             migrationBuilder.DropTable(
                 name: "PageI18n");
@@ -2080,13 +1914,13 @@ namespace Nti.Api.Data.Migrations
                 name: "News");
 
             migrationBuilder.DropTable(
-                name: "Orders");
-
-            migrationBuilder.DropTable(
                 name: "Page");
 
             migrationBuilder.DropTable(
                 name: "Project");
+
+            migrationBuilder.DropTable(
+                name: "QuoteRequest");
 
             migrationBuilder.DropTable(
                 name: "Role");
@@ -2107,16 +1941,10 @@ namespace Nti.Api.Data.Migrations
                 name: "Vlog");
 
             migrationBuilder.DropTable(
-                name: "QuoteRequest");
+                name: "Solution");
 
             migrationBuilder.DropTable(
                 name: "Category");
-
-            migrationBuilder.DropTable(
-                name: "Member");
-
-            migrationBuilder.DropTable(
-                name: "Solution");
         }
     }
 }

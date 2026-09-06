@@ -8,8 +8,8 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 **"The Courage to Print Green — 永續 All In!"**，永續／綠色印刷為核心訴求。
 
 - 品牌標語（PES）：PROFESSIONALS | EFFECTIVENESS | SERVICE
-- 需求：中／英雙語官網 + 自建 CMS 後台 + 會員系統 + 報價／聯絡表單 + AI 客服
-- 目前狀態：**前端切版 + 後台介面完成**（`apps/web/` Next.js 1:1 承接 `mockup/` 全部 44 頁、雙語路由就緒；`apps/admin/` 24 個後台單元可操作，接本機 mock；兩者同站部署於 `/` 與 `/admin/`；API／DB 正式開發尚未啟動）
+- 需求：中／英雙語官網 + 自建 CMS 後台 + 報價／聯絡表單（**會員系統與 AI 客服本期不納入**）
+- 目前狀態：**前端切版 + 後台介面完成**（`apps/web/` Next.js 1:1 承接 `mockup/` 全部 44 頁、雙語路由就緒；`apps/admin/` 22 個後台單元可操作，接本機 mock；兩者同站部署於 `/` 與 `/admin/`；API／DB 正式開發尚未啟動）
 
 ## 文件索引
 
@@ -29,8 +29,8 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [05 SEO](docs/05-seo.md) | system-analyst + qa：SEO 規範與稽核 |
 | [06 GEO](docs/06-geo.md) | deep-research + system-analyst：生成式引擎優化 |
 | [07 部署](docs/07-deployment.md) | backend-engineer（DevOps）：Azure 部署地圖 |
-| [08 資料庫設計](docs/08-database.md) | system-analyst + backend-engineer：49 張表 DDL、多語策略、索引、種子、遷移 |
-| [09 後台 CMS 功能](docs/09-cms-admin.md) | backend-engineer：24 個後台單元規格、上傳建議尺寸總表、權限矩陣 |
+| [08 資料庫設計](docs/08-database.md) | system-analyst + backend-engineer：45 張表 DDL、多語策略、索引、種子、遷移 |
+| [09 後台 CMS 功能](docs/09-cms-admin.md) | backend-engineer：22 個後台單元規格、上傳建議尺寸總表、權限矩陣 |
 | [10 後端技術規範](docs/10-backend-design.md) | backend-engineer：**P4 的施工標準**——分層鐵律、`ApiResponse` 信封、錯誤碼、JWT/RBAC、EF+Dapper 雙軌、Coding Checklist（範本：`Jabez/Api`） |
 | [內容匯入](db/content/README.md) | `db/content/`：把 mockup 的頁面內容匯入 CMS（111 筆，中英雙語）。**中文為初稿待客戶校閱** |
 | [資料庫建置腳本](db/README.md) | `db/`：參考實作與交付腳本 migrations／seed／verify（資料庫名 NTI）。**schema 權威為 EF Migration**，見 10 §8 |
@@ -42,7 +42,7 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [現有網站盤點與內容遷移](reference/現有網站盤點與內容遷移.md) | 舊站 nti-printing.com 頁面/內容盤點、新舊頁面對應、缺漏頁面與待製內容、待決策點 |
 | [**後端專案說明**](Api/README.md) | `Api/`：Azure Functions .NET 10 API——本機執行、結構、預設拒絕授權與雙 audience 的注意事項 |
 | [前端專案說明](apps/web/README.md) | `apps/web/`：Next.js 公開站——結構、素材同步、版面一致性怎麼保證、`verify:markup` 驗收閘 |
-| [後台專案說明](apps/admin/README.md) | `apps/admin/`：React + Vite 管理後台——24 個單元、權限矩陣、mock 資料來源、接 API 時要改哪裡 |
+| [後台專案說明](apps/admin/README.md) | `apps/admin/`：React + Vite 管理後台——22 個單元、權限矩陣、mock 資料來源、接 API 時要改哪裡 |
 
 ## 目錄結構
 
@@ -80,7 +80,7 @@ NTI/
 │   │   ├── public/assets/ # 由 mockup/assets 同步而來，**不進版控**（70MB）
 │   │   └── public/admin/  # 後台產物，由 apps/admin 的 vite build 直接寫入，**不進版控**
 │   └── admin/         # 管理後台（React + Vite 純 SPA，靜態、noindex），掛在 /admin/
-│       ├── src/units/     # docs/09 的 24 個單元宣告（欄位、清單欄、權限、上傳提示）
+│       ├── src/units/     # docs/09 的 22 個單元宣告（欄位、清單欄、權限、上傳提示）
 │       ├── src/api/       # client.ts＝唯一的資料存取層；種子自 db/seed 與 mockup 產生
 │       └── src/pages/     # 通用清單／編輯 + 儀表板、設定、分類、角色、操作紀錄
 ├── reference/         # 規劃案原始文件（規劃書、時程、IA、簡報）— 約 2.5GB，**只進 NAS**
@@ -147,8 +147,8 @@ NTI/
   頁面由 `apps/web/scripts/build-pages.mjs` 從 mockup 機械式產生；改動後務必跑驗收閘：
   `pnpm --filter web build && pnpm --filter web start`，另一終端 `pnpm --filter web verify:markup`
   （應輸出「全部 44 頁與 mockup 一致」）。
-- **後台開發**：先讀 [docs/09-cms-admin.md](docs/09-cms-admin.md)（24 個單元、上傳尺寸總表、共用 UI 規則、權限矩陣）。
-  權限矩陣的權威展開在 [`db/seed/110_role_permission.sql`](db/README.md)（171 列）；
+- **後台開發**：先讀 [docs/09-cms-admin.md](docs/09-cms-admin.md)（22 個單元、上傳尺寸總表、共用 UI 規則、權限矩陣）。
+  權限矩陣的權威展開在 [`db/seed/110_role_permission.sql`](db/README.md)（167 列）；
   `apps/admin/src/lib/permissions.ts` 與它一對一，數字對不上時開發模式的 console 會直接報錯。
 - 前端開發優先使用 `frontend-design` skill；改動後用 `run`／`verify` skill 驗證。
 - **版控與雙 remote（重要）**：git 無法對不同 remote 過濾路徑，因此用**兩條分支**分流：

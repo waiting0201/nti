@@ -5,7 +5,7 @@
 | **主責 Agent** | `backend-engineer` |
 | **共責 Agent** | `system-analyst`（契約／schema／權限模型）、`code-review-optimizer`（合併前審查） |
 | **搭配 Skills** | `run`、`verify`、`code-review`／`simplify`、`security-review` |
-| **對應階段** | P4（後端／CMS／API 實作）／P6（會員與表單）／持續維護 |
+| **對應階段** | P4（後端／CMS／API 實作）／P6（表單）／持續維護 |
 | **核心定位** | 本文件規範**怎麼寫**；[`04-api.md`](04-api.md) 規範**寫什麼**。P4 開工後，所有後端程式碼以本文件為唯一施工標準。 |
 | **範本來源** | `/Users/tim/webapps/Jabez/Api`（同技術棧、已上線）與其 `docs/backend-design.md`。凡標註「Jabez 已驗證」者為實戰結論，不再重新評估。 |
 
@@ -17,7 +17,7 @@
 |------|------|
 | [`04-api.md`](04-api.md) | API 契約：端點清單、權限碼對照、回應信封（本文件 §5 為其實作規格） |
 | [`08-database.md`](08-database.md) | 資料表 DDL、多語策略、索引、種子 —— 本文件 §8 定義如何以 EF Core 表達 |
-| [`09-cms-admin.md`](09-cms-admin.md) | 24 個後台單元、上傳尺寸規則、**權限矩陣（171 列，權威來源）** |
+| [`09-cms-admin.md`](09-cms-admin.md) | 22 個後台單元、上傳尺寸規則、**權限矩陣（167 列，權威來源）** |
 | [`03-backend.md`](03-backend.md) | 領域範圍與模組邊界 |
 | [`07-deployment.md`](07-deployment.md) | Azure 資源與部署地圖（本文件 §11 為其 CI/CD 落地） |
 | [`db/README.md`](../db/README.md) | **Azure SQL Basic 相容性 checklist**（§8.6 沿用該表） |
@@ -346,30 +346,30 @@ public sealed class AppException(string code, string message, int statusCode = 4
 - `TokenValidationParameters` 全開（issuer／audience／lifetime／signing key），`ClockSkew = 30s`
 - 驗證失敗一律回 `null`，由呼叫端轉 401，**不讓例外冒出**
 
-### 7.2 兩套身分（NTI 特有）
+### 7.2 只有一套身分
 
-Jabez 只有內部員工一種身分；NTI 有**後台管理員**與**前台會員**兩種，必須分離：
+**前台全站匿名**，只有後台管理員需要登入：
 
-| | 後台 | 前台會員（P6） |
-|---|---|---|
-| 資料表 | `AdminUser` / `Role` / `RolePermission` | `Member` / `MemberToken` |
-| audience | `nti-admin` | `nti-web` |
-| claims | `roles`、`permissions`、`is_superadmin` | `member_id`，無權限碼 |
-| 可達路由 | `/admin/*` | `/me/*`、需登入的 `/supplier/downloads/{id}/hit` |
+| | 後台 |
+|---|---|
+| 資料表 | `AdminUser` / `Role` / `RolePermission` |
+| audience | `nti-admin` |
+| claims | `roles`、`permissions`、`is_superadmin` |
+| 可達路由 | `/admin/*`、`/auth/admin/*` |
 
-**`AppRouter` 依 audience 判定**：會員 token 打 `/admin/*` 一律 403，反之亦然。
+> 原本規劃的前台會員（audience `nti-web`）已於 **2026-09-06 移出專案範圍**——客戶
+> 2026-08-31 版 sitemap 沒有會員節點。`AppRouter` 因此只驗一種 audience；非 `/admin/*`
+> 且不在白名單的路由回 404（§7.6）。
 
 ### 7.3 Token 生命週期
 
-- access token：`Jwt__ExpiryMinutes`（後台 60、前台會員 120）
+- access token：`Jwt__ExpiryMinutes`（後台 60 分鐘）
 - refresh token：`Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))` 的不透明字串，存 DB
 - **rotation**：每次 refresh 撤銷舊 token（`IsRevoked=1`）並發新的一對；偵測到已撤銷 token 被重用 → 撤銷該使用者全部 token
-- 前台會員的 email 驗證／密碼重設 token 走 `MemberToken`，一次性、帶到期時間
 
 ### 7.4 密碼
 
 - `BCrypt.Net.BCrypt.HashPassword` / `.Verify`，work factor 用預設
-- 後台**永不回傳也永不可設定會員密碼**（[`03-backend.md`](03-backend.md) §3）；只能觸發重設信
 - 正式環境第一位超管由部署流程建立：隨機密碼 + 啟用信 + `MustChangePassword=1`
 - 登入失敗訊息不區分「帳號不存在」與「密碼錯誤」，一律 `AUTH_INVALID_CREDENTIALS`
 
@@ -383,18 +383,18 @@ private static string? GetRequiredPermission(string method, string[] segments) =
         ("POST",           ["admin", "news"])      => PermissionCodes.NewsEdit,
         ("PUT" or "PATCH", ["admin", "news", _])   => PermissionCodes.NewsEdit,
         ("DELETE",         ["admin", "news", _])   => PermissionCodes.NewsDelete,
-        // ... 24 個單元逐條
+        // ... 各單元逐條
         _ => DenySentinel,      // ★ 未列出的 /admin/* 一律拒絕
     };
 ```
 
 > Jabez 此處的預設是 `_ => null`（＝登入即可），其文件自承是已知風險。**NTI 改為預設拒絕**：新增 `/admin/*` 端點若忘了補權限表，會直接 403 而不是靜默放行。非 `/admin/*` 的公開路由走 `IsPublicRoute` 白名單，不經此表。
 
-`RequirePermission` 檢查 `permissions` claim；`is_superadmin=true` 自動通過。權限碼值域＝[`09-cms-admin.md` §6](09-cms-admin.md) 的 171 列，與 `db/seed/110_role_permission.sql` 逐字對應（§9.2）。
+`RequirePermission` 檢查 `permissions` claim；`is_superadmin=true` 自動通過。權限碼值域＝[`09-cms-admin.md` §6](09-cms-admin.md) 的 167 列，與 `db/seed/110_role_permission.sql` 逐字對應（§9.2）。
 
 ### 7.6 公開路由白名單
 
-`IsPublicRoute` 對應 [`04-api.md`](04-api.md) §3.1／§3.2 的前台唯讀端點與兩支表單端點。白名單是**列舉式**，新增前台端點時必須補進去，否則會要求 token。
+`IsPublicRoute` 對應 [`04-api.md`](04-api.md) §3.1／§3.2 的前台唯讀端點與兩支表單端點。白名單是**列舉式**，新增前台端點時必須補進去，否則會直接回 404——前台沒有會員系統，這張白名單就是前台的完整範圍。
 
 ---
 
@@ -490,7 +490,7 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 | Category 型別安全的 9 條 PERSISTED 常數計算欄 | `Property(x => x.CategoryTypeGuard).HasComputedColumnSql("'News'", stored: true)` + `HasOne().WithMany().HasForeignKey(x => new { x.CategoryId, x.CategoryTypeGuard })` |
 | filtered unique index（`UX_Vlog_MainFeature`、可為 NULL 的 `Code`） | `HasIndex(...).IsUnique().HasFilter("[Code] IS NOT NULL")` |
 | 定序 `Latin1_General_100_CI_AS_SC` | 資料庫由 `az sql db create --collation` 建立；Migration 不改定序 |
-| 種子：角色 3／權限 171／Category 44／SiteSetting 15／Page 29／Solution 4 | `HasData(...)` 寫在各自的 Configuration，**Id 固定硬編**（跨環境一致，對日後內容遷移對照與 hotfix SQL 很重要） |
+| 種子：角色 3／權限 167／Category 44／SiteSetting 15／Page 29／Solution 4 | `HasData(...)` 寫在各自的 Configuration，**Id 固定硬編**（跨環境一致，對日後內容遷移對照與 hotfix SQL 很重要） |
 | 時間欄 `DATETIME2(0)` 存 UTC | `HasColumnType("datetime2(0)")` |
 | 狀態欄 `VARCHAR(20)` + `CHECK` | `HasColumnType("varchar(20)")` + `HasCheckConstraint` |
 | `SchemaVersion` 表 | 由 EF 的 `__EFMigrationsHistory` 取代；`db/` 版保留供交付腳本使用 |
@@ -532,7 +532,7 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 
 | class | 內容 | 權威來源 |
 |---|---|---|
-| `PermissionCodes` | 171 列權限碼 | [`09-cms-admin.md` §6](09-cms-admin.md) ＝ `db/seed/110_role_permission.sql` |
+| `PermissionCodes` | 167 列權限碼 | [`09-cms-admin.md` §6](09-cms-admin.md) ＝ `db/seed/110_role_permission.sql` |
 | `RoleNames` | 超級管理員／內容編輯／檢視者 | 09 §6 |
 | `CategoryTypes` | 九種 `CategoryType` | [`08-database.md`](08-database.md) §4.1 |
 | `PageKeys` | 29 個固定頁 key | 08 §4／`db/seed/140_page.sql` |
@@ -583,11 +583,11 @@ Jabez 是內網 ERP，無此需求；NTI 的 `/quotes`、`/contacts`、`/auth/*`
 程式內只處理 `OPTIONS → new OkResult()`；實際 allow-list 在平台層：
 
 - 本機：`local.settings.json` 的 `Host.CORS`
-- 正式：Function App → CORS，**兩個 origin**（公開站 SWA domain、CMS SPA domain）。禁用 `*`（會員與後台端點帶憑證）
+- 正式：Function App → CORS，**兩個 origin**（公開站 SWA domain、CMS SPA domain）。禁用 `*`（後台端點帶憑證）
 
 ### 9.8 快取標頭
 
-前台唯讀端點供 Next.js ISR 消費，回應帶 `Cache-Control: public, max-age=0, s-maxage=300, stale-while-revalidate=600`；`/site-settings`、`/categories` 這類低頻異動可拉長 `s-maxage`。後台與會員端點一律 `Cache-Control: no-store`。
+前台唯讀端點供 Next.js ISR 消費，回應帶 `Cache-Control: public, max-age=0, s-maxage=300, stale-while-revalidate=600`；`/site-settings`、`/categories` 這類低頻異動可拉長 `s-maxage`。後台端點一律 `Cache-Control: no-store`。
 
 ### 9.9 排程（Timer Trigger）
 
@@ -616,7 +616,7 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 | Key 群組 | 內容 |
 |---|---|
 | `ConnectionStrings__DefaultConnection` | Azure SQL |
-| `Jwt__Secret` / `__Issuer` / `__AudienceAdmin` / `__AudienceWeb` / `__ExpiryMinutes` / `__RefreshExpiryDays` | §7 |
+| `Jwt__Secret` / `__Issuer` / `__AudienceAdmin` / `__ExpiryMinutes` / `__RefreshExpiryDays` | §7 |
 | `Smtp__Host` / `__Port` / `__User` / `__Password` / `__From` | 通知信 |
 | `BlobStorageConnection` | §9.5，本機為 Azurite |
 | `Turnstile__SecretKey` | §9.6 |
@@ -689,4 +689,6 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 
 | 2026-09-04 | Tim（Claude Code） | §13 的 OpenAPI 待決項定案：**手寫 `Api/openapi.yaml`**（catch-all 路由讓自動產生器無從內省），另附 `tools/check-openapi.mjs` 做漂移檢查。三支 Timer Function 完成並實測（含 `IsPastDue` 不 return、冪等閘）；孤兒檔清除預設只報告不刪除，並有 7 天寬限期 |
 
-*最後更新：2026-09-04*
+| 2026-09-06 | Tim（Claude Code） | 會員系統移出範圍：§7.2 由「兩套身分」改為「只有一套身分」（audience 只剩 `nti-admin`）、§7.3 刪除會員 token 生命週期、§7.6 白名單以外的前台路由改為回 404（原為要求會員 token）；權限碼 171 → 167 列 |
+
+*最後更新：2026-09-06*

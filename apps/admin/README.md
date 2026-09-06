@@ -1,6 +1,6 @@
 # admin — NTI Printing 管理後台（React + Vite SPA）
 
-依 [`docs/09-cms-admin.md`](../docs/09-cms-admin.md) 實作的 **24 個後台單元**。
+依 [`docs/09-cms-admin.md`](../docs/09-cms-admin.md) 實作的 **22 個後台單元**（19 會員／20 訂單已移出範圍；16 轉址暫時隱藏，宣告仍在 `src/units/rest.ts`）。
 純 SPA、靜態輸出、`noindex`。資料來源有兩種，由 `VITE_API_BASE` 決定——見下方〈資料從哪來〉。
 
 ## 快速開始
@@ -28,7 +28,7 @@ VITE_API_BASE=http://localhost:7071/api/v1 pnpm --filter admin dev
 |---|---|---|
 | 實作 | `src/api/client.mock.ts`（localStorage） | `src/api/client.api.ts`（打 `/api/v1/admin/*`） |
 | 登入 | 選角色即進入 | Email + 密碼，首登強制改密碼 |
-| 權限 | 查本地的 171 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
+| 權限 | 查本地的 167 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
 | 圖片 | `public/assets` 或 `VITE_MEDIA_BASE` | 上傳到 Blob，經 `/files/media/*` 代理取回 |
 
 兩者**簽章完全一樣**，上層的清單／編輯畫面不知道資料從哪來（`src/api/client.ts` 是門面）。
@@ -43,8 +43,8 @@ API 的欄位名對應 [docs/08](../../docs/08-database.md) 的資料表欄位�
 差異集中在 [`src/api/mapping.ts`](src/api/mapping.ts) 一張表裡（例如 `imageDesktop` ↔ `imagePath`、
 `newWindow` ↔ `openInNewTab`）。統一成任一邊都會讓另一邊的驗收失去意義。
 
-那份對照表同時記錄了 **6 個 UI 有、schema 沒有的欄位**（`ogImageAlt`、vlog 的 `thumbAlt`、
-contact 的 `assignee`、member 的 `internalNote`、order 的 `memberEmail`／`quoteNo`）——
+那份對照表同時記錄了 **3 個 UI 有、schema 沒有的欄位**（`ogImageAlt`、vlog 的 `thumbAlt`、
+contact 的 `assignee`）——
 它們目前存不進去，是已知缺口而不是 bug。
 
 > 圖片來自 `public/assets`（指向 `../../mockup/assets` 的 symlink，不進版控）。
@@ -83,7 +83,7 @@ dev 與 build 兩種形態的差別只有素材來源：
 ## 驗收閘
 
 ```bash
-pnpm --filter admin check:units   # → 「✓ 每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 171 列」
+pnpm --filter admin check:units   # → 「✓ 每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 167 列」
 pnpm --filter admin typecheck
 ```
 
@@ -94,7 +94,7 @@ pnpm --filter admin typecheck
 
 | docs §  | 實作位置 |
 |---|---|
-| §2 24 個單元 | [`src/units/`](src/units/) —— 一個單元一份宣告（欄位、清單欄、排序、上下架、固定筆數…） |
+| §2 各單元 | [`src/units/`](src/units/) —— 一個單元一份宣告（欄位、清單欄、排序、上下架、固定筆數…） |
 | §3 上傳建議尺寸 | [`src/units/content.ts`](src/units/content.ts) 的 `HINT`，**逐字**引用規格文字，顯示在欄位旁 |
 | §3 共通規則 | 每個圖片欄位都配一個中英 Alt；[`validateUnits()`](src/units/index.ts) 會在開發模式檢查並在 console 指出違規 |
 | §5.1 清單頁 | [`ListPage`](src/pages/ListPage.tsx)：分頁 20 筆、關鍵字、狀態／分類篩選、中英完成度 badge、批次上下架、批次軟刪、拖曳排序 |
@@ -119,7 +119,7 @@ pnpm --filter admin typecheck
 
 由 [`scripts/build-seed.mjs`](scripts/build-seed.mjs) 產生（`pnpm --filter admin seed`），
 所以後台一打開就是這個站真正的內容，客戶看得懂自己在改什麼。
-P6 的報價／聯絡／會員／訂單與操作紀錄則是示意資料（前台表單尚未接 API）。
+報價／聯絡與操作紀錄則是示意資料（前台表單尚未接 API）。
 
 資料存在瀏覽器的 localStorage，**可以真的新增、編輯、排序、上下架**，重整不會消失。
 

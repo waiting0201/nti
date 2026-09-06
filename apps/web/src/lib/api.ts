@@ -201,7 +201,6 @@ export type SupplierDownload = {
   filePath: string
   fileExt: string
   fileSizeBytes: number
-  requireLogin: boolean
   downloadCount: number
   name: string
 }

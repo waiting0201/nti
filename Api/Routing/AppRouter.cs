@@ -39,9 +39,8 @@ public sealed partial class AppRouter(
     CategoryHandler       categories,
     FileHandler           files,
 
-    // ── 認證與表單（04-api §3.2、§3.3）────────────────────────────────
+    // ── 認證與表單（04-api §3.2）──────────────────────────────────────
     AuthHandler           auth,
-    MemberHandler         members,
     FormHandler           forms,
 
     // ── 後台 24 個單元（04-api §3.4）──────────────────────────────────
@@ -64,8 +63,6 @@ public sealed partial class AppRouter(
     AdminPageHandler             adminPages,
     AdminRedirectHandler         adminRedirects,
     AdminFormHandler             adminForms,
-    AdminMemberHandler           adminMembers,
-    AdminOrderHandler            adminOrders,
     AdminSettingHandler          adminSettings,
     AdminCategoryHandler         adminCategories,
     AdminAccountHandler          adminAccounts,
@@ -109,19 +106,10 @@ public sealed partial class AppRouter(
         }
         else if (!IsPublicRoute(method, segments))
         {
-            // 前台會員：只收 nti-web audience 的 token；後台 token 亦不得存取
-            var principal = jwt.ValidateRequest(req, TokenAudiences.Web)
-                ?? throw AppException.Unauthorized("缺少或無效的會員憑證。");
-
-            req.HttpContext.User = principal;
-        }
-        else if (req.Headers.ContainsKey("Authorization"))
-        {
-            // 公開路由的選擇性登入：有帶會員 token 就掛上去，沒帶或無效也照樣放行。
-            // POST /supplier/downloads/{id}/hit 需要這個——多數下載不需登入，
-            // 只有 RequireLogin = 1 的受控文件要，那個判斷在 Handler 裡（04-api §3.1）。
-            var principal = jwt.ValidateRequest(req, TokenAudiences.Web);
-            if (principal is not null) req.HttpContext.User = principal;
+            // 前台全站匿名（沒有會員系統），白名單就是前台的完整範圍。
+            // 沒登記在白名單的非 /admin/* 路由一律當成不存在——新端點忘了補白名單時
+            // 會在開發階段直接 404，不會靜悄悄地變成公開端點（docs/10 §7.6）。
+            return NotFound(method, route);
         }
 
         var result = await RoutePublicAsync(req, method, segments)

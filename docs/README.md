@@ -29,7 +29,7 @@
 
 | 層 | 選定 | 說明 |
 |----|------|------|
-| 公開網站（前端） | **Next.js（SSR + ISR）** | 需 SEO + GEO；內容頁 ISR、會員/個人化頁 SSR/CSR |
+| 公開網站（前端） | **Next.js（SSR + ISR）** | 需 SEO + GEO；內容頁 ISR、表單頁 SSR/CSR |
 | 公開站 host | **Azure Static Web Apps**（Free 起，必要時 Standard；SSR 撞限制則退 Container Apps） | Next.js SSR/ISR 一級支援 |
 | CMS 後台（後端管理介面） | **純 SPA**（靜態），**不需 SEO** | 登入後台用，host 同 SWA Free / Blob 靜態 |
 | API | **Azure Functions .NET 10**（isolated、ASP.NET Core Integration、Consumption） | 唯一資料存取層；單一 `RouterFunction` + 集中式 `AppRouter`，寫法見 [10-backend-design.md](10-backend-design.md) |
@@ -65,7 +65,7 @@
 | **system-analyst** | 系統架構、DB schema、API 結構、SEO 技術規範 | — | 技術規格書、ER Model、API 文件 |
 | **visual-design-architect** | 既有 PSD → 設計系統 + 響應式版型 + 可點擊原型 | `frontend-design` | Design tokens、各頁 RWD 設計稿、互動原型 |
 | **frontend-architect** | Next.js 前台、i18n 雙語、共用元件、CMS 串接 | `frontend-design`、`run`、`verify` | 前台站台、元件庫 |
-| **backend-engineer** | 自建 CMS、API（Azure Functions .NET 10）、會員系統、報價/聯絡、權限角色、媒體/Blob | `run`、`verify` | API 服務、CMS 後台、DB |
+| **backend-engineer** | 自建 CMS、API（Azure Functions .NET 10）、報價/聯絡、權限角色、媒體/Blob | `run`、`verify` | API 服務、CMS 後台、DB |
 | **qa-test-engineer** | 功能/RWD/跨瀏覽器/無障礙/SEO/效能稽核（只審不改） | `verify` | 缺失報告、驗收檢核表 |
 | **code-review-optimizer** | 每次合併前的程式碼審查與重構建議 | `code-review`、`simplify` | Review 報告、修正項 |
 | **deep-research（skill）** | 競品（DNP/Toppan/Amcor 等）分析 | `deep-research` | 研究報告、PoC 建議 |
@@ -85,7 +85,7 @@ P4 後端/CMS        ─┼─ 平行 fan-out（frontend-architect ‖ backend-e
                    │     每次合併 → code-review-optimizer
 P5 前台頁面開發    ─┘
         ▼
-P6 會員/報價/聯絡        → backend + frontend（AI 客服本期不做）
+P6 報價/聯絡表單         → backend + frontend（AI 客服與會員系統本期不做）
 P8 內容遷移/雙語/SEO實作  → backend + 內容團隊（301 map、結構化資料、WebP/alt）
         ▼
 P9 整合測試/QA/效能/SEO稽核 → qa-test-engineer + code-review-optimizer (verify)

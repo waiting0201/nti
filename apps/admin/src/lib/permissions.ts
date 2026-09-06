@@ -1,9 +1,9 @@
 /**
  * 權限矩陣 — 逐格對照 docs/09-cms-admin.md §6 與其展開檔
- * `db/seed/110_role_permission.sql`（171 列：SuperAdmin 83／Editor 67／Viewer 21）。
+ * `db/seed/110_role_permission.sql`（167 列：SuperAdmin 79／Editor 67／Viewer 21）。
  *
  * 下面的 GRANTS 與那份 SQL 是一對一的，`permissionRowCount()` 算出來的數字
- * 應該等於 171 —— 對不上就代表前後端對權限的認知已經岔開，要先修正再往下做。
+ * 應該等於 167 —— 對不上就代表前後端對權限的認知已經岔開，要先修正再往下做。
  *
  * 權限碼格式 `{單元代號}.{view|edit|publish|delete|export}`，另有三個特例碼
  * `quote.download`／`redirect.export`／`audit.resend`。SuperAdmin 逐列展開、
@@ -54,8 +54,6 @@ const GRANTS: Record<RoleCode, string[]> = {
     'quote.view', 'quote.edit', 'quote.download', 'quote.export',
     // 18 contact
     'contact.view', 'contact.edit',
-    // 19 member ／ 20 order
-    'member.view', 'member.edit', 'order.view', 'order.edit',
     // 21 setting ／ 22 category
     'setting.view', 'setting.edit',
     'category.view', 'category.edit', 'category.delete',
@@ -103,7 +101,7 @@ export function can(role: RoleCode, code: string): boolean {
   return ROLE_PERMISSIONS[role].has(code)
 }
 
-/** 展開後的列數，應與 db/seed/110_role_permission.sql 的 171 列一致 */
+/** 展開後的列數，應與 db/seed/110_role_permission.sql 的 167 列一致 */
 export function permissionRowCount() {
   const SuperAdmin = ROLE_PERMISSIONS.SuperAdmin.size
   const Editor = ROLE_PERMISSIONS.Editor.size

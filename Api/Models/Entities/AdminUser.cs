@@ -1,7 +1,7 @@
 namespace Nti.Api.Models.Entities;
 
 /// <summary>
-/// 後台管理員（docs/08 §4.14）。與前台 <see cref="Member"/> 是兩套獨立帳號體系，不共用登入。
+/// 後台管理員（docs/08 §4.14）。前台全站匿名，沒有會員帳號體系。
 /// </summary>
 public sealed class AdminUser : IAuditable
 {

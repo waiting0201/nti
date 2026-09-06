@@ -30,11 +30,6 @@ public sealed class QuoteRequestConfiguration : IEntityTypeConfiguration<QuoteRe
 
         b.HasAlternateKey(x => x.QuoteNo).HasName("UQ_QuoteRequest_QuoteNo");
 
-        b.HasOne<Member>().WithMany()
-            .HasForeignKey(x => x.MemberId)
-            .HasConstraintName("FK_QuoteRequest_Member")
-            .OnDelete(DeleteBehavior.Restrict);
-
         b.HasOne<Solution>().WithMany()
             .HasForeignKey(x => x.SolutionId)
             .HasConstraintName("FK_QuoteRequest_Solution")

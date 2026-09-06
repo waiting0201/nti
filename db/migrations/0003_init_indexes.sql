@@ -66,10 +66,7 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Contact_Status' AND o
     CREATE INDEX IX_Contact_Status ON dbo.ContactMessage(Status, SubmittedAt DESC);
 GO
 
-/* --- 會員／轉址／稽核 -------------------------------------------------------- */
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_MemberToken_Lookup' AND object_id = OBJECT_ID(N'dbo.MemberToken'))
-    CREATE INDEX IX_MemberToken_Lookup ON dbo.MemberToken(TokenHash) INCLUDE (MemberId, ExpiresAt, UsedAt);
-GO
+/* --- 轉址／稽核 -------------------------------------------------------------- */
 -- 取代 08 §5 的 IX_Redirect_From：同時做唯一性與覆蓋，middleware 查轉址只打這一個索引
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'UX_Redirect_FromPath' AND object_id = OBJECT_ID(N'dbo.Redirect'))
     CREATE UNIQUE INDEX UX_Redirect_FromPath ON dbo.Redirect(FromPath) INCLUDE (ToPath, StatusCode, IsActive);
@@ -91,13 +88,6 @@ GO
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_QuoteAttachment_Quote' AND object_id = OBJECT_ID(N'dbo.QuoteAttachment'))
     CREATE INDEX IX_QuoteAttachment_Quote ON dbo.QuoteAttachment(QuoteRequestId);
 GO
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Orders_Member' AND object_id = OBJECT_ID(N'dbo.Orders'))
-    CREATE INDEX IX_Orders_Member ON dbo.Orders(MemberId, CreatedAt DESC);
-GO
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_OrderProgress_Order' AND object_id = OBJECT_ID(N'dbo.OrderProgress'))
-    CREATE INDEX IX_OrderProgress_Order ON dbo.OrderProgress(OrderId, HappenedAt);
-GO
-
 /* --- 新增：預留的電子報後台清單 ---------------------------------------------- */
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_NewsletterSubscriber_Status' AND object_id = OBJECT_ID(N'dbo.NewsletterSubscriber'))
     CREATE INDEX IX_NewsletterSubscriber_Status ON dbo.NewsletterSubscriber(Status, SubscribedAt DESC)

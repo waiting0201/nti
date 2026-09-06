@@ -2,7 +2,7 @@ namespace Nti.Api.Common;
 
 /// <summary>
 /// 權限碼（docs/10 §9.2）。權威來源：docs/09 §6 的權限矩陣
-/// ＝ <c>db/seed/110_role_permission.sql</c>（171 列＝SuperAdmin 83／Editor 67／Viewer 21）
+/// ＝ <c>db/seed/110_role_permission.sql</c>（167 列＝SuperAdmin 79／Editor 67／Viewer 21）
 /// ＝ <c>apps/admin/src/lib/permissions.ts</c>。
 /// <para>格式 <c>{單元代號}.{action}</c>，單元代號逐字對應 docs/09 §2，不做單複數轉換。</para>
 /// <para>這些字串在程式中不得再出現字面值。</para>
@@ -90,13 +90,7 @@ public static class PermissionCodes
     public const string ContactView                = "contact.view";
     public const string ContactEdit                = "contact.edit";
 
-    // ── 19 會員 ──
-    public const string MemberView                 = "member.view";
-    public const string MemberEdit                 = "member.edit";
-
-    // ── 20 訂單 ──
-    public const string OrderView                  = "order.view";
-    public const string OrderEdit                  = "order.edit";
+    // 19 會員／20 訂單已於 2026-09-06 移出專案範圍，編號不再使用。
 
     // ── 21 網站設定 ──
     public const string SettingView                = "setting.view";
@@ -117,7 +111,7 @@ public static class PermissionCodes
     public const string AuditResend                = "audit.resend";
 
 
-    /// <summary>全部 83 個權限碼（SuperAdmin 的授權範圍）。</summary>
+    /// <summary>全部 79 個權限碼（SuperAdmin 的授權範圍）。</summary>
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
     {
         HomeBannerView, HomeBannerEdit, HomeBannerPublish, HomeBannerDelete,
@@ -137,8 +131,7 @@ public static class PermissionCodes
         DashboardView, PageView, PageEdit, RedirectView,
         RedirectEdit, RedirectDelete, RedirectExport, QuoteView,
         QuoteEdit, QuoteDownload, QuoteExport, ContactView,
-        ContactEdit, MemberView, MemberEdit, OrderView,
-        OrderEdit, SettingView, SettingEdit, CategoryView,
+        ContactEdit, SettingView, SettingEdit, CategoryView,
         CategoryEdit, CategoryDelete, AdminView, AdminEdit,
         AdminDelete, AuditView, AuditResend,
     };
@@ -247,9 +240,10 @@ public static class Langs
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal) { Zh, En };
 }
 
-/// <summary>JWT audience（docs/10 §7.2）：後台與前台會員的身分完全分離。</summary>
+/// <summary>
+/// JWT audience（docs/10 §7.2）。目前只有後台一套身分——前台全站匿名，沒有會員系統。
+/// </summary>
 public static class TokenAudiences
 {
     public const string Admin = "nti-admin";
-    public const string Web   = "nti-web";
 }

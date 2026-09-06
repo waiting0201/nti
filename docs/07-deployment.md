@@ -28,7 +28,7 @@
 | ~~**Mockup2 預覽**~~（未採用） | `mockup2/` 靜態切版稿（`.dc.html` + `support.js`） | Cloudflare Pages 專案 `nti-mockup2`（direct upload，**不連 git**） | 已停止更新 | 公開、免密碼，**可即刻下線** |
 | **公開網站（前端）** | Next.js **SSR + ISR** | **Azure Static Web Apps** `stapp-nti-prod`（RG `NTIUS`／westus2／Free）<br>`gray-river-0a6ae341e.5.azurestaticapps.net` | push `main` → `.github/workflows/web.yml` | 公開可達，**上線前 robots 擋全站**（見 §7.3） |
 | **CMS 後台（前端）** | 純 SPA（靜態） | **與公開站同一個 Static Web Apps**，掛在 `/admin/`（vite `build.outDir` 直接寫進 `apps/web/public/admin`） | CI 先 `pnpm --filter admin build` 再 `pnpm --filter web build` | 登入後台、**noindex**（`robots.txt` Disallow） |
-| **API** | Azure Functions **.NET 10**（isolated、Consumption） | Azure Functions | CI/CD | 公開讀免認證、會員/後台需認證 |
+| **API** | Azure Functions **.NET 10**（isolated、Consumption） | Azure Functions | CI/CD | 公開讀免認證、後台需認證 |
 | **資料庫** | **Azure SQL Database — Basic** | Azure（PaaS） | — | 受 Functions 存取 |
 | **媒體/檔案** | Azure Blob Storage `stntiprod`（RG `NTIUS`／westus2） | Azure | `tools/upload-assets.sh` | 容器 `assets` 公開讀取；上傳走 AAD（Storage Blob Data Contributor），不用帳戶金鑰 |
 
@@ -190,8 +190,7 @@ az functionapp create -g $RG -n $APP -l $LOC \
 az functionapp config appsettings set -g $RG -n $APP --settings \
   "ConnectionStrings__DefaultConnection=<Azure SQL 連線字串>" \
   "Jwt__Secret=<32 字以上亂數>" "Jwt__Issuer=nti-api" \
-  "Jwt__AudienceAdmin=nti-admin" "Jwt__AudienceWeb=nti-web" \
-  "Jwt__ExpiryMinutes=60" "Jwt__ExpiryMinutesWeb=120" \
+  "Jwt__AudienceAdmin=nti-admin" "Jwt__ExpiryMinutes=60" \
   "BlobStorageConnection=<stntiprod 連線字串>" \
   "Smtp__Host=<...>" "Smtp__Port=587" "Smtp__User=<...>" \
   "Smtp__Password=<...>" "Smtp__From=<...>" \
@@ -200,7 +199,7 @@ az functionapp config appsettings set -g $RG -n $APP --settings \
   "RetentionCleanupCron=0 30 3 * * *" \
   "OrphanMediaCron=0 0 4 * * 0"
 
-# ── CORS：兩個 origin，禁用 *（會員與後台端點帶憑證）──────────────────
+# ── CORS：兩個 origin，禁用 *（後台端點帶憑證）──────────────────────
 az functionapp cors add -g $RG -n $APP \
   --allowed-origins https://gray-river-0a6ae341e.5.azurestaticapps.net
 ```
@@ -305,5 +304,7 @@ repo:waiting0201@5709750/nti@1354276527:environment:production
 | 2026-09-04 | Tim（Claude Code） | **資源已開設並上線**：`func-nti-prod`（Flex Consumption FC1）、`nti-sql-prod`／`NTI`（Basic，定序 `Latin1_General_100_CI_AS_SC`）、`ai-nti-prod`；內容匯入 111 筆；`API_BASE` 已設，公開站與後台改吃 CMS。§7.4 補記 OIDC 的 environment／不可變 ID subject 坑 |
 | 2026-09-04 | Tim（Claude Code） | 新增 §7.4：API 與資料庫的資源建立指令、OIDC 聯合身分設定、GitHub secrets／variables 清單、部署後的 schema 驗收閘。CI 為 `.github/workflows/api.yml`（觸發於 `Api/**`，含 health 冒煙測試與「產物不得含 local.settings.json」的斷言）。資源本身尚未開設 |
 
-*最後更新：2026-09-04*
+| 2026-09-06 | Tim（Claude Code） | 會員系統移出範圍：app settings 刪除 `Jwt__AudienceWeb`／`Jwt__ExpiryMinutesWeb` |
+
+*最後更新：2026-09-06*
 

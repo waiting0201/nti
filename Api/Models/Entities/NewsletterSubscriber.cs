@@ -4,7 +4,7 @@ namespace Nti.Api.Models.Entities;
 /// 電子報訂閱（docs/08 §4.15）——<b>預留，待客戶確認</b>（docs/09 §2.1 缺口一）。
 /// <para>
 /// 尚未列入本期估算，schema 先備妥，客戶點頭後只需補後台單元與權限碼。
-/// double opt-in 的 <see cref="ConfirmToken"/> 只存 SHA-256（比照 <see cref="MemberToken"/>）；
+/// double opt-in 的 <see cref="ConfirmToken"/> 只存 SHA-256；
 /// <c>Source='Import'</c> 直接支援舊站名單遷移；無可翻譯欄位故不設 i18n 側表。
 /// </para>
 /// </summary>

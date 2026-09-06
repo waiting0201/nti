@@ -134,17 +134,6 @@ export const UNIT_MAP: Record<string, UnitMap> = {
     unsupported: ['assignee'],
   },
 
-  member: {
-    // isActive 是 switch，對應 Status 是不是 'Active'（見 client）
-    // ⚠ Member 沒有 InternalNote 欄位
-    unsupported: ['internalNote'],
-  },
-
-  order: {
-    entity: { productName: 'title', etaDate: 'expectedShipDate' },
-    // memberEmail／quoteNo 是顯示用的關聯欄位，API 目前只回 memberId／quoteRequestId
-    unsupported: ['memberEmail', 'quoteNo'],
-  },
 }
 
 /** 反查表：API 欄位 → UI key */

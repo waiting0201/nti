@@ -20,7 +20,7 @@ export const SEO_FIELDS: Field[] = [
   // 註：OG 圖本身選填，所以這個 Alt 只有在真的上傳了圖片時才算必填 —— 判斷在 completeness.ts
 ]
 
-/** docs §2 的 24 個單元，順序即側邊選單順序 */
+/** 後台單元，順序即側邊選單順序（docs §2；19 會員／20 訂單已移出範圍，16 轉址暫時隱藏）*/
 export const UNITS: Unit[] = [
   rest.dashboard,
   content.homeBanner,
@@ -38,11 +38,9 @@ export const UNITS: Unit[] = [
   rest.supplierSpec,
   rest.supplierDownload,
   rest.page,
-  rest.redirect,
+  // rest.redirect —— 301 轉址單元暫時隱藏（宣告仍留在 rest.ts，要開啟把這行還原即可）
   rest.quote,
   rest.contact,
-  rest.member,
-  rest.order,
   rest.setting,
   rest.category,
   rest.admin,
@@ -65,13 +63,13 @@ export function unitFields(unit: Unit): Field[] {
 export function validateUnits(): string[] {
   const problems: string[] = []
 
-  // 權限矩陣展開後應與 db/seed/110_role_permission.sql 的 171 列一致；
+  // 權限矩陣展開後應與 db/seed/110_role_permission.sql 的 167 列一致；
   // 對不上代表前後端對權限的認知已岔開，要先修正再往下做。
   const perm = permissionRowCount()
-  if (perm.SuperAdmin !== 83 || perm.Editor !== 67 || perm.Viewer !== 21) {
+  if (perm.SuperAdmin !== 79 || perm.Editor !== 67 || perm.Viewer !== 21) {
     problems.push(
       `權限矩陣與 db/seed/110_role_permission.sql 不一致：` +
-        `SuperAdmin ${perm.SuperAdmin}（應 83）／Editor ${perm.Editor}（應 67）／Viewer ${perm.Viewer}（應 21）`,
+        `SuperAdmin ${perm.SuperAdmin}（應 79）／Editor ${perm.Editor}（應 67）／Viewer ${perm.Viewer}（應 21）`,
     )
   }
 

@@ -63,17 +63,6 @@ public sealed partial class AppRouter
             ("GET",            ["admin", "contact", ..]) => PermissionCodes.ContactView,
             ("PUT" or "PATCH", ["admin", "contact", _])  => PermissionCodes.ContactEdit,
 
-            // ── 19 member ────────────────────────────────────────────────
-            ("GET",            ["admin", "member", ..])                  => PermissionCodes.MemberView,
-            ("PUT" or "PATCH", ["admin", "member", _])                   => PermissionCodes.MemberEdit,
-            ("POST",           ["admin", "member", _, "resend-verify"])  => PermissionCodes.MemberEdit,
-
-            // ── 20 order ─────────────────────────────────────────────────
-            ("GET",            ["admin", "order", ..])             => PermissionCodes.OrderView,
-            ("POST",           ["admin", "order"])                 => PermissionCodes.OrderEdit,
-            ("PUT" or "PATCH", ["admin", "order", _])              => PermissionCodes.OrderEdit,
-            ("POST",           ["admin", "order", _, "progress"])  => PermissionCodes.OrderEdit,
-
             // ── 21 setting ───────────────────────────────────────────────
             ("POST",           ["admin", "setting", "upload"]) => PermissionCodes.SettingEdit,
             ("GET",            ["admin", "setting"])           => PermissionCodes.SettingView,
@@ -171,19 +160,6 @@ public sealed partial class AppRouter
             ("GET",            ["admin", "contact"])          => await adminForms.GetContactsAsync(req),
             ("GET",            ["admin", "contact", var id])  => await adminForms.GetContactAsync(req, id),
             ("PUT" or "PATCH", ["admin", "contact", var id])  => await adminForms.UpdateContactAsync(req, id),
-
-            // ── 19 member ────────────────────────────────────────────────
-            ("GET",            ["admin", "member"])                        => await adminMembers.GetMembersAsync(req),
-            ("GET",            ["admin", "member", var id])                => await adminMembers.GetMemberAsync(req, id),
-            ("PUT" or "PATCH", ["admin", "member", var id])                => await adminMembers.UpdateMemberAsync(req, id),
-            ("POST",           ["admin", "member", var id, "resend-verify"]) => await adminMembers.ResendVerifyAsync(req, id),
-
-            // ── 20 order ─────────────────────────────────────────────────
-            ("GET",            ["admin", "order"])                     => await adminOrders.GetListAsync(req),
-            ("GET",            ["admin", "order", var id])             => await adminOrders.GetByIdAsync(req, id),
-            ("POST",           ["admin", "order"])                     => await adminOrders.CreateAsync(req),
-            ("PUT" or "PATCH", ["admin", "order", var id])             => await adminOrders.UpdateAsync(req, id),
-            ("POST",           ["admin", "order", var id, "progress"]) => await adminOrders.AddProgressAsync(req, id),
 
             // ── 21 setting ───────────────────────────────────────────────
             ("POST",           ["admin", "setting", "upload"]) => await adminMedia.UploadAsync(req),

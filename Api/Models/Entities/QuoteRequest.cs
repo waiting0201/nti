@@ -12,7 +12,6 @@ public sealed class QuoteRequest : IAuditable
 {
     public int       Id                     { get; set; }
     public string    QuoteNo                { get; set; } = null!;  // Q20260901-0001，後端產生
-    public int?      MemberId               { get; set; }           // 未登入送出則為 NULL
     public string    FullName               { get; set; } = null!;
     public string    Company                { get; set; } = null!;
     public string    Email                  { get; set; } = null!;

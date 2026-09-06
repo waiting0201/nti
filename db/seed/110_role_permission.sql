@@ -4,9 +4,9 @@
    ⚠ 權威來源是 docs/09-cms-admin.md §6 的矩陣，不是 docs/08 §6.1 的文字描述。
      08 §6.1 有兩處與矩陣不符，已於本次一併回寫修正：
        (a) 08 寫 Editor 為「view/edit/publish」→ 矩陣第 4 列明列 Editor 可 delete。
-       (b) 08 寫 Viewer「全部 view」→ 矩陣中 Viewer 對單元 19/20/23/24 是無權限，
+       (b) 08 寫 Viewer「全部 view」→ 矩陣中 Viewer 對單元 23/24 是無權限，
            只有 15/16、17/18、21/22 才是檢視。
-     另 08 §6.1 用的 `system.*` / `member.*` 群組前綴不屬於 24 個單元代號，已棄用。
+     另 08 §6.1 用的 `system.*` / `member.*` 群組前綴不屬於單元代號，已棄用。
 
    權限碼格式 {單元代號}.{action}。矩陣描述到、但 08/09 都未定代號的三項，
    本次補上：quote.download（附件下載）、redirect.export（CSV 匯入匯出）、
@@ -15,7 +15,9 @@
    SuperAdmin 亦逐列展開，不用萬用碼 —— RBAC 檢查邏輯保持單一（一律查
    RolePermission），且可稽核。新增後台單元時只需在本檔加一列 VALUES。
 
-   預期列數：SuperAdmin 83、Editor 67、Viewer 21 → 合計 171（由 verify.sql 斷言）。
+   預期列數：SuperAdmin 79、Editor 67、Viewer 21 → 合計 167（由 verify.sql 斷言）。
+
+   單元 19 會員 ／ 20 訂單與生產進度已於 2026-09-06 移出專案範圍，編號不再使用。
    ============================================================================= */
 SET NOCOUNT ON;
 SET ANSI_NULLS ON;
@@ -62,9 +64,6 @@ grants (RoleCode, Code) AS (
         ('SuperAdmin','contact.view'),('SuperAdmin','contact.edit'),
         ('Editor','contact.view'),('Editor','contact.edit'),
         ('Viewer','contact.view'),
-        -- 19 member ／ 20 order：僅 SuperAdmin
-        ('SuperAdmin','member.view'),('SuperAdmin','member.edit'),
-        ('SuperAdmin','order.view'),('SuperAdmin','order.edit'),
         -- 21 setting ／ 22 category：SuperAdmin 全權、Viewer 檢視、Editor 無
         ('SuperAdmin','setting.view'),('SuperAdmin','setting.edit'),
         ('Viewer','setting.view'),

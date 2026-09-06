@@ -5,7 +5,7 @@
 | **主責 Agent** | `frontend-architect` |
 | **協作 Agent** | `visual-design-architect`（設計交付）、`backend-engineer`（API/CMS 串接）、`system-analyst`（SEO/i18n 技術約束） |
 | **搭配 Skills** | `frontend-design`、`run`、`verify` |
-| **對應階段** | P3（前端框架/元件）／P5（前台頁面）／P6（會員/報價/聯絡） |
+| **對應階段** | P3（前端框架/元件）／P5（前台頁面）／P6（報價/聯絡表單） |
 | **核心定位** | 以**設計定稿**與 **API 契約**為雙介面，與後端平行 fan-out 不互鎖。 |
 
 ---
@@ -26,7 +26,7 @@
 | 項目 | 選定 | 備註 |
 |------|------|------|
 | 框架 | **Next.js（React）— SSR + ISR** | Azure SWA 一級支援；SSR/ISR 滿足 SEO/GEO |
-| 渲染 | **內容頁 SSG + ISR**（背景/webhook 重生）、**會員/報價/個人化頁 SSR 或 CSR** | 內容頁 HTML 由 CDN 出，訪客不觸發 Node 渲染、也不打醒 Functions 冷啟動 |
+| 渲染 | **內容頁 SSG + ISR**（背景/webhook 重生）、**報價／聯絡表單頁 SSR 或 CSR** | 內容頁 HTML 由 CDN 出，訪客不觸發 Node 渲染、也不打醒 Functions 冷啟動 |
 | i18n | 中／英雙語，`hreflang` 對應 | 路由 `/zh`、`/en` 或 domain 策略由 SEO 文件定 |
 | 樣式 | 對應 design tokens（CSS variables / Tailwind） | 與 01-design tokens 一致 |
 | 資料來源 | **只呼叫 .NET API（[`04-api.md`](04-api.md)），前端不直連 DB** | 公開站只負責呈現 |
@@ -40,10 +40,10 @@
 
 > 架構依據：客戶 sitemap（`reference/sbk/sitemap20260831.JPG`）。路由與節點對照見 [`reference/官網資訊架構_IA.md`](../reference/官網資訊架構_IA.md)；`mockup/` 已依此架構對齊，切版時以 mockup 為準。
 
-- **共用元件**：Header（**5 個頂層**：About Us／Solutions／Projects／Sustainability／Insights，多層下拉、語系切換、會員入口）、Footer（Company 欄含 **Careers**）、Floating Button（Get a Quote／Contact Us；~~AI Agent 本期不做~~）、麵包屑、分頁、卡片、輪播、表單元件。
+- **共用元件**：Header（**5 個頂層**：About Us／Solutions／Projects／Sustainability／Insights，多層下拉、語系切換）、Footer（Company 欄含 **Careers**）、Floating Button（Get a Quote／Contact Us；~~AI Agent 本期不做~~）、麵包屑、分頁、卡片、輪播、表單元件。
 - **首頁**：Banner/Videos 輪播、品牌標語區（The Courage to Print Green）、Printing Solutions、Projects 卡、Clients 輪播。
 - **內容頁（吃 CMS）**：About Us（NTI Difference／Benefits to Clients／Certifications, Partnerships & Awards／Facilities & Equipment + 5 個第三層）、Solutions（+4 子方案，第四項為 **Other Printing**）、Projects（總覽 + 詳細，含 Industries / Applications 與 Case Studies & Photos 錨點）、Sustainability（數據統計區 + 4 子頁）、Insights（Latest News 列表+詳細／Green Vlog 含 YouTube 嵌入／FAQ／**Industry Trends**）、Supplier Area（公告/規格/下載）、**Careers**、Privacy & Legal。
-- **功能頁**：Get a Quote（含檔案上傳）、Contact Us（Google Map 嵌入）、Member（登入/註冊/會員中心/報價紀錄/訂單）。
+- **功能頁**：Get a Quote（含檔案上傳）、Contact Us（Google Map 嵌入）。（會員中心本期不做）
 - ~~AI 客服~~：本期不做（Claude API/AI Agent 暫緩）。
 
 ---
@@ -53,7 +53,7 @@
 1. **專案骨架**（P3）：Next.js + i18n + tokens + 共用 layout（Header/Footer/Floating）。
 2. **元件庫**：對齊 01-design 元件，Storybook 或等效清單。
 3. **內容頁**（P5）：串 CMS 資料，先以 API mock 開發，契約穩定後接真值。
-4. **功能頁**（P6）：表單驗證、檔案上傳、會員流程（登入/註冊/忘記密碼/會員中心）。
+4. **功能頁**（P6）：表單驗證、檔案上傳、送出結果與錯誤處理。
 5. **i18n 內容串接**（P8）：中英對照、語系切換、hreflang。
 
 ---
@@ -98,4 +98,6 @@
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 P7 前端嵌入與報價動線、相關風險列 |
 | 2026-08-31 | Tim（Claude Code） | 依客戶 sitemap 對齊 §3 範圍與路由（5 個頂層、Other Printing、Post-Press Processing、Projects 錨點、Insights/Careers/Industry Trends）；標註切版以 mockup 為準 |
 
-*最後更新：2026-08-31*
+| 2026-09-06 | Tim（Claude Code） | 會員系統移出專案範圍：§3 刪除 Member 功能頁與頁首會員入口、渲染策略的「會員/個人化頁」改為表單頁、工作分解第 4 項改為表單流程 |
+
+*最後更新：2026-09-06*

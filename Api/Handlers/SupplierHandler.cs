@@ -38,14 +38,7 @@ public sealed class SupplierHandler(ISupplierReadService reads)
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 
-    /// <summary>
-    /// 累計下載次數（<c>POST /supplier/downloads/{id}/hit</c>）。
-    /// <para>
-    /// <c>RequireLogin = 1</c> 的受控文件需要會員憑證。目前會員系統未上線（P6），
-    /// 前台不會出現這種項目；這裡先擋住，等 <c>/auth</c> 做完就自動生效——
-    /// Router 已經驗過會員 token 並寫入 <c>HttpContext.User</c>。
-    /// </para>
-    /// </summary>
+    /// <summary>累計下載次數（<c>POST /supplier/downloads/{id}/hit</c>）。全部項目一律公開下載。</summary>
     public async Task<IActionResult> HitDownloadAsync(HttpRequest req, string rawId)
     {
         if (!int.TryParse(rawId, out var id))
@@ -53,9 +46,6 @@ public sealed class SupplierHandler(ISupplierReadService reads)
 
         var lang = LangResolver.Resolve(req);
         var item = await reads.GetDownloadAsync(lang, id) ?? throw AppException.NotFound("SupplierDownload");
-
-        if (item.RequireLogin && req.HttpContext.User.Identity?.IsAuthenticated != true)
-            throw AppException.Unauthorized("此檔案需登入後才能下載。");
 
         await reads.IncrementDownloadCountAsync(id);
 

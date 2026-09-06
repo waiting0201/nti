@@ -41,7 +41,7 @@
 依頁型注入：`Website`、`Organization`、`BreadcrumbList`、`Product`（印刷方案）、`Article`（NEWS/Green Vlog）、`FAQPage`、必要時 `VideoObject`（案例/Vlog 影片）。
 
 ### 2.4 渲染與可檢索
-- 公開站內容頁採 **Next.js SSG + ISR**（CMS 更新以 webhook 觸發 revalidate）、會員/個人化頁 SSR/CSR；關鍵內容**不依賴 JS**。
+- 公開站內容頁採 **Next.js SSG + ISR**（CMS 更新以 webhook 觸發 revalidate）；關鍵內容**不依賴 JS**。
 - CMS 後台 SPA 以 `X-Robots-Tag: noindex` / `robots.txt` 排除索引。
 - **避免文字圖片化**（標題/正文為可選取文字）。
 - 語意化標籤、單一 H1、合理 H2–H3 階層、麵包屑。

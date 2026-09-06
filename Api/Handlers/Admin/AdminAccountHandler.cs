@@ -246,9 +246,6 @@ public sealed class AdminDashboardHandler(AppDbContext db)
 
             // 寄信失敗：需要人去重寄，不看就沒人知道
             failedEmails = await db.EmailLog.CountAsync(e => e.Status == "Failed"),
-
-            members = await db.Member.CountAsync(m => !m.IsDeleted),
-            orders  = await db.Order.CountAsync(o => !o.IsDeleted),
         }));
     }
 }

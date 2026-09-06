@@ -1,20 +1,19 @@
 /* =============================================================================
-   0002_init_schema.sql  —  NTI 官網 schema（48 張表）
+   0002_init_schema.sql  —  NTI 官網 schema（44 張表）
    =============================================================================
    來源：docs/08-database.md §4（設計）+ docs/09-cms-admin.md §2（後台單元對照）
 
    本檔的區段順序 = 建表依賴順序（拓撲序），區段標題同時標出 docs/09 的
    「後台單元代號」與 docs/08 的節次，方便雙向追溯。
 
-   與 docs/08 §4 的四點差異（皆為「讓腳本可執行」與「跨環境安全」的必要調整）：
+   與 docs/08 §4 的三點差異（皆為「讓腳本可執行」與「跨環境安全」的必要調整）：
 
    1. 稽核五欄：08 §4 以單行 `/* audit */` 佔位，此處全部展開。
    2. 約束一律具名（PK_ / FK_ / UQ_ / CK_ / DF_）。08 §4 的 PK、FK、DEFAULT 多為
       匿名 inline，SQL Server 會產生帶隨機 hash 的名稱（DF__HomeBanner__Sort__1B0907CE），
       **每個環境都不同** → 未來要 DROP CONSTRAINT 改預設值時，dev 能跑的 migration
       會在 prod 炸掉。
-   3. Member / MemberToken 上移至 QuoteRequest 之前（08 §4.12 的建表順序警語）。
-   4. Category 型別安全：Category 是唯一的橫向共用主檔（九種 CategoryType 服務
+   3. Category 型別安全：Category 是唯一的橫向共用主檔（九種 CategoryType 服務
       八個內容單元 + 報價表單）。單純的 FK 只保證「分類存在」，不保證「型別正確」
       —— News.CategoryId 可以指到 CategoryType='Facility' 的列而不被擋下。
       此處在每個引用端加一個 PERSISTED 常數計算欄（*TypeGuard），與 CategoryId
@@ -93,7 +92,7 @@ GO
 IF OBJECT_ID(N'dbo.EmailLog', N'U') IS NULL
 CREATE TABLE dbo.EmailLog (
     Id            BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_EmailLog PRIMARY KEY,
-    MailType      VARCHAR(30)  NOT NULL,                                         -- QuoteNotify|QuoteConfirm|ContactNotify|MemberVerify|PasswordReset
+    MailType      VARCHAR(30)  NOT NULL,                                         -- QuoteNotify|QuoteConfirm|ContactNotify|AdminPasswordReset
     ToAddress     NVARCHAR(300) NOT NULL,
     Subject       NVARCHAR(250) NOT NULL,
     RelatedEntity VARCHAR(60) NULL,
@@ -660,7 +659,6 @@ CREATE TABLE dbo.SupplierDownload (
     FilePath      NVARCHAR(260) NOT NULL,
     FileExt       VARCHAR(10) NOT NULL,                                          -- 自動帶入，前台顯示 PDF/XLSX 標籤
     FileSizeBytes BIGINT NOT NULL,                                               -- 自動帶入，前台格式化為 2.4 MB
-    RequireLogin  BIT NOT NULL CONSTRAINT DF_SupplierDownload_RequireLogin DEFAULT 0,  -- 受控文件：會員系統上線後才生效（P6）
     DownloadCount INT NOT NULL CONSTRAINT DF_SupplierDownload_DownloadCount DEFAULT 0,
     SortOrder     INT NOT NULL CONSTRAINT DF_SupplierDownload_SortOrder DEFAULT 0,
     IsPublished   BIT NOT NULL CONSTRAINT DF_SupplierDownload_IsPublished DEFAULT 1,
@@ -745,54 +743,6 @@ CREATE TABLE dbo.Redirect (
 GO
 
 /* =============================================================================
-   單元 19 member — 會員（08 §4.13，P6）
-   -----------------------------------------------------------------------------
-   ⚠ 位置刻意上移：08 §4.13 原本排在 §4.12 表單之後，但 QuoteRequest.MemberId
-     參照 Member，故必須先建（08 §4.12 的建表順序警語）。
-     Member 與 AdminUser 是兩套獨立帳號體系，不共用登入。
-     後台不可查看或設定會員密碼，只能重寄驗證信／觸發密碼重設／啟用停用（09 §19）。
-   ============================================================================= */
-
-IF OBJECT_ID(N'dbo.Member', N'U') IS NULL
-CREATE TABLE dbo.Member (
-    Id               INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Member PRIMARY KEY,
-    Email            NVARCHAR(160) NOT NULL,
-    PasswordHash     NVARCHAR(200) NOT NULL,                                     -- ASP.NET Core Identity V3 (PBKDF2)，salt 內含
-    DisplayName      NVARCHAR(80)  NOT NULL,
-    Company          NVARCHAR(120) NULL,
-    Phone            NVARCHAR(40)  NULL,
-    PreferredLang    VARCHAR(5) NOT NULL CONSTRAINT DF_Member_PreferredLang DEFAULT 'zh',
-    Status           VARCHAR(20) NOT NULL CONSTRAINT DF_Member_Status DEFAULT 'Pending',
-    EmailConfirmedAt DATETIME2(0) NULL,
-    LastLoginAt      DATETIME2(0) NULL,
-    FailedLoginCount TINYINT NOT NULL CONSTRAINT DF_Member_FailedLoginCount DEFAULT 0,
-    LockoutEndAt     DATETIME2(0) NULL,
-    CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_Member_CreatedAt DEFAULT SYSUTCDATETIME(),
-    CreatedBy INT NULL,
-    UpdatedAt DATETIME2(0) NULL,
-    UpdatedBy INT NULL,
-    IsDeleted BIT NOT NULL CONSTRAINT DF_Member_IsDeleted DEFAULT 0,
-    CONSTRAINT UQ_Member_Email UNIQUE (Email),
-    CONSTRAINT CK_Member_Status CHECK (Status IN ('Pending','Active','Suspended')),
-    CONSTRAINT CK_Member_PreferredLang CHECK (PreferredLang IN ('zh','en'))
-);
-GO
-
-IF OBJECT_ID(N'dbo.MemberToken', N'U') IS NULL
-CREATE TABLE dbo.MemberToken (
-    Id        BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_MemberToken PRIMARY KEY,
-    MemberId  INT NOT NULL,
-    TokenType VARCHAR(20) NOT NULL,                                              -- EmailVerify|PasswordReset
-    TokenHash VARBINARY(32) NOT NULL,                                            -- 只存 SHA-256，明碼僅寄出
-    ExpiresAt DATETIME2(0) NOT NULL,
-    UsedAt    DATETIME2(0) NULL,
-    CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_MemberToken_CreatedAt DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT FK_MemberToken_Member FOREIGN KEY (MemberId) REFERENCES dbo.Member(Id),
-    CONSTRAINT CK_MemberToken_Type CHECK (TokenType IN ('EmailVerify','PasswordReset'))
-);
-GO
-
-/* =============================================================================
    單元 17 quote ／ 18 contact — 表單（08 §4.12）
    -----------------------------------------------------------------------------
    客戶填寫內容在後台唯讀；後台僅可改 Status / AssigneeId / InternalNote / RepliedAt。
@@ -803,7 +753,6 @@ IF OBJECT_ID(N'dbo.QuoteRequest', N'U') IS NULL
 CREATE TABLE dbo.QuoteRequest (
     Id                     INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_QuoteRequest PRIMARY KEY,
     QuoteNo                VARCHAR(20) NOT NULL,                                 -- Q20260901-0001，後端產生
-    MemberId               INT NULL,                                             -- 未登入送出則為 NULL
     FullName               NVARCHAR(80)  NOT NULL,
     Company                NVARCHAR(120) NOT NULL,
     Email                  NVARCHAR(160) NOT NULL,
@@ -833,7 +782,6 @@ CREATE TABLE dbo.QuoteRequest (
     UpdatedBy INT NULL,
     IsDeleted BIT NOT NULL CONSTRAINT DF_QuoteRequest_IsDeleted DEFAULT 0,
     CONSTRAINT UQ_QuoteRequest_QuoteNo UNIQUE (QuoteNo),
-    CONSTRAINT FK_QuoteRequest_Member   FOREIGN KEY (MemberId)   REFERENCES dbo.Member(Id),
     CONSTRAINT FK_QuoteRequest_Solution FOREIGN KEY (SolutionId) REFERENCES dbo.Solution(Id),
     CONSTRAINT FK_QuoteRequest_Industry FOREIGN KEY (IndustryCategoryId, IndustryTypeGuard)
         REFERENCES dbo.Category(Id, CategoryType),
@@ -884,53 +832,10 @@ CREATE TABLE dbo.ContactMessage (
 GO
 
 /* =============================================================================
-   單元 20 order — 訂單與生產進度（08 §4.13，P6）
-   -----------------------------------------------------------------------------
-   'Order' 為 T-SQL 保留字，資料表命名為 Orders。
-   ============================================================================= */
-
-IF OBJECT_ID(N'dbo.Orders', N'U') IS NULL
-CREATE TABLE dbo.Orders (
-    Id               INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Orders PRIMARY KEY,
-    OrderNo          VARCHAR(20) NOT NULL,
-    MemberId         INT NOT NULL,
-    QuoteRequestId   INT NULL,
-    Title            NVARCHAR(200) NOT NULL,
-    Status           VARCHAR(20) NOT NULL CONSTRAINT DF_Orders_Status DEFAULT 'Confirmed',
-    ExpectedShipDate DATE NULL,
-    CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_Orders_CreatedAt DEFAULT SYSUTCDATETIME(),
-    CreatedBy INT NULL,
-    UpdatedAt DATETIME2(0) NULL,
-    UpdatedBy INT NULL,
-    IsDeleted BIT NOT NULL CONSTRAINT DF_Orders_IsDeleted DEFAULT 0,
-    CONSTRAINT UQ_Orders_OrderNo UNIQUE (OrderNo),
-    CONSTRAINT FK_Orders_Member       FOREIGN KEY (MemberId)       REFERENCES dbo.Member(Id),
-    CONSTRAINT FK_Orders_QuoteRequest FOREIGN KEY (QuoteRequestId) REFERENCES dbo.QuoteRequest(Id),
-    CONSTRAINT CK_Order_Status CHECK (Status IN ('Confirmed','InProduction','Shipped','Completed','Cancelled'))
-);
-GO
-
-IF OBJECT_ID(N'dbo.OrderProgress', N'U') IS NULL
-CREATE TABLE dbo.OrderProgress (
-    Id          BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_OrderProgress PRIMARY KEY,
-    OrderId     INT NOT NULL,
-    Stage       VARCHAR(20) NOT NULL,                                            -- Design|PrePress|Printing|PostPress|QC|Shipping
-    StageStatus VARCHAR(20) NOT NULL,                                            -- Pending|Doing|Done
-    HappenedAt  DATETIME2(0) NOT NULL,
-    Note        NVARCHAR(400) NULL,
-    CreatedAt   DATETIME2(0) NOT NULL CONSTRAINT DF_OrderProgress_CreatedAt DEFAULT SYSUTCDATETIME(),
-    CreatedBy   INT NULL,
-    CONSTRAINT FK_OrderProgress_Orders FOREIGN KEY (OrderId) REFERENCES dbo.Orders(Id),
-    CONSTRAINT CK_OrderProgress_Stage       CHECK (Stage IN ('Design','PrePress','Printing','PostPress','QC','Shipping')),
-    CONSTRAINT CK_OrderProgress_StageStatus CHECK (StageStatus IN ('Pending','Doing','Done'))
-);
-GO
-
-/* =============================================================================
    預留（待客戶確認）— 電子報訂閱｜docs/09 §2.1 缺口一
    -----------------------------------------------------------------------------
    尚未列入本期估算，schema 先備妥，客戶確認後只需補後台單元與權限碼。
-   - double opt-in：ConfirmToken 只存 SHA-256，明碼僅寄出（比照 MemberToken）
+   - double opt-in：ConfirmToken 只存 SHA-256，明碼僅寄出
    - Source='Import' 直接支援舊站名單遷移
    - 無可翻譯欄位，故不設 *I18n 側表
    - EmailLog.MailType 無 CHECK 約束，未來加 NewsletterConfirm 不需改 schema

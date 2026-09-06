@@ -61,7 +61,6 @@ export const supplierDownload: Unit = {
     { key: 'file', label: '檔案', type: 'file', required: true, hint: HINT.supplierDownload, side: 'neutral' },
     { key: 'fileMeta', label: '檔案類型／大小', type: 'readonly', side: 'neutral', hint: '上傳時自動帶入，前台顯示 PDF｜2.4 MB' },
     { key: 'displayName', label: '顯示名稱', type: 'text', i18n: true, required: true, side: 'locale', placeholder: 'Supplier Handbook 2026 (EN)' },
-    { key: 'requireLogin', label: '需登入下載', type: 'switch', side: 'neutral', hint: '會員系統上線（P6）後才生效，之前顯示「即將啟用」' },
     { key: 'downloadCount', label: '下載次數', type: 'readonly', side: 'neutral' },
   ],
   columns: [
@@ -199,68 +198,6 @@ export const contact: Unit = {
     { key: 'company', label: '公司', width: '160px' },
     { key: 'status', label: '狀態', width: '110px' },
     { key: 'submittedAt', label: '送出時間', render: 'date', width: '120px' },
-  ],
-}
-
-/* ── 會員 19–20 ─────────────────────────────────────────── */
-
-export const member: Unit = {
-  code: 'member',
-  no: '19',
-  title: '會員管理',
-  group: '會員',
-  phase: 'P6',
-  frontend: '會員中心',
-  note: '後台不可查看或設定會員密碼；只能啟用／停用、重寄驗證信、觸發密碼重設信。',
-  readOnly: 'status-only',
-  fields: [
-    { key: 'isActive', label: '啟用', type: 'switch', side: 'neutral' },
-    { key: 'internalNote', label: '內部備註', type: 'textarea', side: 'neutral' },
-  ],
-  columns: [
-    { key: 'email', label: 'Email' },
-    { key: 'name', label: '名稱', width: '140px' },
-    { key: 'company', label: '公司', width: '180px' },
-    { key: 'isActive', label: '狀態', render: 'bool', width: '90px' },
-    { key: 'registeredAt', label: '註冊日', render: 'date', width: '110px' },
-    { key: 'lastLoginAt', label: '最後登入', render: 'date', width: '120px' },
-  ],
-}
-
-export const order: Unit = {
-  code: 'order',
-  no: '20',
-  title: '訂單與生產進度',
-  group: '會員',
-  phase: 'P6',
-  frontend: '會員中心時間軸',
-  note: '進度階段：設計／印前／印刷／印後／品檢／出貨，各有未開始／進行中／完成三種狀態。',
-  fields: [
-    { key: 'orderNo', label: '訂單編號', type: 'readonly', side: 'neutral' },
-    { key: 'memberEmail', label: '會員', type: 'readonly', side: 'neutral' },
-    { key: 'quoteNo', label: '關聯報價單', type: 'readonly', side: 'neutral' },
-    { key: 'productName', label: '品名', type: 'text', required: true, side: 'neutral' },
-    {
-      key: 'status',
-      label: '狀態',
-      type: 'select',
-      required: true,
-      side: 'neutral',
-      options: [
-        { value: 'Pending', label: '待生產' },
-        { value: 'Producing', label: '生產中' },
-        { value: 'Shipped', label: '已出貨' },
-        { value: 'Closed', label: '已結案' },
-      ],
-    },
-    { key: 'etaDate', label: '預計出貨日', type: 'date', side: 'neutral' },
-  ],
-  columns: [
-    { key: 'orderNo', label: '訂單編號', width: '150px' },
-    { key: 'memberEmail', label: '會員' },
-    { key: 'productName', label: '品名' },
-    { key: 'status', label: '狀態', width: '110px' },
-    { key: 'etaDate', label: '預計出貨', render: 'date', width: '120px' },
   ],
 }
 

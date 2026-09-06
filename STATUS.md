@@ -44,12 +44,13 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | P3 | 前端框架／元件 | ✅ | Next.js App Router，共用元件與各頁行為自 mockup 移植 |
 | P4 | 後端／CMS API | ✅ | 程式、資源、內容、CI 全數完成並上線（見 §五、§六） |
 | P5 | 前台頁面開發 | 🟡 | 44 頁切版完成；內容仍為靜態，未接 API |
-| P6 | 會員／報價／聯絡 | 🟡 | 表單已切版（`PageForm`），無後端 |
+| P6 | 報價／聯絡表單 | 🟡 | 表單已切版（`PageForm`），前台尚未接後端 |
 | P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語路由就緒，**中文文案未提供**；sitemap 與結構化資料未做 |
 | P9 | 整合測試／QA／SEO 稽核 | ⬜ | |
 | P10 | UAT 客戶驗收 | ⬜ | |
 | P11 | 部署 | ✅ | SWA + Blob + CI 全通（見 §六） |
 | — | AI 客服 | ⛔ | 本期不納入 |
+| — | 會員系統／訂單與生產進度 | ⛔ | **2026-09-06 移出範圍**：客戶 2026-08-31 sitemap 無會員節點，mockup 44 頁亦無會員中心。前後端、資料表與後台單元皆已移除 |
 | — | 3D 包裝客製（Pacdora） | ⛔ | 廠商不提供技術崁入服務 |
 
 ---
@@ -116,10 +117,10 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ### ✅ 已完成
 
-- **24 個單元 + 儀表板**（清單項目 25），依 [`docs/09`](docs/09-cms-admin.md) 實作
+- **22 個單元 + 儀表板**，依 [`docs/09`](docs/09-cms-admin.md) 實作（19 會員／20 訂單已移出範圍；16 轉址暫時隱藏）
 - **驗收閘**：`pnpm --filter admin check:units` →
-  「每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 171 列」
-- **權限矩陣**與 [`db/seed/110_role_permission.sql`](db/README.md) 一對一（171 列），數字對不上時 dev 模式 console 直接報錯
+  「每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 167 列」
+- **權限矩陣**與 [`db/seed/110_role_permission.sql`](db/README.md) 一對一（167 列），數字對不上時 dev 模式 console 直接報錯
 - **角色切換登入**（SuperAdmin／Editor／Viewer）用來驗權限矩陣
 
 ### ✅ 已接上 API（2026-09-04）
@@ -130,7 +131,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 |---|---|---|
 | 實作 | `client.mock.ts`（localStorage） | `client.api.ts`（打 `/api/v1/admin/*`） |
 | 登入 | 選角色即進入 | Email + 密碼，首登強制改密碼 |
-| 權限 | 查本地 171 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
+| 權限 | 查本地 167 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
 | 圖片 | 本機素材 | 上傳 Blob，經 `/files/media/*` 代理取回 |
 
 保留 mock 是因為後台已部署在 SWA 的 `/admin/` 供客戶操作，而 API 資源還沒開——
@@ -144,24 +145,24 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 | 項目 | 現況 |
 |---|---|
-| 6 個欄位存不進去 | `ogImageAlt`、vlog `thumbAlt`、contact `assignee`、member `internalNote`、order `memberEmail`／`quoteNo` —— UI 有、schema 沒有對應欄位，列在 `src/api/mapping.ts` |
+| 3 個欄位存不進去 | `ogImageAlt`、vlog `thumbAlt`、contact `assignee` —— UI 有、schema 沒有對應欄位，列在 `src/api/mapping.ts` |
 | 清單搜尋 | 關鍵字目前在前端過濾當頁資料。後端還沒有搜尋參數（04 §3.4 未列），跨頁搜尋不準 |
 
 ---
 
-## 四、資料模型（49 張表）
+## 四、資料模型（45 張表）
 
 ### ✅ 已完成
 
-- [`docs/08-database.md`](docs/08-database.md)：49 張表的 DDL、多語策略、索引、種子、遷移策略
+- [`docs/08-database.md`](docs/08-database.md)：45 張表的 DDL、多語策略、索引、種子、遷移策略
 - [`db/`](db/README.md) 參考實作：`migrations/`（0001–0003）、`seed/`（100–150 共 6 支）、`verify/`、`tools/run-local.sh`
 - 本機一鍵建置：`cp db/.env.local.example db/.env.local && db/tools/run-local.sh`
 
 - **EF Core Migration（schema 權威來源）已建立**（2026-09-04）：
-  48 個 Entity + Configuration、`Api/Data/Migrations/InitialSchema`（schema + 種子）。
+  44 個 Entity + Configuration、`Api/Data/Migrations/InitialSchema`（schema + 種子）。
   `db/` 自此為參考實作與交付腳本。
   - 種子由 `Api/Data/Seed/SeedData.cs` 的 `HasData` 寫入，Id 硬編、跨環境一致：
-    角色 3／權限 171／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)
+    角色 3／權限 167／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)
   - 驗收閘 [`db/verify/verify-ef.sql`](db/README.md)：結構 11 項 + 種子 16 項，本機**全數 PASS**
   - 與 `db/migrations/` 建出來的庫逐欄逐約束比對，差異只有 `SchemaVersion` ↔
     `__EFMigrationsHistory` 與四個 DEFAULT 約束的名稱縮寫（以 EF 為準）
@@ -187,22 +188,22 @@ mockup 內容（現況部署），設了就改吃 CMS。
   ＋ `Paging`（`pageSize` 強制 `Clamp(1,100)`）
 - **`ExceptionMiddleware`**：`AppException` → 對應 status + code；`ReadFormAsync` 的 Content-Type
   例外單獨接住；其餘一律 500 `INTERNAL`，堆疊不外洩
-- **JWT 雙 audience**（`nti-admin`／`nti-web`），互打對方路由一律 401
+- **JWT 單一 audience**（`nti-admin`）——前台全站匿名，沒有會員系統
 - **集中式 `AppRouter`**（三個 partial）＋ **授權預設拒絕**：未登記於權限表的 `/admin/*` 直接 403
-- **`Common/` 常數**：權限碼 83 個（＝ `db/seed/110` 的 SuperAdmin 授權範圍）、CategoryType 9、
+- **`Common/` 常數**：權限碼 79 個（＝ `db/seed/110` 的 SuperAdmin 授權範圍）、CategoryType 9、
   PageKey 29、角色 3、報價／聯絡狀態、`Clock`（Asia/Taipei）、`LangResolver`
 - **`AppDbContext`**：稽核五欄統一填寫、`Remove()` 自動改寫為軟刪
 - **`GET /health`** 本機實測通過（`func start` + `dotnet build` 0 warning／0 error）
 
 ### ✅ 資料層（2026-09-04）
 
-48 張表的 Entity、Configuration 與 Migration，詳見 §四。三個踩到的坑已寫成程式碼註解：
+44 張表的 Entity、Configuration 與 Migration，詳見 §四。三個踩到的坑已寫成程式碼註解：
 
 | 坑 | 後果 | 處置 |
 |---|---|---|
 | `Clock.Now`（台北）vs DDL 的 `SYSUTCDATETIME()`（UTC） | 同一欄兩種時區，上下架時間窗差 8 小時 | 持久化一律 `Clock.UtcNow`；docs/10 §9.1 已更正 |
 | 預設值為 `true` 的 bool 欄位存不進 `false` | 「暫不上架」被靜默上架、預留的 `green-csr` 從 noindex 變成可索引 | 掃全模型設 `ValueGenerated.Never` |
-| EF 自動幫每條外鍵建索引 | Basic 5 DTU 多出 35 個沒用的索引 | 移除 `ForeignKeyIndexConvention`，只留明列的 20 條 |
+| EF 自動幫每條外鍵建索引 | Basic 5 DTU 多出一堆沒用的索引 | 移除 `ForeignKeyIndexConvention`，只留明列的 17 條 |
 
 本機實測（port 7072）：
 
@@ -211,7 +212,6 @@ mockup 內容（現況部署），設了就改吃 CMS。
 | `GET /api/v1/health` | 200，信封正確、camelCase、時間為台北時區 |
 | 無憑證打 `/admin/*` | 401 `AUTH_TOKEN_INVALID` |
 | 後台 token 打未登記的 `/admin/news` | 403 `FORBIDDEN`（預設拒絕生效） |
-| 會員 token 打 `/admin/*` | 401（audience 分離生效） |
 | 不存在的路由 | 404 `NOT_FOUND` |
 
 ### ✅ 3.1 前台內容端點（2026-09-04）
@@ -235,19 +235,17 @@ mockup 內容（現況部署），設了就改吃 CMS。
 | 值域驗證 | `?type=Bogus` 回 400 `VALIDATION_FORMAT`（不是靜默的空陣列） |
 | 快取標頭 | 內容 `s-maxage=300`、設定與分類 `3600`、寫入端點 `no-store` |
 | 內部設定不外洩 | `/site-settings` 濾掉 `Mail` 群組（15 → 12 筆） |
-| 受控文件 | `RequireLogin = 1` 的下載未帶會員憑證回 401 |
 
-本機假內容 fixture：`db/local/920_dev_content.sql`（各單元一筆 + 三個邊界案例）。
+本機假內容 fixture：`db/local/920_dev_content.sql`（各單元一筆 + 兩個邊界案例）。
 
-### ✅ 3.2 表單／3.3 會員／3.4 後台（2026-09-04）
+### ✅ 3.2 表單／3.3 後台認證／3.4 後台（2026-09-04）
 
 | 群組 | 端點數 | 狀態 |
 |---|---|---|
 | 3.1 前台內容（公開唯讀） | 20 | ✅ |
 | 3.2 表單（公開寫入） | 2 | ✅ 含 Turnstile、rate limit、附件上傳與 magic bytes 驗證 |
-| 3.3 會員（認證） | 9 | ✅ 註冊／登入／忘記密碼／重設／`/me`／報價與訂單紀錄 |
-| 3.4 後台管理（RBAC） | 24 單元 + 動作端點 | ✅ 含 dashboard、上傳、匯出入、稽核 |
-| 後台認證（契約原本沒有） | 2 | ✅ `/auth/admin/login`、`/auth/admin/change-password` |
+| 3.4 後台管理（RBAC） | 22 單元 + 動作端點 | ✅ 含 dashboard、上傳、匯出入、稽核 |
+| 3.3 後台認證（契約原本沒有） | 2 | ✅ `/auth/admin/login`、`/auth/admin/change-password` |
 
 支援服務：`PasswordHasher`（BCrypt）、`BlobStorageService`、`EmailService`（+EmailLog）、
 `TurnstileService`、`RateLimitService`、`AuditService`、`QuoteNumberGenerator`、
@@ -257,9 +255,8 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 | 驗證項 | 結果 |
 |---|---|
-| 權限矩陣 | SuperAdmin 83／Editor 67／Viewer 21 逐項驗過：Viewer 可讀不可寫、Editor 沒有 `quote.export`／`admin.*`／`audit.*` |
+| 權限矩陣 | SuperAdmin 79／Editor 67／Viewer 21 逐項驗過：Viewer 可讀不可寫、Editor 沒有 `quote.export`／`admin.*`／`audit.*` |
 | 預設拒絕 | 未登記的 `/admin/*` 回 403（不是靜默放行） |
-| audience 分離 | 會員 token 打 `/admin/*` 401，後台 token 打 `/me` 401 |
 | 上架前兩語系檢查 | 只有中文就上架回 409 `CONFLICT_STATE`，補上英文後成功 |
 | 帳號列舉防護 | 帳號不存在與密碼錯誤回同一個 `AUTH_INVALID_CREDENTIALS`；忘記密碼一律回成功 |
 | 首登強制改密碼 | 改完 `mustChangePassword=false`，舊密碼失效 |
@@ -287,7 +284,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ### ✅ OpenAPI 與 CI（2026-09-04）
 
-- [`Api/openapi.yaml`](Api/README.md)：66 個路徑、83 個 operation，手寫
+- [`Api/openapi.yaml`](Api/README.md)：52 個路徑、65 個 operation，手寫
   （catch-all 路由讓自動產生器無從內省，docs/10 §13 的待決項已定案）
 - [`tools/check-openapi.mjs`](tools/check-openapi.mjs)：漂移檢查。靜態比對路徑 segment
   是否存在於 `AppRouter`，`--live` 另外實打全部 47 個 GET 端點。**目前全數通過**
@@ -300,8 +297,8 @@ mockup 內容（現況部署），設了就改吃 CMS。
 - **Azure 資源尚未開設**：Function App 與 Azure SQL。指令、OIDC 設定與 GitHub
   secrets／variables 清單見 [`docs/07 §7.4`](docs/07-deployment.md)。**會產生費用**
 - **中文文案待客戶校閱**：CMS 內容已用 mockup 的實際內容填入（見 §十）
-- **refresh token rotation**（docs/10 §7.3）：schema 無對應資料表，且 04 §3.3 的端點清單
-  未列 `/auth/refresh`。目前只發 access token（後台 60 分鐘、會員 120 分鐘）
+- **refresh token rotation**（docs/10 §7.3）：schema 無對應資料表，端點清單也未列
+  `/auth/refresh`。目前只發 access token（後台 60 分鐘）
 - 附件病毒掃描：`ScanStatus` 寫入後恆為 `Pending`，未接掃描服務。
   **後台目前下載不到任何報價附件**（未掃過的一律拒絕）
 

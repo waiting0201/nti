@@ -13,7 +13,7 @@ info:
   title: NTI Printing API
   version: 1.0.0
   description: |
-    NTI Printing 官網後端。前台內容公開唯讀，會員與後台以 JWT 認證且 audience 分離。
+    NTI Printing 官網後端。前台全站匿名（無會員系統），只有後台以 JWT 認證（audience `nti-admin`）。
 
     - 契約定義：`docs/04-api.md`
     - 實作規格：`docs/10-backend-design.md`
@@ -30,13 +30,11 @@ tags:
     description: 公開唯讀，供 Next.js ISR 消費（帶 s-maxage 快取標頭）
   - name: 表單
     description: 公開寫入，受 Turnstile 與 rate limit 保護
-  - name: 會員
-    description: audience 為 nti-web
   - name: 後台認證
   - name: 後台內容單元
     description: 01–14，CRUD 形狀一致
   - name: 後台其他單元
-    description: 15–24 與 dashboard
+    description: 15–18、21–24 與 dashboard
 
 security: []   # 預設不需認證；需要的端點各自宣告
 
@@ -227,13 +225,10 @@ paths:
     post:
       tags: [前台內容]
       summary: 累計下載次數
-      description: |
-        公開端點。`RequireLogin = 1` 的受控文件需要會員憑證——
-        整條路由要求 token 的話一般下載也會被擋。
+      description: 公開端點，全部下載項目一律不需登入。
       parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
       responses:
         '200': { $ref: '#/components/responses/Ok' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /pages/{pageKey}:
@@ -312,107 +307,6 @@ paths:
         '200': { $ref: '#/components/responses/Ok' }
         '400': { $ref: '#/components/responses/BadRequest' }
         '429': { $ref: '#/components/responses/RateLimited' }
-
-  # ══════════════════ 04-api §3.3 會員 ══════════════════
-  /auth/register:
-    post:
-      tags: [會員]
-      summary: 註冊
-      description: 建立後狀態為 Pending，須完成 Email 驗證才能登入。
-      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Register' } } } }
-      responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '409': { $ref: '#/components/responses/Conflict' }
-
-  /auth/login:
-    post:
-      tags: [會員]
-      summary: 會員登入
-      description: |
-        帳號不存在與密碼錯誤回同一個 `AUTH_INVALID_CREDENTIALS`——分開回等於提供帳號列舉工具。
-        連續失敗 5 次鎖 15 分鐘。
-      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Login' } } } }
-      responses:
-        '200':
-          description: 登入成功
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - type: object
-                    properties: { data: { $ref: '#/components/schemas/AuthToken' } }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { description: 帳號未驗證或已停用, content: { application/json: { schema: { $ref: '#/components/schemas/ApiResponse' } } } }
-
-  /auth/forgot-password:
-    post:
-      tags: [會員]
-      summary: 忘記密碼
-      description: 信箱不存在也回成功——回「查無此帳號」等於提供帳號列舉。
-      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { email: { type: string }, turnstileToken: { type: string } } } } } }
-      responses:
-        '200': { $ref: '#/components/responses/Ok' }
-
-  /auth/reset-password:
-    post:
-      tags: [會員]
-      summary: 重設密碼
-      description: token 一次性、24 小時到期；DB 只存 SHA-256，明碼僅在信裡。
-      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [token, newPassword], properties: { token: { type: string }, newPassword: { type: string, minLength: 8 } } } } } }
-      responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-
-  /me:
-    get:
-      tags: [會員]
-      summary: 帳戶設定
-      security: [{ MemberAuth: [] }]
-      responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-    put:
-      tags: [會員]
-      summary: 更新帳戶設定
-      description: email 不可自行修改（會繞過驗證流程）；密碼走重設流程。
-      security: [{ MemberAuth: [] }]
-      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { displayName: { type: string }, company: { type: string }, phone: { type: string }, preferredLang: { $ref: '#/components/schemas/Lang' } } } } } }
-      responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-
-  /me/quotes:
-    get:
-      tags: [會員]
-      summary: 我的報價紀錄
-      security: [{ MemberAuth: [] }]
-      responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-
-  /me/orders:
-    get:
-      tags: [會員]
-      summary: 我的訂單
-      security: [{ MemberAuth: [] }]
-      responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-
-  /me/orders/{id}:
-    get:
-      tags: [會員]
-      summary: 訂單生產進度
-      description: 查詢一定帶會員條件——否則換個 id 就能看別人的訂單。
-      security: [{ MemberAuth: [] }]
-      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
-      responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '404': { $ref: '#/components/responses/NotFound' }
 
   # ══════════════════ 後台認證（契約原本沒有，2026-09-04 補）══════════════════
   /auth/admin/login:
@@ -666,38 +560,6 @@ paths:
     get:   { tags: [後台其他單元], summary: '聯絡訊息單筆（contact.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
     patch: { tags: [後台其他單元], summary: '改狀態（contact.edit）', security: [{ AdminAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/FormStatus' } } } }, responses: { '200': { $ref: '#/components/responses/Ok' } } }
 
-  /admin/member:
-    get: { tags: [後台其他單元], summary: '會員清單（member.view）', security: [{ AdminAuth: [] }], parameters: [{ $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
-
-  /admin/member/{id}:
-    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
-    get: { tags: [後台其他單元], summary: '會員單筆（member.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
-    patch:
-      tags: [後台其他單元]
-      summary: 啟用／停用（member.edit）
-      description: |
-        **後台不可查看或設定會員密碼**（docs/03 §3），密碼雜湊也不出現在任何回應裡。
-        只能改狀態或觸發重設信。
-      security: [{ AdminAuth: [] }]
-      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { status: { $ref: '#/components/schemas/MemberStatus' } } } } } }
-      responses:
-        '200': { $ref: '#/components/responses/Ok' }
-
-  /admin/member/{id}/resend-verify:
-    post: { tags: [後台其他單元], summary: '重寄驗證信（member.edit）', security: [{ AdminAuth: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
-
-  /admin/order:
-    get:  { tags: [後台其他單元], summary: '訂單清單（order.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
-    post: { tags: [後台其他單元], summary: '新增訂單（order.edit）', security: [{ AdminAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { type: object } } } }, responses: { '200': { $ref: '#/components/responses/Ok' } } }
-
-  /admin/order/{id}:
-    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
-    get: { tags: [後台其他單元], summary: '訂單與進度（order.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
-    put: { tags: [後台其他單元], summary: '修改訂單（order.edit）', security: [{ AdminAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { type: object } } } }, responses: { '200': { $ref: '#/components/responses/Ok' } } }
-
-  /admin/order/{id}/progress:
-    post: { tags: [後台其他單元], summary: '新增生產進度（order.edit）', security: [{ AdminAuth: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { stage: { $ref: '#/components/schemas/OrderStage' }, stageStatus: { $ref: '#/components/schemas/StageStatus' }, happenedAt: { type: string, format: date-time }, note: { type: string } } } } } }, responses: { '200': { $ref: '#/components/responses/Ok' } } }
-
   /admin/setting:
     get: { tags: [後台其他單元], summary: '全站設定（setting.view）。後台看得到 Mail 群組', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
     put:
@@ -786,13 +648,8 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: |
-        後台 token，audience 為 `nti-admin`。**會員 token 打 `/admin/*` 一律 401**。
+        後台 token，audience 為 `nti-admin`——**全站唯一的一種身分**（前台沒有會員系統）。
         權限檢查集中在 AppRouter：未登記於權限表的 `/admin/*` 直接 403（預設拒絕）。
-    MemberAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: 會員 token，audience 為 `nti-web`。後台 token 打 `/me/*` 一律 401。
 
   parameters:
     Lang:
@@ -901,9 +758,6 @@ components:
     CategoryType: { type: string, enum: [News, Project, Vlog, Faq, Certification, Facility, SupplierNotice, Industry, QuoteMaterial] }
     QuoteStatus:  { type: string, enum: [New, InProgress, Quoted, Closed, Spam] }
     ContactStatus: { type: string, enum: [New, Replied, Closed, Spam] }
-    MemberStatus: { type: string, enum: [Pending, Active, Suspended] }
-    OrderStage:   { type: string, enum: [Design, PrePress, Printing, PostPress, QC, Shipping] }
-    StageStatus:  { type: string, enum: [Pending, Doing, Done] }
 
     Seo:
       type: object
@@ -960,26 +814,13 @@ components:
         password:       { type: string }
         turnstileToken: { type: string }
 
-    Register:
-      type: object
-      required: [email, password, displayName, consent]
-      properties:
-        email:          { type: string }
-        password:       { type: string, minLength: 8 }
-        displayName:    { type: string }
-        company:        { type: string }
-        phone:          { type: string }
-        preferredLang:  { $ref: '#/components/schemas/Lang' }
-        consent:        { type: boolean }
-        turnstileToken: { type: string }
-
     AuthToken:
       type: object
       description: |
-        **沒有 refresh token**：schema 無對應資料表，04 §3.3 的端點清單也未列 `/auth/refresh`。
+        **沒有 refresh token**：schema 無對應資料表，端點清單也未列 `/auth/refresh`。
       properties:
         accessToken:        { type: string }
-        expiresInMinutes:   { type: integer, description: 後台 60、會員 120 }
+        expiresInMinutes:   { type: integer, description: 後台 60 分鐘 }
         displayName:        { type: string }
         email:              { type: string }
         roleCode:           { type: string, nullable: true, description: 僅後台 }

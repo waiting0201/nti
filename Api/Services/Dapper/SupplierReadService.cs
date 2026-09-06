@@ -55,7 +55,7 @@ public sealed class SupplierReadService(IDbConnection db) : ISupplierReadService
 
     // ── 14 supplier-download ──────────────────────────────────────────────
     private static readonly string DownloadSelect = $"""
-        SELECT d.Id, d.FilePath, d.FileExt, d.FileSizeBytes, d.RequireLogin,
+        SELECT d.Id, d.FilePath, d.FileExt, d.FileSizeBytes,
                d.DownloadCount, d.SortOrder, i.Name
         FROM SupplierDownload d
         INNER JOIN SupplierDownloadI18n i ON i.SupplierDownloadId = d.Id AND i.Lang = @Lang

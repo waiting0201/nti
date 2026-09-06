@@ -56,7 +56,7 @@ export type ListColumn = {
   width?: string
 }
 
-export type UnitGroup = '儀表板' | '首頁' | '內容' | '供應商' | '頁面／SEO' | '表單' | '會員' | '系統'
+export type UnitGroup = '儀表板' | '首頁' | '內容' | '供應商' | '頁面／SEO' | '表單' | '系統'
 
 export type Unit = {
   /** docs §2 的代號，同時是權限碼前綴 */

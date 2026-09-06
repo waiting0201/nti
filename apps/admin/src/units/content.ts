@@ -225,7 +225,7 @@ export const certification: Unit = {
   group: '內容',
   phase: 'P4',
   frontend: '首頁 Proof 認證牆、about-certifications、differences、green-esg',
-  note: '現有 logo 素材解析度偏低，上線前需向客戶索取向量原檔（見 IA §6）。',
+  note: '現有 logo 素材解析度偏低，上線前需向客戶索取向量原檔。',
   sortable: true,
   hasStatus: true,
   countHint: { min: 12, max: 16, message: '首頁 Proof 牆建議 12–16 枚，目前數量超出建議範圍。' },
@@ -277,7 +277,7 @@ export const facility: Unit = {
   group: '內容',
   phase: 'P4',
   frontend: 'facility-pre-press／-eco-printing／-post-press／-quality／-tour 五個子頁的設備卡',
-  note: '五個子頁的導言與流程敘述文字為固定文案（docs §7），後台只管設備卡。',
+  note: '五個子頁的導言與流程敘述文字為固定文案，後台只管設備卡。',
   sortable: true,
   hasStatus: true,
   fields: [
@@ -302,7 +302,7 @@ export const job: Unit = {
   group: '內容',
   phase: 'P4',
   frontend: 'careers.html 職缺清單',
-  note: 'careers.html 的「Why NTI」六條福利為固定文案（docs §7）。',
+  note: 'careers.html 的「Why NTI」六條福利為固定文案。',
   sortable: true,
   hasStatus: true,
   fields: [

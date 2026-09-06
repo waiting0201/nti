@@ -1928,143 +1928,6 @@ namespace Nti.Api.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Nti.Api.Models.Entities.Member", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Company")
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2(0)")
-                        .HasDefaultValueSql("SYSUTCDATETIME()");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<DateTime?>("EmailConfirmedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<byte>("FailedLoginCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint")
-                        .HasDefaultValue((byte)0);
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime?>("LastLoginAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<DateTime?>("LockoutEndAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
-                    b.Property<string>("PreferredLang")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(5)")
-                        .HasDefaultValue("zh");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)")
-                        .HasDefaultValue("Pending");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasAlternateKey("Email")
-                        .HasName("UQ_Member_Email");
-
-                    b.ToTable("Member", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_Member_PreferredLang", "[PreferredLang] IN ('zh','en')");
-
-                            t.HasCheckConstraint("CK_Member_Status", "[Status] IN ('Pending','Active','Suspended')");
-                        });
-                });
-
-            modelBuilder.Entity("Nti.Api.Models.Entities.MemberToken", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2(0)")
-                        .HasDefaultValueSql("SYSUTCDATETIME()");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<int>("MemberId")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("TokenHash")
-                        .IsRequired()
-                        .HasColumnType("varbinary(32)");
-
-                    b.Property<string>("TokenType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<DateTime?>("UsedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TokenHash")
-                        .HasDatabaseName("IX_MemberToken_Lookup");
-
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("TokenHash"), new[] { "MemberId", "ExpiresAt", "UsedAt" });
-
-                    b.ToTable("MemberToken", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_MemberToken_Type", "[TokenType] IN ('EmailVerify','PasswordReset')");
-                        });
-                });
-
             modelBuilder.Entity("Nti.Api.Models.Entities.News", b =>
                 {
                     b.Property<int>("Id")
@@ -2334,126 +2197,6 @@ namespace Nti.Api.Data.Migrations
                             t.HasCheckConstraint("CK_NewsletterSubscriber_Source", "[Source] IN ('Website','Import','Admin')");
 
                             t.HasCheckConstraint("CK_NewsletterSubscriber_Status", "[Status] IN ('Pending','Subscribed','Unsubscribed','Bounced')");
-                        });
-                });
-
-            modelBuilder.Entity("Nti.Api.Models.Entities.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2(0)")
-                        .HasDefaultValueSql("SYSUTCDATETIME()");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly?>("ExpectedShipDate")
-                        .HasColumnType("date");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<int>("MemberId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("OrderNo")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<int?>("QuoteRequestId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)")
-                        .HasDefaultValue("Confirmed");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasAlternateKey("OrderNo")
-                        .HasName("UQ_Orders_OrderNo");
-
-                    b.HasIndex("MemberId", "CreatedAt")
-                        .IsDescending(false, true)
-                        .HasDatabaseName("IX_Orders_Member");
-
-                    b.ToTable("Orders", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_Order_Status", "[Status] IN ('Confirmed','InProduction','Shipped','Completed','Cancelled')");
-                        });
-                });
-
-            modelBuilder.Entity("Nti.Api.Models.Entities.OrderProgress", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2(0)")
-                        .HasDefaultValueSql("SYSUTCDATETIME()");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("HappenedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<string>("Note")
-                        .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Stage")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<string>("StageStatus")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId", "HappenedAt")
-                        .HasDatabaseName("IX_OrderProgress_Order");
-
-                    b.ToTable("OrderProgress", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_OrderProgress_Stage", "[Stage] IN ('Design','PrePress','Printing','PostPress','QC','Shipping')");
-
-                            t.HasCheckConstraint("CK_OrderProgress_StageStatus", "[StageStatus] IN ('Pending','Doing','Done')");
                         });
                 });
 
@@ -3434,9 +3177,6 @@ namespace Nti.Api.Data.Migrations
                         .HasColumnType("varchar(30)")
                         .HasComputedColumnSql("CAST('QuoteMaterial' AS VARCHAR(30))", true);
 
-                    b.Property<int?>("MemberId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("NeedsSustainableAdvice")
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
@@ -4353,26 +4093,6 @@ namespace Nti.Api.Data.Migrations
                         new
                         {
                             RoleId = 1,
-                            PermissionCode = "member.view"
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionCode = "member.edit"
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionCode = "order.view"
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionCode = "order.edit"
-                        },
-                        new
-                        {
-                            RoleId = 1,
                             PermissionCode = "setting.view"
                         },
                         new
@@ -5060,10 +4780,6 @@ namespace Nti.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<bool>("RequireLogin")
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<int>("SortOrder")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -5475,16 +5191,6 @@ namespace Nti.Api.Data.Migrations
                         .HasConstraintName("FK_JobPostingI18n_JobPosting");
                 });
 
-            modelBuilder.Entity("Nti.Api.Models.Entities.MemberToken", b =>
-                {
-                    b.HasOne("Nti.Api.Models.Entities.Member", null)
-                        .WithMany()
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_MemberToken_Member");
-                });
-
             modelBuilder.Entity("Nti.Api.Models.Entities.News", b =>
                 {
                     b.HasOne("Nti.Api.Models.Entities.Category", null)
@@ -5503,32 +5209,6 @@ namespace Nti.Api.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_NewsI18n_News");
-                });
-
-            modelBuilder.Entity("Nti.Api.Models.Entities.Order", b =>
-                {
-                    b.HasOne("Nti.Api.Models.Entities.Member", null)
-                        .WithMany()
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_Orders_Member");
-
-                    b.HasOne("Nti.Api.Models.Entities.QuoteRequest", null)
-                        .WithMany()
-                        .HasForeignKey("QuoteRequestId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_Orders_QuoteRequest");
-                });
-
-            modelBuilder.Entity("Nti.Api.Models.Entities.OrderProgress", b =>
-                {
-                    b.HasOne("Nti.Api.Models.Entities.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_OrderProgress_Orders");
                 });
 
             modelBuilder.Entity("Nti.Api.Models.Entities.PageI18n", b =>
@@ -5573,12 +5253,6 @@ namespace Nti.Api.Data.Migrations
 
             modelBuilder.Entity("Nti.Api.Models.Entities.QuoteRequest", b =>
                 {
-                    b.HasOne("Nti.Api.Models.Entities.Member", null)
-                        .WithMany()
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_QuoteRequest_Member");
-
                     b.HasOne("Nti.Api.Models.Entities.Solution", null)
                         .WithMany()
                         .HasForeignKey("SolutionId")

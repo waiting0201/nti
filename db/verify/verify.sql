@@ -24,7 +24,7 @@ DECLARE @r TABLE (
 
 /* ---------- 結構 ---------- */
 INSERT @r (Item, Expected, Actual)
-SELECT N'資料表總數（47 設計 + Newsletter + SchemaVersion）', N'49',
+SELECT N'資料表總數（43 設計 + Newsletter + SchemaVersion）', N'45',
        CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables;
 
 INSERT @r (Item, Expected, Actual)
@@ -32,7 +32,7 @@ SELECT N'*I18n 多語子表數', N'16',
        CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables WHERE name LIKE '%I18n';
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'外鍵數', N'35', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
+SELECT N'外鍵數', N'30', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
 
 INSERT @r (Item, Expected, Actual)
 SELECT N'Category 型別安全複合外鍵數', N'9', CAST(COUNT(*) AS NVARCHAR(20))
@@ -57,7 +57,7 @@ FROM (VALUES ('AdminUser'),('Category'),('HomeBanner'),('Solution'),('SolutionIt
              ('Project'),('News'),('Vlog'),('Faq'),('IndustryTrend'),('Certification'),
              ('ClientLogo'),('FacilityItem'),('JobPosting'),('SupplierNotice'),
              ('SupplierSpec'),('SupplierDownload'),('Page'),('Redirect'),
-             ('QuoteRequest'),('ContactMessage'),('Member'),('Orders'),
+             ('QuoteRequest'),('ContactMessage'),
              ('NewsletterSubscriber')) t (n)
 WHERE (SELECT COUNT(*) FROM sys.columns c
        WHERE c.object_id = OBJECT_ID('dbo.' + t.n)
@@ -86,8 +86,8 @@ WHERE t.name LIKE '%I18n'
 
 /* ---------- 種子資料 ---------- */
 INSERT @r (Item, Expected, Actual) SELECT N'Role',           N'3',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Role;
-INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'171', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
-INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'83', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
+INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'167', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
+INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'79', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'67', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'21', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
 INSERT @r (Item, Expected, Actual) SELECT N'Category',       N'44', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category;

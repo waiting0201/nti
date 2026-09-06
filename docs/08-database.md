@@ -86,7 +86,7 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 
 ## 3. 資料表一覽
 
-分區一覽（**32 張主表 + 16 張 `*I18n` 多語子表 + 1 張系統表 = 49 張**）：
+分區一覽（**28 張主表 + 16 張 `*I18n` 多語子表 + 1 張系統表 = 45 張**）：
 
 | 區 | 資料表 |
 |----|--------|
@@ -96,7 +96,6 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 | 供應商 | `SupplierNotice`(+I18n)、`SupplierSpec`(+I18n)、`SupplierDownload`(+I18n) |
 | 頁面／SEO | `Page`、`PageI18n`、`Redirect` |
 | 表單 | `QuoteRequest`、`QuoteAttachment`、`ContactMessage` |
-| 會員（P6） | `Member`、`MemberToken`、`Orders`、`OrderProgress` |
 | 系統 | `AdminUser`、`Role`、`RolePermission`、`AuditLog`、`EmailLog`、`SchemaVersion` |
 | 預留（待客戶確認） | `NewsletterSubscriber` — 見 §4.15 |
 
@@ -446,7 +445,6 @@ CREATE TABLE dbo.SupplierDownload (
   FilePath NVARCHAR(260) NOT NULL,
   FileExt VARCHAR(10) NOT NULL,            -- 自動帶入，前台顯示 PDF/XLSX 標籤
   FileSizeBytes BIGINT NOT NULL,           -- 自動帶入，前台格式化為 2.4 MB
-  RequireLogin BIT NOT NULL DEFAULT 0,     -- 受控文件：會員系統上線後才生效（P6）
   DownloadCount INT NOT NULL DEFAULT 0,
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1,
@@ -499,13 +497,10 @@ CREATE TABLE dbo.Redirect (
 
 ### 4.12 表單
 
-> 建表順序：`QuoteRequest` 參照 `Member`。實際腳本 [`db/migrations/0002_init_schema.sql`](../db/migrations/0002_init_schema.sql) 已將 `Member`／`MemberToken` 上移至 `QuoteRequest` 之前；本節維持依功能分區敘述。
-
 ```sql
 CREATE TABLE dbo.QuoteRequest (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   QuoteNo VARCHAR(20) NOT NULL UNIQUE,     -- Q20260901-0001，後端產生
-  MemberId INT NULL REFERENCES dbo.Member(Id),   -- 未登入送出則為 NULL
   FullName NVARCHAR(80) NOT NULL,
   Company NVARCHAR(120) NOT NULL,
   Email NVARCHAR(160) NOT NULL,
@@ -559,61 +554,11 @@ CREATE TABLE dbo.ContactMessage (
 );
 ```
 
-### 4.13 會員與訂單（P6）
+### 4.13 （保留編號）會員與訂單
 
-```sql
-CREATE TABLE dbo.Member (
-  Id INT IDENTITY(1,1) PRIMARY KEY,
-  Email NVARCHAR(160) NOT NULL UNIQUE,
-  PasswordHash NVARCHAR(200) NOT NULL,     -- ASP.NET Core Identity V3 (PBKDF2)，salt 內含
-  DisplayName NVARCHAR(80) NOT NULL,
-  Company NVARCHAR(120) NULL,
-  Phone NVARCHAR(40) NULL,
-  PreferredLang VARCHAR(5) NOT NULL DEFAULT 'zh',
-  Status VARCHAR(20) NOT NULL DEFAULT 'Pending',
-  EmailConfirmedAt DATETIME2(0) NULL,
-  LastLoginAt DATETIME2(0) NULL,
-  FailedLoginCount TINYINT NOT NULL DEFAULT 0,
-  LockoutEndAt DATETIME2(0) NULL,
-  /* audit */
-  CONSTRAINT CK_Member_Status CHECK (Status IN ('Pending','Active','Suspended'))
-);
-
-CREATE TABLE dbo.MemberToken (
-  Id BIGINT IDENTITY(1,1) PRIMARY KEY,
-  MemberId INT NOT NULL REFERENCES dbo.Member(Id),
-  TokenType VARCHAR(20) NOT NULL,          -- EmailVerify|PasswordReset
-  TokenHash VARBINARY(32) NOT NULL,        -- 只存 SHA-256，明碼僅寄出
-  ExpiresAt DATETIME2(0) NOT NULL,
-  UsedAt DATETIME2(0) NULL,
-  CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
-  CONSTRAINT CK_MemberToken_Type CHECK (TokenType IN ('EmailVerify','PasswordReset'))
-);
-
-CREATE TABLE dbo.Orders (
-  Id INT IDENTITY(1,1) PRIMARY KEY,
-  OrderNo VARCHAR(20) NOT NULL UNIQUE,
-  MemberId INT NOT NULL REFERENCES dbo.Member(Id),
-  QuoteRequestId INT NULL REFERENCES dbo.QuoteRequest(Id),
-  Title NVARCHAR(200) NOT NULL,
-  Status VARCHAR(20) NOT NULL DEFAULT 'Confirmed',
-  ExpectedShipDate DATE NULL,
-  /* audit */
-  CONSTRAINT CK_Order_Status CHECK (Status IN ('Confirmed','InProduction','Shipped','Completed','Cancelled'))
-);
-
-CREATE TABLE dbo.OrderProgress (
-  Id BIGINT IDENTITY(1,1) PRIMARY KEY,
-  OrderId INT NOT NULL REFERENCES dbo.Orders(Id),
-  Stage VARCHAR(20) NOT NULL,              -- Design|PrePress|Printing|PostPress|QC|Shipping
-  StageStatus VARCHAR(20) NOT NULL,        -- Pending|Doing|Done
-  HappenedAt DATETIME2(0) NOT NULL,
-  Note NVARCHAR(400) NULL,
-  CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(), CreatedBy INT NULL
-);
-```
-
-> `Order` 為 T-SQL 保留字，資料表命名為 **`Orders`**。
+> **2026-09-06 移出專案範圍。** 原本規劃的 `Member`／`MemberToken`／`Orders`／`OrderProgress`
+> 四張表已自 schema 移除——客戶 2026-08-31 版 sitemap 沒有會員節點，前台也沒有會員中心頁面。
+> 後續章節編號維持不變，避免既有交叉引用失效。
 
 ### 4.14 系統
 
@@ -658,7 +603,7 @@ CREATE TABLE dbo.AuditLog (
 
 CREATE TABLE dbo.EmailLog (
   Id BIGINT IDENTITY(1,1) PRIMARY KEY,
-  MailType VARCHAR(30) NOT NULL,           -- QuoteNotify|QuoteConfirm|ContactNotify|MemberVerify|PasswordReset
+  MailType VARCHAR(30) NOT NULL,           -- QuoteNotify|QuoteConfirm|ContactNotify|AdminPasswordReset
   ToAddress NVARCHAR(300) NOT NULL,
   Subject NVARCHAR(250) NOT NULL,
   RelatedEntity VARCHAR(60) NULL, RelatedId INT NULL,
@@ -674,7 +619,7 @@ CREATE TABLE dbo.EmailLog (
 
 ```sql
 -- 預留（待客戶確認）：電子報訂閱｜09-cms-admin.md §2.1 缺口一
--- double opt-in 的 token 只存 SHA-256（比照 MemberToken）；Source='Import' 支援舊站名單遷移。
+-- double opt-in 的 token 只存 SHA-256；Source='Import' 支援舊站名單遷移。
 -- 訂閱者無可翻譯欄位，故不設 *I18n 側表。EmailLog.MailType 無 CHECK，未來加 NewsletterConfirm 不需改 schema。
 CREATE TABLE dbo.NewsletterSubscriber (
   Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -760,8 +705,7 @@ CREATE INDEX IX_Category_Type ON dbo.Category(CategoryType, IsActive, SortOrder)
 CREATE INDEX IX_Quote_Status ON dbo.QuoteRequest(Status, SubmittedAt DESC);
 CREATE INDEX IX_Contact_Status ON dbo.ContactMessage(Status, SubmittedAt DESC);
 
--- 會員／轉址／稽核
-CREATE INDEX IX_MemberToken_Lookup ON dbo.MemberToken(TokenHash) INCLUDE(MemberId, ExpiresAt, UsedAt);
+-- 轉址／稽核
 CREATE INDEX IX_AuditLog_Entity ON dbo.AuditLog(EntityName, EntityId, CreatedAt DESC);
 
 -- 轉址：一個索引同時做唯一性與覆蓋，取代原本的 FromPath UNIQUE + IX_Redirect_From
@@ -774,8 +718,6 @@ CREATE UNIQUE INDEX UX_Vlog_MainFeature ON dbo.Vlog(IsMainFeature) WHERE IsMainF
 -- 外鍵支撐索引：外鍵欄位若無索引，父表刪改時會全表掃描子表
 CREATE INDEX IX_SolutionItem_Solution   ON dbo.SolutionItem(SolutionId, SortOrder);
 CREATE INDEX IX_QuoteAttachment_Quote   ON dbo.QuoteAttachment(QuoteRequestId);
-CREATE INDEX IX_Orders_Member           ON dbo.Orders(MemberId, CreatedAt DESC);
-CREATE INDEX IX_OrderProgress_Order     ON dbo.OrderProgress(OrderId, HappenedAt);
 
 -- 預留（待客戶確認）：電子報後台清單
 CREATE INDEX IX_NewsletterSubscriber_Status ON dbo.NewsletterSubscriber(Status, SubscribedAt DESC)
@@ -795,10 +737,10 @@ CREATE INDEX IX_NewsletterSubscriber_Status ON dbo.NewsletterSubscriber(Status, 
 | Role.Code | 名稱 | 權限範圍 |
 |-----------|------|------|
 | `SuperAdmin` | 超級管理員 | 24 個單元全動作（83 列） |
-| `Editor` | 內容編輯 | 內容單元 01–14 的 `view/edit/publish/delete`；15 頁面 SEO 與 16 轉址；17 報價／18 聯絡的檢視與改狀態。**不可** `quote.download`／`quote.export`，不可觸及 19 會員、20 訂單、21 設定、22 分類、23 管理員、24 操作紀錄（67 列） |
-| `Viewer` | 檢視者 | 內容單元 01–14、15、16、17、18、21、22 的 `view`。**對 19 會員、20 訂單、23 管理員、24 操作紀錄無任何權限**（21 列） |
+| `Editor` | 內容編輯 | 內容單元 01–14 的 `view/edit/publish/delete`；15 頁面 SEO 與 16 轉址；17 報價／18 聯絡的檢視與改狀態。**不可** `quote.download`／`quote.export`，不可觸及 21 設定、22 分類、23 管理員、24 操作紀錄（67 列） |
+| `Viewer` | 檢視者 | 內容單元 01–14、15、16、17、18、21、22 的 `view`。**對 23 管理員、24 操作紀錄無任何權限**（21 列） |
 
-權限碼格式 `{單元代號}.{action}`，`unit` 對應 [09-cms-admin.md](09-cms-admin.md) 的單元代號（如 `news.edit`、`quote.export`）。合計 **171 列**，由 `db/verify/verify.sql` 斷言。
+權限碼格式 `{單元代號}.{action}`，`unit` 對應 [09-cms-admin.md](09-cms-admin.md) 的單元代號（如 `news.edit`、`quote.export`）。合計 **167 列**，由 `db/verify/verify.sql` 斷言。
 
 矩陣描述到、但原本未定代號的三項，本次補上：`quote.download`（報價附件下載）、`redirect.export`（轉址 CSV 匯入匯出）、`audit.resend`（`EmailLog` 重寄）。
 
@@ -902,7 +844,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 - [ ] 有網址的實體（`Page`／`News`／`Solution`）具備完整 SEO 欄位組。
 - [ ] 每個圖片欄位都有對應的多語 `Alt` 欄位。
 - [ ] 遷移腳本可從空庫一次建置到位並帶入 §6 種子。
-- [ ] `db/verify/verify.sql` 全數 PASS（49 張表、35 條外鍵、0 個匿名約束、171 列權限、種子筆數相符）。
+- [ ] `db/verify/verify.sql` 全數 PASS（45 張表、30 條外鍵、0 個匿名約束、167 列權限、種子筆數相符）。
 - [ ] 冪等實測：`db/tools/run-local.sh` **連續跑兩次**零錯誤且 verify 輸出相同。
 
 ---
@@ -914,4 +856,6 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-09-01 | Tim（Claude Code） | 初版：依 mockup 44 頁實際結構與三條專案決議（單元式後台／無 Media Library／固定文字不進後台）定義 31 張表、索引、種子與遷移策略 |
 | 2026-09-02 | Tim（Claude Code） | 產出可執行建置腳本 [`db/`](../db/)（本機 SQL Server 開發、語法相容 Azure SQL）：展開稽核五欄、約束全面具名、補 `SchemaVersion` DDL（§4.15）、重排建表順序（`Member` 前移）。新增 §4.16 Category 型別安全（複合外鍵，DB 層擋下「把 Facility 分類掛到 News」）。納入三個待客戶確認缺口的預留 schema（`NewsletterSubscriber`／`HomeBanner.MediaType`+`VideoPath`／`Page` 的 `green-csr`），表數 47 → 49。索引調整：移除與 UNIQUE 重複的 `IX_Redirect_From`、新增 `UX_Vlog_MainFeature` 與 4 條外鍵支撐索引。§6.1 權限改以 09 §6 矩陣為權威（修正 Editor 可 delete、Viewer 非「全部 view」兩處錯誤），補 `quote.download`／`redirect.export`／`audit.resend` 三個權限碼。§8 補定序決策與 Azure 相容性。 |
 
-*最後更新：2026-09-02*
+| 2026-09-06 | Tim（Claude Code） | **會員與訂單移出專案範圍**：移除 `Member`／`MemberToken`／`Orders`／`OrderProgress` 四張表、`QuoteRequest.MemberId` 外鍵、`SupplierDownload.RequireLogin`（受控文件概念一併取消）與三條相關索引。表數 49 → 45、外鍵 35 → 30、非 PK/UQ 索引 20 → 17、權限矩陣 171 → 167 列（SuperAdmin 83 → 79）。§4.13 保留節次編號並註明移除原因，避免既有交叉引用失效 |
+
+*最後更新：2026-09-06*

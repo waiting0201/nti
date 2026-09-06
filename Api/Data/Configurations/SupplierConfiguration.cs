@@ -61,7 +61,6 @@ public sealed class SupplierDownloadConfiguration : IEntityTypeConfiguration<Sup
         b.ToTable("SupplierDownload");
         b.Property(x => x.FilePath).HasMaxLength(260);
         b.Property(x => x.FileExt).Ascii(10);
-        b.Property(x => x.RequireLogin).HasDefaultValue(false);
         b.Property(x => x.DownloadCount).HasDefaultValue(0);
         b.Property(x => x.SortOrder).HasDefaultValue(0);
         b.Property(x => x.IsPublished).HasDefaultValue(true);

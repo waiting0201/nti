@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Nti.Api.Routing;
 
 /// <summary>
-/// 前台路由表（04-api §3.1 唯讀內容、§3.2 表單、§3.3 會員）。
+/// 前台路由表（04-api §3.1 唯讀內容、§3.2 表單）。
 /// <para>
 /// <see cref="IsPublicRoute"/> 是<b>列舉式</b>白名單：新增前台端點時必須同時補進來，
-/// 否則會被要求 token（docs/10 §7.6）。會員端點（<c>/me/*</c>）刻意不在白名單內。
+/// 否則直接回 404（docs/10 §7.6）。前台沒有會員系統，全站匿名，這張表就是它的全部範圍。
 /// </para>
 /// </summary>
 public sealed partial class AppRouter
@@ -35,8 +35,6 @@ public sealed partial class AppRouter
             ("GET",  ["supplier", "notices"]) or
             ("GET",  ["supplier", "specs"]) or
             ("GET",  ["supplier", "downloads"]) or
-            // RequireLogin = 1 的受控文件由 Handler 自己擋（多數項目不需登入，
-            // 整條路由要求 token 會讓一般下載也打不到）
             ("POST", ["supplier", "downloads", _, "hit"]) or
             ("GET",  ["pages", _]) or
             ("GET",  ["site-settings"]) or
@@ -47,12 +45,6 @@ public sealed partial class AppRouter
             // ── 04-api §3.2 表單（Turnstile + rate limit 擋在 Handler 裡）──
             ("POST", ["quotes"]) or
             ("POST", ["contacts"]) or
-
-            // ── 04-api §3.3 會員：未登入才會用到的四支 ────────────────────
-            ("POST", ["auth", "register"]) or
-            ("POST", ["auth", "login"]) or
-            ("POST", ["auth", "forgot-password"]) or
-            ("POST", ["auth", "reset-password"]) or
 
             // 後台登入。改密碼不在這裡——它需要有效的後台 token（見 IsAdminAuthRoute）
             ("POST", ["auth", "admin", "login"]);
@@ -103,18 +95,6 @@ public sealed partial class AppRouter
             // ── 表單（§3.2）───────────────────────────────────────────────
             ("POST", ["quotes"])                  => await forms.CreateQuoteAsync(req),
             ("POST", ["contacts"])                => await forms.CreateContactAsync(req),
-
-            // ── 會員（§3.3）───────────────────────────────────────────────
-            ("POST", ["auth", "register"])        => await members.RegisterAsync(req),
-            ("POST", ["auth", "login"])           => await members.LoginAsync(req),
-            ("POST", ["auth", "forgot-password"]) => await members.ForgotPasswordAsync(req),
-            ("POST", ["auth", "reset-password"])  => await members.ResetPasswordAsync(req),
-
-            ("GET",  ["me"])                      => await members.GetMeAsync(req),
-            ("PUT" or "PATCH", ["me"])            => await members.UpdateMeAsync(req),
-            ("GET",  ["me", "quotes"])            => await members.GetMyQuotesAsync(req),
-            ("GET",  ["me", "orders"])            => await members.GetMyOrdersAsync(req),
-            ("GET",  ["me", "orders", var id])    => await members.GetMyOrderAsync(req, id),
 
             // ── 後台登入與改密碼 ─────────────────────────────────────────
             ("POST", ["auth", "admin", "login"])           => await auth.AdminLoginAsync(req),

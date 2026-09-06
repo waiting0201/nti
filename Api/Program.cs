@@ -117,12 +117,11 @@ var host = new HostBuilder()
         services.AddScoped<CategoryHandler>();
         services.AddScoped<FileHandler>();
 
-        // 認證與公開表單（04-api §3.2、§3.3）
+        // 認證與公開表單（04-api §3.2）
         services.AddScoped<AuthHandler>();
-        services.AddScoped<MemberHandler>();
         services.AddScoped<FormHandler>();
 
-        // 後台 24 個單元（04-api §3.4）
+        // 後台 22 個單元（04-api §3.4）
         services.AddScoped<AdminDashboardHandler>();
         services.AddScoped<AdminHomeBannerHandler>();
         services.AddScoped<AdminSolutionHandler>();
@@ -142,8 +141,6 @@ var host = new HostBuilder()
         services.AddScoped<AdminPageHandler>();
         services.AddScoped<AdminRedirectHandler>();
         services.AddScoped<AdminFormHandler>();
-        services.AddScoped<AdminMemberHandler>();
-        services.AddScoped<AdminOrderHandler>();
         services.AddScoped<AdminSettingHandler>();
         services.AddScoped<AdminCategoryHandler>();
         services.AddScoped<AdminAccountHandler>();

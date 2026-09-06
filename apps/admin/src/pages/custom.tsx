@@ -84,7 +84,7 @@ export function SettingPage() {
       ))}
 
       <Notice kind="info">
-        contact 頁目前是台中的暫代地址，上線前須換成台南實際廠址（IA §7 待客戶提供）。
+        contact 頁目前是台中的暫代地址，上線前須換成台南實際廠址（待客戶提供）。
       </Notice>
 
       <div className="card">
@@ -227,10 +227,9 @@ const MATRIX_ROWS: Array<{ label: string; codes: string[] }> = [
   { label: '內容單元 01–14 新增／編輯／排序', codes: CONTENT_UNITS.map((u) => `${u}.edit`) },
   { label: '內容單元 01–14 上下架', codes: CONTENT_UNITS.map((u) => `${u}.publish`) },
   { label: '內容單元 01–14 刪除', codes: CONTENT_UNITS.map((u) => `${u}.delete`) },
-  { label: '15 頁面 SEO ／ 16 轉址', codes: ['page.edit', 'redirect.edit'] },
+  { label: '15 頁面 SEO', codes: ['page.edit'] },
   { label: '17 報價 ／ 18 聯絡：檢視・改狀態', codes: ['quote.edit', 'contact.edit'] },
   { label: '17 報價：附件下載・匯出 CSV', codes: ['quote.download', 'quote.export'] },
-  { label: '19 會員 ／ 20 訂單', codes: ['member.view', 'order.view'] },
   { label: '21 網站設定 ／ 22 分類', codes: ['setting.edit', 'category.edit'] },
   { label: '23 管理員與角色', codes: ['admin.edit'] },
   { label: '24 操作紀錄', codes: ['audit.view'] },

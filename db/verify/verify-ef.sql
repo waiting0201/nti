@@ -10,7 +10,7 @@
    由 db/seed 的腳本灌種子）。2026-09-02 起 schema 的權威來源改為 EF Migration
    （docs/10 §8），正式環境的庫由 Api 啟動時的 MigrateAsync() 建立，兩處差異：
 
-     - SchemaVersion 由 __EFMigrationsHistory 取代（故表數仍為 49，組成不同）
+     - SchemaVersion 由 __EFMigrationsHistory 取代（故表數仍為 45，組成不同）
      - 種子改由 Api/Data/Seed/SeedData.cs 的 HasData 寫入，筆數斷言完全相同
 
    斷言內容與 verify.sql 逐條對應，數字有異動時兩份要一起改。
@@ -34,13 +34,13 @@ DECLARE @r TABLE (
 
 /* ---------- 結構 ---------- */
 INSERT @r (Item, Expected, Actual)
-SELECT N'資料表總數（48 + __EFMigrationsHistory）', N'49', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables;
+SELECT N'資料表總數（44 + __EFMigrationsHistory）', N'45', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables;
 
 INSERT @r (Item, Expected, Actual)
 SELECT N'*I18n 多語子表數', N'16', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables WHERE name LIKE '%I18n';
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'外鍵數', N'35', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
+SELECT N'外鍵數', N'30', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
 
 INSERT @r (Item, Expected, Actual)
 SELECT N'Category 型別安全複合外鍵數', N'9', CAST(COUNT(*) AS NVARCHAR(20))
@@ -65,12 +65,12 @@ SELECT N'匿名（系統命名）約束數', N'0', CAST(SUM(c) AS NVARCHAR(20)) 
 
 /* CHECK 約束 33 = 16 個 *I18n 的 Lang 值域 + 17 個狀態／型別值域 */
 INSERT @r (Item, Expected, Actual)
-SELECT N'CHECK 約束數', N'33', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.check_constraints;
+SELECT N'CHECK 約束數', N'27', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.check_constraints;
 
-/* 索引寧缺勿濫（Basic 5 DTU）：非 PK/UQ 的索引只有 docs/08 §5 明列的 20 條。
+/* 索引寧缺勿濫（Basic 5 DTU）：非 PK/UQ 的索引只有 docs/08 §5 明列的 17 條。
    EF 會自動幫每條外鍵建索引，AppDbContext 已移除該慣例——這條斷言就是在守它。 */
 INSERT @r (Item, Expected, Actual)
-SELECT N'非 PK/UQ 索引數', N'20', CAST(COUNT(*) AS NVARCHAR(20))
+SELECT N'非 PK/UQ 索引數', N'17', CAST(COUNT(*) AS NVARCHAR(20))
 FROM sys.indexes i JOIN sys.tables t ON t.object_id = i.object_id
 WHERE i.is_primary_key = 0 AND i.is_unique_constraint = 0 AND i.type > 0;
 
@@ -81,7 +81,7 @@ FROM (VALUES ('AdminUser'),('Category'),('HomeBanner'),('Solution'),('SolutionIt
              ('Project'),('News'),('Vlog'),('Faq'),('IndustryTrend'),('Certification'),
              ('ClientLogo'),('FacilityItem'),('JobPosting'),('SupplierNotice'),
              ('SupplierSpec'),('SupplierDownload'),('Page'),('Redirect'),
-             ('QuoteRequest'),('ContactMessage'),('Member'),('Orders'),
+             ('QuoteRequest'),('ContactMessage'),
              ('NewsletterSubscriber')) t (n)
 WHERE (SELECT COUNT(*) FROM sys.columns c
        WHERE c.object_id = OBJECT_ID('dbo.' + t.n)
@@ -108,8 +108,8 @@ WHERE t.name LIKE '%I18n'
 
 /* ---------- 種子（Api/Data/Seed/SeedData.cs 的 HasData）---------- */
 INSERT @r (Item, Expected, Actual) SELECT N'Role', N'3', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Role;
-INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'171', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
-INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'83', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
+INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'167', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
+INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'79', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'67', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'21', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
 INSERT @r (Item, Expected, Actual) SELECT N'Category',       N'44', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category;

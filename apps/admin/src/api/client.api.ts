@@ -59,9 +59,6 @@ function toRow(unit: string, source: ApiRow): Row {
   // quote 的「已回覆」是 switch，DB 存的是 repliedAt 有沒有值
   if (unit === 'quote') row.replied = Boolean(source.repliedAt)
 
-  // member 的「啟用」是 switch，DB 存的是三態 Status
-  if (unit === 'member') row.isActive = source.status === 'Active'
-
   return row
 }
 
@@ -78,7 +75,6 @@ function toPayload(unit: string, row: Row): Record<string, unknown> {
     // 顯示用的衍生欄位不回寫
     if (unit === 'supplier-download' && key === 'fileMeta') continue
     if (unit === 'quote' && key === 'replied') continue
-    if (unit === 'member' && key === 'isActive') continue
 
     payload[uiToApiEntity(unit, key)] = value
   }

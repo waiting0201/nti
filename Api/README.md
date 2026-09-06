@@ -57,10 +57,10 @@ Api/
 
 1. **授權是預設拒絕的。** `AppRouter.Admin.cs` 的 `GetRequiredPermission` 沒登記的 `/admin/*`
    一律 403（不是放行）。新增後台端點時要同時補路由表與權限表兩處。
-   同理，前台新端點若沒補進 `AppRouter.Public.cs` 的 `IsPublicRoute`，會被要求 token。
+   同理，前台新端點若沒補進 `AppRouter.Public.cs` 的 `IsPublicRoute`，會直接回 404。
 
-2. **兩套身分不共用 token。** 後台 token 的 audience 是 `nti-admin`、前台會員是 `nti-web`，
-   互打對方的路由一律 401。
+2. **只有後台需要 token。** 前台全站匿名（會員系統 2026-09-06 移出範圍），
+   token 只有 `nti-admin` 一種 audience。
 
 3. **camelCase 要設兩處。** `Program.cs` 的 `Configure<JsonOptions>`（回應）與
    `ConfigureHttpJsonOptions`（`ReadFromJsonAsync`）少設一邊，就會出現半邊 PascalCase。
@@ -77,19 +77,19 @@ Api/
 已完成：
 
 - **骨架**：統一信封與錯誤碼、例外處理、JWT（雙 audience）、集中式路由與預設拒絕授權、
-  `Common/` 常數（權限碼 83／CategoryType 9／PageKey 29）、`GET /health`
-- **資料層**：48 張表的 Entity 與 Configuration、`InitialSchema` Migration（schema + 種子）、
+  `Common/` 常數（權限碼 79／CategoryType 9／PageKey 29）、`GET /health`
+- **資料層**：44 張表的 Entity 與 Configuration、`InitialSchema` Migration（schema + 種子）、
   `AppDbContext`（稽核欄位統一填寫、軟刪改寫）
-- **種子**：角色 3／權限 171／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)，
+- **種子**：角色 3／權限 167／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)，
   由 `Data/Seed/SeedData.cs` 的 `HasData` 寫入，Id 硬編、跨環境一致
 
-- **端點全部完成**：§3.1 前台唯讀 20 支、§3.2 表單 2 支、§3.3 會員 9 支、
-  §3.4 後台 24 單元，外加契約原本沒有的後台認證 2 支
+- **端點全部完成**：§3.1 前台唯讀 20 支、§3.2 表單 2 支、
+  §3.4 後台 22 單元，外加契約原本沒有的後台認證 2 支
 - **支援服務**：BCrypt 密碼、Blob、Email（+EmailLog）、Turnstile、rate limit、AuditLog、
   報價單號、第一位超管的 bootstrap
 
 - **三支 Timer Function**：上下架排程、AuditLog 12 個月清除、孤兒檔清除
-- **[`openapi.yaml`](openapi.yaml)**：66 路徑／83 operation，手寫（catch-all 路由下
+- **[`openapi.yaml`](openapi.yaml)**：52 路徑／65 operation，手寫（catch-all 路由下
   自動產生器內省不出東西）。改端點時跑 `node tools/check-openapi.mjs` 檢查有沒有漂移
 - **[CI](../.github/workflows/api.yml)**：觸發於 `Api/**`，OIDC 登入 + health 冒煙測試
 

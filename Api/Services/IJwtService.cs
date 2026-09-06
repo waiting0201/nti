@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace Nti.Api.Services;
 
-/// <summary>JWT 自簽（docs/10 §7）。兩套身分：後台管理員與前台會員，audience 分離。</summary>
+/// <summary>JWT 自簽（docs/10 §7）。只有後台管理員一套身分（audience = nti-admin）。</summary>
 public interface IJwtService
 {
     /// <summary>後台管理員 access token（audience = nti-admin）。</summary>
@@ -14,9 +14,6 @@ public interface IJwtService
         IEnumerable<string> roleCodes,
         IEnumerable<string> permissionCodes,
         bool                isSuperAdmin = false);
-
-    /// <summary>前台會員 access token（audience = nti-web，無權限碼）。</summary>
-    string GenerateMemberToken(int memberId, string name, string email);
 
     /// <summary>不透明 refresh token（存 DB，rotation 見 docs/10 §7.3）。</summary>
     string GenerateRefreshToken();

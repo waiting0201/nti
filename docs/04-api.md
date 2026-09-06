@@ -33,7 +33,7 @@
 - **路徑前綴**：**`/api/v1`**（`host.json` 的 `routePrefix`）。下方 §3 列出的路徑一律省略此前綴，例如 `GET /solutions` 的實際位址是 `GET /api/v1/solutions`。
 - **JSON 命名**：一律 **camelCase**（請求與回應皆然）。
 - **語系**：以 `?lang=zh|en` 或 `Accept-Language` 提供雙語內容；列表回傳當前語系，必要時帶 `hreflang` 對應資訊。**缺語系不 fallback**（[`08-database.md` §2.5](08-database.md)）—— 該語系無內容者不列出，詳細頁回 404。
-- **認證**：公開讀取（前台內容）免認證；會員 API 與後台 API 皆用 **JWT**，且**兩者的 audience 分離**（會員 token 不得存取 `/admin/*`）；後台另需 RBAC（超管／編輯／檢視者）。
+- **認證**：**前台全站匿名**（無會員系統，2026-09-06 移出範圍）；只有後台 API 用 **JWT**（audience `nti-admin`）並需 RBAC（超管／編輯／檢視者）。
 - **成功回應信封**：所有端點一律回傳統一信封，**不回裸 data**：
 
   ```jsonc
@@ -58,8 +58,8 @@
   不帶分頁參數時 `data` 為平面陣列（供下拉選單與前台完整清單）。
 - **檔案**：上傳走 multipart；下載一律經後端代理路由 `/files/{container}/{*path}`（Blob 容器全為 private）。回傳 Blob 相對路徑（無資產表，見 [`08-database.md` §2.6](08-database.md)）。
 - **CORS**：allow-list 兩個 origin（公開站、CMS SPA），**不使用 `*`**。
-- **公開寫入端點防護**：`POST /quotes`、`POST /contacts`、`/auth/*` 需通過 **Turnstile** 驗證並受 rate limit（超限回 429 `RATE_LIMITED`）。
-- **快取**：前台唯讀端點帶 `s-maxage` + `stale-while-revalidate` 供 Next.js ISR 消費；後台與會員端點一律 `no-store`。
+- **公開寫入端點防護**：`POST /quotes`、`POST /contacts`、`POST /auth/admin/login` 需通過 **Turnstile** 驗證並受 rate limit（超限回 429 `RATE_LIMITED`）。
+- **快取**：前台唯讀端點帶 `s-maxage` + `stale-while-revalidate` 供 Next.js ISR 消費；後台端點一律 `no-store`。
 - **文件化**：OpenAPI/Swagger 為單一事實來源，與本文件對齊（產生方式待定，見 [`10-backend-design.md` §13](10-backend-design.md)）。
 
 ---
@@ -78,7 +78,7 @@
 - `GET /news`、`GET /news/{slug}`、`GET /green-vlog`
 - `GET /faq`、`GET /industry-trends`、`GET /careers`
 - `GET /supplier/notices`、`/supplier/specs`、`/supplier/downloads`
-- `POST /supplier/downloads/{id}/hit`（累計 `SupplierDownload.DownloadCount`；`RequireLogin = 1` 者需會員憑證，P6 起生效）
+- `POST /supplier/downloads/{id}/hit`（累計 `SupplierDownload.DownloadCount`；全部項目一律公開下載）
 - `GET /pages/{pageKey}`（**29 個**固定頁的 SEO 欄位；`HasRichBody = 1` 者另含 `bodyHtml` —— `privacy-legal` 與預留的 `green-csr`）
 - `GET /site-settings`（公司資訊與社群連結；信件收件者等內部設定不外露）
 - 每筆內容回傳 **SEO 欄位**：`title/metaDescription/h1/canonical/og/slug/imageAlt/hreflang`。
@@ -95,10 +95,12 @@
   選填：`company`、`phone`
   **無「主旨」欄位** —— `mockup/contact.html` 與 `ContactMessage` 皆無此欄。
 
-### 3.3 會員（認證）
-- `POST /auth/register`、`/auth/login`、`/auth/forgot-password`、`/auth/reset-password`
-- `GET/PUT /me`（帳戶設定）
-- `GET /me/quotes`（報價紀錄 + 狀態）、`GET /me/orders`、`GET /me/orders/{id}`（生產進度）
+### 3.3 後台認證
+- `POST /auth/admin/login`（Turnstile + rate limit；回 access token、角色、權限碼、`mustChangePassword`）
+- `POST /auth/admin/change-password`（需有效的後台 token，但不需權限碼——首登強制改密碼時使用者還沒有任何權限）
+
+> **前台沒有會員系統**（2026-09-06 移出範圍，見 §5 變更紀錄），故無 `/auth/register`、`/me/*` 等端點；
+> 前台路由全部匿名，白名單以外的非 `/admin/*` 路徑一律回 404。
 
 ### 3.4 後台管理（RBAC）
 - `GET/POST/PUT/DELETE /admin/{unit}`（各單元 CRUD + 排序 + 上下架排程）
@@ -109,7 +111,6 @@
   | `/admin/home-banner`、`/admin/solution`、`/admin/project`、`/admin/news`、`/admin/vlog`、`/admin/faq`、`/admin/trend`、`/admin/certification`、`/admin/client`、`/admin/facility`、`/admin/job`、`/admin/supplier-notice`、`/admin/supplier-spec`、`/admin/supplier-download` | 01–14 內容 | 同路徑名 |
   | `/admin/page`、`/admin/redirect` | 15、16 | `page.*`、`redirect.*` |
   | `/admin/quote`、`/admin/contact` | 17、18（檢視／改狀態／匯出） | `quote.*`、`contact.*` |
-  | `/admin/member`、`/admin/order` | 19、20 | `member.*`、`order.*` |
   | `/admin/setting`、`/admin/category` | 21、22 | `setting.*`、`category.*` |
   | `/admin/admin`、`/admin/audit` | 23 管理員與角色、24 操作紀錄 | `admin.*`、`audit.*` |
   | `/admin/dashboard` | 00 待辦總覽（唯讀聚合） | `dashboard.view` |
@@ -175,4 +176,6 @@
 
 | 2026-09-04 | Tim（Claude Code） | 後台接上 API 時補齊三處：(1) **`GET /files/media/{*path}`** —— §2 早就寫明「下載一律經後端代理路由」，但 §3 漏了這支；只開 media 容器，報價附件另有帶授權的路徑。(2) `/admin/{unit}` 清單改回**主表整列 + i18n**（原本只回標題，後台清單需要縮圖、分類、日期等欄位）；i18n 刻意排除 `nvarchar(max)` 欄位，內文只在單筆端點出現。(3) `/admin/category` 清單補 `usageCount`（刪除前要顯示前台影響，且 UI 是同步取值）。另：DB 約束違反（FK／CHECK／唯一鍵）改回 409 而非 500 |
 
-*最後更新：2026-09-04*
+| 2026-09-06 | Tim（Claude Code） | **會員系統與訂單／生產進度移出專案範圍**（客戶 2026-08-31 sitemap 無此節點，見 STATUS.md）。移除 §3.3 的 `/auth/register`、`/auth/login`、`/auth/forgot-password`、`/auth/reset-password`、`/me`、`/me/quotes`、`/me/orders*` 共 9 支，§3.3 改為後台認證；移除 §3.4 的 `/admin/member`、`/admin/order` 共 9 支與 `member.*`／`order.*` 權限碼（矩陣 171 → 167 列）；JWT 只剩 `nti-admin` 一個 audience；受控文件 `RequireLogin` 概念整個移除，供應商下載一律公開 |
+
+*最後更新：2026-09-06*

@@ -21,9 +21,7 @@ public sealed class JwtService : IJwtService
     private readonly string _secret;
     private readonly string _issuer;
     private readonly string _audienceAdmin;
-    private readonly string _audienceWeb;
     private readonly int    _expiryMinutesAdmin;
-    private readonly int    _expiryMinutesWeb;
     private readonly SymmetricSecurityKey _key;
 
     private readonly JwtSecurityTokenHandler _handler = new()
@@ -38,9 +36,7 @@ public sealed class JwtService : IJwtService
         _secret             = config["Jwt:Secret"] ?? throw new InvalidOperationException("Jwt:Secret is required.");
         _issuer             = config["Jwt:Issuer"]        ?? "nti-api";
         _audienceAdmin      = config["Jwt:AudienceAdmin"] ?? TokenAudiences.Admin;
-        _audienceWeb        = config["Jwt:AudienceWeb"]   ?? TokenAudiences.Web;
-        _expiryMinutesAdmin = int.TryParse(config["Jwt:ExpiryMinutes"],    out var a) ? a : 60;
-        _expiryMinutesWeb   = int.TryParse(config["Jwt:ExpiryMinutesWeb"], out var w) ? w : 120;
+        _expiryMinutesAdmin = int.TryParse(config["Jwt:ExpiryMinutes"], out var a) ? a : 60;
         _key                = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
     }
 
@@ -64,13 +60,6 @@ public sealed class JwtService : IJwtService
             claims.Add(new Claim("permissions", perm));
 
         return Write(claims, _audienceAdmin, _expiryMinutesAdmin);
-    }
-
-    public string GenerateMemberToken(int memberId, string name, string email)
-    {
-        var claims = BaseClaims(memberId, name, email);
-        claims.Add(new Claim("member_id", memberId.ToString()));
-        return Write(claims, _audienceWeb, _expiryMinutesWeb);
     }
 
     public string GenerateRefreshToken() =>

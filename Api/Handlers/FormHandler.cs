@@ -59,8 +59,6 @@ public sealed class FormHandler(
             UserAgent              = RequestContext.UserAgent(req),
             SourceLang             = LangResolver.Resolve(req),
             SubmittedAt            = now,
-            // 登入會員送出的報價要掛在他的帳號下，之後 /me/quotes 才查得到
-            MemberId               = RequestContext.UserId(req.HttpContext.User),
         };
 
         // 附件先上傳 Blob 再落庫：上傳失敗就整筆不進 DB，不會留下指向不存在檔案的紀錄

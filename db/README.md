@@ -85,8 +85,8 @@ db/tools/sqlcmd.sh NTI < db/local/920_dev_content.sql          # 每個單元一
 db/tools/sqlcmd.sh NTI < db/local/930_dev_content_clear.sql    # 清除並還原
 ```
 
-`920` 刻意佈了三個邊界案例：未來排程的消息（驗上下架時間窗）、只有英文的消息
-（驗缺語系不 fallback）、`RequireLogin = 1` 的下載（驗受控文件要憑證）。
+`920` 刻意佈了兩個邊界案例：未來排程的消息（驗上下架時間窗）、只有英文的消息
+（驗缺語系不 fallback）。
 
 本機無需安裝 sqlcmd —— `db/tools/sqlcmd.sh` 透過 `docker exec` 使用容器內的
 `/opt/mssql-tools18/bin/sqlcmd`。GUI 檢視可用 DBeaver 或 VS Code 的 `ms-mssql` 擴充
@@ -246,8 +246,7 @@ DeployChanges.To.SqlDatabase(conn)
    匿名 inline DEFAULT 會產生 `DF__HomeBanner__Sort__1B0907CE` 這種帶隨機 hash 的名稱，
    **每個環境都不同** → 未來要 `DROP CONSTRAINT` 改預設值時，dev 能跑的 migration
    會在 prod 炸掉。`verify.sql` 斷言匿名約束數為 0。
-3. **`Member` / `MemberToken` 上移**至 `QuoteRequest` 之前（08 §4.12 的建表順序警語）。
-4. **Category 型別安全**。`Category` 是唯一的橫向共用主檔（九種 `CategoryType` 服務八個
+3. **Category 型別安全**。`Category` 是唯一的橫向共用主檔（九種 `CategoryType` 服務八個
    內容單元 + 報價表單）。單純的 FK 只保證「分類存在」、不保證「型別正確」——
    `News.CategoryId` 可以指到 `CategoryType='Facility'` 的列而不被擋下。
    因此在每個引用端加一個 PERSISTED 常數計算欄（`*TypeGuard`），與 `CategoryId` 組成
@@ -327,13 +326,13 @@ docs/09 §2.1 列出三個缺口「屬範圍變更、未確認前不納入本期
 
 | 檢查項 | 預期 |
 |---|---|
-| 資料表總數 | 49（08 §3 的 47 + `NewsletterSubscriber` + `SchemaVersion`） |
+| 資料表總數 | 45（08 §3 的 43 + `NewsletterSubscriber` + `SchemaVersion`） |
 | `*I18n` 子表 | 16 |
-| 外鍵 | 35（`AuditLog.AdminUserId`／`CreatedBy`／`UpdatedBy`／`AssigneeId` 依 08 §2.3 刻意無 FK） |
+| 外鍵 | 30（`AuditLog.AdminUserId`／`CreatedBy`／`UpdatedBy`／`AssigneeId` 依 08 §2.3 刻意無 FK） |
 | Category 型別安全複合外鍵 | 9 |
 | 匿名（系統命名）約束 | **0** |
 | 內容表缺稽核五欄 | 0（docs/08 §9 DoD 第 1 條的自動化） |
-| `RolePermission` | 171（SuperAdmin 83／Editor 67／Viewer 21） |
+| `RolePermission` | 167（SuperAdmin 79／Editor 67／Viewer 21） |
 | `Category` / `CategoryI18n` | 44 / 88 |
 | `SiteSetting` | 15 |
 | `Page` / `PageI18n` / `HasRichBody=1` | 29 / 58 / 2 |

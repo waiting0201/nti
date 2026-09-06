@@ -6,7 +6,7 @@ import { api, hasApi, loadSession as loadApiSession, saveSession as saveApiSessi
  * 登入狀態。兩種模式，由 `VITE_API_BASE` 有沒有設定決定（見 `api/client.ts`）：
  *
  *   - **接了 API**：`POST /auth/admin/login` 取 JWT，權限來自 token 的 `permissions` claim
- *   - **本機示範**：選一個角色即進入，權限查本地的 171 列矩陣
+ *   - **本機示範**：選一個角色即進入，權限查本地的 167 列矩陣
  *
  * 兩種模式下元件層的 `can()` 用法完全一樣。
  *

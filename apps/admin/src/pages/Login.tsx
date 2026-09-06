@@ -5,8 +5,8 @@ import { MANUAL_SEED } from '@/api/seed.manual'
 import { hasApi, ApiError } from '@/api/http'
 
 const ROLE_DESC: Record<RoleCode, string> = {
-  SuperAdmin: '全部 24 個單元，含會員、訂單、系統設定與操作紀錄',
-  Editor: '內容單元與頁面 SEO 可編輯；會員、設定、管理員看不到',
+  SuperAdmin: '全部單元，含系統設定、管理員與操作紀錄',
+  Editor: '內容單元與頁面 SEO 可編輯；設定、管理員看不到',
   Viewer: '所有內容唯讀，不能新增、編輯或上下架',
 }
 
