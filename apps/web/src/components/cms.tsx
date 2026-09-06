@@ -477,7 +477,7 @@ export function FacilityGrid({ items }: { items: FacilityItem[] }) {
 // ── 11 job ────────────────────────────────────────────────────────────────
 export function JobList({ items }: { items: Job[] }) {
   return (
-    <div className="faq-list reveal mt-s">
+    <div className="faq-list wide reveal mt-s">
       {items.map((j, i) => (
         <details key={j.id} className="faq" open={i === 0}>
           <summary>

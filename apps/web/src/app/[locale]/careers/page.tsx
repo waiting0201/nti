@@ -36,7 +36,7 @@ export default async function Page({ params }: Props) {
           <JobList items={jobs} />
         ) : (
         <>
-        <div className="faq-list reveal mt-s">
+        <div className="faq-list wide reveal mt-s">
           <details className="faq" open><summary><span>Offset Press Operator &mdash; Tainan plant</span></summary><p>Run and maintain sheet-fed offset presses to ISO&nbsp;12647-2 colour standards. Experience on Heidelberg equipment preferred; we will train the right candidate on our colour management workflow. Shift allowance applies.</p></details>
           <details className="faq"><summary><span>Prepress / Colour Management Engineer</span></summary><p>Own CTP output, proofing and dot calibration. You will work with the Jazzy colour system and X-Rite instruments, and be the last check before a job reaches the press.</p></details>
           <details className="faq"><summary><span>Structural Packaging Designer</span></summary><p>Turn product dimensions into dielines that survive transit and recycle cleanly. CAD plus hands-on sample making on our Z&Uuml;ND cutter; close collaboration with brand-side design teams.</p></details>
