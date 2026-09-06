@@ -282,7 +282,10 @@ footer a:hover{color:var(--leaf)}
 
 /* ---------- responsive ---------- */
 @media(max-width:900px){
-  .menu,.htools .lang{display:none}
+  /* 語系鈕在手機版要留著：雙語站沒有它就沒有其他切換入口
+     （漢堡選單在 mockup 本來就沒有實作行為）。間距收窄讓 htools 在 320px 也放得下。 */
+  .menu{display:none}
+  .htools{gap:12px}
   .burger{display:flex}
   .hero-cta{position:static;justify-content:center;padding:18px 16px;background:var(--mint-2)}
   .hero-cta .btn{flex:1;justify-content:center;max-width:230px}
