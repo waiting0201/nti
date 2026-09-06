@@ -89,7 +89,7 @@ Api/
 ├── Functions/                       # trigger binding，僅此而已
 │   ├── RouterFunction.cs            # 唯一 HTTP entry point（catch-all）
 │   ├── PublishScheduleFunction.cs   # Timer：上下架排程生效
-│   └── RetentionCleanupFunction.cs  # Timer：AuditLog 12 個月清除
+│   └── OrphanMediaFunction.cs       # Timer：孤兒檔清除
 ├── Routing/
 │   ├── AppRouter.cs                 # 分派 + 授權（partial class）
 │   ├── AppRouter.Public.cs          # 前台唯讀路由表
@@ -547,14 +547,11 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 
 **這些字串在程式中不得再出現字面值。**
 
-### 9.3 AuditLog
+### 9.3 AuditLog（2026-09-06 移出本期範圍）
 
-[`09-cms-admin.md`](09-cms-admin.md) §5.8 要求所有 `/admin/*` 寫入操作記錄稽核。**在 `AppRouter` 分派完成後統一寫入**，而非每個 Handler 各寫一次：
+操作紀錄不做。`AuditLog` 表、`IAuditService`／`AuditService`、`AppRouter` 的稽核寫入與 `RetentionCleanupFunction` 皆已移除；`IAuditable`（`CreatedAt`／`CreatedBy`／`UpdatedAt`／`UpdatedBy`／`IsDeleted`）是另一回事，照舊。
 
-- 觸發條件：`method` 為 POST/PUT/PATCH/DELETE 且路徑為 `/admin/*` 且回應 2xx
-- 記錄：`AdminUserId`、`Action`（`method + 路徑`）、`TargetTable`／`TargetId`、`Ip`、`UserAgent`、`CreatedAt`
-- **另有三個唯讀但須稽核的動作**（04 §3.4）：`GET /admin/quote/export`、`GET /admin/quote/{id}/attachments/{attId}`、`POST /admin/audit/emails/{id}/resend` —— 在 Router 的稽核判定加白名單
-- 保留 12 個月，由 `RetentionCleanupFunction`（Timer）清除
+單元 24 保留，內容改為只有信件紀錄（§9.4），權限碼 `audit.view`／`audit.resend` 沿用。
 
 ### 9.4 EmailLog
 
@@ -601,7 +598,6 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 | Function | 工作 |
 |---|---|
 | `PublishScheduleFunction` | `PublishAt`／`UnpublishAt` 到期生效 |
-| `RetentionCleanupFunction` | `AuditLog` 保留 12 個月；`EmailLog` 保留期**待定**（`db/README.md` 已知缺口 #3） |
 | `OrphanMediaFunction` | 孤兒檔清除。**必須額外解析所有 `*Html` 欄位內的 `<img src>`**，否則會誤刪內文插圖（`db/README.md` 已知缺口 #2） |
 
 ### 9.10 Logging
@@ -625,7 +621,7 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 | `Smtp__Host` / `__Port` / `__User` / `__Password` / `__From` | 通知信 |
 | `BlobStorageConnection` | §9.5，本機為 Azurite |
 | `Turnstile__SecretKey` | §9.6 |
-| `PublishScheduleCron` / `RetentionCleanupCron` / `OrphanMediaCron` | §9.9 |
+| `PublishScheduleCron` / `OrphanMediaCron` | §9.9 |
 | `Cors__AllowedOrigins` | 參考用；實際生效在平台層 |
 
 **任何金鑰不得出現在前端**（04 §5 DoD）。
@@ -704,7 +700,6 @@ traces | where timestamp > ago(30m)
 - [ ] 多表寫入包在 `CreateExecutionStrategy()` + transaction 內
 - [ ] 上傳有副檔名白名單 + 大小限制 + **magic bytes 驗證**
 - [ ] 公開寫入端點有 Turnstile + rate limit
-- [ ] `/admin/*` 寫入操作有 AuditLog
 - [ ] 新增／修改端點已同步更新 [`04-api.md`](04-api.md) §3 與 `Api/openapi.yaml`，並補變更紀錄（`node tools/check-openapi.mjs` 應通過）
 - [ ] `dotnet ef migrations script` 已對照 §8.6 的 Azure SQL Basic checklist
 - [ ] 日誌無密碼／token／個資
@@ -740,5 +735,6 @@ traces | where timestamp > ago(30m)
 | 2026-09-06 | Tim（Claude Code） | §7.4：後台登入識別改為 `Username`（不限定 email 格式，`email` claim 變成選填）、密碼長度下限 8 → 6 碼。§11.1 第 3 條補一條例外：資料回填可以用一行靜態 `migrationBuilder.Sql`，並記下「先 NULL → 回填 → 收成 NOT NULL」的加欄位順序 |
 
 | 2026-09-06 | Tim（Claude Code） | §11.1 第 2 條擴充為「不要依賴約束的名稱」（原本只講 DEFAULT）：`AdminUsernameLogin` 的 `DropUniqueConstraint` 在正式庫回 SQL 3728，即使 model／InitialSchema／`db/0002` 三處命名一致。附上查 `sys.key_constraints`／`sys.indexes` 取實際名稱的寫法，並提醒唯一鍵可能是索引而非約束 |
+| 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：§9.3 改為移除說明；刪除 `AuditLog` 實體與表、`IAuditService`／`AuditService`、`AppRouter` 分派後的稽核寫入、`RetentionCleanupFunction` 與 `RetentionCleanupCron`，以及 Coding Checklist 的稽核那條。`IAuditable` 的稽核五欄不受影響。單元 24 只剩信件紀錄（§9.4），權限碼 `audit.*` 沿用 |
 
 *最後更新：2026-09-06*

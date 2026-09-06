@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import * as api from '@/api/client'
 import type { Row } from '@/api/types'
-import { SETTING_GROUPS, MANUAL_SEED, AUDIT_LOG, EMAIL_LOG } from '@/api/seed.manual'
+import { SETTING_GROUPS, MANUAL_SEED, EMAIL_LOG } from '@/api/seed.manual'
 import { LOCALE_LABEL, LOCALES, type Locale } from '@/lib/types'
 import { Badge, Hint, Modal, Notice, toast } from '@/components/ui'
 import { FieldInput } from '@/components/fields'
@@ -232,7 +232,7 @@ const MATRIX_ROWS: Array<{ label: string; codes: string[] }> = [
   { label: '17 報價：附件下載・匯出 CSV', codes: ['quote.download', 'quote.export'] },
   { label: '21 網站設定 ／ 22 分類', codes: ['setting.edit', 'category.edit'] },
   { label: '23 管理員與角色', codes: ['admin.edit'] },
-  { label: '24 操作紀錄', codes: ['audit.view'] },
+  { label: '24 信件紀錄', codes: ['audit.view'] },
 ]
 
 export function AdminUsersPage() {
@@ -335,93 +335,56 @@ export function AdminUsersPage() {
   )
 }
 
-/* ── 24 操作紀錄 ───────────────────────────────────────── */
+/* ── 24 信件紀錄 ───────────────────────────────────────── */
 
 export function AuditPage() {
   const { can } = useAuth()
-  const [tab, setTab] = useState<'audit' | 'email'>('audit')
 
   return (
     <>
       <div className="page-h">
-        <h1>24 · 操作紀錄</h1>
-        <div className="sub">唯讀。保留 12 個月，逾期由排程清除。</div>
-      </div>
-
-      <div className="locale-tabs">
-        <button className={tab === 'audit' ? 'active' : ''} onClick={() => setTab('audit')}>
-          操作紀錄
-        </button>
-        <button className={tab === 'email' ? 'active' : ''} onClick={() => setTab('email')}>
-          信件紀錄
-        </button>
+        <h1>24 · 信件紀錄</h1>
+        <div className="sub">唯讀。寄信結果與失敗原因，失敗的可重寄。</div>
       </div>
 
       <div className="card">
-        {tab === 'audit' ? (
-          <table className="list">
-            <thead>
-              <tr>
-                <th style={{ width: 170 }}>時間</th>
-                <th style={{ width: 140 }}>管理員</th>
-                <th style={{ width: 70 }}>動作</th>
-                <th>對象</th>
-                <th style={{ width: 120 }}>IP</th>
-                <th style={{ width: 280 }}>變更明細</th>
+        <table className="list">
+          <thead>
+            <tr>
+              <th style={{ width: 170 }}>時間</th>
+              <th style={{ width: 240 }}>收件者</th>
+              <th>主旨</th>
+              <th style={{ width: 80 }}>狀態</th>
+              <th style={{ width: 300 }}>失敗原因</th>
+              <th style={{ width: 80 }} />
+            </tr>
+          </thead>
+          <tbody>
+            {EMAIL_LOG.map((e) => (
+              <tr key={e.id}>
+                <td>{e.at.replace('T', ' ').replace('Z', '')}</td>
+                <td>{e.to}</td>
+                <td className="row-title">{e.subject}</td>
+                <td>
+                  <Badge kind={e.status === '成功' ? 'ok' : 'danger'}>{e.status}</Badge>
+                </td>
+                <td className="diff">{e.error || '—'}</td>
+                <td>
+                  {e.status === '失敗' && (
+                    <button
+                      className="btn btn-sm"
+                      disabled={!can('audit.resend')}
+                      title={can('audit.resend') ? '' : '需要 audit.resend 權限'}
+                      onClick={() => toast('已重新寄送（示範）')}
+                    >
+                      重寄
+                    </button>
+                  )}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {AUDIT_LOG.map((a) => (
-                <tr key={a.id}>
-                  <td>{a.at.replace('T', ' ').replace('Z', '')}</td>
-                  <td>{a.actor}</td>
-                  <td>{a.action}</td>
-                  <td className="row-title">{a.target}</td>
-                  <td>{a.ip}</td>
-                  <td className="diff">{a.diff || '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <table className="list">
-            <thead>
-              <tr>
-                <th style={{ width: 170 }}>時間</th>
-                <th style={{ width: 240 }}>收件者</th>
-                <th>主旨</th>
-                <th style={{ width: 80 }}>狀態</th>
-                <th style={{ width: 300 }}>失敗原因</th>
-                <th style={{ width: 80 }} />
-              </tr>
-            </thead>
-            <tbody>
-              {EMAIL_LOG.map((e) => (
-                <tr key={e.id}>
-                  <td>{e.at.replace('T', ' ').replace('Z', '')}</td>
-                  <td>{e.to}</td>
-                  <td className="row-title">{e.subject}</td>
-                  <td>
-                    <Badge kind={e.status === '成功' ? 'ok' : 'danger'}>{e.status}</Badge>
-                  </td>
-                  <td className="diff">{e.error || '—'}</td>
-                  <td>
-                    {e.status === '失敗' && (
-                      <button
-                        className="btn btn-sm"
-                        disabled={!can('audit.resend')}
-                        title={can('audit.resend') ? '' : '需要 audit.resend 權限'}
-                        onClick={() => toast('已重新寄送（示範）')}
-                      >
-                        重寄
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   )

@@ -21,7 +21,6 @@
     "Smtp__From": "REPLACE_WITH_FROM_ADDRESS",
     "Turnstile__SecretKey": "REPLACE_WITH_TURNSTILE_SECRET",
     "PublishScheduleCron": "0 */5 * * * *",
-    "RetentionCleanupCron": "0 30 3 * * *",
     "OrphanMediaCron": "0 0 4 * * 0"
   },
   "ConnectionStrings": {

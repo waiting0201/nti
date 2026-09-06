@@ -59,23 +59,6 @@ public sealed class AdminUserConfiguration : IEntityTypeConfiguration<AdminUser>
     }
 }
 
-public sealed class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
-{
-    public void Configure(EntityTypeBuilder<AuditLog> b)
-    {
-        b.ToTable("AuditLog");
-        b.Property(x => x.Action).Ascii(20);
-        b.Property(x => x.EntityName).Ascii(60);
-        b.Property(x => x.SourceIp).AsciiNullable(45);
-        b.Property(x => x.CreatedAt).HasDefaultValueSql("SYSUTCDATETIME()");
-
-        // AdminUserId 刻意不建 FK（docs/08 §2.3）：管理員刪除時不該連鎖擋住稽核紀錄
-        b.HasIndex(x => new { x.EntityName, x.EntityId, x.CreatedAt })
-            .HasDatabaseName("IX_AuditLog_Entity")
-            .IsDescending(false, false, true);
-    }
-}
-
 public sealed class EmailLogConfiguration : IEntityTypeConfiguration<EmailLog>
 {
     public void Configure(EntityTypeBuilder<EmailLog> b)

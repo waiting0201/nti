@@ -243,10 +243,10 @@ export const admin: Unit = {
 export const audit: Unit = {
   code: 'audit',
   no: '24',
-  title: '操作紀錄',
+  title: '信件紀錄',
   group: '系統',
   phase: 'P4',
-  note: '唯讀。保留 12 個月，逾期由排程清除。',
+  note: '唯讀。寄信結果與失敗原因，失敗的可重寄。',
   custom: true,
   readOnly: 'full',
   fields: [],

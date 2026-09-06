@@ -44,7 +44,7 @@
 | 系統 | 21 | 網站設定 | `setting` | `SiteSetting` | P4 |
 | 系統 | 22 | 分類管理 | `category` | `Category` | P4 |
 | 系統 | 23 | 管理員與角色 | `admin` | `AdminUser`／`Role` | P4 |
-| 系統 | 24 | 操作紀錄 | `audit` | `AuditLog`／`EmailLog` | P4 |
+| 系統 | 24 | 信件紀錄 | `audit` | `EmailLog` | P4 |
 
 
 ### 2.1 與規劃書 §3-1 功能清單的差異
@@ -114,7 +114,7 @@
 > 以下每個單元的欄位表中：**語** 欄位標 ✓ 表示中英各存一份；**必** 表示必填。共用操作與 UI 規則見 §5。
 
 ### 00 `dashboard` 待辦總覽
-唯讀首頁。四張數字卡：待處理報價（`Status IN ('New','InProgress')`）、待處理聯絡訊息（`Status = 'New'`）、**中英未對齊的內容筆數**、7 天內即將下架的內容。下方為最近 20 筆操作紀錄。點卡片直接跳到對應單元的已篩選清單。
+唯讀首頁。四張數字卡：待處理報價（`Status IN ('New','InProgress')`）、待處理聯絡訊息（`Status = 'New'`）、**中英未對齊的內容筆數**、7 天內即將下架的內容。點卡片直接跳到對應單元的已篩選清單。
 
 ### 01 `home-banner` 首頁 Banner
 **前台**：`index.html` `#hero` 輪播（目前 3 張）。
@@ -300,8 +300,10 @@
 角色：三個系統角色（超級管理員／內容編輯／檢視者，不可刪）＋ 權限矩陣勾選（§6）。
 **不可停用或降級自己**；系統至少保留一名啟用中的超級管理員。
 
-### 24 `audit` 操作紀錄
-唯讀。兩個分頁：**操作紀錄**（時間／管理員／動作／對象／IP／變更明細 diff）與 **信件紀錄**（`EmailLog`，含失敗原因與重寄）。可依管理員／對象／日期區間篩選。保留 12 個月，逾期由排程清除。
+### 24 `audit` 信件紀錄
+唯讀。列出 `EmailLog`：時間／收件者／主旨／狀態／失敗原因，失敗者可重寄（`audit.resend`）。可依狀態篩選。
+
+> 操作紀錄（`AuditLog`）已於 2026-09-06 移出本期範圍，單元代號與權限碼 `audit.*` 沿用給信件紀錄。
 
 ---
 
@@ -333,7 +335,7 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 一律**軟刪**（`IsDeleted = 1`），列表隱藏；系統設定類（分類、管理員）以停用取代刪除。刪除前確認對話框需顯示前台影響（例如「此分類有 8 篇新聞引用」）。
 
 ### 5.8 驗證與安全
-必填／長度／格式（Email、URL、YouTube ID）皆前後端雙重驗證；後端為準。後台 SPA 以 `X-Robots-Tag: noindex` 排除索引，所有 `/api/v1/admin/*` 需 JWT + RBAC 檢查，寫入操作記 `AuditLog`。
+必填／長度／格式（Email、URL、YouTube ID）皆前後端雙重驗證；後端為準。後台 SPA 以 `X-Robots-Tag: noindex` 排除索引，所有 `/api/v1/admin/*` 需 JWT + RBAC 檢查。
 
 ---
 
@@ -350,7 +352,7 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 | 17 報價：附件下載・匯出 CSV | ✓ | — | — |
 | 21 網站設定 ／ 22 分類 | ✓ | — | 檢視 |
 | 23 管理員與角色 | ✓ | — | — |
-| 24 操作紀錄 | ✓ | — | — |
+| 24 信件紀錄 | ✓ | — | — |
 
 權限碼 `{單元代號}.{view|edit|publish|delete|export}`，存於 `RolePermission`。上表逐格展開為種子列共 **167 列**（SuperAdmin 79／Editor 67／Viewer 21），見 [`db/seed/110_role_permission.sql`](../db/seed/110_role_permission.sql)；**本表為權限的權威來源**，[08-database.md §6.1](08-database.md) 僅為摘要。
 
@@ -360,7 +362,7 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 |---|---|---|
 | `quote.download` | 17 報價：附件下載 | 僅 SuperAdmin |
 | `redirect.export` | 16 轉址：CSV 匯入匯出 | SuperAdmin、Editor |
-| `audit.resend` | 24 操作紀錄：`EmailLog` 重寄 | 僅 SuperAdmin |
+| `audit.resend` | 24 信件紀錄：`EmailLog` 重寄 | 僅 SuperAdmin |
 
 `SuperAdmin` 亦逐列展開、不使用 `system.*` 之類的萬用碼——RBAC 檢查邏輯保持單一（一律查 `RolePermission`）且可稽核。
 
@@ -408,5 +410,6 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 
 | 2026-09-06 | Tim（Claude Code） | §23 後台帳號不再限定 email 格式：登入識別改為 `Username`（建立後唯讀），信箱降為選填的通知欄位；密碼長度下限由 8 碼放寬為 6 碼（前後端各一處，`AuthHandler.MinPasswordLength` ↔ `Login.tsx` 的 `MIN_PASSWORD_LENGTH`） |
 | 2026-09-06 | Tim（Claude Code） | **移除單元 19 會員管理與 20 訂單與生產進度**（客戶 2026-08-31 sitemap 無會員節點、mockup 44 頁無會員中心）。§2 表刪兩列、§19/§20 改為移除說明並保留節次編號、§6 權限矩陣刪一列（171 → 167 列，SuperAdmin 83 → 79）；§14 供應商下載刪除「需登入下載」欄位（受控文件概念一併取消） |
+| 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：單元 24 由「操作紀錄」改為 **信件紀錄**，只剩 `EmailLog`（狀態／失敗原因／重寄）。移除 §00 儀表板的「最近 20 筆操作紀錄」、§5.8 的「寫入操作記 `AuditLog`」。單元數與權限矩陣不變（22 個單元、167 列，`audit.view`／`audit.resend` 沿用） |
 
 *最後更新：2026-09-06*

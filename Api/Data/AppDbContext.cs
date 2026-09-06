@@ -20,7 +20,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAc
     public DbSet<Role>           Role           => Set<Role>();
     public DbSet<RolePermission> RolePermission => Set<RolePermission>();
     public DbSet<AdminUser>      AdminUser      => Set<AdminUser>();
-    public DbSet<AuditLog>       AuditLog       => Set<AuditLog>();
     public DbSet<EmailLog>       EmailLog       => Set<EmailLog>();
 
     // ── 共用主檔（§4.1）─────────────────────────────────────────────────────

@@ -76,7 +76,6 @@ var host = new HostBuilder()
         //    誤設 Singleton 會捕獲已釋放的 DbContext，且只在高併發下才浮現（docs/10 §4.1）
         services.AddScoped<AppRouter>();
         services.AddHttpContextAccessor();
-        services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IRateLimitService, RateLimitService>();
         services.AddScoped<IQuoteNumberGenerator, QuoteNumberGenerator>();

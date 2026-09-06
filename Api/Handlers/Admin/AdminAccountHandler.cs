@@ -204,36 +204,9 @@ public sealed class AdminUserUpsertDto
     public bool?   IsActive    { get; set; }
 }
 
-/// <summary>24 audit — 操作紀錄與寄信紀錄（docs/09 §24）。</summary>
+/// <summary>24 audit — 信件紀錄（docs/09 §24）。</summary>
 public sealed class AdminAuditHandler(AppDbContext db, IEmailService email)
 {
-    public async Task<IActionResult> GetLogsAsync(HttpRequest req)
-    {
-        var paging     = Paging.From(req);
-        var entityName = QueryValues.Text(req, "entityName");
-
-        var query = db.AuditLog.AsNoTracking().AsQueryable();
-        if (entityName is not null) query = query.Where(a => a.EntityName == entityName);
-
-        var total = await query.CountAsync();
-        var rows  = await query.OrderByDescending(a => a.Id)
-            .Skip(paging.Skip).Take(paging.PageSize)
-            .Select(a => new
-            {
-                a.Id, a.AdminUserId,
-                adminName = db.AdminUser.Where(u => u.Id == a.AdminUserId).Select(u => u.DisplayName).FirstOrDefault(),
-                a.Action, a.EntityName, a.EntityId, a.SourceIp, a.CreatedAt,
-            })
-            .ToListAsync();
-
-        CacheControl.NoStore(req.HttpContext.Response);
-        return new OkObjectResult(ApiResponse.Ok(new
-        {
-            items = rows, totalCount = total, page = paging.Page, pageSize = paging.PageSize,
-            totalPages = Math.Max(1, (int)Math.Ceiling((double)total / paging.PageSize)),
-        }));
-    }
-
     public async Task<IActionResult> GetEmailsAsync(HttpRequest req)
     {
         var paging = Paging.From(req);
@@ -251,10 +224,7 @@ public sealed class AdminAuditHandler(AppDbContext db, IEmailService email)
             PagedResult<EmailLog>.From(rows, total, paging.Page, paging.PageSize)));
     }
 
-    /// <summary>
-    /// 重寄（權限 <c>audit.resend</c>）。
-    /// <b>這是唯讀但必須寫 AuditLog 的三個動作之一</b>（docs/10 §9.3）：重寄會把內容再送一次到某個信箱。
-    /// </summary>
+    /// <summary>重寄（權限 <c>audit.resend</c>）：把內容再送一次到某個信箱。</summary>
     public async Task<IActionResult> ResendAsync(HttpRequest req, string rawId)
     {
         if (!long.TryParse(rawId, out var id))

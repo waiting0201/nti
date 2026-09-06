@@ -3,11 +3,10 @@ import { Link } from 'react-router-dom'
 import * as api from '@/api/client'
 import { UNITS } from '@/units'
 import { isComplete } from '@/lib/completeness'
-import { AUDIT_LOG } from '@/api/seed.manual'
 import { useAuth } from '@/lib/auth'
 import { Notice } from '@/components/ui'
 
-/** docs §00：四張數字卡 + 最近 20 筆操作紀錄，點卡片跳到已篩選的清單 */
+/** docs §00：四張數字卡，點卡片跳到已篩選的清單 */
 export function Dashboard() {
   const { session, can } = useAuth()
   const [stats, setStats] = useState({ quote: 0, contact: 0, incomplete: 0, expiring: 0 })
@@ -70,37 +69,6 @@ export function Dashboard() {
 
       {!can('quote.view') && (
         <Notice kind="info" >你的角色看不到報價與聯絡訊息，所以這裡只列內容相關的待辦。</Notice>
-      )}
-
-      {can('audit.view') && (
-        <div className="card" style={{ marginTop: 18 }}>
-          <div className="card-h">
-            <h2>最近操作紀錄</h2>
-            <Link className="btn btn-sm" style={{ marginLeft: 'auto' }} to="/u/audit">
-              全部紀錄
-            </Link>
-          </div>
-          <table className="list">
-            <thead>
-              <tr>
-                <th style={{ width: 170 }}>時間</th>
-                <th style={{ width: 140 }}>管理員</th>
-                <th style={{ width: 70 }}>動作</th>
-                <th>對象</th>
-              </tr>
-            </thead>
-            <tbody>
-              {AUDIT_LOG.slice(0, 8).map((a) => (
-                <tr key={a.id}>
-                  <td>{a.at.replace('T', ' ').replace('Z', '')}</td>
-                  <td>{a.actor}</td>
-                  <td>{a.action}</td>
-                  <td>{a.target}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       )}
     </>
   )

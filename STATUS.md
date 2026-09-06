@@ -335,16 +335,15 @@ mockup 內容（現況部署），設了就改吃 CMS。
 | 附件授權 | `ScanStatus=Pending` 拒絕下載（403），改 `Clean` 後下載且內容位元一致 |
 | rate limit | 公開表單第 10 次起回 429 `RATE_LIMITED` |
 | 寄信失敗不影響提交 | SMTP 未設定 → EmailLog 記 `Failed`，但表單仍回 200 |
-| AuditLog | 後台寫入全數留痕，另含匯出 CSV 與附件下載兩個唯讀動作 |
 
 ### ✅ Timer Function（2026-09-04）
 
-三支都實測跑過（把 cron 調成每 10 秒觀察行為），皆遵守「`IsPastDue` 時不 return」與冪等閘：
+兩支都實測跑過（把 cron 調成每 10 秒觀察行為），皆遵守「`IsPastDue` 時不 return」與冪等閘：
+（`RetentionCleanupFunction` 已隨操作紀錄一起移除，2026-09-06。）
 
 | Function | 工作 | 實測 |
 |---|---|---|
 | `PublishScheduleFunction` | `UnpublishAt` 到期的內容改為下架 | 過期那筆被下架，第二輪不重複動作 |
-| `RetentionCleanupFunction` | `AuditLog` 保留 12 個月，分批刪 | 13 個月前那筆被清、當天那筆保留 |
 | `OrphanMediaFunction` | 孤兒檔清除 | 掃描含富文本 `<img src>`；7 天內的新檔不視為孤兒 |
 
 > ⚠ `OrphanMedia` **預設只報告不刪除**，要真的刪必須設 `OrphanMediaDeleteEnabled=true`。

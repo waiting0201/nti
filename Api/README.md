@@ -65,8 +65,8 @@ Api/
 3. **camelCase 要設兩處。** `Program.cs` 的 `Configure<JsonOptions>`（回應）與
    `ConfigureHttpJsonOptions`（`ReadFromJsonAsync`）少設一邊，就會出現半邊 PascalCase。
 
-4. **稽核與權限都不在 Handler 裡。** AuditLog 由 `AppRouter` 在分派完成後統一寫，
-   權限也在 Router 檢查。Handler 裡再寫一次不會出錯，但會變成兩個真相來源。
+4. **權限不在 Handler 裡。** 權限一律在 `AppRouter` 檢查，Handler 裡再檢一次不會出錯，
+   但會變成兩個真相來源。
 
 5. **內容單元 01–14 共用 `AdminContentHandler<TEntity, TI18n>`。** 這 14 個單元的
    CRUD 形狀完全一樣，各單元只宣告自己的清單標題欄位。要改 CRUD 行為請改基底，
@@ -78,18 +78,18 @@ Api/
 
 - **骨架**：統一信封與錯誤碼、例外處理、JWT（雙 audience）、集中式路由與預設拒絕授權、
   `Common/` 常數（權限碼 79／CategoryType 9／PageKey 29）、`GET /health`
-- **資料層**：44 張表的 Entity 與 Configuration、兩支 Migration（`InitialSchema` + `RemoveMemberAndOrder`）、
+- **資料層**：43 張表的 Entity 與 Configuration、Migration（`InitialSchema` → `RemoveMemberAndOrder` → `AdminUsernameLogin` → `DropAuditLog`）、
   `AppDbContext`（稽核欄位統一填寫、軟刪改寫）
 - **種子**：角色 3／權限 167／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)，
   由 `Data/Seed/SeedData.cs` 的 `HasData` 寫入，Id 硬編、跨環境一致
 
 - **端點全部完成**：§3.1 前台唯讀 20 支、§3.2 表單 2 支、
   §3.4 後台 22 單元，外加契約原本沒有的後台認證 2 支
-- **支援服務**：BCrypt 密碼、Blob、Email（+EmailLog）、Turnstile、rate limit、AuditLog、
+- **支援服務**：BCrypt 密碼、Blob、Email（+EmailLog）、Turnstile、rate limit、
   報價單號、第一位超管的 bootstrap
 
-- **三支 Timer Function**：上下架排程、AuditLog 12 個月清除、孤兒檔清除
-- **[`openapi.yaml`](openapi.yaml)**：52 路徑／65 operation，手寫（catch-all 路由下
+- **兩支 Timer Function**：上下架排程、孤兒檔清除
+- **[`openapi.yaml`](openapi.yaml)**：51 路徑／64 operation，手寫（catch-all 路由下
   自動產生器內省不出東西）。改端點時跑 `node tools/check-openapi.mjs` 檢查有沒有漂移
 - **[CI](../.github/workflows/api.yml)**：觸發於 `Api/**`，OIDC 登入 + health 冒煙測試
 
@@ -99,7 +99,7 @@ Api/
 
 ## 排程
 
-三支 Timer，cron 由 app setting 注入（`PublishScheduleCron` 等）。本機要測的話把 cron
+兩支 Timer，cron 由 app setting 注入（`PublishScheduleCron` 等）。本機要測的話把 cron
 改成 `*/10 * * * * *` 觀察，記得改回去。
 
 ⚠ **`OrphanMediaFunction` 預設只報告不刪除。** 要真的刪要設 `OrphanMediaDeleteEnabled=true`。

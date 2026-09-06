@@ -8,7 +8,7 @@ import { hasApi, ApiError } from '@/api/http'
 const MIN_PASSWORD_LENGTH = 6
 
 const ROLE_DESC: Record<RoleCode, string> = {
-  SuperAdmin: '全部單元，含系統設定、管理員與操作紀錄',
+  SuperAdmin: '全部單元，含系統設定、管理員與信件紀錄',
   Editor: '內容單元與頁面 SEO 可編輯；設定、管理員看不到',
   Viewer: '所有內容唯讀，不能新增、編輯或上下架',
 }

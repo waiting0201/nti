@@ -44,7 +44,7 @@
 | [`verify/verify-ef.sql`](verify/verify-ef.sql) | **EF Migration 建出來的庫**（含 `__EFMigrationsHistory`），正式環境用這支 | 27 |
 
 兩份斷言逐條對應，數字有異動時要一起改。`verify-ef.sql` 另外多守三件 EF 特有的事：
-非 PK/UQ 索引數必須是 20（EF 會自動幫每條外鍵建索引，`AppDbContext` 已移除該慣例）、
+非 PK/UQ 索引數必須是 16（EF 會自動幫每條外鍵建索引，`AppDbContext` 已移除該慣例）、
 `green-csr` 必須是 noindex、四筆 Solution 必須未上架
 （後兩者是「預設值為 true 的 bool 欄位存不進 false」那個坑的哨兵）。
 
@@ -293,7 +293,7 @@ docs/09 §2.1 列出三個缺口「屬範圍變更、未確認前不納入本期
 
 1. **`Page.RouteTemplate` 待 02-frontend 定案**：[docs/05-seo.md §2.2](../docs/05-seo.md) 已確立採用 `/zh`、`/en` 子路徑，`seed/140_page.sql` 是依此與 IA 層級推導的現行提案值。路由確定後直接改該檔即可，**不影響 schema**。
 2. **富文本內文插圖的孤兒清除**：docs/08 §2.6 說孤兒檔「比對欄位引用後清除」，但 `news` 內文插圖只存在於 `NewsI18n.BodyHtml` 的 HTML 字串裡、沒有 `*Path` 欄位。清除排程**必須額外解析所有 `*Html` 欄位內的 `<img src>`**，否則會誤刪。
-3. **`AuditLog` 保留 12 個月**（docs/09 §24）需要清除排程（走 Azure Functions Timer Trigger，Azure SQL 無 Agent Job）；`EmailLog` 的保留期尚未定義。
+3. **`EmailLog` 的保留期尚未定義**。（原本並列的 `AuditLog` 12 個月清除已隨操作紀錄一起移出本期範圍，2026-09-06。）
 4. **WebP 衍生檔的路徑慣例未定**：docs/08 §2.6 要求影像另存 WebP 衍生檔且原檔保留，但只有一個 `XxxPath` 欄位，兩者的對應靠命名慣例——慣例本身尚未寫進任何文件。
 
 ---
@@ -327,9 +327,9 @@ docs/09 §2.1 列出三個缺口「屬範圍變更、未確認前不納入本期
 
 | 檢查項 | 預期 |
 |---|---|
-| 資料表總數 | 45（08 §3 的 43 + `NewsletterSubscriber` + `SchemaVersion`） |
+| 資料表總數 | 44（08 §3 的 42 + `NewsletterSubscriber` + `SchemaVersion`） |
 | `*I18n` 子表 | 16 |
-| 外鍵 | 30（`AuditLog.AdminUserId`／`CreatedBy`／`UpdatedBy`／`AssigneeId` 依 08 §2.3 刻意無 FK） |
+| 外鍵 | 30（`CreatedBy`／`UpdatedBy`／`AssigneeId` 依 08 §2.3 刻意無 FK） |
 | Category 型別安全複合外鍵 | 9 |
 | 匿名（系統命名）約束 | **0** |
 | 內容表缺稽核五欄 | 0（docs/08 §9 DoD 第 1 條的自動化） |

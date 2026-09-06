@@ -529,7 +529,7 @@ paths:
       tags: [後台其他單元]
       summary: 匯出報價 CSV（quote.export，僅超管）
       description: |
-        **唯讀但必須寫 AuditLog 的三個動作之一**——匯出等於把一整份客戶個資帶出系統。
+        匯出等於把一整份客戶個資帶出系統，因此限超管。
       security: [{ AdminAuth: [] }]
       responses:
         '200': { description: CSV（UTF-8 with BOM）, content: { text/csv: { schema: { type: string } } } }
@@ -627,9 +627,6 @@ paths:
       description: 不能刪自己，也不能刪掉最後一位可用的超管。
       security: [{ AdminAuth: [] }]
       responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } }
-
-  /admin/audit:
-    get: { tags: [後台其他單元], summary: '操作紀錄（audit.view）。保留 12 個月', security: [{ AdminAuth: [] }], parameters: [{ name: entityName, in: query, schema: { type: string } }, { $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
 
   /admin/audit/emails:
     get: { tags: [後台其他單元], summary: '寄信紀錄（audit.view）', security: [{ AdminAuth: [] }], parameters: [{ name: status, in: query, schema: { type: string, enum: [Sent, Failed] } }], responses: { '200': { $ref: '#/components/responses/Ok' } } }

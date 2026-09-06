@@ -89,9 +89,7 @@ public sealed class AdminFormHandler(AppDbContext db, IBlobStorageService blobs)
     }
 
     /// <summary>
-    /// 匯出 CSV（權限 <c>quote.export</c>，僅超管）。
-    /// <b>這是唯讀但必須寫 AuditLog 的三個動作之一</b>（docs/10 §9.3）——
-    /// 匯出等於把一整份客戶個資帶出系統，誰在什麼時候匯出過必須查得到。
+    /// 匯出 CSV（權限 <c>quote.export</c>，僅超管）——匯出等於把一整份客戶個資帶出系統。
     /// </summary>
     public async Task<IActionResult> ExportQuotesAsync(HttpRequest req)
     {

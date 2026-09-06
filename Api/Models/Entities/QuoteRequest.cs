@@ -5,7 +5,7 @@ namespace Nti.Api.Models.Entities;
 /// <para>
 /// 客戶填寫的內容在後台唯讀，只有 <see cref="Status"/>／<see cref="AssigneeId"/>／
 /// <see cref="InternalNote"/>／<see cref="RepliedAt"/> 可改。匯出 CSV 需 <c>quote.export</c>
-/// 權限且必須寫入 AuditLog（docs/09 §17）。
+/// 權限（docs/09 §17）。
 /// </para>
 /// </summary>
 public sealed class QuoteRequest : IAuditable

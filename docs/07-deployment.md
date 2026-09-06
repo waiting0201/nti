@@ -196,7 +196,6 @@ az functionapp config appsettings set -g $RG -n $APP --settings \
   "Smtp__Password=<...>" "Smtp__From=<...>" \
   "Turnstile__SecretKey=<...>" \
   "PublishScheduleCron=0 */5 * * * *" \
-  "RetentionCleanupCron=0 30 3 * * *" \
   "OrphanMediaCron=0 0 4 * * 0"
 
 # ── CORS：兩個 origin，禁用 *（後台端點帶憑證）──────────────────────

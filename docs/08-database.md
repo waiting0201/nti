@@ -96,7 +96,7 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 | 供應商 | `SupplierNotice`(+I18n)、`SupplierSpec`(+I18n)、`SupplierDownload`(+I18n) |
 | 頁面／SEO | `Page`、`PageI18n`、`Redirect` |
 | 表單 | `QuoteRequest`、`QuoteAttachment`、`ContactMessage` |
-| 系統 | `AdminUser`、`Role`、`RolePermission`、`AuditLog`、`EmailLog`、`SchemaVersion` |
+| 系統 | `AdminUser`、`Role`、`RolePermission`、`EmailLog`、`SchemaVersion` |
 | 預留（待客戶確認） | `NewsletterSubscriber` — 見 §4.15 |
 
 ---
@@ -591,16 +591,7 @@ CREATE TABLE dbo.AdminUser (
   /* audit */
 );
 
-CREATE TABLE dbo.AuditLog (
-  Id BIGINT IDENTITY(1,1) PRIMARY KEY,
-  AdminUserId INT NULL,
-  Action VARCHAR(20) NOT NULL,             -- Create|Update|Delete|Publish|Login|Export
-  EntityName VARCHAR(60) NOT NULL,
-  EntityId INT NULL,
-  ChangesJson NVARCHAR(MAX) NULL,          -- { field: [before, after] }
-  SourceIp VARCHAR(45) NULL,
-  CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME()
-);
+-- AuditLog：2026-09-06 移出本期範圍（不做操作紀錄），見 §9 變更紀錄。
 
 CREATE TABLE dbo.EmailLog (
   Id BIGINT IDENTITY(1,1) PRIMARY KEY,
@@ -706,9 +697,6 @@ CREATE INDEX IX_Category_Type ON dbo.Category(CategoryType, IsActive, SortOrder)
 CREATE INDEX IX_Quote_Status ON dbo.QuoteRequest(Status, SubmittedAt DESC);
 CREATE INDEX IX_Contact_Status ON dbo.ContactMessage(Status, SubmittedAt DESC);
 
--- 轉址／稽核
-CREATE INDEX IX_AuditLog_Entity ON dbo.AuditLog(EntityName, EntityId, CreatedAt DESC);
-
 -- 轉址：一個索引同時做唯一性與覆蓋，取代原本的 FromPath UNIQUE + IX_Redirect_From
 -- （兩者對同一欄位重複建索引，在 Basic 層是純粹的浪費）
 CREATE UNIQUE INDEX UX_Redirect_FromPath ON dbo.Redirect(FromPath) INCLUDE(ToPath, StatusCode, IsActive);
@@ -738,8 +726,8 @@ CREATE INDEX IX_NewsletterSubscriber_Status ON dbo.NewsletterSubscriber(Status, 
 | Role.Code | 名稱 | 權限範圍 |
 |-----------|------|------|
 | `SuperAdmin` | 超級管理員 | 24 個單元全動作（83 列） |
-| `Editor` | 內容編輯 | 內容單元 01–14 的 `view/edit/publish/delete`；15 頁面 SEO 與 16 轉址；17 報價／18 聯絡的檢視與改狀態。**不可** `quote.download`／`quote.export`，不可觸及 21 設定、22 分類、23 管理員、24 操作紀錄（67 列） |
-| `Viewer` | 檢視者 | 內容單元 01–14、15、16、17、18、21、22 的 `view`。**對 23 管理員、24 操作紀錄無任何權限**（21 列） |
+| `Editor` | 內容編輯 | 內容單元 01–14 的 `view/edit/publish/delete`；15 頁面 SEO 與 16 轉址；17 報價／18 聯絡的檢視與改狀態。**不可** `quote.download`／`quote.export`，不可觸及 21 設定、22 分類、23 管理員、24 信件紀錄（67 列） |
+| `Viewer` | 檢視者 | 內容單元 01–14、15、16、17、18、21、22 的 `view`。**對 23 管理員、24 信件紀錄無任何權限**（21 列） |
 
 權限碼格式 `{單元代號}.{action}`，`unit` 對應 [09-cms-admin.md](09-cms-admin.md) 的單元代號（如 `news.edit`、`quote.export`）。合計 **167 列**，由 `db/verify/verify.sql` 斷言。
 
@@ -859,5 +847,6 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 
 | 2026-09-06 | Tim（Claude Code） | **後台登入識別改為 `AdminUser.Username`**（不限定 email 格式）：新增 `Username NVARCHAR(80) NOT NULL UNIQUE`，唯一鍵由 `UQ_AdminUser_Email` 換成 `UQ_AdminUser_Username`，`Email` 降為選填的通知信箱（沒填就寄不出啟用信，初始密碼改由建立者當場轉交）。既有帳號的 email 原封搬進 `Username`，登入方式不變。遷移：`Api/Data/Migrations/20260906130926_AdminUsernameLogin` ↔ `db/migrations/0005_admin_username.sql` |
 | 2026-09-06 | Tim（Claude Code） | **會員與訂單移出專案範圍**：移除 `Member`／`MemberToken`／`Orders`／`OrderProgress` 四張表、`QuoteRequest.MemberId` 外鍵、`SupplierDownload.RequireLogin`（受控文件概念一併取消）與三條相關索引。表數 49 → 45、外鍵 35 → 30、非 PK/UQ 索引 20 → 17、權限矩陣 171 → 167 列（SuperAdmin 83 → 79）。§4.13 保留節次編號並註明移除原因，避免既有交叉引用失效 |
+| 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：移除 `AuditLog` 表與 `IX_AuditLog_Entity`。表數 45 → 44、非 PK/UQ 索引 17 → 16。單元 24 保留但只剩信件紀錄（`EmailLog`），權限碼 `audit.view`／`audit.resend` 沿用，權限矩陣仍為 167 列 |
 
 *最後更新：2026-09-06*

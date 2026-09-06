@@ -26,7 +26,7 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
     where TEntity : class, IAuditable, new()
     where TI18n   : class, II18n, new()
 {
-    /// <summary>單元代號，用於錯誤訊息與 AuditLog 的 EntityName。</summary>
+    /// <summary>單元代號，用於錯誤訊息。</summary>
     protected virtual string EntityName => typeof(TEntity).Name;
 
     /// <summary>i18n 側表指向主表的外鍵欄位名（由 EF 模型推導，不必各單元自己寫）。</summary>

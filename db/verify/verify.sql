@@ -24,7 +24,7 @@ DECLARE @r TABLE (
 
 /* ---------- 結構 ---------- */
 INSERT @r (Item, Expected, Actual)
-SELECT N'資料表總數（43 設計 + Newsletter + SchemaVersion）', N'45',
+SELECT N'資料表總數（42 設計 + Newsletter + SchemaVersion）', N'44',
        CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables;
 
 INSERT @r (Item, Expected, Actual)

@@ -82,7 +82,7 @@ public sealed partial class AppRouter
 
             // ── 24 audit ─────────────────────────────────────────────────
             ("POST", ["admin", "audit", "emails", _, "resend"]) => PermissionCodes.AuditResend,
-            ("GET",  ["admin", "audit", ..])                    => PermissionCodes.AuditView,
+            ("GET",  ["admin", "audit", "emails"])              => PermissionCodes.AuditView,
 
             // ★ 未列出的 /admin/* 一律拒絕
             _ => DenySentinel,
@@ -180,7 +180,6 @@ public sealed partial class AppRouter
             ("DELETE",         ["admin", "admin", var id])    => await adminAccounts.DeleteAsync(req, id),
 
             // ── 24 audit ─────────────────────────────────────────────────
-            ("GET",  ["admin", "audit"])                             => await adminAudits.GetLogsAsync(req),
             ("GET",  ["admin", "audit", "emails"])                   => await adminAudits.GetEmailsAsync(req),
             ("POST", ["admin", "audit", "emails", var id, "resend"]) => await adminAudits.ResendAsync(req, id),
 

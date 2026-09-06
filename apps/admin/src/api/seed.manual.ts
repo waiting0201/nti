@@ -3,7 +3,7 @@ import type { Row } from './types'
 /**
  * mockup 與 db/seed 裡沒有對應內容的單元，用示意資料開場。
  * 供應商下載檔、301 轉址、報價／聯絡（前台表單尚未接 API）、
- * 管理員、操作紀錄、信件紀錄、網站設定。
+ * 管理員、信件紀錄、網站設定。
  */
 
 const bi = (zh: Record<string, string>, en: Record<string, string>) => ({ zh, en })
@@ -178,20 +178,6 @@ export const SETTING_VALUES: Record<string, string | { zh: string; en: string }>
   'mail.contactTo': 'service@nti-printing.com',
   'mail.bcc': '',
 }
-
-/** 操作紀錄（docs §24） */
-export const AUDIT_LOG = [
-  { id: '20', at: '2026-09-02T00:41:12Z', actor: 'Tim（系統管理）', action: '登入', target: '—', ip: '203.74.12.88', diff: '' },
-  { id: '19', at: '2026-09-01T08:22:04Z', actor: '王思婷', action: '更新', target: 'news / NTI wins a 2026 Global Views ESG Award…', ip: '61.220.9.14', diff: 'zh.summary：（空）→「第 22 屆遠見 ESG…」' },
-  { id: '18', at: '2026-09-01T08:10:47Z', actor: '王思婷', action: '上架', target: 'news / Green printing and digital innovation at NTI Tainan', ip: '61.220.9.14', diff: 'isPublished：false → true' },
-  { id: '17', at: '2026-09-01T06:20:31Z', actor: '王思婷', action: '登入', target: '—', ip: '61.220.9.14', diff: '' },
-  { id: '16', at: '2026-08-31T10:02:55Z', actor: 'Tim（系統管理）', action: '排序', target: 'home-banner', ip: '203.74.12.88', diff: 'sortOrder：3 筆重新排列' },
-  { id: '15', at: '2026-08-31T09:58:13Z', actor: 'Tim（系統管理）', action: '新增', target: 'certification / CO₂ Neutral', ip: '203.74.12.88', diff: '' },
-  { id: '14', at: '2026-08-30T09:05:02Z', actor: '李昀', action: '登入', target: '—', ip: '114.32.55.7', diff: '' },
-  { id: '13', at: '2026-08-30T08:30:19Z', actor: '王思婷', action: '更新', target: 'contact / Sofia Marchetti', ip: '61.220.9.14', diff: 'status：New → Replied' },
-  { id: '12', at: '2026-08-29T03:11:40Z', actor: '王思婷', action: '更新', target: 'quote / Q-2026-0142', ip: '61.220.9.14', diff: 'status：New → InProgress；assignee：（空）→ 王思婷' },
-  { id: '11', at: '2026-08-28T07:44:26Z', actor: 'Tim（系統管理）', action: '刪除', target: 'project / 舊版電子包材案例', ip: '203.74.12.88', diff: 'isDeleted：false → true（軟刪）' },
-]
 
 export const EMAIL_LOG = [
   { id: '6', at: '2026-09-01T14:20:41Z', to: 'sales@nti-printing.com', subject: '新的報價需求 Q-2026-0138', status: '成功', error: '' },

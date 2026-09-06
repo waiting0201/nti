@@ -20,7 +20,6 @@ namespace Nti.Api.Routing;
 public sealed partial class AppRouter(
     ILogger<AppRouter>    logger,
     IJwtService           jwt,
-    IAuditService         audit,
     HealthHandler         health,
     ContentHandler        content,
     SolutionHandler       solutions,
@@ -112,60 +111,9 @@ public sealed partial class AppRouter(
             return NotFound(method, route);
         }
 
-        var result = await RoutePublicAsync(req, method, segments)
+        return await RoutePublicAsync(req, method, segments)
             ?? await RouteAdminAsync(req, method, segments)
             ?? NotFound(method, route);
-
-        // 稽核在分派完成後統一寫（docs/10 §9.3），不由各 Handler 各寫一次——
-        // 後者只要有一支忘了寫就會留下查不到的操作，而且不會有任何症狀。
-        // 走到這裡代表沒有拋例外；拋了的話 middleware 會接手，那些請求本來就不該記成已完成。
-        await WriteAuditIfNeededAsync(req, method, segments, result);
-
-        return result;
-    }
-
-    /// <summary>
-    /// 是否需要寫 AuditLog：<c>/admin/*</c> 的寫入操作，外加三個「唯讀但必須留痕」的動作
-    /// （04-api §3.4）——匯出報價 CSV、下載報價附件、重寄信件。
-    /// 這三個都會把資料帶出系統或再送出去一次，誰做的必須查得到。
-    /// </summary>
-    private static bool ShouldAudit(string method, string[] segments)
-    {
-        if (segments is not ["admin", ..]) return false;
-
-        if (method is "POST" or "PUT" or "PATCH" or "DELETE") return true;
-
-        return (method, segments) is
-            ("GET", ["admin", "quote", "export"]) or
-            ("GET", ["admin", "quote", _, "attachments", _]);
-    }
-
-    private async Task WriteAuditIfNeededAsync(
-        HttpRequest req, string method, string[] segments, IActionResult result)
-    {
-        if (!ShouldAudit(method, segments)) return;
-
-        // 找不到路由的 404 不記：那不是一次操作
-        if (result is NotFoundObjectResult) return;
-
-        var action = (method, segments) switch
-        {
-            ("POST", ["admin", "audit", "emails", _, "resend"]) => "Resend",
-            ("GET",  ["admin", "quote", "export"])              => "Export",
-            ("GET",  _)                                         => "Download",
-            ("PATCH", [.., "publish"])                          => "Publish",
-            ("POST", _)                                         => "Create",
-            ("DELETE", _)                                       => "Delete",
-            _                                                   => "Update",
-        };
-
-        // EntityName 用單元代號（docs/09 §2），與權限碼同一組字串，查詢時對得起來
-        var entityName = segments.Length > 1 ? segments[1] : "admin";
-        var entityId   = segments.Length > 2 && int.TryParse(segments[2], out var id) ? id : (int?)null;
-
-        await audit.WriteAsync(
-            RequestContext.UserId(req.HttpContext.User),
-            action, entityName, entityId, RequestContext.SourceIp(req));
     }
 
     /// <summary>檢查 JWT 的 permissions claim；<c>is_superadmin</c> 自動通過（docs/10 §7.5）。</summary>

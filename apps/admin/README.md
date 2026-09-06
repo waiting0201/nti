@@ -119,7 +119,7 @@ pnpm --filter admin typecheck
 
 由 [`scripts/build-seed.mjs`](scripts/build-seed.mjs) 產生（`pnpm --filter admin seed`），
 所以後台一打開就是這個站真正的內容，客戶看得懂自己在改什麼。
-報價／聯絡與操作紀錄則是示意資料（前台表單尚未接 API）。
+報價／聯絡與信件紀錄則是示意資料（前台表單尚未接 API）。
 
 資料存在瀏覽器的 localStorage，**可以真的新增、編輯、排序、上下架**，重整不會消失。
 
