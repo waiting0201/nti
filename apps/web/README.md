@@ -239,10 +239,8 @@ node scripts/extract-i18n.mjs --client  # 重產 src/lib/zh-client.ts
 ## 已知待辦
 
 - **中文文案待客戶校閱**（現況為機器翻譯初稿）。
-- Header 搜尋功能、手機版漢堡選單（mockup 本身也未實作行為）。
-- **手機版（≤900px）沒有語系切換**：mockup 的 header 在小螢幕會橫向溢出，
-  漢堡鈕、搜尋與語系鈕都被推到畫面外，`.lang` 另外還被 `display:none` 藏起來。
-  這是 mockup 本身的 RWD 缺口，修它等於重新設計手機版 header，需要先與客戶確認。
+- Header 搜尋功能尚未實作。
+- 手機版漢堡選單仍然沒有行為（mockup 本身也未實作），但語系切換已經有了。
 - 首頁 hero 的橫幅圖片把英文標語**燒在圖裡**（`ref-home-banner*.png`），
   中文站要換掉需要客戶提供中文版素材。
 - 表單（`/contact`、`/get-a-quote`）目前是 mockup 的前端成功卡，尚未接 API。

@@ -75,8 +75,8 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | 項目 | 現況 |
 |---|---|
 | 中文文案 | 已補齊（見下方「靜態文字雙語」），但**是機器翻譯初稿，待客戶校閱** |
-| 手機版語系切換 | ≤900px 的 header 會橫向溢出，漢堡／搜尋／語系鈕都在畫面外。mockup 本身的 RWD 缺口，要修等於重設計手機版 header |
 | 首頁 hero 素材 | 英文標語**燒在圖裡**（`ref-home-banner*.png`），中文站需要客戶提供中文版素材 |
+| 公司傳真與地圖嵌入碼 | 仍待客戶提供（地址與電話已於 2026-09-06 更新，見下方） |
 | 表單送出 | `PageForm` 只有前端行為，送出無後端（P6） |
 
 ### ✅ 靜態文字雙語（2026-09-06）
@@ -100,6 +100,42 @@ CMS 那 16 頁的內容早就有中英兩版（§十），但**其餘 28 頁與 
   英文站的標題長期顯示成 `…Packaging &amp;amp; Printing…`。改在 `build-pages.mjs` 解掉。
 - 語系鈕在 900–1150px 之間會把「中文」拆成兩行直排（`.lang-btn` 沒有 `white-space:nowrap`、
   `.htools` 會被壓縮）。mockup 的按鈕永遠是 `EN`，所以從沒踩到。
+
+### ✅ 手機版語系切換（2026-09-06）
+
+mockup 的 `@media(max-width:900px)` 把 `.menu` 與 `.htools .lang` 一起藏起來，
+於是手機上沒有任何切換語系的入口（漢堡選單在 mockup 本來就沒有行為）。
+改成只藏 `.menu`，`.htools` 的 gap 由 18px 收成 12px。
+
+以 CDP 在**真正的 320px 視窗**量過（headless 的 `--window-size` 最小 500px，
+量不到手機寬度 —— 先前「header 會橫向溢出」的判斷就是被這個限制誤導的，
+實際上從來沒有溢出）：320px 下 `document.scrollWidth` 等於視窗寬，
+語系鈕在 175..233、漢堡在 276..300，下拉展開後選單落在 97..233 完全在畫面內，
+兩個連結分別指向 `/en/contact` 與 `/zh/contact`。375px 與 900px 邊界同樣正常。
+
+### ✅ 公司地址與電話更正（2026-09-06）
+
+contact 頁原本掛的是**台中的暫代地址**與 04 開頭的電話（`db/seed/130_site_setting.sql`
+與後台的提示都標著「待換台南實際廠址」）。客戶提供了正式資料，已更新：
+
+| | 舊 | 新 |
+|---|---|---|
+| 地址（zh） | 台中市北屯區東山路一段 192 巷 56 弄 18 號 | 709 臺南市安南區媽祖宮里工業六路29號 |
+| 地址（en） | No. 18, Aly. 56, Ln. 192, Sec. 1, Dongshan Rd., Beitun Dist., Taichung 406 | No. 29, Gongye 6th Rd., Annan Dist., Tainan City 709, Taiwan |
+| 標題 | Taichung Plant & Office／台中廠與辦公室 | Tainan Plant & Office／台南廠與辦公室 |
+| 電話 | +886 4 2436 6659 | +886 6 261 1358（`tel:+88662611358`） |
+
+同步更新的位置：`mockup/contact.html`（英文權威來源）→ `build-pages.mjs` 重產
+contact 頁、`zh.ts` 的三筆 key、Google Maps embed 的查詢字串與 iframe title、
+後台 mock 的 `company.address`／`company.phone`，以及 `db/seed/130_site_setting.sql`
+與後台提示裡「待換台南廠址」的註記。
+
+⚠ 兩個需要確認的地方：英文地址的**郵遞區號 709** 與**省略「媽祖宮里」**都是依
+慣例補的（沿用原本「Taichung 406」帶郵遞區號的格式），客戶只給了中文地址。
+
+`SiteSetting` 的 `company.address`／`company.phone` 在資料庫裡仍是 NULL —— 依設計
+那是客戶在後台填的欄位，且目前沒有任何頁面讀它（固定頁的內容寫死在前端，
+docs/08 決議 3）。要的話可以另外灌進去。
 
 ### ✅ 語系解析（2026-09-06）
 
@@ -414,6 +450,7 @@ gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌�
 |---|---|---|
 | **中文文案** | 客戶未提供正式文案 | 已用機器翻譯初稿填滿（111 筆內容，`/zh` 可以驗收了），但**上線前需客戶校閱**。公司中文名與董事長姓名沒有依據，刻意保留 `NTI`／「鄭董事長」 |
 | 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 301 對照表、缺漏頁面內容 |
+| 公司傳真、地圖嵌入碼 | 客戶未提供 | `SiteSetting` 的 `company.fax`／`company.map_embed` 仍為 NULL；地圖目前用地址字串查 Google Maps embed |
 | Azure SQL 開設 | 資源尚未開設（schema、種子與 API 都已就緒） | 後台無法脫離 mock |
 | 正式網域 | 客戶端 DNS | 上線 checklist 卡住 |
 
