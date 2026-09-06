@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { mediaUrl } from '@/lib/media'
 import { ProjectGrid } from '@/components/cms'
 import { getProjects } from '@/lib/api'
@@ -18,7 +19,7 @@ export default async function Page({ params }: Props) {
   const { locale } = await params
   const projects = await getProjects(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Projects</h1>
         <div className="sec-sub reveal">Real Projects. Real Impact.</div>
@@ -27,7 +28,7 @@ export default async function Page({ params }: Props) {
         <div className="flist plain cols3 reveal mt-s"><p className="fi">Food &amp; Beverage</p><p className="fi">Electronics</p><p className="fi">Beauty &amp; Skincare</p><p className="fi">Medical &amp; Healthcare</p><p className="fi">Luxury &amp; Gift Packaging</p><p className="fi">Hardware &amp; Hand Tools</p><p className="fi">Automotive</p><p className="fi">Publishing &amp; Stationery</p><p className="fi">Home &amp; Lifestyle</p><p className="fi">Industrial &amp; Consumer Goods</p></div>
         <div className="dtitle reveal mt-m" id="cases">Case Studies &amp; Photos</div>
         {projects?.length ? (
-          <ProjectGrid items={projects} />
+          <ProjectGrid items={projects} locale={locale} />
         ) : (
         <>
         <div className="filter-row reveal" id="pjFilters">
@@ -92,6 +93,6 @@ export default async function Page({ params }: Props) {
         <p className="prose wide reveal mt-l">Explore how global brands trust NTI to print greener &mdash; without compromise.</p>
       </div></section>
       <ProjectFilter />
-    </>
+    </T>
   )
 }

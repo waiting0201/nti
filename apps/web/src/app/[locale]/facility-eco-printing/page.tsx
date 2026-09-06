@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { FacilityGrid } from '@/components/cms'
 import { getFacility } from '@/lib/api'
@@ -19,7 +20,7 @@ export default async function Page({ params }: Props) {
   const equipment = await getFacility(locale, 'eco-printing')
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/fac-eco-pressroom.jpg")} alt="NTI press room — production control" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><A href={l("/facility")}>Facilities &amp; Equipment</A><span>&rsaquo;</span><b>Environmentally Friendly Printing</b></div>
@@ -69,6 +70,6 @@ export default async function Page({ params }: Props) {
         <p className="mt-m"><A href={l("/get-a-quote")} className="btn btn-solid">Get a Quote</A></p>
         <p className="mt-m reveal"><A href={l("/facility-post-press")} className="blink">Next: Post-Press Processing</A></p>
       </div></section>
-    </>
+    </T>
   )
 }

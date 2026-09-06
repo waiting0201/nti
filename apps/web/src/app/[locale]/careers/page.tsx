@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { JobList } from '@/components/cms'
 import { getJobs } from '@/lib/api'
@@ -20,7 +21,7 @@ export default async function Page({ params }: Props) {
   const jobs = await getJobs(locale)
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/fac-tour-main.jpg")} alt="Working at NTI Printing in Tainan, Taiwan" /></section>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Careers <span className="ti-slash">/</span> <span className="ti-alt">Join the green print team</span></h1>
@@ -49,6 +50,6 @@ export default async function Page({ params }: Props) {
           <A href={l("/contact")} className="btn btn-solid">Contact us</A>
         </div>
       </div></section>
-    </>
+    </T>
   )
 }

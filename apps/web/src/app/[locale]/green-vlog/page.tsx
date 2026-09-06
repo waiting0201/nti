@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { VlogGrid } from '@/components/cms'
 import { getVlogs } from '@/lib/api'
@@ -17,7 +18,7 @@ export default async function Page({ params }: Props) {
   const { locale } = await params
   const vlogs = await getVlogs(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Green Vlog <span className="ti-slash">/</span> <span className="ti-alt">Green knowledge hub</span></h1>
         <div className="sec-sub reveal">Explore practical insights, industry trends, and sustainable packaging and eco friendly printing solutions that help brands build a greener future.</div>
@@ -45,6 +46,6 @@ export default async function Page({ params }: Props) {
         </>
         )}
       </div></section>
-    </>
+    </T>
   )
 }

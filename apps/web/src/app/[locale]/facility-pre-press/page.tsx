@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { FacilityGrid } from '@/components/cms'
 import { getFacility } from '@/lib/api'
@@ -19,7 +20,7 @@ export default async function Page({ params }: Props) {
   const equipment = await getFacility(locale, 'pre-press')
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/fac-pre-ctp.jpg")} alt="Heidelberg Suprasetter 105 S CTP plate-making system" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><A href={l("/facility")}>Facilities &amp; Equipment</A><span>&rsaquo;</span><b>Prepress Equipment</b></div>
@@ -68,6 +69,6 @@ export default async function Page({ params }: Props) {
         <p className="mt-m"><A href={l("/get-a-quote")} className="btn btn-solid">Get a Quote</A></p>
         <p className="mt-m reveal"><A href={l("/facility-eco-printing")} className="blink">Next: Environmentally Friendly Printing</A></p>
       </div></section>
-    </>
+    </T>
   )
 }

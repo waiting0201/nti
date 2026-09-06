@@ -1,10 +1,12 @@
 import { A } from './A'
+import { T } from '@/lib/t'
 import { withLocale, type Locale } from '@/lib/i18n'
 import { mediaUrl } from '@/lib/media'
 
 export function SiteFooter({ locale }: { locale: Locale }) {
   const l = withLocale(locale)
   return (
+    <T locale={locale}>
     <footer>
       <div className="wrap">
         <div className="fgrid">
@@ -63,5 +65,6 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         </div>
       </div>
     </footer>
+    </T>
   )
 }

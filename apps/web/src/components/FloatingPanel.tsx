@@ -1,10 +1,11 @@
 import { A } from './A'
+import { T } from '@/lib/t'
 import { withLocale, type Locale } from '@/lib/i18n'
 
 export function FloatingPanel({ locale }: { locale: Locale }) {
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <div className="fab hide" id="fab">
         <div className="fab-head">
           <b>Have the courage to print green</b>
@@ -44,6 +45,6 @@ export function FloatingPanel({ locale }: { locale: Locale }) {
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
       </button>
-    </>
+    </T>
   )
 }

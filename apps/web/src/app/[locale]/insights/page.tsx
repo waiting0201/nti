@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -9,7 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/insights", {
     title: "Insights — NTI Printing",
-    description: "NTI Printing Insights — company news, Green Vlog videos, FAQ and sustainable packaging industry trends from Taiwan&rsquo;s green printing specialist.",
+    description: "NTI Printing Insights — company news, Green Vlog videos, FAQ and sustainable packaging industry trends from Taiwan’s green printing specialist.",
   })
 }
 
@@ -17,7 +18,7 @@ export default async function Page({ params }: Props) {
   const { locale } = await params
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/green-tree.jpg")} alt="NTI Printing Insights — sustainable packaging knowledge hub" /></section>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Insights <span className="ti-slash">/</span> <span className="ti-alt">Knowledge hub</span></h1>
@@ -41,6 +42,6 @@ export default async function Page({ params }: Props) {
           </A>
         </div>
       </div></section>
-    </>
+    </T>
   )
 }

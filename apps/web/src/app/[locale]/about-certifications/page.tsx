@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { CertificationWall } from '@/components/cms'
 import { getCertifications } from '@/lib/api'
@@ -10,7 +11,7 @@ type Props = { params: Promise<{ locale: Locale }> }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/about-certifications", {
-    title: "Our Certifications — Proof of Quality &amp; Sustainability | NTI Printing",
+    title: "Our Certifications — Proof of Quality & Sustainability | NTI Printing",
   })
 }
 
@@ -19,7 +20,7 @@ export default async function Page({ params }: Props) {
   const certs = await getCertifications(locale)
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/ref-about-mid2.png")} alt="NTI Printing headquarters in Tainan, Taiwan" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><b>Our Certifications</b></div>
@@ -71,6 +72,6 @@ export default async function Page({ params }: Props) {
         <p className="mt-m"><A href={l("/get-a-quote")} className="btn btn-solid">Get a Quote</A></p>
         <p className="mt-m reveal"><A href={l("/facility-tour")} className="blink">Next: Factory Tour</A></p>
       </div></section>
-    </>
+    </T>
   )
 }

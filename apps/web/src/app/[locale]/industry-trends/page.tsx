@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { TrendSections } from '@/components/cms'
 import { getTrends } from '@/lib/api'
@@ -20,7 +21,7 @@ export default async function Page({ params }: Props) {
   const trends = await getTrends(locale)
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/sol-patterns.jpg")} alt="Sustainable packaging industry trends" /></section>
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/insights")}>Insights</A><span>&rsaquo;</span><b>Industry Trends</b></div>
@@ -63,6 +64,6 @@ export default async function Page({ params }: Props) {
       </div></section>
       </>
       )}
-    </>
+    </T>
   )
 }

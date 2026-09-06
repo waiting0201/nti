@@ -219,12 +219,29 @@ const BEHAVIORS = {
   'get-a-quote': [['PageForm', '@/components/behaviors/PageForm']],
 }
 
+const HEAD_ENTITIES = {
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'",
+  mdash: '—', ndash: '–', nbsp: ' ', hellip: '…',
+  rsquo: '’', lsquo: '‘', rdquo: '”', ldquo: '“',
+  trade: '™', reg: '®', copy: '©', times: '×',
+}
+
+const decodeEntities = (s) =>
+  s === undefined
+    ? undefined
+    : s
+        .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+        .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+        .replace(/&([a-zA-Z][a-zA-Z0-9]*);/g, (m, name) => HEAD_ENTITIES[name] ?? m)
+
 function extract(html) {
   const headEnd = html.indexOf('</header>') + '</header>'.length
   const footStart = html.indexOf('<footer')
   if (headEnd < 9 || footStart < 0) throw new Error('找不到 header/footer 邊界')
-  const title = /<title>([\s\S]*?)<\/title>/.exec(html)?.[1].trim() ?? ''
-  const desc = /<meta\s+name="description"\s+content="([\s\S]*?)"\s*\/?>/.exec(html)?.[1].trim()
+  // <head> 的文字進的是 JS 字串（metadata），不是 JSX，所以實體要在這裡解掉——
+  // 留著 &amp; 會被 React 再跳脫一次，標題就變成 "…Packaging &amp;amp; Printing…"
+  const title = decodeEntities(/<title>([\s\S]*?)<\/title>/.exec(html)?.[1].trim() ?? '')
+  const desc = decodeEntities(/<meta\s+name="description"\s+content="([\s\S]*?)"\s*\/?>/.exec(html)?.[1].trim())
   return {
     title,
     desc,
@@ -277,6 +294,7 @@ for (const file of files) {
   const behaviors = BEHAVIORS[slug] ?? []
   const imports = [
     "import type { Metadata } from 'next'",
+    "import { T } from '@/lib/t'",
     ...(ctx.usesA ? ["import { A } from '@/components/A'"] : []),
     ...(ctx.usesMedia ? ["import { mediaUrl } from '@/lib/media'"] : []),
     ...behaviors.map(([name, from]) => `import { ${name} } from '${from}'`),
@@ -310,9 +328,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { locale } = await params
 ${localeLine}  return (
-    <>
+    <T locale={locale}>
 ${jsx}
-${behaviorTags}    </>
+${behaviorTags}    </T>
   )
 }
 `

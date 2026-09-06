@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { FaqList } from '@/components/cms'
 import { getFaqs } from '@/lib/api'
@@ -29,12 +30,12 @@ export default async function Page({ params }: Props) {
   )
 
   return (
-    <>
+    <T locale={locale}>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">FAQ <span className="ti-slash">/</span> <span className="ti-alt">Your questions answered</span></h1>
         <div className="sec-sub reveal">Find answers to common questions about green printing, packaging, certifications, sustainability, and working with NTI.</div>
         {faqs?.length ? (
-          <FaqList items={faqs}>{faqCta}</FaqList>
+          <FaqList items={faqs} locale={locale}>{faqCta}</FaqList>
         ) : (
         <div className="faq-layout">
           <nav className="faq-nav reveal" id="faqNav" aria-label="FAQ categories">
@@ -61,6 +62,6 @@ export default async function Page({ params }: Props) {
         )}
       </div></section>
       <FaqFilter />
-    </>
+    </T>
   )
 }

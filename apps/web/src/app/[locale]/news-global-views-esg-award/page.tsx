@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   const { locale } = await params
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/insights")}>Insights</A><span>&rsaquo;</span><A href={l("/news")}>Latest News</A><span>&rsaquo;</span><b>Awards</b></div>
         <span className="news-meta reveal"><span className="cat">Awards</span><span className="date">2026.06.30</span></span>
@@ -38,6 +39,6 @@ export default async function Page({ params }: Props) {
         <p><A href={l("/news")} className="btn btn-out">&laquo; All news</A></p>
         <p className="mt-m"><A href={l("/news-firefighter-boardgame")} className="blink">Older: NTI donates a paper-model board game promoting disaster-prevention education</A></p>
       </div></section>
-    </>
+    </T>
   )
 }

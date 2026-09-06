@@ -3,6 +3,7 @@
 import { Fragment } from 'react'
 import { usePathname } from 'next/navigation'
 import { A } from './A'
+import { T } from '@/lib/t-client'
 import { NAV_ACTIVE } from './nav-active'
 import { splitLocale, withLocale, type Locale } from '@/lib/i18n'
 import { mediaUrl } from '@/lib/media'
@@ -111,6 +112,7 @@ export function SiteHeader() {
   const selfHref = `/${locale}${path === '/' ? '' : path}`
 
   return (
+    <T locale={locale}>
     <header id="hdr">
       <div className="wrap nav">
         <A href={l('/')} className="brand" aria-label="NTI Printing home">
@@ -167,5 +169,6 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
+    </T>
   )
 }

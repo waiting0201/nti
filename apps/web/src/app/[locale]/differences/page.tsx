@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -8,7 +9,7 @@ type Props = { params: Promise<{ locale: Locale }> }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/differences", {
-    title: "Why Choose NTI Printing | Quality, Sustainability &amp; Partnership",
+    title: "Why Choose NTI Printing | Quality, Sustainability & Partnership",
   })
 }
 
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   const { locale } = await params
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/ref-about-banner.png")} alt="Colorful NTI paper-craft animal packaging figures" /></section>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">The NTI Difference &mdash; Where Sustainability Meets Uncompromising Quality</h1>
@@ -63,6 +64,6 @@ export default async function Page({ params }: Props) {
         <img src={mediaUrl("/assets/cert-leed.png")} alt="LEED Leadership in Energy and Environmental Design" />
         <img src={mediaUrl("/assets/cert-mof.png")} alt="Mineral Oil Free" />
       </div></section>
-    </>
+    </T>
   )
 }

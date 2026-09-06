@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { cmsMedia, getPage } from './api'
+import { tr } from './t'
 import { PAGE_KEY_BY_PATH } from './pages'
 
 export const locales = ['en', 'zh'] as const
@@ -45,8 +46,9 @@ export async function pageMetadata(
   const rel = path === '/' ? '' : path
   const cms = await cmsSeo(locale, path)
 
-  const title       = cms?.seo.seoTitle       || meta.title
-  const description = cms?.seo.seoDescription || meta.description
+  // 後台沒填就用各頁寫死的英文，並在 /zh 換成字典裡的中文（見 lib/t.tsx）
+  const title       = cms?.seo.seoTitle       || tr(locale, meta.title)
+  const description = cms?.seo.seoDescription || (meta.description && tr(locale, meta.description))
   const canonical   = cms?.seo.canonicalUrl   || `${siteUrl}/${locale}${rel}`
 
   return {

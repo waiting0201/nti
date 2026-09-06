@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { SupplierDownloads, SupplierNotices, SupplierSpecs } from '@/components/cms'
 import { getSupplierDownloads, getSupplierNotices, getSupplierSpecs } from '@/lib/api'
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
     getSupplierDownloads(locale),
   ])
   return (
-    <>
+    <T locale={locale}>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Supplier Area</h1>
         <div className="sec-sub reveal">Announcements, specifications and downloadable documents for NTI Printing&rsquo;s supply partners.</div>
@@ -68,6 +69,6 @@ export default async function Page({ params }: Props) {
           </div>
         </div>
       </div></section>
-    </>
+    </T>
   )
 }

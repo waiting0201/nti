@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   const { locale } = await params
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">UV Printing</h1>
         <div className="sec-sub reveal">Print on the materials ordinary ink can&rsquo;t touch.</div>
@@ -50,6 +51,6 @@ export default async function Page({ params }: Props) {
           <A href={l("/get-a-quote")} className="btn btn-solid">Get a quote</A>
         </div>
       </div></section>
-    </>
+    </T>
   )
 }

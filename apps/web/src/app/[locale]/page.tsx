@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { CertificationLogos, ClientLogos, HeroSlides } from '@/components/cms'
 import { getHome } from '@/lib/api'
@@ -12,8 +13,8 @@ type Props = { params: Promise<{ locale: Locale }> }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/", {
-    title: "NTI Printing | Taiwan's Eco-Friendly Packaging &amp; Printing Manufacturer",
-    description: "NTI Printing — Taiwan's leading sustainable packaging manufacturer. FSC CoC certified, G7 Master Printer, ISO 9001/14001. Custom color boxes, UV printing &amp; eco-friendly packaging solutions for global brands.",
+    title: "NTI Printing | Taiwan's Eco-Friendly Packaging & Printing Manufacturer",
+    description: "NTI Printing — Taiwan's leading sustainable packaging manufacturer. FSC CoC certified, G7 Master Printer, ISO 9001/14001. Custom color boxes, UV printing & eco-friendly packaging solutions for global brands.",
   })
 }
 
@@ -22,7 +23,7 @@ export default async function Page({ params }: Props) {
   const home = await getHome(locale)
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
 
       {/* ============ HERO ============ */}
       <section className="hero" id="hero" aria-label="Featured highlights">
@@ -165,7 +166,7 @@ export default async function Page({ params }: Props) {
           <h2 className="proof-h reveal"><b>Proof</b><span>&mdash; Through action, not words.</span></h2>
           {home?.certifications.length ? (
             <div className="cert-wall reveal" data-d="1">
-              <CertificationLogos items={home.certifications} />
+              <CertificationLogos items={home.certifications} locale={locale} />
             </div>
           ) : (
           <div className="cert-wall reveal" data-d="1">
@@ -258,6 +259,6 @@ export default async function Page({ params }: Props) {
 
       {/* ============ FOOTER ============ */}
       <HeroSlider />
-    </>
+    </T>
   )
 }

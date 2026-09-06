@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { NewsList } from '@/components/cms'
 import { getNews } from '@/lib/api'
@@ -19,7 +20,7 @@ export default async function Page({ params }: Props) {
   const news = await getNews(locale)
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/diff-grid.jpg")} alt="NTI Printing news — sustainably printed packaging patterns" /></section>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">News <span className="ti-slash">/</span> <span className="ti-alt">Latest news &amp; insights</span></h1>
@@ -130,6 +131,6 @@ export default async function Page({ params }: Props) {
         </>
         )}
       </div></section>
-    </>
+    </T>
   )
 }

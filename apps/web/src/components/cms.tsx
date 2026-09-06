@@ -17,6 +17,7 @@ import {
   type Vlog,
 } from '@/lib/api'
 import { withLocale, type Locale } from '@/lib/i18n'
+import { T } from '@/lib/t'
 
 /**
  * 從 CMS 渲染的內容區塊。
@@ -51,7 +52,7 @@ export function NewsList({ items, locale }: { items: NewsCard[]; locale: Locale 
   const [feature, ...rest] = items
 
   return (
-    <>
+    <T locale={locale}>
       {feature && (
         <A href={l(`/news/${feature.slug}`)} className="news-feature reveal mt-l">
           <div className="nf-img">
@@ -89,17 +90,17 @@ export function NewsList({ items, locale }: { items: NewsCard[]; locale: Locale 
           </A>
         ))}
       </div>
-    </>
+    </T>
   )
 }
 
 // ── 03 project ────────────────────────────────────────────────────────────
-export function ProjectGrid({ items }: { items: Project[] }) {
+export function ProjectGrid({ items, locale }: { items: Project[]; locale: Locale }) {
   // 篩選鈕由資料裡實際出現的分類產生，不寫死——後台改了分類，前台要跟著動
   const tags = [...new Set(items.map((p) => p.categoryName))]
 
   return (
-    <>
+    <T locale={locale}>
       <div className="filter-row reveal" id="pjFilters">
         <button className="fbtn active" data-f="All">
           All projects
@@ -135,7 +136,7 @@ export function ProjectGrid({ items }: { items: Project[] }) {
           </article>
         ))}
       </div>
-    </>
+    </T>
   )
 }
 
@@ -207,11 +208,12 @@ export function VlogGrid({ items }: { items: Vlog[] }) {
 }
 
 // ── 06 faq ────────────────────────────────────────────────────────────────
-export function FaqList({ items, children }: { items: Faq[]; children?: React.ReactNode }) {
+export function FaqList({ items, children, locale }: { items: Faq[]; children?: React.ReactNode; locale: Locale }) {
   // 分組鈕同樣由資料產生。data-c 兩邊都用分類名稱，FaqFilter 才比對得起來
   const groups = [...new Set(items.map((f) => f.categoryName).filter(Boolean))] as string[]
 
   return (
+    <T locale={locale}>
     <div className="faq-layout">
       <nav className="faq-nav reveal" id="faqNav" aria-label="FAQ categories">
         <button className="active" data-c="All">
@@ -238,6 +240,7 @@ export function FaqList({ items, children }: { items: Faq[]; children?: React.Re
         {children}
       </div>
     </div>
+    </T>
   )
 }
 
@@ -374,7 +377,7 @@ const PROOF_ICONS: Record<ProofCategory, React.ReactNode> = {
  * 否則（現況：14 筆同一分類或未分類）退回用 logoPath 檔名對照表分三類，
  * 對不上的一律進最後一組，不遺漏任何一筆。
  */
-export function CertificationLogos({ items }: { items: Certification[] }) {
+export function CertificationLogos({ items, locale }: { items: Certification[]; locale: Locale }) {
   const distinctNamed = new Set(items.map((c) => c.categoryName).filter(Boolean))
 
   type Group = { key: string; title: string; iconClass: string; icon: React.ReactNode; items: Certification[] }
@@ -417,7 +420,7 @@ export function CertificationLogos({ items }: { items: Certification[] }) {
   }
 
   return (
-    <>
+    <T locale={locale}>
       {groups.map((g) => (
         <article key={g.key} className="proof-card">
           <span className={`proof-ic ${g.iconClass}`} aria-hidden="true">
@@ -437,7 +440,7 @@ export function CertificationLogos({ items }: { items: Certification[] }) {
           </div>
         </article>
       ))}
-    </>
+    </T>
   )
 }
 

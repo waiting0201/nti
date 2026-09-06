@@ -1,10 +1,14 @@
 'use client'
 import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+import { splitLocale } from '@/lib/i18n'
+import { tr } from '@/lib/t-client'
 
 type Item = { src: string; cap: string; fit?: string }
 
 /** facility.html 的設備分類幻燈片（資料與行為皆自 mockup 原樣移植） */
 export function FacilityExplorer() {
+  const { locale } = splitLocale(usePathname() ?? '/')
   useEffect(() => {
   const SETS: Record<string, Item[]> = {
     pre:[
@@ -28,14 +32,14 @@ export function FacilityExplorer() {
       {src:'/assets/fac-qc-exact.png',cap:'X-Rite eXact spectrophotometer',fit:'contain'},
       {src:'/assets/fac-qc-icplate.png',cap:'X-Rite IC Plate II dot measurement',fit:'contain'},
       {src:'/assets/fac-qc-barcode.png',cap:'Barcode grade scanner',fit:'contain'},
-      {src:'/assets/fac-qc-chamber.png',cap:'Temperature &amp; humidity chamber',fit:'contain'},
+      {src:'/assets/fac-qc-chamber.png',cap:'Temperature & humidity chamber',fit:'contain'},
       {src:'/assets/fac-qc-rub.png',cap:'Ink rub tester',fit:'contain'},
       {src:'/assets/fac-qc-gloss.png',cap:'Gloss meter — Elcometer 406',fit:'contain'},
       {src:'/assets/fac-qc-blister.png',cap:'Blister packing strength tester',fit:'contain'}],
     tour:[
       {src:'/assets/fac-tour1.jpg',cap:'Factory floor'},
       {src:'/assets/fac-tour2.jpg',cap:'Production aisle'},
-      {src:'/assets/fac-tour-main.jpg',cap:'Packaging stock &amp; logistics'}]
+      {src:'/assets/fac-tour-main.jpg',cap:'Packaging stock & logistics'}]
   };
 
     const facImg = document.getElementById('facImg') as HTMLImageElement | null
@@ -52,7 +56,7 @@ export function FacilityExplorer() {
       const s = list[curIdx]
       facImg!.src = s.src
       facImg!.style.objectFit = s.fit || 'cover'
-      facCap!.innerHTML = s.cap + ' <span class="fac-count">' + (curIdx + 1) + ' / ' + list.length + '</span>'
+      facCap!.innerHTML = tr(locale, s.cap) + ' <span class="fac-count">' + (curIdx + 1) + ' / ' + list.length + '</span>'
       facImg!.alt = facCap!.textContent ?? ''
     }
     const tabHandlers = facTabs.map((a) => {
@@ -83,6 +87,6 @@ export function FacilityExplorer() {
       facPrev?.removeEventListener('click', onPrev)
       facNext?.removeEventListener('click', onNext)
     }
-  }, [])
+  }, [locale])
   return null
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { PageForm } from '@/components/behaviors/PageForm'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   const { locale } = await params
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Contact Us</h1>
         <div className="form-grid mt-l">
@@ -58,6 +59,6 @@ export default async function Page({ params }: Props) {
         </div>
       </div></section>
       <PageForm />
-    </>
+    </T>
   )
 }

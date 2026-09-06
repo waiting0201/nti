@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { SolutionItems } from '@/components/cms'
 import { getSolutionByCode } from '@/lib/api'
@@ -19,7 +20,7 @@ export default async function Page({ params }: Props) {
   const solution = await getSolutionByCode(locale, 'cardboard')
   const l = withLocale(locale)
   return (
-    <>
+    <T locale={locale}>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Packaging Paperboard</h1>
         <div className="sec-sub reveal">Paper hang tags &amp; backcards for blister packages.</div>
@@ -65,6 +66,6 @@ export default async function Page({ params }: Props) {
           <A href={l("/get-a-quote")} className="btn btn-solid">Get a quote</A>
         </div>
       </div></section>
-    </>
+    </T>
   )
 }

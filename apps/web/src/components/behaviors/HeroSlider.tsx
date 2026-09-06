@@ -1,8 +1,11 @@
 'use client'
 import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+import { splitLocale } from '@/lib/i18n'
 
 /** index.html 的 hero 輪播（原樣移植：5.5s 自動、hover 暫停、左右鈕、dots 由 JS 產生） */
 export function HeroSlider() {
+  const { locale } = splitLocale(usePathname() ?? '/')
   useEffect(() => {
     const hero = document.getElementById('hero')
     if (!hero) return
@@ -16,7 +19,7 @@ export function HeroSlider() {
     slides.forEach((_, i) => {
       const d = document.createElement('button')
       d.className = 'dot' + (i ? '' : ' on')
-      d.setAttribute('aria-label', 'Slide ' + (i + 1))
+      d.setAttribute('aria-label', locale === 'zh' ? '第 ' + (i + 1) + ' 張' : 'Slide ' + (i + 1))
       d.onclick = () => {
         go(i)
         restart()
@@ -60,6 +63,6 @@ export function HeroSlider() {
       hero.removeEventListener('mouseleave', restart)
       dotsBox.innerHTML = ''
     }
-  }, [])
+  }, [locale])
   return null
 }
