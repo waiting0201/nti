@@ -167,6 +167,10 @@ mockup 內容（現況部署），設了就改吃 CMS。
   - 驗收閘 [`db/verify/verify-ef.sql`](db/README.md)：結構 11 項 + 種子 16 項，本機**全數 PASS**
   - 與 `db/migrations/` 建出來的庫逐欄逐約束比對，差異只有 `SchemaVersion` ↔
     `__EFMigrationsHistory` 與四個 DEFAULT 約束的名稱縮寫（以 EF 為準）
+  - ⚠ **那個「名稱縮寫」差異不是無害的**：2026-09-06 移除會員與訂單時，
+    `DROP CONSTRAINT DF_SupplierDownload_RequireLogin` 在正式庫找不到該名稱
+    （SQL 3728），migration 整支回滾、worker 起不來。教訓寫在
+    [`docs/10 §11.1`](docs/10-backend-design.md)：migration 不得依賴 DEFAULT 約束的名稱
 
 ### ⬜ 未做
 

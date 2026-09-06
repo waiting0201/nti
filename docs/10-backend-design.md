@@ -638,6 +638,35 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 - Migration **不在 CI 跑**，由 `Program.cs` 啟動時 `MigrateAsync()` 套用
 - 部署後跑 `db/verify/verify.sql` 作為 schema 驗收閘（§8.6）
 
+### 11.1 Migration 的三條紅線（2026-09-06 用四次失敗的部署換到的）
+
+`MigrateAsync()` 在 `host.RunAsync()` 之前跑，**migration 掛掉 = worker 起不來 =
+0 functions loaded**。此時 Kestrel 仍在，`/api/v1/health` 回的是 404 而不是 500，
+部署步驟本身也照樣顯示成功——只有 `api.yml` 的 health 冒煙測試會抓到。
+症狀不指向原因，所以先看 App Insights 的 `traces`（不是 `exceptions`，SQL 的實際
+訊息在 traces 裡）：
+
+```kusto
+traces | where timestamp > ago(30m)
+      | where message contains "Exception" or message contains "Error Number"
+      | order by timestamp desc
+```
+
+1. **已套用的 migration 不得重生。** 重新產生 `InitialSchema` 會換掉 migration ID，
+   正式庫的 `__EFMigrationsHistory` 記的是舊 ID，EF 把新的當成 pending 又跑一次
+   `CREATE TABLE` → **SQL 2714 物件已存在**。要改 schema 一律 append 一支新的。
+2. **不要依賴 DEFAULT 約束的名稱。** 正式庫該約束的實際名稱可能與 model 上的
+   `Relational:DefaultConstraintName` 不同（本專案就是如此），依名稱刪 → **SQL 3728
+   不是一個約束**，整支交易回滾。`DropColumn` **不要帶**那個註記，EF 會自己查
+   `sys.default_constraints` 找實際名稱。FK 名稱則可靠（`HasConstraintName` 指定）。
+3. **不要在 migration 裡手寫 SQL。** `EXEC()` 的括號內只接受字串與變數相加，
+   放函式呼叫是語法錯誤 → **SQL 102 Incorrect syntax near 'QUOTENAME'**。
+   EF 產的寫法是 `SELECT @var = QUOTENAME(d.name) ... EXEC(N'...' + @var)`，
+   QUOTENAME 在 SELECT 就套上。要手寫之前先問「EF 自己會不會產」。
+
+> 送出前一律先看產物：`dotnet ef migrations script <from> <to>`。
+> 這四次失敗每一次都能在那份 SQL 裡看出來。
+
 ---
 
 ## 12. Coding Style Checklist
@@ -690,5 +719,6 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 | 2026-09-04 | Tim（Claude Code） | §13 的 OpenAPI 待決項定案：**手寫 `Api/openapi.yaml`**（catch-all 路由讓自動產生器無從內省），另附 `tools/check-openapi.mjs` 做漂移檢查。三支 Timer Function 完成並實測（含 `IsPastDue` 不 return、冪等閘）；孤兒檔清除預設只報告不刪除，並有 7 天寬限期 |
 
 | 2026-09-06 | Tim（Claude Code） | 會員系統移出範圍：§7.2 由「兩套身分」改為「只有一套身分」（audience 只剩 `nti-admin`）、§7.3 刪除會員 token 生命週期、§7.6 白名單以外的前台路由改為回 404（原為要求會員 token）；權限碼 171 → 167 列 |
+| 2026-09-06 | Tim（Claude Code） | 新增 §11.1「Migration 的三條紅線」：已套用的 migration 不得重生（SQL 2714）、不得依賴 DEFAULT 約束名稱（SQL 3728）、不要在 migration 裡手寫 SQL（SQL 102）。三條都是這天四次部署失敗實際踩到的，附 App Insights 的查法——migration 掛掉時 health 回 404 而非 500，症狀不指向原因 |
 
 *最後更新：2026-09-06*
