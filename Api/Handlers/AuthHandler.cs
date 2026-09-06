@@ -27,6 +27,9 @@ public sealed class AuthHandler(
     private const int  MaxFailedAttempts = 5;
     private const int  LockoutMinutes    = 15;
 
+    /// <summary>密碼長度下限（2026-09-06 由 8 放寬為 6；前端 Login.tsx 同步）。</summary>
+    public  const int  MinPasswordLength = 6;
+
     public async Task<IActionResult> AdminLoginAsync(HttpRequest req)
     {
         var dto = await req.ReadFromJsonAsync<LoginDto>() ?? new LoginDto();
@@ -34,10 +37,12 @@ public sealed class AuthHandler(
         if (!await turnstile.VerifyAsync(dto.TurnstileToken, RequestContext.SourceIp(req)))
             throw AppException.BadRequest(ErrorCodes.BotCheckFailed, "機器人驗證未通過。");
 
-        if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password))
-            throw AppException.BadRequest(ErrorCodes.ValidationRequired, "email 與 password 為必填。");
+        if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.Password))
+            throw AppException.BadRequest(ErrorCodes.ValidationRequired, "username 與 password 為必填。");
 
-        var user = await db.AdminUser.FirstOrDefaultAsync(x => x.Email == dto.Email && !x.IsDeleted);
+        // 帳號不限定 email 格式，比對前只去頭尾空白（貼上帳號時常帶到）
+        var username = dto.Username.Trim();
+        var user     = await db.AdminUser.FirstOrDefaultAsync(x => x.Username == username && !x.IsDeleted);
 
         // 帳號不存在與密碼錯誤回同一個錯誤（docs/10 §7.4）：分開回等於送對方一個帳號列舉工具
         if (user is null || !hasher.Verify(dto.Password, user.PasswordHash))
@@ -63,7 +68,7 @@ public sealed class AuthHandler(
         user.LastLoginAt      = Clock.UtcNow;
         await db.SaveChangesAsync();
 
-        var token = jwt.GenerateAdminToken(user.Id, user.DisplayName, user.Email,
+        var token = jwt.GenerateAdminToken(user.Id, user.DisplayName, user.Username, user.Email,
             [role.Code], permissions, isSuperAdmin: role.Code == RoleCodes.SuperAdmin);
 
         CacheControl.NoStore(req.HttpContext.Response);
@@ -72,6 +77,7 @@ public sealed class AuthHandler(
             AccessToken        = token,
             ExpiresInMinutes   = int.TryParse(cfg["Jwt:ExpiryMinutes"], out var m) ? m : 60,
             DisplayName        = user.DisplayName,
+            Username           = user.Username,
             Email              = user.Email,
             RoleCode           = role.Code,
             Permissions        = permissions,
@@ -92,8 +98,8 @@ public sealed class AuthHandler(
         if (string.IsNullOrWhiteSpace(dto.CurrentPassword) || string.IsNullOrWhiteSpace(dto.NewPassword))
             throw AppException.BadRequest(ErrorCodes.ValidationRequired, "currentPassword 與 newPassword 為必填。");
 
-        if (dto.NewPassword.Length < 8)
-            throw AppException.BadRequest(ErrorCodes.ValidationRange, "新密碼至少 8 碼。");
+        if (dto.NewPassword.Length < MinPasswordLength)
+            throw AppException.BadRequest(ErrorCodes.ValidationRange, $"新密碼至少 {MinPasswordLength} 碼。");
 
         var user = await db.AdminUser.FirstOrDefaultAsync(x => x.Id == userId && !x.IsDeleted)
             ?? throw AppException.NotFound("AdminUser");

@@ -578,7 +578,8 @@ CREATE TABLE dbo.RolePermission (
 
 CREATE TABLE dbo.AdminUser (
   Id INT IDENTITY(1,1) PRIMARY KEY,
-  Email NVARCHAR(160) NOT NULL UNIQUE,
+  Username NVARCHAR(80) NOT NULL UNIQUE,   -- 登入帳號，不限定 email 格式
+  Email NVARCHAR(160) NULL,                -- 通知信箱（啟用信），選填
   PasswordHash NVARCHAR(200) NOT NULL,
   DisplayName NVARCHAR(80) NOT NULL,
   RoleId INT NOT NULL REFERENCES dbo.Role(Id),
@@ -856,6 +857,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-09-01 | Tim（Claude Code） | 初版：依 mockup 44 頁實際結構與三條專案決議（單元式後台／無 Media Library／固定文字不進後台）定義 31 張表、索引、種子與遷移策略 |
 | 2026-09-02 | Tim（Claude Code） | 產出可執行建置腳本 [`db/`](../db/)（本機 SQL Server 開發、語法相容 Azure SQL）：展開稽核五欄、約束全面具名、補 `SchemaVersion` DDL（§4.15）、重排建表順序（`Member` 前移）。新增 §4.16 Category 型別安全（複合外鍵，DB 層擋下「把 Facility 分類掛到 News」）。納入三個待客戶確認缺口的預留 schema（`NewsletterSubscriber`／`HomeBanner.MediaType`+`VideoPath`／`Page` 的 `green-csr`），表數 47 → 49。索引調整：移除與 UNIQUE 重複的 `IX_Redirect_From`、新增 `UX_Vlog_MainFeature` 與 4 條外鍵支撐索引。§6.1 權限改以 09 §6 矩陣為權威（修正 Editor 可 delete、Viewer 非「全部 view」兩處錯誤），補 `quote.download`／`redirect.export`／`audit.resend` 三個權限碼。§8 補定序決策與 Azure 相容性。 |
 
+| 2026-09-06 | Tim（Claude Code） | **後台登入識別改為 `AdminUser.Username`**（不限定 email 格式）：新增 `Username NVARCHAR(80) NOT NULL UNIQUE`，唯一鍵由 `UQ_AdminUser_Email` 換成 `UQ_AdminUser_Username`，`Email` 降為選填的通知信箱（沒填就寄不出啟用信，初始密碼改由建立者當場轉交）。既有帳號的 email 原封搬進 `Username`，登入方式不變。遷移：`Api/Data/Migrations/20260906130926_AdminUsernameLogin` ↔ `db/migrations/0005_admin_username.sql` |
 | 2026-09-06 | Tim（Claude Code） | **會員與訂單移出專案範圍**：移除 `Member`／`MemberToken`／`Orders`／`OrderProgress` 四張表、`QuoteRequest.MemberId` 外鍵、`SupplierDownload.RequireLogin`（受控文件概念一併取消）與三條相關索引。表數 49 → 45、外鍵 35 → 30、非 PK/UQ 索引 20 → 17、權限矩陣 171 → 167 列（SuperAdmin 83 → 79）。§4.13 保留節次編號並註明移除原因，避免既有交叉引用失效 |
 
 *最後更新：2026-09-06*

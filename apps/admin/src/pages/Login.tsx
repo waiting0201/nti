@@ -4,6 +4,9 @@ import { useAuth, type RoleCode } from '@/lib/auth'
 import { MANUAL_SEED } from '@/api/seed.manual'
 import { hasApi, ApiError } from '@/api/http'
 
+/** 密碼長度下限，與後端 AuthHandler.MinPasswordLength 一致（2026-09-06 由 8 放寬為 6）。 */
+const MIN_PASSWORD_LENGTH = 6
+
 const ROLE_DESC: Record<RoleCode, string> = {
   SuperAdmin: '全部單元，含系統設定、管理員與操作紀錄',
   Editor: '內容單元與頁面 SEO 可編輯；設定、管理員看不到',
@@ -29,11 +32,12 @@ function LoginHead({ title, sub }: { title: string; sub?: React.ReactNode }) {
   )
 }
 
-/** 接了 API：Email + 密碼。連續 5 次失敗鎖 15 分鐘（後端擋，docs/09 §23）。 */
+/** 接了 API：帳號 + 密碼。帳號不限定 email 格式（2026-09-06）。
+ *  連續 5 次失敗鎖 15 分鐘（後端擋，docs/09 §23）。 */
 function PasswordLogin() {
   const { loginWithPassword } = useAuth()
   const nav = useNavigate()
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -44,7 +48,7 @@ function PasswordLogin() {
     setError('')
 
     try {
-      await loginWithPassword(email, password)
+      await loginWithPassword(username, password)
       nav('/')
     } catch (err) {
       // 以 code 分支，不比對訊息字串（docs/10 §5.1）
@@ -67,13 +71,13 @@ function PasswordLogin() {
 
         <div className="login-fields">
           <div className="field">
-            <label htmlFor="login-email">Email</label>
+            <label htmlFor="login-username">帳號</label>
             <input
-              id="login-email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="login-username"
+              type="text"
+              autoComplete="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               autoFocus
             />
@@ -117,7 +121,7 @@ function DemoLogin() {
   const [role, setRole] = useState<RoleCode>('SuperAdmin')
   const [sp] = useSearchParams()
 
-  const accounts = MANUAL_SEED.adminUser as unknown as Array<{ email: string; displayName: string; role: RoleCode }>
+  const accounts = MANUAL_SEED.adminUser as unknown as Array<{ username: string; email?: string; displayName: string; role: RoleCode }>
 
   const as = sp.get('as')
   useEffect(() => {
@@ -127,7 +131,7 @@ function DemoLogin() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     const account = accounts.find((a) => a.role === role) ?? accounts[0]
-    login({ email: account.email, displayName: account.displayName, role })
+    login({ username: account.username, email: account.email, displayName: account.displayName, role })
     nav('/')
   }
 
@@ -153,7 +157,7 @@ function DemoLogin() {
                 <span>
                   <b>{r === 'SuperAdmin' ? '超級管理員' : r === 'Editor' ? '內容編輯' : '檢視者'}</b>
                   <small>{ROLE_DESC[r]}</small>
-                  {account && <small>{account.email}</small>}
+                  {account && <small>{account.username}</small>}
                 </span>
               </label>
             )
@@ -167,7 +171,7 @@ function DemoLogin() {
         </div>
 
         <p className="login-foot">
-          設定 <code>VITE_API_BASE</code> 後這裡會變成 Email + 密碼登入。
+          設定 <code>VITE_API_BASE</code> 後這裡會變成帳號 + 密碼登入。
         </p>
       </form>
     </div>
@@ -186,7 +190,7 @@ export function ChangePassword() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (next !== confirm) return setError('兩次輸入的新密碼不一致。')
-    if (next.length < 8) return setError('新密碼至少 8 碼。')
+    if (next.length < MIN_PASSWORD_LENGTH) return setError(`新密碼至少 ${MIN_PASSWORD_LENGTH} 碼。`)
 
     setBusy(true)
     setError('')
@@ -223,11 +227,12 @@ export function ChangePassword() {
             />
           </div>
           <div className="field">
-            <label htmlFor="cp-next">新密碼（至少 8 碼）</label>
+            <label htmlFor="cp-next">新密碼（至少 {MIN_PASSWORD_LENGTH} 碼）</label>
             <input
               id="cp-next"
               type="password"
               autoComplete="new-password"
+              minLength={MIN_PASSWORD_LENGTH}
               value={next}
               onChange={(e) => setNext(e.target.value)}
               required

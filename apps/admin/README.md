@@ -27,7 +27,7 @@ VITE_API_BASE=http://localhost:7071/api/v1 pnpm --filter admin dev
 | | 沒設 `VITE_API_BASE` | 設了 |
 |---|---|---|
 | 實作 | `src/api/client.mock.ts`（localStorage） | `src/api/client.api.ts`（打 `/api/v1/admin/*`） |
-| 登入 | 選角色即進入 | Email + 密碼，首登強制改密碼 |
+| 登入 | 選角色即進入 | 帳號 + 密碼（帳號不限定 email 格式），首登強制改密碼 |
 | 權限 | 查本地的 167 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
 | 圖片 | `public/assets` 或 `VITE_MEDIA_BASE` | 上傳到 Blob，經 `/files/media/*` 代理取回 |
 

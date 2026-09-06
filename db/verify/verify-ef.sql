@@ -74,6 +74,13 @@ SELECT N'非 PK/UQ 索引數', N'17', CAST(COUNT(*) AS NVARCHAR(20))
 FROM sys.indexes i JOIN sys.tables t ON t.object_id = i.object_id
 WHERE i.is_primary_key = 0 AND i.is_unique_constraint = 0 AND i.type > 0;
 
+/* 後台登入識別＝Username（2026-09-06，見 db/migrations/0005）：唯一鍵搬家了 */
+INSERT @r (Item, Expected, Actual)
+SELECT N'AdminUser 登入唯一鍵（Username，非 Email）', N'1',
+       CAST(COUNT(*) AS NVARCHAR(20))
+FROM sys.key_constraints
+WHERE name IN (N'UQ_AdminUser_Username', N'UQ_AdminUser_Email');
+
 /* docs/08 §9 DoD 第 1 條：內容表具備稽核五欄 */
 INSERT @r (Item, Expected, Actual)
 SELECT N'內容表缺稽核五欄的張數', N'0', CAST(COUNT(*) AS NVARCHAR(20))
@@ -128,7 +135,7 @@ INSERT @r (Item, Expected, Actual) SELECT N'Solution（固定 4 筆）', N'4', C
    green-csr 的 noindex 斷言把關（同一個機制，而 green-csr 是種子的一部分，
    不會被內容匯入改動）。 */
 INSERT @r (Item, Expected, Actual) SELECT N'SolutionI18n',   N'8',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SolutionI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'已套用的 Migration 數', N'2', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.__EFMigrationsHistory;
+INSERT @r (Item, Expected, Actual) SELECT N'已套用的 Migration 數', N'3', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.__EFMigrationsHistory;
 
 /* ---------- 輸出 ---------- */
 SELECT Item AS [檢查項], Expected AS [預期], Actual AS [實際],

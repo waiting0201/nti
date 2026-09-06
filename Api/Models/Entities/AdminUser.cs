@@ -6,7 +6,12 @@ namespace Nti.Api.Models.Entities;
 public sealed class AdminUser : IAuditable
 {
     public int       Id                 { get; set; }
-    public string    Email              { get; set; } = null!;
+
+    /// <summary>登入帳號。不限定 email 格式（2026-09-06），唯一。</summary>
+    public string    Username           { get; set; } = null!;
+
+    /// <summary>通知信箱，選填。沒填就寄不出啟用信，初始密碼改由建立者當場取得。</summary>
+    public string?   Email              { get; set; }
     public string    PasswordHash       { get; set; } = null!;
     public string    DisplayName        { get; set; } = null!;
     public int       RoleId             { get; set; }

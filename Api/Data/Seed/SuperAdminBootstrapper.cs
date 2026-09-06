@@ -26,12 +26,14 @@ public static class SuperAdminBootstrapper
 
         if (await db.AdminUser.AnyAsync()) return;
 
+        // 帳號不限定 email 格式（2026-09-06）：_USERNAME 為主，沒設就沿用舊的 _EMAIL 當帳號
+        var username = cfg["BOOTSTRAP_SUPERADMIN_USERNAME"] ?? cfg["BOOTSTRAP_SUPERADMIN_EMAIL"];
         var email    = cfg["BOOTSTRAP_SUPERADMIN_EMAIL"];
         var password = cfg["BOOTSTRAP_SUPERADMIN_PASSWORD"];
 
-        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             throw new InvalidOperationException(
-                "BOOTSTRAP_SUPERADMIN=true 時必須同時提供 BOOTSTRAP_SUPERADMIN_EMAIL 與 _PASSWORD。");
+                "BOOTSTRAP_SUPERADMIN=true 時必須同時提供 BOOTSTRAP_SUPERADMIN_USERNAME（或 _EMAIL）與 _PASSWORD。");
 
         var superAdminRoleId = await db.Role.Where(r => r.Code == RoleCodes.SuperAdmin)
                                             .Select(r => r.Id)
@@ -39,7 +41,8 @@ public static class SuperAdminBootstrapper
 
         db.AdminUser.Add(new AdminUser
         {
-            Email              = email,
+            Username           = username.Trim(),
+            Email              = string.IsNullOrWhiteSpace(email) ? null : email.Trim(),
             PasswordHash       = hasher.Hash(password),
             DisplayName        = "Super Admin",
             RoleId             = superAdminRoleId,

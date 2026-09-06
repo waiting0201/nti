@@ -2,7 +2,8 @@ namespace Nti.Api.Models.Dtos;
 
 public sealed class LoginDto
 {
-    public string? Email    { get; set; }
+    /// <summary>登入帳號。不限定 email 格式（2026-09-06）。</summary>
+    public string? Username { get; set; }
     public string? Password { get; set; }
 
     /// <summary>Turnstile token（登入也受機器人防護，docs/10 §9.6）。</summary>
@@ -21,6 +22,7 @@ public sealed class AuthTokenDto
     public string   AccessToken        { get; set; } = null!;
     public int      ExpiresInMinutes   { get; set; }
     public string   DisplayName        { get; set; } = null!;
+    public string   Username           { get; set; } = null!;
     public string?  Email              { get; set; }
 
     /// <summary>後台專用：角色與權限碼，供前端決定畫面顯示（真正的把關在 API）。</summary>

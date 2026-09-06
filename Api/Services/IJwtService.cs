@@ -10,7 +10,8 @@ public interface IJwtService
     string GenerateAdminToken(
         int                 adminUserId,
         string              name,
-        string              email,
+        string              username,
+        string?             email,
         IEnumerable<string> roleCodes,
         IEnumerable<string> permissionCodes,
         bool                isSuperAdmin = false);

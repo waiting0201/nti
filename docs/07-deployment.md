@@ -205,7 +205,8 @@ az functionapp cors add -g $RG -n $APP \
 ```
 
 **第一位超級管理員**（docs/10 §7.4）：把 `BOOTSTRAP_SUPERADMIN=true` 與
-`BOOTSTRAP_SUPERADMIN_EMAIL`／`_PASSWORD` 設上去，重啟一次 Function App，
+`BOOTSTRAP_SUPERADMIN_USERNAME`（登入帳號，不限定 email 格式）／`_PASSWORD` 設上去
+（`_EMAIL` 是選填的通知信箱），重啟一次 Function App，
 **跑完立刻改回 false 並移除密碼設定**。它只在 `AdminUser` 表為空時動作。
 
 **OIDC 聯合身分**（`api.yml` 用它登入，不用 publish profile）：

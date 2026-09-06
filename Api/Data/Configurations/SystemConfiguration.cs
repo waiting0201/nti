@@ -42,6 +42,7 @@ public sealed class AdminUserConfiguration : IEntityTypeConfiguration<AdminUser>
     public void Configure(EntityTypeBuilder<AdminUser> b)
     {
         b.ToTable("AdminUser");
+        b.Property(x => x.Username).HasMaxLength(80);
         b.Property(x => x.Email).HasMaxLength(160);
         b.Property(x => x.PasswordHash).HasMaxLength(200);
         b.Property(x => x.DisplayName).HasMaxLength(80);
@@ -50,7 +51,7 @@ public sealed class AdminUserConfiguration : IEntityTypeConfiguration<AdminUser>
         b.Property(x => x.MustChangePassword).HasDefaultValue(true);
         b.Audit();
 
-        b.HasAlternateKey(x => x.Email).HasName("UQ_AdminUser_Email");
+        b.HasAlternateKey(x => x.Username).HasName("UQ_AdminUser_Username");
         b.HasOne<Role>().WithMany()
             .HasForeignKey(x => x.RoleId)
             .HasConstraintName("FK_AdminUser_Role")

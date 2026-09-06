@@ -96,7 +96,8 @@
   **無「主旨」欄位** —— `mockup/contact.html` 與 `ContactMessage` 皆無此欄。
 
 ### 3.3 後台認證
-- `POST /auth/admin/login`（Turnstile + rate limit；回 access token、角色、權限碼、`mustChangePassword`）
+- `POST /auth/admin/login`（Turnstile + rate limit；body 為 `username` + `password`——
+  **帳號不限定 email 格式**，2026-09-06；回 access token、角色、權限碼、`mustChangePassword`）
 - `POST /auth/admin/change-password`（需有效的後台 token，但不需權限碼——首登強制改密碼時使用者還沒有任何權限）
 
 > **前台沒有會員系統**（2026-09-06 移出範圍，見 §5 變更紀錄），故無 `/auth/register`、`/me/*` 等端點；
@@ -166,6 +167,7 @@
 | 2026-06-12 | Tim（Claude Code） | 改為 Azure Functions .NET10 HTTP trigger；移除 `/ai/chat`；Pacdora 設計結果併入 `/quotes` 可選欄位 |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 §3.5 Pacdora 契約、/quotes 之 pacdora 欄位、相關風險 |
 | 2026-09-01 | Tim（Claude Code） | 上游輸入補 08（DDL）／09（後台單元）；ER Model 權威來源改指向 `08-database.md` |
+| 2026-09-06 | Tim（Claude Code） | 後台帳號不限定 email 格式：`POST /auth/admin/login` 的 body 由 `email` 改為 `username`，`AuthToken` 多回 `username`、`email` 改為可為 null；`POST /admin/admin` 必填欄位改 `username`＋選填 `email`，沒填信箱時回應多帶一次性的 `data.initialPassword`。`Api/openapi.yaml` 已同步 |
 | 2026-09-01 | Tim（Claude Code） | §3.1 依 mockup 44 頁對齊（移除 `/projects/{slug}`、`/green-vlog/{slug}`；`/nti-difference`、`/advantages` 併入 `/pages/{pageKey}`；新增 faq／industry-trends／careers／certifications／clients／site-settings）；檔案上傳由「預簽章 URL（S3）」更正為 Azure Blob SAS；`/admin/i18n` 移除 |
 | 2026-09-02 | Tim（Claude Code） | 對齊 08／09 修正四處契約缺口：`POST /contacts` 刪除不存在的「主旨」、補回「公司」（依 `ContactMessage` 與 `mockup/contact.html`）；`POST /quotes` 欄位補齊為完整清單（產業／尺寸／材質／目標日期／永續建議勾選／同意時間）；新增 `GET /categories?type=`（前台下拉選項來源，原為契約缺口）與 `POST /supplier/downloads/{id}/hit`；§3.4 `/admin/{resource}` 改為 `{unit}` 並附完整路徑↔單元↔權限碼對照表（不再單複數混用、`/admin/users` 更正為 `/admin/admin`），補列非 CRUD 動作端點；固定頁 28 → 29 |
 | 2026-09-02 | Tim（Claude Code） | 以 `Jabez/Api` 為範本補齊契約缺口：新增成功回應信封與錯誤碼欄位 `code`（原僅有 `{code,message,details}` 形狀）、分頁回應形狀與雙模式、`pageSize` 上限 100；執行環境由「每資源群組一支 Function」改為**單一 `RouterFunction` + 集中式 `AppRouter`**；明訂 §3 路徑省略的前綴為 `/api/v1`；補 camelCase、CORS 雙 origin、Turnstile／rate limit、快取標頭、會員與後台 audience 分離；§3.4 補「未列出的 `/admin/*` 預設拒絕」；新增 [`10-backend-design.md`](10-backend-design.md) 為實作規格 |

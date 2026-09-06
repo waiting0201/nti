@@ -40,7 +40,7 @@
 
 | 腳本 | 檢核對象 | 斷言數 |
 |---|---|---|
-| [`verify/verify.sql`](verify/verify.sql) | `db/migrations/` + `db/seed/` 建出來的庫（含 `SchemaVersion`） | 24 |
+| [`verify/verify.sql`](verify/verify.sql) | `db/migrations/` + `db/seed/` 建出來的庫（含 `SchemaVersion`） | 25 |
 | [`verify/verify-ef.sql`](verify/verify-ef.sql) | **EF Migration 建出來的庫**（含 `__EFMigrationsHistory`），正式環境用這支 | 27 |
 
 兩份斷言逐條對應，數字有異動時要一起改。`verify-ef.sql` 另外多守三件 EF 特有的事：
@@ -92,7 +92,8 @@ db/tools/sqlcmd.sh NTI < db/local/930_dev_content_clear.sql    # 清除並還原
 `/opt/mssql-tools18/bin/sqlcmd`。GUI 檢視可用 DBeaver 或 VS Code 的 `ms-mssql` 擴充
 （`localhost,1433` / `sa`）。
 
-dev 管理員帳號為 `sa@system.local` / `Admin@123`（BCrypt 雜湊，與 API 的 `PasswordHasher` 一致）。
+dev 管理員帳號為 `sa` / `Admin@123`（BCrypt 雜湊，與 API 的 `PasswordHasher` 一致；
+2026-09-06 起帳號不限定 email 格式，見 `migrations/0005_admin_username.sql`）。
 **`local/` 只在本機執行、不會出現在 GitHub 公開版**（見 [CLAUDE.md](../CLAUDE.md) 版控與雙 remote），
 需要時向專案內部版（NAS）索取。
 

@@ -46,7 +46,7 @@ jobs:
         env:
           VITE_MEDIA_BASE: ${{ vars.MEDIA_BASE }}
           # 後台的資料來源開關：沒設就走本機 mock（localStorage，可以操作給客戶看），
-          # 設了就打真的 API 並要求 Email + 密碼登入。
+          # 設了就打真的 API 並要求帳號 + 密碼登入。
           # Azure 的 Function App 開好之後設這個 variable，後台就自動接上去。
           VITE_API_BASE: ${{ vars.API_BASE }}
 

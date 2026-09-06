@@ -15,7 +15,10 @@ import { api, hasApi, loadSession as loadApiSession, saveSession as saveApiSessi
  */
 
 type Session = {
-  email: string
+  /** 登入帳號，不限定 email 格式（2026-09-06） */
+  username: string
+  /** 通知信箱，選填 */
+  email?: string
   displayName: string
   role: RoleCode
   /** 接了 API 時由 token 帶回；示範模式為 undefined，改查本地矩陣 */
@@ -26,7 +29,7 @@ type Session = {
 type AuthValue = {
   session: Session | null
   login: (s: Session) => void
-  loginWithPassword: (email: string, password: string) => Promise<void>
+  loginWithPassword: (username: string, password: string) => Promise<void>
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>
   logout: () => void
   can: (code: string) => boolean
@@ -36,12 +39,13 @@ const AuthCtx = createContext<AuthValue | null>(null)
 const KEY = 'nti-admin-session'
 
 const DEMO_ACCOUNTS: Record<RoleCode, Session> = {
-  SuperAdmin: { email: 'tim@nti-printing.com', displayName: 'Tim（系統管理）', role: 'SuperAdmin' },
-  Editor: { email: 'sinting.wang@nti-printing.com', displayName: '王思婷', role: 'Editor' },
-  Viewer: { email: 'yun.li@nti-printing.com', displayName: '李昀', role: 'Viewer' },
+  SuperAdmin: { username: 'tim', email: 'tim@nti-printing.com', displayName: 'Tim（系統管理）', role: 'SuperAdmin' },
+  Editor: { username: 'sinting.wang', email: 'sinting.wang@nti-printing.com', displayName: '王思婷', role: 'Editor' },
+  Viewer: { username: 'yun.li', email: 'yun.li@nti-printing.com', displayName: '李昀', role: 'Viewer' },
 }
 
 const fromApiSession = (s: ApiSession): Session => ({
+  username: s.username,
   email: s.email,
   displayName: s.displayName,
   role: (s.roleCode as RoleCode) ?? 'Viewer',
@@ -85,8 +89,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       },
 
-      loginWithPassword: async (email, password) => {
-        const data = await api.post<ApiSession>('/auth/admin/login', { email, password })
+      loginWithPassword: async (username, password) => {
+        const data = await api.post<ApiSession>('/auth/admin/login', { username, password })
         saveApiSession(data)
         setSession(fromApiSession(data))
       },

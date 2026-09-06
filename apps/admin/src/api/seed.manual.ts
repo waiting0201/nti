@@ -103,9 +103,10 @@ export const MANUAL_SEED: Record<string, Row[]> = {
   ],
 
   adminUser: [
-    { id: '1', email: 'tim@nti-printing.com', displayName: 'Tim（系統管理）', role: 'SuperAdmin', isActive: true, lastLoginAt: '2026-09-02T00:41:00Z' },
-    { id: '2', email: 'sinting.wang@nti-printing.com', displayName: '王思婷', role: 'Editor', isActive: true, lastLoginAt: '2026-09-01T06:20:00Z' },
-    { id: '3', email: 'yun.li@nti-printing.com', displayName: '李昀', role: 'Viewer', isActive: true, lastLoginAt: '2026-08-30T09:05:00Z' },
+    { id: '1', username: 'tim', email: 'tim@nti-printing.com', displayName: 'Tim（系統管理）', role: 'SuperAdmin', isActive: true, lastLoginAt: '2026-09-02T00:41:00Z' },
+    { id: '2', username: 'sinting.wang', email: 'sinting.wang@nti-printing.com', displayName: '王思婷', role: 'Editor', isActive: true, lastLoginAt: '2026-09-01T06:20:00Z' },
+    // 帳號不限定 email 格式（2026-09-06）：這筆刻意不是信箱，也沒填通知信箱
+    { id: '3', username: 'yun.li', displayName: '李昀', role: 'Viewer', isActive: true, lastLoginAt: '2026-08-30T09:05:00Z' },
   ],
 }
 

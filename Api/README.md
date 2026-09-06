@@ -113,17 +113,19 @@ Api/
 
 ```jsonc
 "BOOTSTRAP_SUPERADMIN": "true",
-"BOOTSTRAP_SUPERADMIN_EMAIL": "you@example.com",
+"BOOTSTRAP_SUPERADMIN_USERNAME": "admin",          // 登入帳號，不限定 email 格式
+"BOOTSTRAP_SUPERADMIN_EMAIL": "you@example.com",   // 通知信箱，選填（沒設就沒有）
 "BOOTSTRAP_SUPERADMIN_PASSWORD": "<夠強的密碼>"
 ```
 
+沒設 `_USERNAME` 時會沿用 `_EMAIL` 當帳號（舊設定照樣能開得起來）。
 `func start` 時會建立帳號（帶 `MustChangePassword = 1`），**跑完把旗標改回 false**。
 它只在 `AdminUser` 表為空時動作，忘了關也不會覆蓋既有帳號。
 
 ```bash
 curl -s localhost:7071/api/v1/auth/admin/login \
   -H 'Content-Type: application/json' \
-  -d '{"email":"you@example.com","password":"<密碼>"}'
+  -d '{"username":"admin","password":"<密碼>"}'
 ```
 
 回應帶 `accessToken`、`roleCode`、`permissions[]` 與 `mustChangePassword`。

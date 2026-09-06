@@ -43,12 +43,13 @@ public sealed class JwtService : IJwtService
     public string GenerateAdminToken(
         int                 adminUserId,
         string              name,
-        string              email,
+        string              username,
+        string?             email,
         IEnumerable<string> roleCodes,
         IEnumerable<string> permissionCodes,
         bool                isSuperAdmin = false)
     {
-        var claims = BaseClaims(adminUserId, name, email);
+        var claims = BaseClaims(adminUserId, name, username, email);
 
         if (isSuperAdmin)
             claims.Add(new Claim("is_superadmin", "true"));
@@ -97,13 +98,25 @@ public sealed class JwtService : IJwtService
         return ValidateToken(authHeader["Bearer ".Length..].Trim(), audience);
     }
 
-    private static List<Claim> BaseClaims(int id, string name, string email) =>
-    [
-        new(JwtRegisteredClaimNames.Sub,   id.ToString()),
-        new(JwtRegisteredClaimNames.Name,  name),
-        new(JwtRegisteredClaimNames.Email, email),
-        new(JwtRegisteredClaimNames.Jti,   Guid.NewGuid().ToString()),
-    ];
+    /// <summary>
+    /// email claim 是選填的：帳號不再等於信箱（2026-09-06），沒填信箱的管理員就不帶這個 claim。
+    /// 身分一律看 <c>sub</c>，不要拿 email 當識別。
+    /// </summary>
+    private static List<Claim> BaseClaims(int id, string name, string username, string? email)
+    {
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub,                id.ToString()),
+            new(JwtRegisteredClaimNames.Name,               name),
+            new(JwtRegisteredClaimNames.PreferredUsername,  username),
+            new(JwtRegisteredClaimNames.Jti,                Guid.NewGuid().ToString()),
+        };
+
+        if (!string.IsNullOrWhiteSpace(email))
+            claims.Add(new Claim(JwtRegisteredClaimNames.Email, email));
+
+        return claims;
+    }
 
     private string Write(List<Claim> claims, string audience, int expiryMinutes)
     {

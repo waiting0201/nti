@@ -11,13 +11,16 @@ namespace Nti.Api.Handlers.Admin;
 /// <summary>23 admin — 管理員與角色（docs/09 §23）。</summary>
 public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher, IEmailService email)
 {
+    private const int MinUsernameLength = 3;
+    private const int MaxUsernameLength = 80;   // 與 AdminUserConfiguration 的欄位長度一致
+
     public async Task<IActionResult> GetListAsync(HttpRequest req)
     {
         var rows = await db.AdminUser.AsNoTracking().Where(u => !u.IsDeleted)
             .OrderBy(u => u.Id)
             .Select(u => new
             {
-                u.Id, u.Email, u.DisplayName, u.RoleId,
+                u.Id, u.Username, u.Email, u.DisplayName, u.RoleId,
                 roleCode = db.Role.Where(r => r.Id == u.RoleId).Select(r => r.Code).FirstOrDefault(),
                 u.IsActive, u.LastLoginAt, u.MustChangePassword, u.CreatedAt,
             })
@@ -44,19 +47,34 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher,
     }
 
     /// <summary>
-    /// 新增管理員。密碼由系統產生後寄啟用信，<b>不接受請求指定密碼</b>——
+    /// 新增管理員。密碼由系統產生，<b>不接受請求指定密碼</b>——
     /// 讓建立者知道別人的密碼是沒必要的風險（docs/10 §7.4）。首登強制改密碼。
+    /// <para>
+    /// 帳號（<c>username</c>）不限定 email 格式（2026-09-06），信箱改為選填：
+    /// 有填就寄啟用信、初始密碼不回傳；沒填就寄不出去，只好把初始密碼回給建立者當場轉交。
+    /// </para>
     /// </summary>
     public async Task<IActionResult> CreateAsync(HttpRequest req)
     {
         var dto = await req.ReadFromJsonAsync<AdminUserUpsertDto>()
             ?? throw AppException.BadRequest(ErrorCodes.ValidationRequired, "缺少內容。");
 
-        if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.DisplayName) || dto.RoleId is null)
-            throw AppException.BadRequest(ErrorCodes.ValidationRequired, "email、displayName、roleId 為必填。");
+        if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.DisplayName) || dto.RoleId is null)
+            throw AppException.BadRequest(ErrorCodes.ValidationRequired, "username、displayName、roleId 為必填。");
 
-        if (await db.AdminUser.AnyAsync(u => u.Email == dto.Email))
-            throw AppException.Conflict(ErrorCodes.ConflictDuplicate, "此 email 已存在。");
+        var username = dto.Username.Trim();
+        var mailbox  = NormalizeEmail(dto.Email);
+
+        if (username.Length < MinUsernameLength || username.Length > MaxUsernameLength)
+            throw AppException.BadRequest(ErrorCodes.ValidationRange,
+                $"帳號長度需介於 {MinUsernameLength}–{MaxUsernameLength} 字。");
+
+        // 只擋空白：帳號會被人手動輸入，中間帶空白幾乎都是複製貼上帶進來的
+        if (username.Any(char.IsWhiteSpace))
+            throw AppException.BadRequest(ErrorCodes.ValidationFormat, "帳號不可包含空白。");
+
+        if (await db.AdminUser.AnyAsync(u => u.Username == username))
+            throw AppException.Conflict(ErrorCodes.ConflictDuplicate, "此帳號已存在。");
 
         if (!await db.Role.AnyAsync(r => r.Id == dto.RoleId))
             throw AppException.NotFound("Role");
@@ -65,7 +83,8 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher,
 
         var user = new AdminUser
         {
-            Email              = dto.Email.Trim(),
+            Username           = username,
+            Email              = mailbox,
             PasswordHash       = hasher.Hash(initialPassword),
             DisplayName        = dto.DisplayName.Trim(),
             RoleId             = dto.RoleId.Value,
@@ -76,11 +95,18 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher,
         db.AdminUser.Add(user);
         await db.SaveChangesAsync();
 
-        await email.SendAsync("AdminInvite", user.Email, "[NTI] 後台帳號已建立",
-            $"<p>初始密碼：{initialPassword}</p><p>首次登入後請立即修改。</p>", nameof(AdminUser), user.Id);
+        if (mailbox is not null)
+            await email.SendAsync("AdminInvite", mailbox, "[NTI] 後台帳號已建立",
+                $"<p>帳號：{user.Username}</p><p>初始密碼：{initialPassword}</p><p>首次登入後請立即修改。</p>",
+                nameof(AdminUser), user.Id);
 
         CacheControl.NoStore(req.HttpContext.Response);
-        return new OkObjectResult(ApiResponse.Ok(new { id = user.Id }));
+        return new OkObjectResult(ApiResponse.Ok(new
+        {
+            id = user.Id,
+            // 沒有信箱可寄時才回傳，否則初始密碼不離開伺服器
+            initialPassword = mailbox is null ? initialPassword : null,
+        }));
     }
 
     public async Task<IActionResult> UpdateAsync(HttpRequest req, string rawId)
@@ -89,7 +115,9 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher,
         var dto  = await req.ReadFromJsonAsync<AdminUserUpsertDto>()
             ?? throw AppException.BadRequest(ErrorCodes.ValidationRequired, "缺少內容。");
 
+        // 帳號建立後唯讀：改帳號等於換一個人，稽核紀錄會對不上
         if (!string.IsNullOrWhiteSpace(dto.DisplayName)) user.DisplayName = dto.DisplayName.Trim();
+        if (dto.Email is not null) user.Email = NormalizeEmail(dto.Email);
 
         if (dto.RoleId is not null)
         {
@@ -137,7 +165,19 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher,
         return new OkObjectResult(ApiResponse.Ok("已刪除。"));
     }
 
-    /// <summary>系統產生的初始密碼：16 碼 URL-safe 亂數，只出現在啟用信裡。</summary>
+    /// <summary>信箱選填：空字串一律存 null，不然唯一性與「有沒有信箱」的判斷都會被空字串汙染。</summary>
+    private static string? NormalizeEmail(string? raw)
+    {
+        var value = raw?.Trim();
+        if (string.IsNullOrEmpty(value)) return null;
+
+        if (!value.Contains('@') || value.Any(char.IsWhiteSpace))
+            throw AppException.BadRequest(ErrorCodes.ValidationFormat, "email 格式不正確。");
+
+        return value;
+    }
+
+    /// <summary>系統產生的初始密碼：16 碼 URL-safe 亂數，只出現在啟用信或建立回應裡。</summary>
     private static string GeneratePassword() =>
         Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(12))
                .Replace('+', 'A').Replace('/', 'b').TrimEnd('=');
@@ -154,6 +194,10 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher,
 
 public sealed class AdminUserUpsertDto
 {
+    /// <summary>登入帳號，不限定 email 格式；建立後唯讀。</summary>
+    public string? Username    { get; set; }
+
+    /// <summary>通知信箱，選填。</summary>
     public string? Email       { get; set; }
     public string? DisplayName { get; set; }
     public int?    RoleId      { get; set; }

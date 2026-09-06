@@ -237,7 +237,7 @@ const MATRIX_ROWS: Array<{ label: string; codes: string[] }> = [
 
 export function AdminUsersPage() {
   const { session } = useAuth()
-  const users = MANUAL_SEED.adminUser as unknown as Array<Row & { email: string; displayName: string; role: RoleCode; isActive: boolean; lastLoginAt: string }>
+  const users = MANUAL_SEED.adminUser as unknown as Array<Row & { username: string; email?: string; displayName: string; role: RoleCode; isActive: boolean; lastLoginAt: string }>
   const counts = useMemo(permissionRowCount, [])
 
   return (
@@ -254,7 +254,8 @@ export function AdminUsersPage() {
         <table className="list">
           <thead>
             <tr>
-              <th>Email</th>
+              <th style={{ width: 180 }}>帳號</th>
+              <th>通知信箱</th>
               <th style={{ width: 160 }}>顯示名稱</th>
               <th style={{ width: 130 }}>角色</th>
               <th style={{ width: 90 }}>啟用</th>
@@ -264,10 +265,11 @@ export function AdminUsersPage() {
           </thead>
           <tbody>
             {users.map((u) => {
-              const isSelf = u.email === session?.email
+              const isSelf = u.username === session?.username
               return (
                 <tr key={u.id}>
-                  <td className="row-title">{u.email}</td>
+                  <td className="row-title">{u.username}</td>
+                  <td>{u.email ?? <span style={{ color: 'var(--grey-2)' }}>—</span>}</td>
                   <td>{u.displayName}</td>
                   <td>{ROLE_LABEL[u.role]}</td>
                   <td>
@@ -286,7 +288,8 @@ export function AdminUsersPage() {
         </table>
         <div className="card-b">
           <Notice kind="info">
-            新增管理員時寄啟用信、強制首次登入改密碼；連續 5 次登入失敗鎖定 15 分鐘。
+            帳號不限定 email 格式；有填通知信箱才寄得出啟用信，沒填就由建立者當場轉交初始密碼。
+            一律強制首次登入改密碼；連續 5 次登入失敗鎖定 15 分鐘。
           </Notice>
         </div>
       </div>

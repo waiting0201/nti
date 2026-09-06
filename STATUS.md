@@ -196,7 +196,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 | | 沒設（現況部署） | 設了 |
 |---|---|---|
 | 實作 | `client.mock.ts`（localStorage） | `client.api.ts`（打 `/api/v1/admin/*`） |
-| 登入 | 選角色即進入 | Email + 密碼，首登強制改密碼 |
+| 登入 | 選角色即進入 | 帳號 + 密碼（帳號不限定 email 格式），首登強制改密碼 |
 | 權限 | 查本地 167 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
 | 圖片 | 本機素材 | 上傳 Blob，經 `/files/media/*` 代理取回 |
 

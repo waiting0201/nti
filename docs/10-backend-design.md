@@ -370,7 +370,12 @@ public sealed class AppException(string code, string message, int statusCode = 4
 ### 7.4 密碼
 
 - `BCrypt.Net.BCrypt.HashPassword` / `.Verify`，work factor 用預設
-- 正式環境第一位超管由部署流程建立：隨機密碼 + 啟用信 + `MustChangePassword=1`
+- **密碼長度下限 6 碼**（2026-09-06 由 8 放寬）。權威為 `AuthHandler.MinPasswordLength`，
+  前端 `apps/admin/src/pages/Login.tsx` 的 `MIN_PASSWORD_LENGTH` 要跟著改
+- **登入識別是 `AdminUser.Username`，不限定 email 格式**（2026-09-06）。`Email` 是選填的
+  通知信箱，token 的 `email` claim 因此可能不存在——身分一律看 `sub`，不要拿 email 當識別
+- 正式環境第一位超管由部署流程建立：隨機密碼 + `MustChangePassword=1`
+  （`BOOTSTRAP_SUPERADMIN_USERNAME` / `_EMAIL` / `_PASSWORD`，見 `SuperAdminBootstrapper`）
 - 登入失敗訊息不區分「帳號不存在」與「密碼錯誤」，一律 `AUTH_INVALID_CREDENTIALS`
 
 ### 7.5 授權集中在 Router：**預設拒絕**
@@ -663,6 +668,10 @@ traces | where timestamp > ago(30m)
    放函式呼叫是語法錯誤 → **SQL 102 Incorrect syntax near 'QUOTENAME'**。
    EF 產的寫法是 `SELECT @var = QUOTENAME(d.name) ... EXEC(N'...' + @var)`，
    QUOTENAME 在 SELECT 就套上。要手寫之前先問「EF 自己會不會產」。
+   > 唯一的例外是**資料回填**（EF 沒有對應的操作），例如 `AdminUsernameLogin` 的
+   > `UPDATE dbo.AdminUser SET Username = LEFT(Email, 80)`：一行靜態 SQL、不組動態字串。
+   > 加欄位時也走「先 NULL → 回填 → 收成 NOT NULL」，避免 `defaultValue` 在 DB 留下
+   > model 沒有的系統命名 DEFAULT 約束（會撞上 verify 的「匿名約束數 = 0」）。
 
 > 送出前一律先看產物：`dotnet ef migrations script <from> <to>`。
 > 這四次失敗每一次都能在那份 SQL 裡看出來。
@@ -720,5 +729,7 @@ traces | where timestamp > ago(30m)
 
 | 2026-09-06 | Tim（Claude Code） | 會員系統移出範圍：§7.2 由「兩套身分」改為「只有一套身分」（audience 只剩 `nti-admin`）、§7.3 刪除會員 token 生命週期、§7.6 白名單以外的前台路由改為回 404（原為要求會員 token）；權限碼 171 → 167 列 |
 | 2026-09-06 | Tim（Claude Code） | 新增 §11.1「Migration 的三條紅線」：已套用的 migration 不得重生（SQL 2714）、不得依賴 DEFAULT 約束名稱（SQL 3728）、不要在 migration 裡手寫 SQL（SQL 102）。三條都是這天四次部署失敗實際踩到的，附 App Insights 的查法——migration 掛掉時 health 回 404 而非 500，症狀不指向原因 |
+
+| 2026-09-06 | Tim（Claude Code） | §7.4：後台登入識別改為 `Username`（不限定 email 格式，`email` claim 變成選填）、密碼長度下限 8 → 6 碼。§11.1 第 3 條補一條例外：資料回填可以用一行靜態 `migrationBuilder.Sql`，並記下「先 NULL → 回填 → 收成 NOT NULL」的加欄位順序 |
 
 *最後更新：2026-09-06*

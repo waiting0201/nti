@@ -602,9 +602,11 @@ paths:
       tags: [後台其他單元]
       summary: 新增管理員（admin.edit）
       description: |
-        密碼由系統產生後寄啟用信，**不接受請求指定密碼**；建立的帳號帶 `mustChangePassword`。
+        密碼由系統產生，**不接受請求指定密碼**；建立的帳號帶 `mustChangePassword`。
+        帳號（`username`）不限定 email 格式；`email` 為選填的通知信箱——有填就寄啟用信，
+        沒填則初始密碼隨回應回傳（`data.initialPassword`），由建立者當場轉交。
       security: [{ AdminAuth: [] }]
-      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [email, displayName, roleId], properties: { email: { type: string }, displayName: { type: string }, roleId: { type: integer } } } } } }
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [username, displayName, roleId], properties: { username: { type: string, maxLength: 80 }, email: { type: string, nullable: true }, displayName: { type: string }, roleId: { type: integer } } } } } }
       responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } }
 
   /admin/admin/roles:
@@ -808,10 +810,10 @@ components:
 
     Login:
       type: object
-      required: [email, password]
+      required: [username, password]
       properties:
-        email:          { type: string }
-        password:       { type: string }
+        username:       { type: string, description: 登入帳號。不限定 email 格式（2026-09-06）。 }
+        password:       { type: string, description: 至少 6 碼 }
         turnstileToken: { type: string }
 
     AuthToken:
@@ -822,7 +824,8 @@ components:
         accessToken:        { type: string }
         expiresInMinutes:   { type: integer, description: 後台 60 分鐘 }
         displayName:        { type: string }
-        email:              { type: string }
+        username:           { type: string, description: 登入帳號 }
+        email:              { type: string, nullable: true, description: 通知信箱，選填 }
         roleCode:           { type: string, nullable: true, description: 僅後台 }
         permissions:        { type: array, nullable: true, items: { type: string }, description: 僅後台。前端據此決定畫面顯示，真正的把關在 API。 }
         mustChangePassword: { type: boolean, description: true 時前端必須先導向改密碼 }

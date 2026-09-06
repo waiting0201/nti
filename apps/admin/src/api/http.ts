@@ -15,7 +15,10 @@ const TOKEN_KEY = 'nti-admin-token'
 export type Session = {
   accessToken: string
   displayName: string
-  email: string
+  /** 登入帳號，不限定 email 格式 */
+  username: string
+  /** 通知信箱，選填（可能沒有） */
+  email?: string
   roleCode: string
   permissions: string[]
   mustChangePassword: boolean
