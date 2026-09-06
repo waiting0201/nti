@@ -660,10 +660,17 @@ traces | where timestamp > ago(30m)
 1. **已套用的 migration 不得重生。** 重新產生 `InitialSchema` 會換掉 migration ID，
    正式庫的 `__EFMigrationsHistory` 記的是舊 ID，EF 把新的當成 pending 又跑一次
    `CREATE TABLE` → **SQL 2714 物件已存在**。要改 schema 一律 append 一支新的。
-2. **不要依賴 DEFAULT 約束的名稱。** 正式庫該約束的實際名稱可能與 model 上的
-   `Relational:DefaultConstraintName` 不同（本專案就是如此），依名稱刪 → **SQL 3728
-   不是一個約束**，整支交易回滾。`DropColumn` **不要帶**那個註記，EF 會自己查
-   `sys.default_constraints` 找實際名稱。FK 名稱則可靠（`HasConstraintName` 指定）。
+2. **不要依賴約束的名稱——DEFAULT 如此，UNIQUE 也一樣。** 正式庫該約束的實際名稱
+   可能與 model 對不上，依名稱刪 → **SQL 3728 不是一個約束**，整支交易回滾。
+   `DropColumn` **不要帶** `Relational:DefaultConstraintName`，EF 會自己查
+   `sys.default_constraints` 找實際名稱。
+   > 2026-09-06 第二次踩到：`AdminUsernameLogin` 的 `DropUniqueConstraint("UQ_AdminUser_Email")`
+   > 在正式庫回 3728——而 `HasAlternateKey().HasName()`、`InitialSchema`、
+   > `db/migrations/0002` 三處都是這個名字。**唯一鍵沒有 EF 版的「自己查名稱」**，
+   > 得自己寫：查 `sys.key_constraints`（單欄且該欄是目標欄）拿實際名稱再 `EXEC` 刪，
+   > 並且要一併處理「它其實是唯一索引不是約束」——對索引下 `DROP CONSTRAINT` 同樣是 3728。
+   > FK 名稱則可靠（`HasConstraintName` 指定）。
+   > **教訓**：migration 裡凡是「按名字刪既有物件」的操作，都要先問「正式庫上真的叫這個嗎」。
 3. **不要在 migration 裡手寫 SQL。** `EXEC()` 的括號內只接受字串與變數相加，
    放函式呼叫是語法錯誤 → **SQL 102 Incorrect syntax near 'QUOTENAME'**。
    EF 產的寫法是 `SELECT @var = QUOTENAME(d.name) ... EXEC(N'...' + @var)`，
@@ -731,5 +738,7 @@ traces | where timestamp > ago(30m)
 | 2026-09-06 | Tim（Claude Code） | 新增 §11.1「Migration 的三條紅線」：已套用的 migration 不得重生（SQL 2714）、不得依賴 DEFAULT 約束名稱（SQL 3728）、不要在 migration 裡手寫 SQL（SQL 102）。三條都是這天四次部署失敗實際踩到的，附 App Insights 的查法——migration 掛掉時 health 回 404 而非 500，症狀不指向原因 |
 
 | 2026-09-06 | Tim（Claude Code） | §7.4：後台登入識別改為 `Username`（不限定 email 格式，`email` claim 變成選填）、密碼長度下限 8 → 6 碼。§11.1 第 3 條補一條例外：資料回填可以用一行靜態 `migrationBuilder.Sql`，並記下「先 NULL → 回填 → 收成 NOT NULL」的加欄位順序 |
+
+| 2026-09-06 | Tim（Claude Code） | §11.1 第 2 條擴充為「不要依賴約束的名稱」（原本只講 DEFAULT）：`AdminUsernameLogin` 的 `DropUniqueConstraint` 在正式庫回 SQL 3728，即使 model／InitialSchema／`db/0002` 三處命名一致。附上查 `sys.key_constraints`／`sys.indexes` 取實際名稱的寫法，並提醒唯一鍵可能是索引而非約束 |
 
 *最後更新：2026-09-06*

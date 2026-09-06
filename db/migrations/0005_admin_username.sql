@@ -37,9 +37,40 @@ GO
 ALTER TABLE dbo.AdminUser ALTER COLUMN Username nvarchar(80) NOT NULL;
 GO
 
-/* --- 3. 唯一鍵從 Email 搬到 Username ---------------------------------------- */
-IF EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_AdminUser_Email')
-    ALTER TABLE dbo.AdminUser DROP CONSTRAINT UQ_AdminUser_Email;
+/* --- 3. 唯一鍵從 Email 搬到 Username ----------------------------------------
+   刪 Email 的唯一性時**不依賴名稱**：2026-09-06 的部署實測，正式庫上並沒有叫
+   UQ_AdminUser_Email 的約束（SQL 3728），而這兩條路徑與 model 都是這樣命名的。
+   約束與唯一索引兩種形式都要認——對索引下 DROP CONSTRAINT 一樣是 3728。
+   QUOTENAME 在 SELECT 就套上：EXEC() 的括號內只接受字串與變數相加。 */
+DECLARE @uq sysname;
+
+SELECT @uq = QUOTENAME(kc.name)
+FROM sys.key_constraints kc
+JOIN sys.index_columns ic ON ic.object_id = kc.parent_object_id
+                         AND ic.index_id  = kc.unique_index_id
+JOIN sys.columns c ON c.object_id = ic.object_id AND c.column_id = ic.column_id
+WHERE kc.parent_object_id = OBJECT_ID(N'dbo.AdminUser')
+  AND kc.type = 'UQ'
+GROUP BY kc.name
+HAVING COUNT(*) = 1 AND MAX(c.name) = N'Email';
+
+IF @uq IS NOT NULL
+    EXEC(N'ALTER TABLE dbo.AdminUser DROP CONSTRAINT ' + @uq + N';');
+
+DECLARE @ux sysname;
+
+SELECT @ux = QUOTENAME(i.name)
+FROM sys.indexes i
+JOIN sys.index_columns ic ON ic.object_id = i.object_id AND ic.index_id = i.index_id
+JOIN sys.columns c ON c.object_id = ic.object_id AND c.column_id = ic.column_id
+WHERE i.object_id = OBJECT_ID(N'dbo.AdminUser')
+  AND i.is_unique = 1 AND i.is_primary_key = 0 AND i.is_unique_constraint = 0
+GROUP BY i.name
+HAVING COUNT(*) = 1 AND MAX(c.name) = N'Email';
+
+IF @ux IS NOT NULL
+    EXEC(N'DROP INDEX ' + @ux + N' ON dbo.AdminUser;');
+GO
 
 IF NOT EXISTS (SELECT 1 FROM sys.key_constraints WHERE name = N'UQ_AdminUser_Username')
     ALTER TABLE dbo.AdminUser ADD CONSTRAINT UQ_AdminUser_Username UNIQUE (Username);
