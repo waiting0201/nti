@@ -49,14 +49,11 @@ export function Shell() {
           </div>
         ))}
         {/*
-          這行以前是寫死的「尚未串接 API」，接上 API 之後就變成謊話。
-          改讀 hasApi（＝有沒有 VITE_API_BASE），資料來源是什麼就顯示什麼。
+          接上 API 之後這裡什麼都不顯示——「資料來自 CMS API」對使用者不是資訊，
+          docs 路徑更只是內部的東西。只留示範模式的警語：那時畫面上的資料是假的，
+          不講的話會被當成真的內容在改。
         */}
-        <div className="sidebar-foot">
-          {hasApi ? '資料來自 CMS API' : '資料為本機示範用，尚未串接 API'}
-          <br />
-          docs/09-cms-admin.md · 儀表板 + 24 個單元
-        </div>
+        {!hasApi && <div className="sidebar-foot">資料為本機示範用，尚未串接 API</div>}
       </aside>
 
       <div className="main">
