@@ -25,13 +25,8 @@ GO
 BEGIN TRAN;
 
 /* --- QuoteRequest.MemberId：先斷外鍵再砍欄位 ------------------------------- */
-DECLARE @fk sysname;
-SELECT @fk = name FROM sys.foreign_keys
-WHERE parent_object_id   = OBJECT_ID(N'dbo.QuoteRequest')
-  AND referenced_object_id = OBJECT_ID(N'dbo.Member');
-
-IF @fk IS NOT NULL
-    EXEC(N'ALTER TABLE dbo.QuoteRequest DROP CONSTRAINT ' + QUOTENAME(@fk));
+IF EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_QuoteRequest_Member')
+    ALTER TABLE dbo.QuoteRequest DROP CONSTRAINT FK_QuoteRequest_Member;
 
 IF COL_LENGTH(N'dbo.QuoteRequest', N'MemberId') IS NOT NULL
     ALTER TABLE dbo.QuoteRequest DROP COLUMN MemberId;
@@ -40,8 +35,10 @@ IF COL_LENGTH(N'dbo.QuoteRequest', N'MemberId') IS NOT NULL
    DEFAULT 約束要先卸掉，否則 DROP COLUMN 會被擋。
    ⚠ 依名稱刪不可靠：正式庫實測該約束不叫 DF_SupplierDownload_RequireLogin
      （2026-09-06 部署失敗，SQL 3728）。一律查系統表拿實際名稱。 */
-DECLARE @df sysname;
-SELECT @df = d.name
+/* QUOTENAME 必須在 SELECT 時就套上：EXEC() 的括號內只接受字串與變數相加，
+   放函式呼叫會是語法錯誤（SQL 102，2026-09-06 部署實測）。 */
+DECLARE @df nvarchar(300);
+SELECT @df = QUOTENAME(d.name)
 FROM sys.default_constraints d
 JOIN sys.columns c ON c.object_id = d.parent_object_id
                   AND c.column_id = d.parent_column_id
@@ -49,7 +46,7 @@ WHERE d.parent_object_id = OBJECT_ID(N'dbo.SupplierDownload')
   AND c.name = N'RequireLogin';
 
 IF @df IS NOT NULL
-    EXEC(N'ALTER TABLE dbo.SupplierDownload DROP CONSTRAINT ' + QUOTENAME(@df));
+    EXEC(N'ALTER TABLE dbo.SupplierDownload DROP CONSTRAINT ' + @df + N';');
 
 IF COL_LENGTH(N'dbo.SupplierDownload', N'RequireLogin') IS NOT NULL
     ALTER TABLE dbo.SupplierDownload DROP COLUMN RequireLogin;
