@@ -84,7 +84,7 @@ export function SettingPage() {
       ))}
 
       <Notice kind="info">
-        contact 頁目前是台中的暫代地址，上線前須換成台南實際廠址（待客戶提供）。
+        contact 頁的地址與電話已是客戶提供的台南廠址（2026-09-06）；傳真與地圖嵌入碼仍待客戶提供。
       </Notice>
 
       <div className="card">

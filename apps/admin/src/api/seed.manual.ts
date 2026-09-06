@@ -160,11 +160,11 @@ export const SETTING_GROUPS: Array<{ title: string; fields: SettingField[] }> = 
 export const SETTING_VALUES: Record<string, string | { zh: string; en: string }> = {
   'company.name': { zh: '南台灣印刷股份有限公司', en: 'NTI Printing Co., Ltd.' },
   'company.address': {
-    zh: '台中市西屯區東沙路一段 192 巷 56 弄 18 號（暫代地址，待換台南實際廠址）',
-    en: 'No. 18, Aly. 56, Ln. 192, Sec. 1, Dongshan Rd., Beitun Dist., Taichung 406, Taiwan',
+    zh: '709 臺南市安南區媽祖宮里工業六路29號',
+    en: 'No. 29, Gongye 6th Rd., Annan Dist., Tainan City 709, Taiwan',
   },
   'company.hours': { zh: '週一至週五 08:30–17:30', en: 'Mon–Fri 08:30–17:30' },
-  'company.phone': '+886-6-000-0000',
+  'company.phone': '+886 6 261 1358',
   'company.fax': '+886-6-000-0001',
   'company.email': 'service@nti-printing.com',
   'company.map': '<iframe src="https://www.google.com/maps?q=…&output=embed"></iframe>',

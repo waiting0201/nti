@@ -24,17 +24,17 @@ export default async function Page({ params }: Props) {
           <div className="info-stack reveal">
             <div className="info-card">
               <span className="info-ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg></span>
-              <div><h3>Taichung Plant &amp; Office</h3><p>No. 18, Aly. 56, Ln. 192, Sec. 1, Dongshan Rd., Beitun Dist., Taichung 406, Taiwan</p></div>
+              <div><h3>Tainan Plant &amp; Office</h3><p>No. 29, Gongye 6th Rd., Annan Dist., Tainan City 709, Taiwan</p></div>
             </div>
             <div className="info-card">
               <span className="info-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8.1 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z" /></svg></span>
-              <div><h3>Phone &amp; Email</h3><p><A href="tel:+886424366659">+886 4 2436 6659</A><br /><A href="mailto:service@nti-printing.com">service@nti-printing.com</A></p></div>
+              <div><h3>Phone &amp; Email</h3><p><A href="tel:+88662611358">+886 6 261 1358</A><br /><A href="mailto:service@nti-printing.com">service@nti-printing.com</A></p></div>
             </div>
             <div className="info-card">
               <span className="info-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg></span>
               <div><h3>Business Hours</h3><p>Mon&ndash;Fri 08:30&ndash;17:30 (GMT+8)<br />Factory visits by appointment</p></div>
             </div>
-            <div className="map-frame"><iframe src="https://www.google.com/maps?q=No.+18,+Aly.+56,+Ln.+192,+Sec.+1,+Dongshan+Rd.,+Beitun+Dist.,+Taichung+406,+Taiwan&output=embed" title="NTI Printing — Taichung plant location" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe></div>
+            <div className="map-frame"><iframe src="https://www.google.com/maps?q=No.+29,+Gongye+6th+Rd.,+Annan+Dist.,+Tainan+City+709,+Taiwan&output=embed" title="NTI Printing — Tainan plant location" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe></div>
           </div>
           <div>
             <div className="form-success" id="pgOk" hidden>

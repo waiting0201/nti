@@ -5,8 +5,8 @@
    後台以此清單渲染表單，不允許自行新增 key。
 
    ⚠ 待客戶提供（docs/09 §21、IA §7）：
-     company.address 目前 contact.html 用的是台中暫代地址，上線前須換成台南實際
-     廠址；company.phone / company.email / company.map_embed 同樣待客戶確認。
+     company.address 與 company.phone 已於 2026-09-06 換成客戶提供的台南廠址與
+     總機（見 contact.html）；company.fax / company.map_embed 仍待客戶確認。
    ============================================================================= */
 SET NOCOUNT ON;
 SET ANSI_NULLS ON;
@@ -17,7 +17,7 @@ GO
 ;WITH src (SettingKey, GroupName, ValueType, IsLocalized, SortOrder) AS (
     SELECT * FROM (VALUES
         ('company.name',            'Company', 'text',      1, 10),
-        ('company.address',         'Company', 'multiline', 1, 20),   -- ⚠ 台中暫代，待換台南廠址
+        ('company.address',         'Company', 'multiline', 1, 20),
         ('company.hours',           'Company', 'multiline', 1, 30),
         ('company.phone',           'Company', 'text',      0, 40),
         ('company.fax',             'Company', 'text',      0, 50),
