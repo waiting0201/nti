@@ -13,7 +13,6 @@
 export const ZH: Record<string, string> = {
   "A Smarter Global Packaging Partner — NTI Printing": "更聰明的全球包裝夥伴 —— NTI Printing",
   "NTI Printing home": "NTI Printing 首頁",
-  "Search": "搜尋",
   "Menu": "選單",
   "Range of NTI sustainably printed pattern packaging": "NTI 永續印刷的多款圖樣包裝",
   "Section pages": "分頁導覽",

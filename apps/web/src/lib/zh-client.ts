@@ -70,7 +70,6 @@ export const ZH_CLIENT: Record<string, string> = {
   "Production aisle": "生產動線",
   "Projects": "實績案例",
   "Red Envelopes": "紅包袋",
-  "Search": "搜尋",
   "Separate lid and base — a more complex structure with an elegant, premium presentation.": "盒蓋與盒身分離 —— 結構較複雜，呈現優雅高階的質感。",
   "Solutions": "解決方案",
   "Special Package": "特殊包裝",

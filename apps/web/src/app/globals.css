@@ -71,8 +71,6 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 .lang-menu a{display:flex;align-items:center;gap:9px;padding:8px 10px;font-weight:700;font-size:.86rem;color:var(--grey);border-radius:7px;white-space:nowrap;transition:background .15s,color .15s}
 .lang-menu a:hover{background:#f2f6ee;color:var(--green)}
 .lang-menu a.active{color:var(--green)}
-.icn{color:var(--grey-2);cursor:pointer;transition:color .2s}
-.icn:hover{color:var(--green)}
 .burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer}
 .burger span{width:24px;height:2px;background:var(--grey);border-radius:2px}
 

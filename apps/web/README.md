@@ -233,13 +233,12 @@ node scripts/extract-i18n.mjs --client  # 重產 src/lib/zh-client.ts
 ### 為什麼字典分兩份
 
 `SiteHeader` 與兩個 explorer 是 client component。讓它們吃完整字典，1000 筆會被
-打進 client bundle，於是 `zh-client.ts` 只放它們用得到的 83 筆，由
+打進 client bundle，於是 `zh-client.ts` 只放它們用得到的 82 筆，由
 `extract-i18n.mjs --client` 從 `zh.ts` 產生，不會漂移。
 
 ## 已知待辦
 
 - **中文文案待客戶校閱**（現況為機器翻譯初稿）。
-- Header 搜尋功能尚未實作。
 - 手機版漢堡選單仍然沒有行為（mockup 本身也未實作），但語系切換已經有了。
 - 首頁 hero 的橫幅圖片把英文標語**燒在圖裡**（`ref-home-banner*.png`），
   中文站要換掉需要客戶提供中文版素材。
