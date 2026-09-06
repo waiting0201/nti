@@ -382,14 +382,24 @@ footer a:hover{color:var(--leaf)}
 .faq-nav button:hover{color:var(--green);background:#f6f9f4}
 .faq-nav button.active{color:var(--green);border-left-color:var(--leaf);background:#f2f7ee;font-weight:800}
 
-.faq{border:1.5px solid var(--line);border-radius:12px;background:#fff;transition:border-color .25s}
+.faq{--faq-pad:30px;border:1.5px solid var(--line);border-radius:12px;background:#fff;transition:border-color .25s}
 .faq[open]{border-color:var(--leaf)}
-.faq summary{display:flex;align-items:center;gap:18px;padding:20px 24px;cursor:pointer;list-style:none}
+.faq summary{position:relative;display:flex;align-items:center;gap:18px;padding:20px var(--faq-pad);cursor:pointer;list-style:none}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary span{flex:1;font-weight:800;font-size:1rem;color:var(--grey);line-height:1.45}
-.faq summary::after{content:"+";flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:var(--card);color:var(--grey-2);display:grid;place-items:center;font-size:1.2rem;font-weight:600;transition:all .3s var(--ease)}
-.faq[open] summary::after{transform:rotate(45deg);background:var(--teal);color:#fff}
-.faq>p{padding:0 24px 22px;font-size:.92rem;line-height:1.85;color:var(--grey-2);max-width:68ch}
+/* 圓角方塊底：order 讓它排在標題之後。展開時只換底色，不旋轉——
+   整塊跟著轉 45° 會把圓角方形變成菱形。 */
+.faq summary::before{content:"";order:2;flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:var(--card);transition:background .3s var(--ease)}
+/* ＋／× 記號：兩條 bar 疊出來並絕對定位在方塊正中。用字型的 "+" 字符沒辦法對準——
+   字符的墨水範圍在 em box 裡本來就偏下，place-items:center 對齊的是行框不是字符。
+   right 從 summary 的 padding box 右緣起算：方塊中心在 padding + 16，再減半個記號。 */
+.faq summary::after{content:"";position:absolute;top:50%;right:calc(var(--faq-pad) + 10px);width:12px;height:12px;margin-top:-6px;color:var(--grey-2);background:linear-gradient(currentColor,currentColor) center/12px 1.8px no-repeat,linear-gradient(currentColor,currentColor) center/1.8px 12px no-repeat;transition:transform .3s var(--ease),color .3s var(--ease)}
+.faq[open] summary::before{background:var(--teal)}
+.faq[open] summary::after{transform:rotate(45deg);color:#fff}
+/* 內文與標題同一條左緣。用 :not(summary) 而不是 >p，因為 CMS 接上後 JobList／FaqList
+   吐的是一層 <div> 包住的 rich HTML，只寫 >p 會讓內文整個貼到框線上。 */
+.faq>:not(summary){padding:2px var(--faq-pad) 24px;font-size:.92rem;line-height:1.85;color:var(--grey-2);max-width:68ch}
+.faq>:not(summary)>*+*{margin-top:1em}
 .faq-cta{margin-top:40px;background:var(--card);border-radius:16px;padding:34px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
 .faq-cta h3{font-size:1.2rem;font-weight:800;color:var(--grey)}
 .faq-cta p{margin-top:6px;font-size:.88rem;color:var(--grey-2)}
@@ -543,6 +553,7 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
   .pj-grid,.vl-grid{grid-template-columns:1fr 1fr}
   .pr-grid,.pr-grid.two{grid-template-columns:1fr 1fr}
   .sa-grid{grid-template-columns:1fr}
+  .faq{--faq-pad:20px}
   .faq-layout{grid-template-columns:1fr}
   .faq-nav{position:static;flex-direction:row;flex-wrap:wrap;gap:8px}
   .faq-nav button{border:1.5px solid var(--line);border-left-width:1.5px;border-radius:100px;padding:8px 16px}
