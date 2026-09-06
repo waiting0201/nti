@@ -45,7 +45,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | P4 | 後端／CMS API | ✅ | 程式、資源、內容、CI 全數完成並上線（見 §五、§六） |
 | P5 | 前台頁面開發 | 🟡 | 44 頁切版完成；內容仍為靜態，未接 API |
 | P6 | 報價／聯絡表單 | 🟡 | 表單已切版（`PageForm`），前台尚未接後端 |
-| P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語路由就緒，**中文文案未提供**；sitemap 與結構化資料未做 |
+| P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語完成（CMS 內容 + 44 頁靜態文字皆有中文，**待客戶校閱**）；sitemap 與結構化資料未做 |
 | P9 | 整合測試／QA／SEO 稽核 | ⬜ | |
 | P10 | UAT 客戶驗收 | ⬜ | |
 | P11 | 部署 | ✅ | SWA + Blob + CI 全通（見 §六） |
@@ -74,9 +74,39 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 
 | 項目 | 現況 |
 |---|---|
-| 中文文案 | **未提供**。`/zh` 目前渲染與 `/en` 相同的英文內容作為佔位 |
-| 內容來源 | 全部寫死在 `page.tsx`，未接 API（P5 尾段） |
+| 中文文案 | 已補齊（見下方「靜態文字雙語」），但**是機器翻譯初稿，待客戶校閱** |
+| 手機版語系切換 | ≤900px 的 header 會橫向溢出，漢堡／搜尋／語系鈕都在畫面外。mockup 本身的 RWD 缺口，要修等於重設計手機版 header |
+| 首頁 hero 素材 | 英文標語**燒在圖裡**（`ref-home-banner*.png`），中文站需要客戶提供中文版素材 |
 | 表單送出 | `PageForm` 只有前端行為，送出無後端（P6） |
+
+### ✅ 靜態文字雙語（2026-09-06）
+
+CMS 那 16 頁的內容早就有中英兩版（§十），但**其餘 28 頁與 header／footer／浮動鈕
+是寫死在前端的固定文案**（docs/08 決議 3），`/zh` 一直顯示英文。現在補上了：
+
+| 做法 | 說明 |
+|---|---|
+| 字典 | `apps/web/src/lib/zh.ts`，**以英文原文為 key**，962／1003 筆有中文；剩下 41 筆是刻意不翻的品牌名、機型名、認證縮寫、Email 與檔案大小 |
+| 套用 | 每頁把整棵 JSX 包在 `<T locale={locale}>`，由 `src/lib/translate.tsx` 走訪 element tree 換文字節點與 `alt`／`title`／`placeholder`／`aria-label` |
+| client component | header 與兩個 explorer 另吃 `zh-client.ts`（83 筆子集，腳本產生），避免整本字典進 client bundle |
+| 盤點工具 | `node apps/web/scripts/extract-i18n.mjs`（`--stale`／`--client`） |
+
+**`/en` 完全不經過替換**，所以 `verify:markup` 仍然「全部 44 頁與 mockup 一致」。
+44 頁的 `/zh` 都已渲染中文，掃過去只剩 5 個節點是英文（皆為機型／標準名稱）。
+
+順手修掉的兩個既有問題：
+
+- `<head>` 的 `title`／`description` 沒有解 HTML 實體，`&amp;` 被 React 再跳脫一次，
+  英文站的標題長期顯示成 `…Packaging &amp;amp; Printing…`。改在 `build-pages.mjs` 解掉。
+- 語系鈕在 900–1150px 之間會把「中文」拆成兩行直排（`.lang-btn` 沒有 `white-space:nowrap`、
+  `.htools` 會被壓縮）。mockup 的按鈕永遠是 `EN`，所以從沒踩到。
+
+### ✅ 語系解析（2026-09-06）
+
+`src/middleware.ts` 從「一律導向 `/en`」改成：使用者選過的（`NEXT_LOCALE` cookie，
+一年）→ `Accept-Language` → `en`。造訪任何 `/zh/...` 就會把語系記下來，之後回到 `/`
+不會被打回英文。順序與後端 `Common/LangResolver.cs` 一致，只有預設值不同
+（前台 `en`，API `zh`）。
 
 ### ✅ 已接上 API（2026-09-04）
 

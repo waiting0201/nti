@@ -120,7 +120,18 @@ NTI/
   程式在 [`Api/`](Api/README.md)，本機 `cd Api && func start` → `http://localhost:7071/api/v1/{*route}`。
   ⚠️ 兩個預設拒絕：未登記於 `AppRouter.Admin.cs` 權限表的 `/admin/*` 直接 403；
   未登記於 `AppRouter.Public.cs` 白名單的前台路由會被要求 token。新增端點時兩張表都要補。
-- **資料庫**：schema 設計在 [docs/08-database.md](docs/08-database.md)；**權威來源為 EF Core Migration**（`Api/Data/Migrations/`，表達方式對照見 10 §8.5）。[`db/`](db/README.md) 為參考實作與交付腳本，本機一鍵建置：`cp db/.env.local.example db/.env.local && db/tools/run-local.sh`；`db/verify/verify.sql` 保留為驗收閘。
+- **資料庫**：schema 設計在 [docs/08-database.md](docs/08-database.md)；**權威來源為 EF Core Migration**（`Api/Data/Migrations/`，表達方式對照見 10 §8.5）。[`db/`](db/README.md) 為參考實作與交付腳本，`db/verify/verify.sql` 保留為驗收閘。
+  本機建庫（Docker SQL Server，資料庫名 `NTI`）：
+
+  ```bash
+  cp db/.env.local.example db/.env.local     # 填本機 sa 密碼
+  (cd Api && dotnet ef database update)      # schema + 種子（權威來源）
+  set -a; . ./db/.env.local; set +a
+  db/tools/sqlcmd.sh NTI < db/content/200_mockup_content.sql   # 111 筆中英內容
+  db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql             # 應輸出「全數 PASS」
+  ```
+
+  只想要 `db/` 那條參考路徑（含 `SchemaVersion`）時才跑 `db/tools/run-local.sh`。
 - **檔案放置慣例**：`docs/` 僅放 **harness engineering 文件**；其他產出的 PDF／時程／規劃檔一律放 `reference/`，客戶提供的原始素材放 `reference/sbk/`。新增重要文件時，於上方「文件索引」補連結。
 - **套件管理**：**pnpm workspace**（`pnpm-workspace.yaml`，packages = `apps/*`），repo 根 `pnpm install` 一次裝完。
   指令一律從根目錄下 `pnpm --filter web ...` / `pnpm --filter admin ...`。
@@ -147,6 +158,10 @@ NTI/
   頁面由 `apps/web/scripts/build-pages.mjs` 從 mockup 機械式產生；改動後務必跑驗收閘：
   `pnpm --filter web build && pnpm --filter web start`，另一終端 `pnpm --filter web verify:markup`
   （應輸出「全部 44 頁與 mockup 一致」）。
+- **前台中文文案**：**mockup 仍然是英文的權威來源**，中文放在
+  `apps/web/src/lib/zh.ts`（以英文原文為 key，查不到就落回英文）。要改英文請改 mockup
+  再重跑 `build-pages.mjs`，字典只補中文。`/en` 不經過替換，所以驗收閘不受影響。
+  盤點還沒翻的字串：`node apps/web/scripts/extract-i18n.mjs`（細節見 apps/web/README〈雙語現況〉）。
 - **後台開發**：先讀 [docs/09-cms-admin.md](docs/09-cms-admin.md)（22 個單元、上傳尺寸總表、共用 UI 規則、權限矩陣）。
   權限矩陣的權威展開在 [`db/seed/110_role_permission.sql`](db/README.md)（167 列）；
   `apps/admin/src/lib/permissions.ts` 與它一對一，數字對不上時開發模式的 console 會直接報錯。

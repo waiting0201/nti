@@ -81,6 +81,7 @@ web/
 └── scripts/
     ├── sync-assets.mjs        # 素材同步
     ├── build-pages.mjs        # 一次性 codegen：mockup HTML → page.tsx
+    ├── extract-i18n.mjs       # 盤點 mockup 的可翻譯字串／重產 zh-client.ts
     ├── pack-standalone.mjs    # postbuild：把 standalone 整理成 SWA 收得下的形狀
     ├── check-size.mjs         # postbuild：SWA Free 的 250MB 閘
     └── verify-markup.mjs      # 版面驗收閘：Next 輸出 vs mockup 逐節點比對
@@ -202,13 +203,47 @@ NEXT_PUBLIC_MEDIA_BASE=https://stntiprod.blob.core.windows.net pnpm --filter web
 
 ## 雙語現況
 
-- 路由：`/en/...`、`/zh/...`；`/` 與缺語系路徑由 middleware 導向 `/en`。
-- `<html lang>`、canonical 與 `hreflang`（en／zh-Hant／x-default）已就緒。
-- **中文文案尚未提供**，`/zh` 目前渲染與 `/en` 相同的英文內容作為佔位。
-  依 [`docs/02-frontend.md`](../docs/02-frontend.md) §4，i18n 內容串接排在 P8。
+- 路由：`/en/...`、`/zh/...`。`<html lang>`、canonical 與 `hreflang`（en／zh-Hant／x-default）已就緒。
+- **語系解析**（`src/middleware.ts`）：使用者選過的（`NEXT_LOCALE` cookie，一年）→
+  `Accept-Language` → `en`。造訪任何 `/zh/...` 或 `/en/...` 就會把該語系記下來，
+  所以之後回到 `/` 不會被打回英文。順序與後端 `Common/LangResolver.cs` 一致，
+  只有預設值不同（前台 `en`，API `zh`）。
+- **靜態文字**：`src/lib/zh.ts` 以**英文原文為 key**，查不到就落回英文。
+  頁面把整棵 JSX 包在 `<T locale={locale}>` 裡，由 `src/lib/translate.tsx` 走訪
+  element tree 換掉文字節點與 `alt`／`title`／`placeholder`／`aria-label`。
+  **`/en` 完全不經過替換**，所以 `verify:markup` 這道閘不受影響。
+- **CMS 內容**：接了 `NEXT_PUBLIC_API_BASE` 的 16 頁改吃資料庫的 `*I18n` 資料表，
+  兩個語系各自獨立（缺語系不 fallback）。
+
+### 字典怎麼維護
+
+```bash
+node scripts/extract-i18n.mjs           # 列出 mockup 有、字典還沒有的字串
+node scripts/extract-i18n.mjs --stale   # 列出字典有、mockup 已經沒有的 key
+node scripts/extract-i18n.mjs --client  # 重產 src/lib/zh-client.ts
+```
+
+英文文案的權威來源仍然是 `mockup/`：**要改英文請改 mockup 再重跑 `build-pages.mjs`**，
+字典只補中文。目前 962／1003 筆有中文，其餘 41 筆是刻意不翻的品牌名、機型名、
+認證縮寫、Email 與檔案大小（`extract-i18n.mjs` 不帶參數就會把它們列出來）。
+
+⚠ **中文是機器翻譯初稿，不是客戶核可的文案**，與 `tools/content-zh.mjs` 的 CMS
+內容同一個狀態。上線前必須由客戶校閱。
+
+### 為什麼字典分兩份
+
+`SiteHeader` 與兩個 explorer 是 client component。讓它們吃完整字典，1000 筆會被
+打進 client bundle，於是 `zh-client.ts` 只放它們用得到的 83 筆，由
+`extract-i18n.mjs --client` 從 `zh.ts` 產生，不會漂移。
 
 ## 已知待辦
 
-- 中文文案、Header 搜尋功能、手機版漢堡選單（mockup 本身也未實作行為）。
+- **中文文案待客戶校閱**（現況為機器翻譯初稿）。
+- Header 搜尋功能、手機版漢堡選單（mockup 本身也未實作行為）。
+- **手機版（≤900px）沒有語系切換**：mockup 的 header 在小螢幕會橫向溢出，
+  漢堡鈕、搜尋與語系鈕都被推到畫面外，`.lang` 另外還被 `display:none` 藏起來。
+  這是 mockup 本身的 RWD 缺口，修它等於重新設計手機版 header，需要先與客戶確認。
+- 首頁 hero 的橫幅圖片把英文標語**燒在圖裡**（`ref-home-banner*.png`），
+  中文站要換掉需要客戶提供中文版素材。
 - 表單（`/contact`、`/get-a-quote`）目前是 mockup 的前端成功卡，尚未接 API。
 - `img-size.js`（mockup 的素材尺寸標示）依原註解不掛載於正式站。
