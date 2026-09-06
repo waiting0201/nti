@@ -170,8 +170,8 @@ NTI/
 
   | 分支 | 內容 | 推向 | 體積 |
   |------|------|------|------|
-  | `master` | 完整 | `Remote_NAS`（`/Volumes/public/Repo/NTI`） | 2,527 MB / 111 檔 |
-  | `public` | master 去掉下表排除項 | `Remote_GitHub`（`waiting0201/nti`，**public repo**） | 0.8 MB 全歷史 / 30 檔 |
+  | `master` | 完整 | `Remote_NAS`（`/Volumes/public/Repo/NTI`） | 2,560 MB 全歷史 / 382 檔 |
+  | `public` | master 去掉下表排除項 | `Remote_GitHub`（`waiting0201/nti`，**public repo**） | 6.2 MB 全歷史 / 298 檔 |
 
   **`public` 分支的排除項**（`tools/sync-public.sh` 的 `EXCLUDE`）——
   ⚠️ 必須涵蓋**歷史上出現過的路徑**，不只是現在的路徑：
@@ -186,7 +186,7 @@ NTI/
   | `db/local/` | 只在本機執行的建庫腳本，含 dev 管理員帳號雜湊 | — |
 
   **真正的安全網是體積斷言，不是這張清單**：`sync-public.sh` 與 `.githooks/pre-push`
-  都會檢查全歷史可達物件 ≤ 20MB（正常約 0.8MB）。路徑清單永遠可能漏掉某個只存在於
+  都會檢查全歷史可達物件 ≤ 20MB（2026-09-06 為 6.2MB）。路徑清單永遠可能漏掉某個只存在於
   舊 commit 的目錄 —— 這正是 `planning/` 一開始被漏掉的原因。
 
   > ⚠️ `waiting0201/nti` 是 **public repo**。新增檔案時先想清楚是否適合公開；
