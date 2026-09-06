@@ -25,16 +25,31 @@ GO
 BEGIN TRAN;
 
 /* --- QuoteRequest.MemberId：先斷外鍵再砍欄位 ------------------------------- */
-IF EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_QuoteRequest_Member')
-    ALTER TABLE dbo.QuoteRequest DROP CONSTRAINT FK_QuoteRequest_Member;
+DECLARE @fk sysname;
+SELECT @fk = name FROM sys.foreign_keys
+WHERE parent_object_id   = OBJECT_ID(N'dbo.QuoteRequest')
+  AND referenced_object_id = OBJECT_ID(N'dbo.Member');
+
+IF @fk IS NOT NULL
+    EXEC(N'ALTER TABLE dbo.QuoteRequest DROP CONSTRAINT ' + QUOTENAME(@fk));
 
 IF COL_LENGTH(N'dbo.QuoteRequest', N'MemberId') IS NOT NULL
     ALTER TABLE dbo.QuoteRequest DROP COLUMN MemberId;
 
 /* --- SupplierDownload.RequireLogin：受控文件概念一併取消 --------------------
-   具名 DEFAULT 約束要先卸掉，否則 DROP COLUMN 會被擋。 */
-IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = N'DF_SupplierDownload_RequireLogin')
-    ALTER TABLE dbo.SupplierDownload DROP CONSTRAINT DF_SupplierDownload_RequireLogin;
+   DEFAULT 約束要先卸掉，否則 DROP COLUMN 會被擋。
+   ⚠ 依名稱刪不可靠：正式庫實測該約束不叫 DF_SupplierDownload_RequireLogin
+     （2026-09-06 部署失敗，SQL 3728）。一律查系統表拿實際名稱。 */
+DECLARE @df sysname;
+SELECT @df = d.name
+FROM sys.default_constraints d
+JOIN sys.columns c ON c.object_id = d.parent_object_id
+                  AND c.column_id = d.parent_column_id
+WHERE d.parent_object_id = OBJECT_ID(N'dbo.SupplierDownload')
+  AND c.name = N'RequireLogin';
+
+IF @df IS NOT NULL
+    EXEC(N'ALTER TABLE dbo.SupplierDownload DROP CONSTRAINT ' + QUOTENAME(@df));
 
 IF COL_LENGTH(N'dbo.SupplierDownload', N'RequireLogin') IS NOT NULL
     ALTER TABLE dbo.SupplierDownload DROP COLUMN RequireLogin;

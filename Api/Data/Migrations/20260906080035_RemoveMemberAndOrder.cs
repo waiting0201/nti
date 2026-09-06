@@ -13,9 +13,18 @@ namespace Nti.Api.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_QuoteRequest_Member",
-                table: "QuoteRequest");
+            // ⚠ 這支不用 EF 產的 DropForeignKey／具名 DropColumn，改成查系統表再刪。
+            //   正式庫的 DEFAULT 約束名稱與 model 上的 Relational:DefaultConstraintName
+            //   對不上（2026-09-06 部署實測：'DF_SupplierDownload_RequireLogin' is not a
+            //   constraint，SQL 3728），依名稱刪就會整支交易回滾、host 起不來。
+            //   FK 一併改為先確認存在——這支要能在名稱不一致的庫上重播。
+            migrationBuilder.Sql(@"
+                DECLARE @fk sysname;
+                SELECT @fk = name FROM sys.foreign_keys
+                WHERE parent_object_id = OBJECT_ID(N'[QuoteRequest]')
+                  AND referenced_object_id = OBJECT_ID(N'[Member]');
+                IF @fk IS NOT NULL
+                    EXEC(N'ALTER TABLE [QuoteRequest] DROP CONSTRAINT ' + QUOTENAME(@fk));");
 
             migrationBuilder.DropTable(
                 name: "MemberToken");
@@ -49,10 +58,11 @@ namespace Nti.Api.Data.Migrations
                 keyColumns: new[] { "PermissionCode", "RoleId" },
                 keyValues: new object[] { "order.view", 1 });
 
+            // 不帶 Relational:DefaultConstraintName 的 DropColumn，EF 會自己查系統表
+            // 找出該欄的 DEFAULT 約束再刪，不依賴名稱——這正是要的行為。
             migrationBuilder.DropColumn(
                 name: "RequireLogin",
-                table: "SupplierDownload")
-                .Annotation("Relational:DefaultConstraintName", "DF_SupplierDownload_RequireLogin");
+                table: "SupplierDownload");
 
             migrationBuilder.DropColumn(
                 name: "MemberId",
