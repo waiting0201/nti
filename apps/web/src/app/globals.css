@@ -397,8 +397,11 @@ footer a:hover{color:var(--leaf)}
 .faq[open] summary::before{background:var(--teal)}
 .faq[open] summary::after{transform:rotate(45deg);color:#fff}
 /* 內文與標題同一條左緣。用 :not(summary) 而不是 >p，因為 CMS 接上後 JobList／FaqList
-   吐的是一層 <div> 包住的 rich HTML，只寫 >p 會讓內文整個貼到框線上。 */
-.faq>:not(summary){padding:2px var(--faq-pad) 24px;font-size:.92rem;line-height:1.85;color:var(--grey-2);max-width:68ch}
+   吐的是一層 <div> 包住的 rich HTML，只寫 >p 會讓內文整個貼到框線上。
+   88ch：卡片放寬到滿版後，68ch（約 84 字元一行）只用掉卡片的 57% 寬。
+   維持上限而不是 none，理由同 .prose.wide 的註解——88ch 在 1440 上約 100 字元一行，
+   已經略高於傳統可讀上限；不設限則會變成 148 字元。 */
+.faq>:not(summary){padding:2px var(--faq-pad) 24px;font-size:.92rem;line-height:1.85;color:var(--grey-2);max-width:88ch}
 .faq>:not(summary)>*+*{margin-top:1em}
 .faq-cta{margin-top:40px;background:var(--card);border-radius:16px;padding:34px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
 .faq-cta h3{font-size:1.2rem;font-weight:800;color:var(--grey)}
