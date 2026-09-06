@@ -298,12 +298,144 @@ export function HeroSlides({ items, locale }: { items: Banner[]; locale: Locale 
   )
 }
 
-/** 首頁 Proof 認證牆：外層 `.cert-wall` 在頁面上，這裡只出 logo。 */
+// 首頁 Proof 三張分類卡：品質管理／環境永續／社會責任·安全。
+type ProofCategory = 'quality' | 'eco' | 'safety' | 'other'
+
+const PROOF_CATEGORY_META: Record<ProofCategory, { title: string; iconClass: string }> = {
+  quality: { title: 'Quality Management', iconClass: 'proof-ic--quality' },
+  eco: { title: 'Environmental Sustainability', iconClass: 'proof-ic--eco' },
+  safety: { title: 'Social Responsibility & Safety', iconClass: 'proof-ic--safety' },
+  other: { title: 'Other Certifications', iconClass: 'proof-ic--quality' },
+}
+
+// 現況種子把 14 張認證都塞進同一個分類，categoryName 派不上用場時的備援：
+// 依檔名對照品質／環境／社會責任三類。對不上的一律進 other，不能讓認證憑空消失。
+const PROOF_LOGO_CATEGORY: Record<string, ProofCategory> = {
+  'cert-g7.png': 'quality',
+  'cert-iso9001.png': 'quality',
+  'cert-gmi.png': 'quality',
+  'cert-fsc.png': 'eco',
+  'cert-iso14001.png': 'eco',
+  'cert-co2neutral.png': 'eco',
+  'cert-green.png': 'eco',
+  'cert-greenbuilding.png': 'eco',
+  'cert-mof.png': 'eco',
+  'cert-iso45001.png': 'safety',
+  'cert-sedex.png': 'safety',
+  'cert-leed-gold.png': 'safety',
+  'cert-esg.png': 'safety',
+  'cert-esci.png': 'safety',
+}
+
+// 同一批檔案在卡片內的補償尺寸 class——原始素材留白比例不一，見 home.css 的 .proof-logos 註解。
+const PROOF_LOGO_SIZE_CLASS: Record<string, string> = {
+  'cert-fsc.png': 'pad-lg',
+  'cert-green.png': 'pad-md',
+  'cert-esg.png': 'pad-sm',
+  'cert-sedex.png': 'wide',
+  'cert-esci.png': 'lockup',
+}
+
+const basename = (path: string) => path.split('/').pop() ?? path
+
+const PROOF_ICONS: Record<ProofCategory, React.ReactNode> = {
+  quality: (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="8.5" r="5.5" />
+      <path d="m9 8.5 2 2 3.5-3.5" />
+      <path d="M8.3 13.2 6.5 21l5.5-3 5.5 3-1.8-7.8" />
+    </svg>
+  ),
+  eco: (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 19c-1-7 2-13 14-14 1 11-4 15-14 14Z" />
+      <path d="M5.5 18.5 14 10" />
+    </svg>
+  ),
+  safety: (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3.5 18.5 6v5.5c0 5-2.8 8-6.5 9.5-3.7-1.5-6.5-4.5-6.5-9.5V6Z" />
+      <path d="m9 12 2 2 4-4.5" />
+    </svg>
+  ),
+  other: (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="8" />
+      <path d="m9 12 2 2 4-4.5" />
+    </svg>
+  ),
+}
+
+/**
+ * 首頁 Proof 認證牆：外層 `.cert-wall` 在頁面上，這裡輸出三張分類卡
+ * （結構需與 page.tsx 的 fallback 分支一致，見那邊的硬寫版本）。
+ *
+ * 分組規則：`categoryName` 若真的有兩種以上不同值，就照它分組（後台已把認證分好類）；
+ * 否則（現況：14 筆同一分類或未分類）退回用 logoPath 檔名對照表分三類，
+ * 對不上的一律進最後一組，不遺漏任何一筆。
+ */
 export function CertificationLogos({ items }: { items: Certification[] }) {
+  const distinctNamed = new Set(items.map((c) => c.categoryName).filter(Boolean))
+
+  type Group = { key: string; title: string; iconClass: string; icon: React.ReactNode; items: Certification[] }
+  let groups: Group[]
+
+  if (distinctNamed.size >= 2) {
+    const order: string[] = []
+    const byName = new Map<string, Certification[]>()
+    for (const c of items) {
+      const key = c.categoryName ?? 'Other'
+      if (!byName.has(key)) {
+        byName.set(key, [])
+        order.push(key)
+      }
+      byName.get(key)!.push(c)
+    }
+    groups = order.map((name) => ({
+      key: name,
+      title: name,
+      iconClass: 'proof-ic--quality',
+      icon: PROOF_ICONS.quality,
+      items: byName.get(name)!,
+    }))
+  } else {
+    const byKey = new Map<ProofCategory, Certification[]>()
+    for (const c of items) {
+      const key = PROOF_LOGO_CATEGORY[basename(c.logoPath)] ?? 'other'
+      if (!byKey.has(key)) byKey.set(key, [])
+      byKey.get(key)!.push(c)
+    }
+    groups = (['quality', 'eco', 'safety', 'other'] as ProofCategory[])
+      .filter((k) => byKey.has(k))
+      .map((k) => ({
+        key: k,
+        title: PROOF_CATEGORY_META[k].title,
+        iconClass: PROOF_CATEGORY_META[k].iconClass,
+        icon: PROOF_ICONS[k],
+        items: byKey.get(k)!,
+      }))
+  }
+
   return (
     <>
-      {items.map((c) => (
-        <img key={c.id} src={cmsMedia(c.logoPath)} alt={c.logoAlt} />
+      {groups.map((g) => (
+        <article key={g.key} className="proof-card">
+          <span className={`proof-ic ${g.iconClass}`} aria-hidden="true">
+            {g.icon}
+          </span>
+          <h3>{g.title}</h3>
+          <p>{g.items.map((c) => c.name).join(', ')}</p>
+          <div className="proof-logos">
+            {g.items.map((c) => (
+              <img
+                key={c.id}
+                className={PROOF_LOGO_SIZE_CLASS[basename(c.logoPath)]}
+                src={cmsMedia(c.logoPath)}
+                alt={c.logoAlt}
+              />
+            ))}
+          </div>
+        </article>
       ))}
     </>
   )

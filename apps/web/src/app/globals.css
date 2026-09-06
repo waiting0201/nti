@@ -111,9 +111,14 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
    eyebrow (.72/800/green) → title (2.9/800/green) → deck (1.24/600/grey) → prose (1.1/500/grey-2) */
 .eyebrow{display:inline-flex;align-items:center;gap:.7em;font-size:.72rem;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:var(--green)}
 .eyebrow::before{content:"";width:28px;height:1.5px;background:var(--leaf)}
-/* measure cap keeps the long new H1s to 2–3 lines instead of one 1100px ruler;
-   line-height opens from 1.06 to 1.12 because these titles now actually wrap */
-.sec-title{color:var(--green-title);font-weight:800;font-size:clamp(1.9rem,3.6vw,2.9rem);letter-spacing:-.022em;line-height:1.12;max-width:24ch;text-wrap:balance}
+/* measure cap keeps the long new H1s to ~2 lines instead of the 24ch version's
+   3–4 (24ch ≈ only 550–600px, so a 70-char title like "The NTI Difference — Where
+   Sustainability Meets Uncompromising Quality" broke three times); 42ch is sized
+   off the longest real H1s (see mockup/*.html sec-title h1s, up to ~77 chars) so
+   they land on 2 balanced lines instead of 3–4. Cap trimmed 2.9rem→2.6rem to keep
+   the heavier weight from reading oversized now that lines run longer; line-height
+   stays 1.12 since these titles still wrap, just to fewer lines. */
+.sec-title{color:var(--green-title);font-weight:800;font-size:clamp(1.9rem,3.6vw,2.6rem);letter-spacing:-.022em;line-height:1.12;max-width:42ch;text-wrap:balance}
 .sec-title.full{max-width:none}
 /* "News / Latest news & insights" — demote the half after the slash so the pair
    reads as name + descriptor rather than one undifferentiated string */

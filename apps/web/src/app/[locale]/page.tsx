@@ -54,22 +54,22 @@ export default async function Page({ params }: Props) {
         <div className="wrap">
           <h2 className="sec-h reveal">What We Do</h2>
           <div className="wwd-tiles">
-            <article className="tile t-deep reveal" data-d="1">
+            <article className="wwd-item reveal" data-d="1">
               <span className="num">01</span>
               <h3>Structural Design</h3>
               <p>Optimized packaging that reduces material use and waste.</p>
             </article>
-            <article className="tile t-leaf reveal" data-d="2">
+            <article className="wwd-item reveal" data-d="2">
               <span className="num">02</span>
               <h3>Pre-Press (CTP)</h3>
               <p>Digital plate-making improves quality while reducing pollution.</p>
             </article>
-            <article className="tile t-lime reveal" data-d="2">
+            <article className="wwd-item reveal" data-d="2">
               <span className="num">03</span>
               <h3>Printing</h3>
               <p>Energy-efficient production with lower waste and emissions.</p>
             </article>
-            <article className="tile t-coral reveal" data-d="3">
+            <article className="wwd-item reveal" data-d="3">
               <span className="num">04</span>
               <h3>Finishing</h3>
               <p>Foil stamping, embossing and specialty coatings.</p>
@@ -122,38 +122,40 @@ export default async function Page({ params }: Props) {
 
       {/* ============ WHY NTI ============ */}
       <section className="whynti" id="why-nti">
-        <div className="wrap"><h2 className="sec-h reveal">Why global brands choose NTI?</h2></div>
-        <div className="why-grid">
-          <article className="tile t-leaf reveal" data-d="1">
-            <span className="num">01</span>
-            <h3>Direct Delivery</h3>
-            <p>Straight to factories, suppliers, warehouses, or assembly plants.</p>
-          </article>
-          <article className="tile t-deep reveal" data-d="2">
-            <span className="num">02</span>
-            <h3>Simplified Coordination</h3>
-            <p>One trusted partner across Taiwan and Asia.</p>
-          </article>
-          <article className="tile t-lime reveal" data-d="3">
-            <span className="num">03</span>
-            <h3>Faster Lead Times</h3>
-            <p>Shorter supply chains and quicker production cycles.</p>
-          </article>
-          <article className="tile t-deep reveal" data-d="1">
-            <span className="num">04</span>
-            <h3>Green Printing</h3>
-            <p>Sustainable printing solutions and smart factory manufacturing.</p>
-          </article>
-          <article className="tile t-coral reveal" data-d="2">
-            <span className="num">05</span>
-            <h3>Premium Quality</h3>
-            <p>Reliable global logistics without compromising print quality.</p>
-          </article>
-          <article className="tile t-leaf reveal" data-d="3">
-            <span className="num">06</span>
-            <h3>One Trusted Partner</h3>
-            <p>From design and materials to final delivery.</p>
-          </article>
+        <div className="wrap">
+          <h2 className="sec-h reveal">Why global brands choose NTI?</h2>
+          <div className="why-grid">
+            <article className="why-item reveal" data-d="1">
+              <span className="num">01</span>
+              <h3>Direct Delivery</h3>
+              <p>Straight to factories, suppliers, warehouses, or assembly plants.</p>
+            </article>
+            <article className="why-item reveal" data-d="2">
+              <span className="num">02</span>
+              <h3>Simplified Coordination</h3>
+              <p>One trusted partner across Taiwan and Asia.</p>
+            </article>
+            <article className="why-item reveal" data-d="3">
+              <span className="num">03</span>
+              <h3>Faster Lead Times</h3>
+              <p>Shorter supply chains and quicker production cycles.</p>
+            </article>
+            <article className="why-item reveal" data-d="1">
+              <span className="num">04</span>
+              <h3>Green Printing</h3>
+              <p>Sustainable printing solutions and smart factory manufacturing.</p>
+            </article>
+            <article className="why-item reveal" data-d="2">
+              <span className="num">05</span>
+              <h3>Premium Quality</h3>
+              <p>Reliable global logistics without compromising print quality.</p>
+            </article>
+            <article className="why-item reveal" data-d="3">
+              <span className="num">06</span>
+              <h3>One Trusted Partner</h3>
+              <p>From design and materials to final delivery.</p>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -167,20 +169,47 @@ export default async function Page({ params }: Props) {
             </div>
           ) : (
           <div className="cert-wall reveal" data-d="1">
-            <img src={mediaUrl("/assets/cert-g7.png")} alt="G7 Master Qualified Facility" />
-            <img src={mediaUrl("/assets/cert-gmi.png")} alt="GMI Certified Print Facility" />
-            <img src={mediaUrl("/assets/cert-iso9001.png")} alt="ISO 9001 Quality Assurance Management" />
-            <img src={mediaUrl("/assets/cert-iso14001.png")} alt="ISO 14001 Environmental Management" />
-            <img src={mediaUrl("/assets/cert-iso45001.png")} alt="ISO 45001 Occupational Health &amp; Safety" />
-            <img className="pad-lg" src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" />
-            <img src={mediaUrl("/assets/cert-leed-gold.png")} alt="LEED Gold 2023" />
-            <img src={mediaUrl("/assets/cert-greenbuilding.png")} alt="Green Building Label &mdash; Diamond grade" />
-            <img src={mediaUrl("/assets/cert-co2neutral.png")} alt="CO2 Neutral" />
-            <img className="pad-md" src={mediaUrl("/assets/cert-green.png")} alt="Green Printing" />
-            <img src={mediaUrl("/assets/cert-mof.png")} alt="Mineral Oil Free" />
-            <img className="pad-sm" src={mediaUrl("/assets/cert-esg.png")} alt="ESG &mdash; Environmental, Social, Governance" />
-            <img className="wide" src={mediaUrl("/assets/cert-sedex.png")} alt="Sedex Member" />
-            <img className="lockup" src={mediaUrl("/assets/cert-esci.png")} alt="Energy Smart Communities Initiative" />
+            <article className="proof-card">
+              <span className="proof-ic proof-ic--quality" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8.5" r="5.5" /><path d="m9 8.5 2 2 3.5-3.5" /><path d="M8.3 13.2 6.5 21l5.5-3 5.5 3-1.8-7.8" /></svg>
+              </span>
+              <h3>Quality Management</h3>
+              <p>G7 Master, ISO 9001, GMI</p>
+              <div className="proof-logos">
+                <img src={mediaUrl("/assets/cert-g7.png")} alt="G7 Master Qualified Facility" />
+                <img src={mediaUrl("/assets/cert-iso9001.png")} alt="ISO 9001 Quality Assurance Management" />
+                <img src={mediaUrl("/assets/cert-gmi.png")} alt="GMI Certified Print Facility" />
+              </div>
+            </article>
+            <article className="proof-card">
+              <span className="proof-ic proof-ic--eco" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M5 19c-1-7 2-13 14-14 1 11-4 15-14 14Z" /><path d="M5.5 18.5 14 10" /></svg>
+              </span>
+              <h3>Environmental Sustainability</h3>
+              <p>FSC, ISO 14001, CO2 Neutral, Green Printing, Green Building (Diamond), Mineral Oil Free</p>
+              <div className="proof-logos">
+                <img className="pad-lg" src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" />
+                <img src={mediaUrl("/assets/cert-iso14001.png")} alt="ISO 14001 Environmental Management" />
+                <img src={mediaUrl("/assets/cert-co2neutral.png")} alt="CO2 Neutral" />
+                <img className="pad-md" src={mediaUrl("/assets/cert-green.png")} alt="Green Printing" />
+                <img src={mediaUrl("/assets/cert-greenbuilding.png")} alt="Green Building Label &mdash; Diamond grade" />
+                <img src={mediaUrl("/assets/cert-mof.png")} alt="Mineral Oil Free" />
+              </div>
+            </article>
+            <article className="proof-card">
+              <span className="proof-ic proof-ic--safety" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3.5 18.5 6v5.5c0 5-2.8 8-6.5 9.5-3.7-1.5-6.5-4.5-6.5-9.5V6Z" /><path d="m9 12 2 2 4-4.5" /></svg>
+              </span>
+              <h3>Social Responsibility &amp; Safety</h3>
+              <p>ISO 45001, Sedex, LEED Gold 2023, ESG, ESCI</p>
+              <div className="proof-logos">
+                <img src={mediaUrl("/assets/cert-iso45001.png")} alt="ISO 45001 Occupational Health &amp; Safety" />
+                <img className="wide" src={mediaUrl("/assets/cert-sedex.png")} alt="Sedex Member" />
+                <img src={mediaUrl("/assets/cert-leed-gold.png")} alt="LEED Gold 2023" />
+                <img className="pad-sm" src={mediaUrl("/assets/cert-esg.png")} alt="ESG &mdash; Environmental, Social, Governance" />
+                <img className="lockup" src={mediaUrl("/assets/cert-esci.png")} alt="Energy Smart Communities Initiative" />
+              </div>
+            </article>
           </div>
           )}
         </div>

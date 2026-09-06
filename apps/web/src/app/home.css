@@ -13,10 +13,6 @@
   --card:#F5F7F8;
   --line:#e8eae9;
   --orange:#E58A2E;
-  /* brand-deck tile palette — used only by the two full-bleed colour-tile
-     sections below; --deep and --leaf above already cover the other two */
-  --lime:#CECC57;
-  --coral:#FF6B35;
   --maxw:1200px;
   --ease:cubic-bezier(.22,1,.36,1);
   --shadow:0 18px 50px -22px rgba(0,63,58,.28);
@@ -156,61 +152,72 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 .pcard .btn{align-self:center;margin-top:30px;border-radius:6px;border:none;background:transparent;color:var(--green);font-size:.92rem;font-weight:700;padding:.85em 2.1em;letter-spacing:.03em}
 .pcard .btn:hover{background:var(--green);color:#fff;transform:translateY(-2px);box-shadow:0 14px 26px -14px rgba(111,160,68,.7)}
 
-/* ---------- brand-deck colour tiles (What We Do / Why NTI) ---------- */
-/* The deck specifies these two blocks as solid colour tiles, not the light cards
-   used elsewhere on the page — the contrast against .products is the point. The
-   palette and the per-tile text inversion are taken from the deck verbatim. */
-.tile{
-  padding:clamp(24px,2.6vw,42px);
-  display:flex;flex-direction:column;justify-content:center;
+/* ---------- what we do / why NTI (hairline reason grids) ---------- */
+/* The brand deck's four solid colour tiles read as heavy blocks against the
+   white-first, green-as-accent palette the rest of the site uses. Both
+   sections are white now; hairline rules (not colour) carry the structure,
+   and green is spent on the numeral only — the one accent, kept consistent
+   with the numbered production steps convention already used site-wide. */
+.wwd-tiles,.why-grid{display:grid}
+.wwd-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
+.why-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:clamp(30px,3.4vw,46px)}
+.wwd-item,.why-item{min-width:0;padding:clamp(20px,2.2vw,28px) clamp(20px,2.4vw,30px)}
+.wwd-item .num,.why-item .num{display:block;font-size:.78rem;font-weight:800;letter-spacing:.15em;color:var(--green)}
+.wwd-item h3,.why-item h3{
+  margin-top:.66em;font-weight:800;line-height:1.16;letter-spacing:-.015em;color:var(--deep);
+  font-size:clamp(1.1rem,1.6vw,1.34rem);text-wrap:balance;
 }
-.tile .num{font-size:.78rem;font-weight:800;letter-spacing:.15em;line-height:1}
-.tile h3{
-  margin-top:.62em;font-weight:800;line-height:1.14;letter-spacing:-.015em;
-  font-size:clamp(1.12rem,1.7vw,1.58rem);text-wrap:balance;
-}
-.tile p{margin-top:.62em;font-size:clamp(.84rem,.95vw,.95rem);font-weight:500;line-height:1.62;max-width:34ch;opacity:.88}
-.t-deep{background:var(--deep);color:#fff}
-.t-deep .num{color:var(--leaf)}
-.t-leaf{background:var(--leaf);color:var(--deep)}
-.t-leaf .num{color:var(--deep)}
-.t-lime{background:var(--lime);color:var(--deep)}
-.t-lime .num{color:var(--deep)}
-.t-coral{background:var(--coral);color:#fff}
-.t-coral .num{color:#fff}
+.wwd-item p,.why-item p{margin-top:.6em;font-size:clamp(.86rem,.95vw,.95rem);font-weight:500;line-height:1.68;color:var(--grey-2);max-width:32ch}
+.wwd-item{border-left:1px solid var(--line)}
+.wwd-item:first-child{border-left:none;padding-left:0}
+.why-item{border-left:1px solid var(--line);border-top:1px solid var(--line)}
+.why-item:nth-child(3n+1){border-left:none;padding-left:0}
+.why-item:nth-child(-n+3){border-top:none}
 
 /* ---------- what we do ---------- */
 .whatwedo{padding:0 0 clamp(58px,7vw,92px)}
-.wwd-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
-.wwd-tiles .tile{min-width:0;min-height:clamp(190px,16vw,232px)}
 
 /* ---------- why NTI ---------- */
-/* full-bleed: the section drops .wrap for the grid so the tiles reach both edges,
-   exactly as the deck draws them */
-.whynti{padding:clamp(58px,7vw,92px) 0 0}
-.why-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
-.why-grid .tile{min-width:0;min-height:clamp(198px,20vw,268px);padding-inline:clamp(24px,3.6vw,60px)}
+/* was full-bleed to the deck's colour tiles; now white, it reads better held
+   inside .wrap like every other section rather than floating edge-to-edge */
+.whynti{padding:clamp(58px,7vw,92px) 0}
 
 /* ---------- proof ---------- */
-.proof{padding:clamp(60px,8vw,104px) 0 clamp(20px,3vw,40px);text-align:center}
+.proof{padding:clamp(60px,8vw,104px) 0 clamp(70px,9vw,116px);text-align:center}
 .proof-h{color:var(--deep);font-size:clamp(1.75rem,3.6vw,2.9rem);line-height:1.18;letter-spacing:-.025em;margin:0 0 clamp(34px,4.4vw,60px)}
 .proof-h b{display:block;font-weight:800}
 .proof-h span{font-weight:400}
-.cert-wall{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:clamp(20px,2.6vw,44px) clamp(22px,3vw,50px)}
+/* three certification categories, replacing the old flat 14-logo wall. Kept the
+   .cert-wall class name on the grouping container (it's now the 3-card grid) so
+   the mockup-only size overlay in img-size.js — which finds its label anchor via
+   .closest('.cert-wall') — still labels the first logo without needing changes. */
+.cert-wall{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,2.4vw,28px);text-align:left}
+.proof-card{
+  background:#fff;border:1px solid var(--line);border-radius:20px;
+  padding:clamp(26px,2.8vw,34px);display:flex;flex-direction:column;transition:border-color .3s;
+}
+.proof-card:hover{border-color:var(--leaf)}
+.proof-ic{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto}
+.proof-ic--quality{background:color-mix(in srgb,var(--green) 16%,#fff);color:var(--green-d)}
+.proof-ic--eco{background:color-mix(in srgb,var(--teal) 16%,#fff);color:var(--teal)}
+.proof-ic--safety{background:color-mix(in srgb,var(--orange) 18%,#fff);color:var(--orange)}
+.proof-card h3{margin-top:18px;font-weight:800;font-size:clamp(1.14rem,1.5vw,1.3rem);letter-spacing:-.01em;color:var(--deep)}
+.proof-card>p{margin-top:8px;font-size:.92rem;font-weight:500;line-height:1.65;color:var(--grey-2)}
+.proof-logos{display:flex;flex-wrap:wrap;align-items:center;align-content:center;flex:1;gap:16px clamp(16px,2vw,26px);padding-top:clamp(18px,2.2vw,24px);border-top:1px solid var(--line)}
 /* source art is low-resolution (~150px badges lifted from the brand deck), so the
    display height is capped rather than fluid-scaled past its native size */
-.cert-wall img{height:clamp(50px,5.4vw,74px);width:auto}
+.proof-logos img{height:clamp(34px,3.6vw,44px);width:auto}
 /* The five pre-existing marks carry baked-in whitespace inside a square canvas —
    FSC's artwork fills only 54% of its box, Green Printing 75%, ESG 82% — so at a
    shared height they read visibly smaller than the tightly-trimmed deck badges.
    These scale each one up to match the others' ink height, not their canvas height.
    The assets themselves are left alone: four other pages share them. */
-.cert-wall img.pad-lg{height:clamp(90px,9.8vw,134px)}
-.cert-wall img.pad-md{height:clamp(65px,7vw,97px)}
-.cert-wall img.pad-sm{height:clamp(60px,6.5vw,89px)}
+.proof-logos img.pad-lg{height:clamp(60px,6.4vw,78px)}
+.proof-logos img.pad-md{height:clamp(44px,4.6vw,57px)}
+.proof-logos img.pad-sm{height:clamp(40px,4.3vw,53px)}
 /* wordmark lockups are read by their width, so capping height would oversize them */
-.cert-wall img.wide{height:auto;width:clamp(130px,14vw,190px)}
-.cert-wall img.lockup{height:auto;width:clamp(100px,10.5vw,146px)}
+.proof-logos img.wide{height:auto;width:clamp(88px,9.4vw,116px)}
+.proof-logos img.lockup{height:auto;width:clamp(68px,7.2vw,90px)}
 
 /* ---------- gallery ---------- */
 .gallery{position:relative;line-height:0}
@@ -281,6 +288,14 @@ footer a:hover{color:var(--leaf)}
   .hero-cta .btn{flex:1;justify-content:center;max-width:230px}
   .prod-grid,.wwd-tiles{grid-template-columns:1fr 1fr}
   .why-grid{grid-template-columns:1fr 1fr}
+  .cert-wall{grid-template-columns:1fr}
+  .wwd-item:nth-child(odd),.why-item:nth-child(odd){border-left:none;padding-left:0}
+  .wwd-item:nth-child(even){border-left:1px solid var(--line);padding-left:clamp(20px,2.2vw,28px)}
+  .wwd-item:nth-child(-n+2){border-top:none}
+  .wwd-item:nth-child(n+3){border-top:1px solid var(--line);padding-top:clamp(20px,2.2vw,28px)}
+  .why-item:nth-child(even){border-left:1px solid var(--line);padding-left:clamp(20px,2.4vw,30px)}
+  .why-item:nth-child(-n+2){border-top:none}
+  .why-item:nth-child(n+3){border-top:1px solid var(--line)}
   .fgrid{grid-template-columns:1fr 1fr;gap:40px;padding:56px 0 48px}
 }
 @media(max-width:560px){
@@ -289,6 +304,10 @@ footer a:hover{color:var(--leaf)}
   .fgrid{grid-template-columns:1fr}
   .prod-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}
   .wwd-tiles,.why-grid{grid-template-columns:1fr}
-  .wwd-tiles .tile{aspect-ratio:auto;min-height:150px}
+  .wwd-item,.why-item{
+    border-left:none;padding-left:0;
+    border-top:1px solid var(--line);padding-top:clamp(20px,5vw,26px);
+  }
+  .wwd-item:first-child,.why-item:first-child{border-top:none;padding-top:0}
   .fbot{flex-wrap:wrap;gap:10px}
 }
