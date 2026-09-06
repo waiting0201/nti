@@ -21,11 +21,15 @@ export function assetUrl(src: unknown): string {
   const s = typeof src === 'string' ? src : ''
   if (!s) return ''
   if (/^(https?:|blob:|data:)/.test(s)) return s
-  if (s.startsWith('/assets/')) return assetBase + s
+
+  // 種子資料寫的是 `/assets/...`，但 db/content 匯進 CMS 的是不帶斜線的 `assets/...`，
+  // 兩種都指向公開的 assets 容器（media 容器只裝後台上傳的檔案，照代理路由送會 404）。
+  const rel = s.replace(/^\/+/, '')
+  if (rel.startsWith('assets/')) return assetBase + '/' + rel
 
   // 接了 API 之後，圖片欄位存的是 Blob 的**相對路徑**（`2026/09/{guid}.webp`）。
   // media 容器是 private，拿不到可直連的 URL，一律走後端的代理路由。
-  if (API_BASE) return `${API_BASE}/files/media/${s.replace(/^\/+/, '')}`
+  if (API_BASE) return `${API_BASE}/files/media/${rel}`
 
   return s
 }

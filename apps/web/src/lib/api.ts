@@ -1,4 +1,5 @@
 import type { Locale } from './i18n'
+import { mediaUrl } from './media'
 
 /**
  * 前台的 API 存取層。
@@ -252,10 +253,19 @@ export const getSiteSettings = (l: Locale) =>
  * CMS 上傳的圖片存的是 Blob 相對路徑，而 media 容器是 private——
  * 一律走後端的代理路由取檔（`/files/media/*`）。
  *
- * mockup 的素材是另一回事：它們在公開的 `assets` 容器，走 `mediaUrl()`。
+ * 例外是 `assets/...`：**種子內容**（`db/content/`）引用的是 mockup 的素材，
+ * 那批檔案在公開的 `assets` 容器（`tools/upload-assets.sh` 上傳），不在 media 裡。
+ * 照代理路由送會 404——media 容器只裝後台上傳的檔案。改走 `mediaUrl()` 直連公開容器，
+ * 順便省下把 62MB 素材逐張穿過 Function 的流量與延遲。
+ *
+ * 客戶日後在後台換圖，新檔會存成 `2026/09/{guid}.webp`，自然落回下面的代理分支。
  */
 export function cmsMedia(path: string | null | undefined): string {
   if (!path) return ''
   if (/^(https?:)?\/\//.test(path)) return path
-  return `${apiBase}/files/media/${path.replace(/^\/+/, '')}`
+
+  const rel = path.replace(/^\/+/, '')
+  if (rel.startsWith('assets/')) return mediaUrl('/' + rel)
+
+  return `${apiBase}/files/media/${rel}`
 }
