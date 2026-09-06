@@ -155,11 +155,12 @@ mockup 內容（現況部署），設了就改吃 CMS。
 ### ✅ 已完成
 
 - [`docs/08-database.md`](docs/08-database.md)：45 張表的 DDL、多語策略、索引、種子、遷移策略
-- [`db/`](db/README.md) 參考實作：`migrations/`（0001–0003）、`seed/`（100–150 共 6 支）、`verify/`、`tools/run-local.sh`
+- [`db/`](db/README.md) 參考實作：`migrations/`（0001–0004）、`seed/`（100–150 共 6 支）、`verify/`、`tools/run-local.sh`
 - 本機一鍵建置：`cp db/.env.local.example db/.env.local && db/tools/run-local.sh`
 
 - **EF Core Migration（schema 權威來源）已建立**（2026-09-04）：
-  44 個 Entity + Configuration、`Api/Data/Migrations/InitialSchema`（schema + 種子）。
+  44 個 Entity + Configuration、`Api/Data/Migrations/` 兩支 migration
+  （`InitialSchema` 建立 schema 與種子，`RemoveMemberAndOrder` 於 2026-09-06 移除會員與訂單）。
   `db/` 自此為參考實作與交付腳本。
   - 種子由 `Api/Data/Seed/SeedData.cs` 的 `HasData` 寫入，Id 硬編、跨環境一致：
     角色 3／權限 167／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)

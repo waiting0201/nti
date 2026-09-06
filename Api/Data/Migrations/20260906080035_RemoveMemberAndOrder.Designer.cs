@@ -12,8 +12,8 @@ using Nti.Api.Data;
 namespace Nti.Api.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260906073448_InitialSchema")]
-    partial class InitialSchema
+    [Migration("20260906080035_RemoveMemberAndOrder")]
+    partial class RemoveMemberAndOrder
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

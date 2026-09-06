@@ -674,7 +674,7 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 | **`AppRouter` 檔案膨脹** | Jabez 的 `AppRouter.cs` 已達 62KB | NTI 端點量約其 1/3，先拆 `AppRouter.Public.cs` / `AppRouter.Admin.cs` 兩個 partial 即可 |
 | **測試專案** | Jabez 完全沒有測試，靠 checklist 人工自檢 | NTI 是否補單元測試（至少涵蓋權限判定表與 `PublicFilter`）待定 |
 | **Rate limit 儲存** | Consumption 多實例，`MemoryCache` 不可用 | 用 DB 表或 Blob；若量小可先用 DB，上線後看 DTU 再評估 |
-| **`db/` 與 EF Migration 的搬遷** | `db/` 現有 3 支 migration + 6 支 seed + 24 項 verify 斷言 | 搬遷為 `Configuration` + `HasData` 屬 P4 第一項工作；`verify.sql` 保留為驗收閘 |
+| **`db/` 與 EF Migration 的搬遷** | `db/` 現有 4 支 migration + 6 支 seed + 24 項 verify 斷言 | 搬遷為 `Configuration` + `HasData` 屬 P4 第一項工作；`verify.sql` 保留為驗收閘 |
 | **`EmailLog` 保留期** | 未定義 | 需客戶確認（`db/README.md` 已知缺口 #3） |
 
 ---

@@ -60,7 +60,7 @@
 ## 4. 工作分解
 
 1. **資料層**（P4）：依 [`08-database.md`](08-database.md) 建立 **45 張表**（內容模型 + 多語 i18n 子表 + 報價/聯絡 + RBAC + 版本表 + 預留的 `NewsletterSubscriber`）。
-   **schema 權威為 EF Core Migration**：既有 [`db/`](../db/) 的 3 支 migration 與 6 支 seed 需搬遷為 `Data/Configurations/<Entity>Configuration.cs` + `HasData`（表達方式對照表見 [`10-backend-design.md` §8.5](10-backend-design.md)），這是 P4 的第一項工作。
+   **schema 權威為 EF Core Migration**：既有 [`db/`](../db/) 的 4 支 migration 與 6 支 seed 需搬遷為 `Data/Configurations/<Entity>Configuration.cs` + `HasData`（表達方式對照表見 [`10-backend-design.md` §8.5](10-backend-design.md)），這是 P4 的第一項工作。
    `db/` 保留為參考實作與交付腳本（本機一鍵建置 `db/tools/run-local.sh` 仍可用）；`db/verify/verify.sql` 的 24 項斷言保留為 EF Migration 產出的驗收閘。
 2. **CMS 後台**：依 [`09-cms-admin.md`](09-cms-admin.md) 的 22 個單元實作 CRUD + 排序 + 上下架排程 + 富文本 + 欄位級檔案上傳（Azure Blob，**不做 Media Library**）+ 角色權限。
 3. **API 實作**：對齊 [`04-api.md`](04-api.md) 契約（前台讀取 + 後台管理 + 表單），寫法依 [`10-backend-design.md`](10-backend-design.md)。
