@@ -193,7 +193,9 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 .whynti{padding:clamp(58px,7vw,92px) 0}
 
 /* ---------- proof ---------- */
-.proof{padding:clamp(60px,8vw,104px) 0 clamp(70px,9vw,116px);text-align:center}
+/* 上下 padding 原為全站最大（104／116），量到上一區到標題的空白 203px、
+   下一區 212px，明顯比別區的 153px 鬆；收到與其他區塊同一個節奏。 */
+.proof{padding:clamp(30px,4vw,50px) 0 clamp(36px,4.4vw,56px);text-align:center}
 /* was a one-off deep-teal heading with the em-dash clause set inline; now it
    uses the same .sec-h green + leaf rule as every other section, with the
    clause demoted to a subtitle sitting under that rule */
