@@ -96,7 +96,7 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 .intro{padding:clamp(64px,9vw,116px) 0;text-align:center}
 .intro h1{
   font-weight:800;font-size:clamp(2rem,4.2vw,3.25rem);line-height:1.1;color:var(--green-title);
-  letter-spacing:-.025em;max-width:22ch;margin:0 auto;text-wrap:balance;
+  letter-spacing:-.025em;max-width:25ch;margin:0 auto;text-wrap:balance;
 }
 /* the slogan is a signature line, not a second headline — small, letterspaced and
    flanked by leaf rules, echoing the .eyebrow motif used on interior pages */
@@ -114,7 +114,7 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
    measure so the new three-clause sentence reads as a lead, not a pull-quote. */
 .intro p{
   font-weight:500;font-size:clamp(1.06rem,1.55vw,1.35rem);line-height:1.75;color:var(--grey-2);
-  max-width:62ch;margin:0 auto;letter-spacing:0;text-wrap:pretty;
+  max-width:70ch;margin:0 auto;letter-spacing:0;text-wrap:pretty;
 }
 .intro p .hl{color:var(--green)}
 .intro p .em{font-weight:800;color:var(--grey)}
