@@ -125,10 +125,11 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .eyebrow+.sec-title{margin-top:18px}
 .sec-sub{font-weight:600;color:var(--grey);font-size:clamp(1.05rem,1.4vw,1.24rem);line-height:1.55;letter-spacing:-.005em;margin-top:16px;max-width:56ch;text-wrap:pretty}
 .sec-title+.sec-sub{margin-top:18px}
-.lead,.prose{color:var(--grey-2);font-weight:500;font-size:clamp(1rem,1.25vw,1.1rem);line-height:1.85;max-width:62ch;text-wrap:pretty}
-/* .wide is "wider than default", not "unbounded" — 70ch ≈ 85 characters, the top
-   of the readable range, instead of 140+ characters on a 1440 screen */
-.prose.wide{max-width:70ch}
+.lead,.prose{color:var(--grey-2);font-weight:500;font-size:clamp(1rem,1.25vw,1.1rem);line-height:1.85;max-width:none;text-wrap:pretty}
+/* 內文一律撐滿容器（客戶 2026-09-07 指定：「文章寬度要滿，不要只有一半」）。
+   先前 .prose 62ch／.wide 70ch 是為了守住可讀行長，在 1200 的 .wrap 裡只用掉約
+   一半寬度——那正是客戶要求改掉的。.wide 因此成為 no-op，class 保留不動 HTML。 */
+.prose.wide{max-width:none}
 .prose+.prose{margin-top:18px}
 .sec-sub+.prose{margin-top:22px}
 .mt-s{margin-top:18px}.mt-m{margin-top:30px}.mt-l{margin-top:46px}
@@ -163,7 +164,7 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .prose+.dtitle,.flist+.dtitle,.bullets+.dtitle,.applist+.dtitle,.photorow+.dtitle{
   margin-top:clamp(34px,4.2vw,54px);padding-top:20px;border-top:1px solid var(--line)
 }
-.bullets{list-style:none;display:flex;flex-direction:column;gap:11px;max-width:64ch}
+.bullets{list-style:none;display:flex;flex-direction:column;gap:11px;max-width:none}
 .bullets li{position:relative;padding-left:24px;color:var(--grey-2);font-weight:500;line-height:1.7}
 .bullets li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:8px;border-radius:2px;background:var(--leaf);transform:rotate(45deg)}
 
@@ -180,7 +181,7 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
    .flist.chips  very short terms (Industries We Serve). Pill row, reusing .applist.
    .flist.cols   modifier: two columns for short single-line entries.
    ------------------------------------------------------------------------------ */
-.flist{display:block;margin-top:18px;max-width:74ch}
+.flist{display:block;margin-top:18px;max-width:none}
 .flist .fi{display:block;padding:14px 0;border-top:1px solid var(--line);color:var(--grey-2);font-weight:500;line-height:1.75;font-size:clamp(.98rem,1.15vw,1.05rem)}
 .flist .fi:first-child{border-top:none;padding-top:2px}
 .flist .fi:last-child{padding-bottom:2px}
@@ -191,7 +192,7 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .flist .fi b::after{content:"\2013";margin:0 .4em 0 .34em;font-weight:500;color:var(--grey-2)}
 
 /* plain — unlabelled sentences, marker-led */
-.flist.plain{max-width:68ch}
+.flist.plain{max-width:none}
 .flist.plain .fi{position:relative;border-top:none;padding:0 0 0 26px;line-height:1.7}
 .flist.plain .fi+.fi{margin-top:12px}
 .flist.plain .fi::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:8px;border-radius:2px;background:var(--leaf);transform:rotate(45deg)}
@@ -229,8 +230,8 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 /* green advantage stacked text block (per PSD) */
 .ga-block .ga-h{color:var(--grey);font-weight:800;font-size:clamp(1.02rem,1.3vw,1.16rem);line-height:1.5;margin-top:clamp(28px,3.2vw,42px)}
 .ga-block .ga-h:first-child{margin-top:0}
-/* was max-width:none — same unbounded-measure problem as .prose.wide had */
-.ga-block .prose{max-width:70ch;margin-top:12px}
+/* 同 .prose：撐滿容器 */
+.ga-block .prose{max-width:none;margin-top:12px}
 
 /* certification logo grid (differences page, per PSD) */
 .certs{padding-top:0}
