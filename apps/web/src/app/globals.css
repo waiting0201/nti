@@ -161,7 +161,7 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 /* A dtitle that follows body copy starts a new beat. The hairline + extra air stops
    pages like green-materials (4 × dtitle+paragraph in a row) reading as one flat run.
    The first dtitle of a section follows a heading, not copy, so it stays rule-free. */
-.prose+.dtitle,.flist+.dtitle,.bullets+.dtitle,.applist+.dtitle,.photorow+.dtitle{
+.prose+.dtitle,.flist+.dtitle,.bullets+.dtitle,.applist+.dtitle,.photorow+.dtitle,.indgrid+.dtitle{
   margin-top:clamp(34px,4.2vw,54px);padding-top:20px;border-top:1px solid var(--line)
 }
 .bullets{list-style:none;display:flex;flex-direction:column;gap:11px;max-width:none}
@@ -250,6 +250,16 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .flist.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px clamp(24px,3vw,44px);max-width:none}
 .flist.cols3 .fi,.flist.cols3 .fi+.fi{margin-top:0}
 .flist.cols3+.filter-row{margin-top:clamp(34px,4vw,52px)}
+
+/* ---------- industries grid（projects：10 個產業別）----------
+   原本是 .flist.plain.cols3 的菱形清單；客戶提供 icon 稿後改成圖示格：
+   五欄、icon 在上標籤在下，深藍綠單色線稿（與 .why-item 同一套畫法，只是
+   這裡用 --deep 而非 --green，對齊客戶提供的稿）。 */
+.indgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(24px,3vw,38px) clamp(14px,1.8vw,26px);margin-top:clamp(22px,2.6vw,32px)}
+.ind-item{min-width:0;text-align:center;color:var(--deep)}
+.ind-item svg{display:block;width:clamp(46px,5vw,62px);height:auto;margin:0 auto}
+.ind-item b{display:block;margin-top:12px;font-weight:700;font-size:clamp(.86rem,.95vw,.95rem);line-height:1.4;letter-spacing:-.005em;text-wrap:balance}
+.indgrid+.filter-row{margin-top:clamp(34px,4vw,52px)}
 
 /* certification logo row */
 .certrow{padding:clamp(40px,6vw,80px) 0}
@@ -620,8 +630,10 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
   .sec-title,.sec-sub,.prose,.prose.wide,.lead,.flist,.flist.plain{max-width:none}
   .flist.cols{grid-template-columns:1fr;gap:12px}
   .flist.cols3{grid-template-columns:1fr 1fr;gap:12px 28px}
+  .indgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:560px){
+  .indgrid{grid-template-columns:1fr 1fr}
   .wwd-tiles,.why-grid{grid-template-columns:1fr}
   .wwd-item,.why-item{
     border-left:none;padding-left:0;
@@ -634,7 +646,7 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
   .flist.chips{gap:8px}
   .flist.chips .fi{font-size:.86rem;padding:.46em .9em}
   .flist.cols3{grid-template-columns:1fr}
-  .prose+.dtitle,.flist+.dtitle,.bullets+.dtitle,.applist+.dtitle,.photorow+.dtitle{padding-top:16px}
+  .prose+.dtitle,.flist+.dtitle,.bullets+.dtitle,.applist+.dtitle,.photorow+.dtitle,.indgrid+.dtitle{padding-top:16px}
   .fab{right:14px;bottom:14px;width:248px}
   .fgrid{grid-template-columns:1fr}
   .news-grid{grid-template-columns:1fr}
