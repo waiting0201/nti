@@ -160,7 +160,17 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 .wwd-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
 .why-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:clamp(30px,3.4vw,46px)}
 .wwd-item,.why-item{min-width:0;padding:clamp(20px,2.2vw,28px) clamp(20px,2.4vw,30px)}
-.wwd-item .num,.why-item .num{display:block;font-size:.78rem;font-weight:800;letter-spacing:.15em;color:var(--green)}
+/* what we do is a sequence, so the step numeral is what anchors each tile —
+   set big, with a small "Step" kicker above it (was a .78rem "01" that read as
+   a label rather than a step) */
+.wwd-item .num{display:block;color:var(--green);line-height:1}
+.wwd-item .num i{display:block;font-style:normal;font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--leaf)}
+.wwd-item .num b{display:block;margin-top:.16em;font-size:clamp(2.1rem,3.6vw,3.1rem);font-weight:800;letter-spacing:-.03em}
+/* the six reasons under why-NTI aren't a sequence, so numerals said nothing.
+   Line icons carry the meaning instead — same green, same 1.6 stroke weight as
+   the proof-card marks, per the client's icons.png reference. */
+.why-item .ico{display:block;color:var(--green)}
+.why-item .ico svg{display:block;width:clamp(38px,4.2vw,50px);height:auto}
 .wwd-item h3,.why-item h3{
   margin-top:.66em;font-weight:800;line-height:1.16;letter-spacing:-.015em;color:var(--deep);
   font-size:clamp(1.1rem,1.6vw,1.34rem);text-wrap:balance;
@@ -182,9 +192,10 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 
 /* ---------- proof ---------- */
 .proof{padding:clamp(60px,8vw,104px) 0 clamp(70px,9vw,116px);text-align:center}
-.proof-h{color:var(--deep);font-size:clamp(1.75rem,3.6vw,2.9rem);line-height:1.18;letter-spacing:-.025em;margin:0 0 clamp(34px,4.4vw,60px)}
-.proof-h b{display:block;font-weight:800}
-.proof-h span{font-weight:400}
+/* was a one-off deep-teal heading with the em-dash clause set inline; now it
+   uses the same .sec-h green + leaf rule as every other section, with the
+   clause demoted to a subtitle sitting under that rule */
+.proof-sub{max-width:46ch;margin:0 auto clamp(34px,4.4vw,60px);font-size:clamp(1rem,1.25vw,1.12rem);font-weight:500;line-height:1.8;color:var(--grey-2);text-wrap:pretty}
 /* three certification categories, replacing the old flat 14-logo wall. Kept the
    .cert-wall class name on the grouping container (it's now the 3-card grid) so
    the mockup-only size overlay in img-size.js — which finds its label anchor via

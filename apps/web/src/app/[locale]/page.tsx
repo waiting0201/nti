@@ -56,22 +56,22 @@ export default async function Page({ params }: Props) {
           <h2 className="sec-h reveal">What We Do</h2>
           <div className="wwd-tiles">
             <article className="wwd-item reveal" data-d="1">
-              <span className="num">01</span>
+              <span className="num"><i>Step</i><b>01</b></span>
               <h3>Structural Design</h3>
               <p>Optimized packaging that reduces material use and waste.</p>
             </article>
             <article className="wwd-item reveal" data-d="2">
-              <span className="num">02</span>
+              <span className="num"><i>Step</i><b>02</b></span>
               <h3>Pre-Press (CTP)</h3>
               <p>Digital plate-making improves quality while reducing pollution.</p>
             </article>
             <article className="wwd-item reveal" data-d="2">
-              <span className="num">03</span>
+              <span className="num"><i>Step</i><b>03</b></span>
               <h3>Printing</h3>
               <p>Energy-efficient production with lower waste and emissions.</p>
             </article>
             <article className="wwd-item reveal" data-d="3">
-              <span className="num">04</span>
+              <span className="num"><i>Step</i><b>04</b></span>
               <h3>Finishing</h3>
               <p>Foil stamping, embossing and specialty coatings.</p>
             </article>
@@ -127,32 +127,32 @@ export default async function Page({ params }: Props) {
           <h2 className="sec-h reveal">Why global brands choose NTI?</h2>
           <div className="why-grid">
             <article className="why-item reveal" data-d="1">
-              <span className="num">01</span>
+              <span className="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2 8.6h3.2M1.2 11.8h4M2.6 15h2.4"/><path d="M7 5.6h8v10H7z"/><path d="M15 9.1h3.3l2.7 3.2v3.3h-1.3"/><circle cx="9.1" cy="17.4" r="1.9"/><circle cx="17.9" cy="17.4" r="1.9"/></svg></span>
               <h3>Direct Delivery</h3>
               <p>Straight to factories, suppliers, warehouses, or assembly plants.</p>
             </article>
             <article className="why-item reveal" data-d="2">
-              <span className="num">02</span>
+              <span className="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 3.4c-2.9 3-2.9 14.2 0 17.2M12 3.4c2.9 3 2.9 14.2 0 17.2"/><path d="M3.4 12h17.2M5.2 7.2h13.6M5.2 16.8h13.6"/><circle cx="8.3" cy="8.3" r="1.15" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="16.2" cy="14.6" r="1.15" fill="currentColor" stroke="none"/></svg></span>
               <h3>Simplified Coordination</h3>
               <p>One trusted partner across Taiwan and Asia.</p>
             </article>
             <article className="why-item reveal" data-d="3">
-              <span className="num">03</span>
+              <span className="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="14" cy="14" r="7"/><path d="M14 10.2V14l2.6 1.9"/><path d="M12.3 2.6h3.4v1.7h-3.4zM14 4.3V7"/><path d="M19.6 7.6 21 6.2"/><path d="M1.6 9.6h3.6M0.8 13.4h3.6M2.2 17.2h2.6"/></svg></span>
               <h3>Faster Lead Times</h3>
               <p>Shorter supply chains and quicker production cycles.</p>
             </article>
             <article className="why-item reveal" data-d="1">
-              <span className="num">04</span>
+              <span className="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 19c-1-7 2-13 14-14 1 11-4 15-14 14Z"/><path d="M5.5 18.5 14 10"/></svg></span>
               <h3>Green Printing</h3>
               <p>Sustainable printing solutions and smart factory manufacturing.</p>
             </article>
             <article className="why-item reveal" data-d="2">
-              <span className="num">05</span>
+              <span className="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2.8 19 5.5v6c0 5.4-3 8.6-7 10.2-4-1.6-7-4.8-7-10.2v-6Z"/><path d="m8.6 11.8 2.4 2.4 4.4-4.8"/></svg></span>
               <h3>Premium Quality</h3>
               <p>Reliable global logistics without compromising print quality.</p>
             </article>
             <article className="why-item reveal" data-d="3">
-              <span className="num">06</span>
+              <span className="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg></span>
               <h3>One Trusted Partner</h3>
               <p>From design and materials to final delivery.</p>
             </article>
@@ -163,7 +163,8 @@ export default async function Page({ params }: Props) {
       {/* ============ PROOF ============ */}
       <section className="proof" id="proof">
         <div className="wrap">
-          <h2 className="proof-h reveal"><b>Proof</b><span>&mdash; Through action, not words.</span></h2>
+          <h2 className="sec-h tight reveal">Proof</h2>
+          <p className="proof-sub reveal">Through action, not words.</p>
           {home?.certifications.length ? (
             <div className="cert-wall reveal" data-d="1">
               <CertificationLogos items={home.certifications} locale={locale} />
