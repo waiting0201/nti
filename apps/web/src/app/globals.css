@@ -172,6 +172,42 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .applist{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .applist b{font-weight:700;font-size:.92rem;color:var(--teal);background:#eef5e9;border:1px solid #dcebcf;padding:.5em 1em;border-radius:100px}
 
+
+/* ---------- hairline reason grids（首頁 What We Do／Why NTI，about-benefits 共用）----------
+   原本只寫在 index.html 的 inline style；about-benefits 的「Why Global Brands Choose NTI」
+   改用同一組六格後，這段成為兩頁共用的元件，移進 site.css。 */
+/* ---------- what we do / why NTI (hairline reason grids) ---------- */
+/* The brand deck's four solid colour tiles read as heavy blocks against the
+   white-first, green-as-accent palette the rest of the site uses. Both
+   sections are white now; hairline rules (not colour) carry the structure,
+   and green is spent on the numeral only — the one accent, kept consistent
+   with the numbered production steps convention already used site-wide. */
+.wwd-tiles,.why-grid{display:grid}
+.wwd-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
+.why-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:clamp(30px,3.4vw,46px)}
+.wwd-item,.why-item{min-width:0;padding:clamp(20px,2.2vw,28px) clamp(20px,2.4vw,30px)}
+/* what we do is a sequence, so the step numeral is what anchors each tile —
+   set big, with a small "Step" kicker above it (was a .78rem "01" that read as
+   a label rather than a step) */
+.wwd-item .num{display:block;color:var(--green);line-height:1}
+.wwd-item .num i{display:block;font-style:normal;font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--leaf)}
+.wwd-item .num b{display:block;margin-top:.16em;font-size:clamp(2.1rem,3.6vw,3.1rem);font-weight:800;letter-spacing:-.03em}
+/* the six reasons under why-NTI aren't a sequence, so numerals said nothing.
+   Line icons carry the meaning instead — same green, same 1.6 stroke weight as
+   the proof-card marks, per the client's icons.png reference. */
+.why-item .ico{display:block;color:var(--green)}
+.why-item .ico svg{display:block;width:clamp(38px,4.2vw,50px);height:auto}
+.wwd-item h3,.why-item h3{
+  margin-top:.66em;font-weight:800;line-height:1.16;letter-spacing:-.015em;color:var(--deep);
+  font-size:clamp(1.1rem,1.6vw,1.34rem);text-wrap:balance;
+}
+.wwd-item p,.why-item p{margin-top:.6em;font-size:clamp(.86rem,.95vw,.95rem);font-weight:500;line-height:1.68;color:var(--grey-2);max-width:32ch}
+.wwd-item{border-left:1px solid var(--line)}
+.wwd-item:first-child{border-left:none;padding-left:0}
+.why-item{border-left:1px solid var(--line);border-top:1px solid var(--line)}
+.why-item:nth-child(3n+1){border-left:none;padding-left:0}
+.why-item:nth-child(-n+3){border-top:none}
+
 /* ---------- feature list: three variants for three kinds of content ----------
    .flist        default — "Label – description" definition entries. The bold label
                  is the anchor, so entries are separated by a hairline instead of a
@@ -544,6 +580,15 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
 
 /* ---------- responsive chrome ---------- */
 @media(max-width:900px){
+  .wwd-tiles{grid-template-columns:1fr 1fr}
+  .why-grid{grid-template-columns:1fr 1fr}
+  .wwd-item:nth-child(odd),.why-item:nth-child(odd){border-left:none;padding-left:0}
+  .wwd-item:nth-child(even){border-left:1px solid var(--line);padding-left:clamp(20px,2.2vw,28px)}
+  .wwd-item:nth-child(-n+2){border-top:none}
+  .wwd-item:nth-child(n+3){border-top:1px solid var(--line);padding-top:clamp(20px,2.2vw,28px)}
+  .why-item:nth-child(even){border-left:1px solid var(--line);padding-left:clamp(20px,2.4vw,30px)}
+  .why-item:nth-child(-n+2){border-top:none}
+  .why-item:nth-child(n+3){border-top:1px solid var(--line)}
   /* 語系鈕在手機版要留著：雙語站沒有它就沒有其他切換入口
      （漢堡選單在 mockup 本來就沒有實作行為）。間距收窄讓 htools 在 320px 也放得下。 */
   .menu{display:none}
@@ -577,6 +622,12 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
   .flist.cols3{grid-template-columns:1fr 1fr;gap:12px 28px}
 }
 @media(max-width:560px){
+  .wwd-tiles,.why-grid{grid-template-columns:1fr}
+  .wwd-item,.why-item{
+    border-left:none;padding-left:0;
+    border-top:1px solid var(--line);padding-top:clamp(20px,5vw,26px);
+  }
+  .wwd-item:first-child,.why-item:first-child{border-top:none;padding-top:0}
   .sec-title{line-height:1.16;letter-spacing:-.015em}
   .sec-title .ti-alt{font-size:.58em}
   .flist .fi{padding:12px 0}

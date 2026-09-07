@@ -150,38 +150,6 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 .pcard .btn{align-self:center;margin-top:30px;border-radius:6px;border:none;background:transparent;color:var(--green);font-size:.92rem;font-weight:700;padding:.85em 2.1em;letter-spacing:.03em}
 .pcard .btn:hover{background:var(--green);color:#fff;transform:translateY(-2px);box-shadow:0 14px 26px -14px rgba(111,160,68,.7)}
 
-/* ---------- what we do / why NTI (hairline reason grids) ---------- */
-/* The brand deck's four solid colour tiles read as heavy blocks against the
-   white-first, green-as-accent palette the rest of the site uses. Both
-   sections are white now; hairline rules (not colour) carry the structure,
-   and green is spent on the numeral only — the one accent, kept consistent
-   with the numbered production steps convention already used site-wide. */
-.wwd-tiles,.why-grid{display:grid}
-.wwd-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
-.why-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:clamp(30px,3.4vw,46px)}
-.wwd-item,.why-item{min-width:0;padding:clamp(20px,2.2vw,28px) clamp(20px,2.4vw,30px)}
-/* what we do is a sequence, so the step numeral is what anchors each tile —
-   set big, with a small "Step" kicker above it (was a .78rem "01" that read as
-   a label rather than a step) */
-.wwd-item .num{display:block;color:var(--green);line-height:1}
-.wwd-item .num i{display:block;font-style:normal;font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--leaf)}
-.wwd-item .num b{display:block;margin-top:.16em;font-size:clamp(2.1rem,3.6vw,3.1rem);font-weight:800;letter-spacing:-.03em}
-/* the six reasons under why-NTI aren't a sequence, so numerals said nothing.
-   Line icons carry the meaning instead — same green, same 1.6 stroke weight as
-   the proof-card marks, per the client's icons.png reference. */
-.why-item .ico{display:block;color:var(--green)}
-.why-item .ico svg{display:block;width:clamp(38px,4.2vw,50px);height:auto}
-.wwd-item h3,.why-item h3{
-  margin-top:.66em;font-weight:800;line-height:1.16;letter-spacing:-.015em;color:var(--deep);
-  font-size:clamp(1.1rem,1.6vw,1.34rem);text-wrap:balance;
-}
-.wwd-item p,.why-item p{margin-top:.6em;font-size:clamp(.86rem,.95vw,.95rem);font-weight:500;line-height:1.68;color:var(--grey-2);max-width:32ch}
-.wwd-item{border-left:1px solid var(--line)}
-.wwd-item:first-child{border-left:none;padding-left:0}
-.why-item{border-left:1px solid var(--line);border-top:1px solid var(--line)}
-.why-item:nth-child(3n+1){border-left:none;padding-left:0}
-.why-item:nth-child(-n+3){border-top:none}
-
 /* ---------- what we do ---------- */
 .whatwedo{padding:0 0 clamp(58px,7vw,92px)}
 
@@ -298,16 +266,8 @@ footer a:hover{color:var(--leaf)}
   .burger{display:flex}
   .hero-cta{position:static;justify-content:center;padding:18px 16px;background:var(--mint-2)}
   .hero-cta .btn{flex:1;justify-content:center;max-width:230px}
-  .prod-grid,.wwd-tiles{grid-template-columns:1fr 1fr}
-  .why-grid{grid-template-columns:1fr 1fr}
+  .prod-grid{grid-template-columns:1fr 1fr}
   .cert-wall{grid-template-columns:1fr}
-  .wwd-item:nth-child(odd),.why-item:nth-child(odd){border-left:none;padding-left:0}
-  .wwd-item:nth-child(even){border-left:1px solid var(--line);padding-left:clamp(20px,2.2vw,28px)}
-  .wwd-item:nth-child(-n+2){border-top:none}
-  .wwd-item:nth-child(n+3){border-top:1px solid var(--line);padding-top:clamp(20px,2.2vw,28px)}
-  .why-item:nth-child(even){border-left:1px solid var(--line);padding-left:clamp(20px,2.4vw,30px)}
-  .why-item:nth-child(-n+2){border-top:none}
-  .why-item:nth-child(n+3){border-top:1px solid var(--line)}
   .fgrid{grid-template-columns:1fr 1fr;gap:40px;padding:56px 0 48px}
 }
 @media(max-width:560px){
@@ -315,11 +275,5 @@ footer a:hover{color:var(--leaf)}
   .hero .sbtn{display:none}
   .fgrid{grid-template-columns:1fr}
   .prod-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}
-  .wwd-tiles,.why-grid{grid-template-columns:1fr}
-  .wwd-item,.why-item{
-    border-left:none;padding-left:0;
-    border-top:1px solid var(--line);padding-top:clamp(20px,5vw,26px);
-  }
-  .wwd-item:first-child,.why-item:first-child{border-top:none;padding-top:0}
   .fbot{flex-wrap:wrap;gap:10px}
 }
