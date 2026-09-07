@@ -5,7 +5,7 @@
 > 分工：本檔記錄**狀態**；[`docs/`](docs/README.md) 的十份作業書記錄各領域的**規格與施工標準**；
 > [`CLAUDE.md`](CLAUDE.md) 記錄**專案規範與索引**。三份不要互相抄，各司其職。
 
-**最後更新**：2026-09-04
+**最後更新**：2026-09-06
 
 ---
 
@@ -240,9 +240,11 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ### ⬜ 未做
 
-- Azure SQL Database 實例尚未開設
-- 本機 `NTI` 庫目前仍是 `db/` 腳本建的版本；要切成 EF 版需先砍庫重建
+- 本機 `NTI` 庫若仍是 `db/` 腳本建的版本，要切成 EF 版需先砍庫重建
   （`db/local/900_drop_database.sql` → `dotnet ef database update`）
+
+> Azure SQL（`nti-sql-prod`／資料庫 `NTI`，Basic）**已於 2026-09-04 開設**並跑過
+> migration 與 111 筆內容匯入，見 §六。
 
 ---
 
@@ -364,8 +366,6 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ### ⬜ 其他未做
 
-- **Azure 資源尚未開設**：Function App 與 Azure SQL。指令、OIDC 設定與 GitHub
-  secrets／variables 清單見 [`docs/07 §7.4`](docs/07-deployment.md)。**會產生費用**
 - **中文文案待客戶校閱**：CMS 內容已用 mockup 的實際內容填入（見 §十）
 - **refresh token rotation**（docs/10 §7.3）：schema 無對應資料表，端點清單也未列
   `/auth/refresh`。目前只發 access token（後台 60 分鐘）
@@ -450,7 +450,7 @@ gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌�
 | **中文文案** | 客戶未提供正式文案 | 已用機器翻譯初稿填滿（111 筆內容，`/zh` 可以驗收了），但**上線前需客戶校閱**。公司中文名與董事長姓名沒有依據，刻意保留 `NTI`／「鄭董事長」 |
 | 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 301 對照表、缺漏頁面內容 |
 | 公司傳真、地圖嵌入碼 | 客戶未提供 | `SiteSetting` 的 `company.fax`／`company.map_embed` 仍為 NULL；地圖目前用地址字串查 Google Maps embed |
-| Azure SQL 開設 | 資源尚未開設（schema、種子與 API 都已就緒） | 後台無法脫離 mock |
+| SMTP 帳密 | 客戶未提供寄件帳號（`Smtp__Host`／`Port` 已填 Brevo） | 表單收得到資料，但通知信一律 `Failed` |
 | 正式網域 | 客戶端 DNS | 上線 checklist 卡住 |
 
 ---
