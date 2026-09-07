@@ -9,14 +9,21 @@
  * 2 個分類、100 個標籤），不是憑印象列的。對應依據見
  * `reference/現有網站盤點與內容遷移.md` §3 的遷移地圖與 `reference/舊站301對照表.md`。
  *
- * **三種情況刻意不列**：
- * 1. 舊網址與新網址相同的（`/en/contact/` → `/en/contact`）——middleware 本來就會放行
- * 2. 100 個 `/tag/*` 封存頁——新站沒有標籤體系，D4 的「逐一 301」要等內容遷移
- *    決定落點（全部對到 `/news` 會被 Google 判為 soft 404，比 404 更糟）
- * 3. 其餘 70 篇文章——新站的 CMS 消息還沒匯入這些內容，沒有可指的網址
+ * 這裡列的是**有專屬落點**的 59 條。其餘 170 條（100 個 `/tag/*` 封存頁與 70 篇文章）
+ * 在 `legacy-archive.ts`（產生檔），依客戶 2026-09-07 決定**一律 301 回首頁**：
+ * 舊連結進來不要讓使用者撞 404。
  *
- * 待辦清單（含建議落點）在 `reference/舊站301對照表.md`，內容遷移做完要回來補完這裡。
+ * ⚠ 那 170 條買到的是使用者體驗，**不是 SEO**：內容不對等的轉址會被 Google 判成
+ * soft 404，權重與 404 一樣傳不過去。內容遷移做完之後把落點補進下面的 `POSTS`，
+ * 重跑 `node tools/check-legacy-redirects.mjs --write`，那幾條就會從首頁改成真正的
+ * 一對一 301（具體落點永遠優先於 archive 的首頁）。優先順序見 docs/05 §3。
+ *
+ * 舊網址與新網址相同的（`/en/contact/` → `/en/contact`）兩邊都不列——middleware 本來就會放行。
+ *
+ * 逐條現況在 `reference/舊站301對照表.md`。
  */
+
+import { LEGACY_ARCHIVE } from './legacy-archive'
 
 /** 一列對照：`zh` 是舊站中文網址、`en` 是 WPML 的英文版（沒有就省略） */
 type Legacy = { zh?: string; en?: string; to: string }
@@ -99,7 +106,17 @@ function flatten(rows: Legacy[]): Record<string, string> {
   return map
 }
 
+/**
+ * 沒有專屬落點的舊網址 → 該語系的首頁。
+ * 舊站中文在根目錄、英文在 `/en/`，前綴決定回哪一邊的首頁。
+ */
+const archive = Object.fromEntries(
+  LEGACY_ARCHIVE.map((p) => [p.toLowerCase(), p.startsWith('/en/') ? '/en' : '/zh']),
+)
+
+// 展開順序＝優先順序：有專屬落點的會蓋掉 archive 的首頁
 export const LEGACY_REDIRECTS: Record<string, string> = {
+  ...archive,
   ...flatten(PAGES),
   ...flatten(POSTS),
 }

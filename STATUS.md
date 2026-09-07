@@ -175,7 +175,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 | 路由清單 | `src/lib/routes.ts` 由 `build-pages.mjs` 從 mockup 產生，不是手寫 |
 | `robots.txt` | 開放收錄時補上 sitemap 位址（預設仍是 `Disallow: /`，見 §七） |
 | 結構化資料 | `Organization`＋`WebSite`（全站）、`BreadcrumbList`（25 頁，來自 mockup 的 `.crumb`）、`NewsArticle`（CMS 消息詳細頁）。不發 `FAQPage`／`Product`／`VideoObject`，理由記在 [docs/05 §2.3](docs/05-seo.md) |
-| 舊站 301 | `src/lib/legacy-redirects.ts` + middleware，**59／229**。全部 45 個固定頁與 2 個分類已對應；mockup 那 12 篇示範消息正是舊站同一批文章，也已對上 |
+| 舊站 301 | `src/lib/legacy-redirects.ts` + middleware，**229 條全部有去處**：59 條專屬落點（45 個固定頁、2 個分類，加上 mockup 那 12 篇示範消息——它們正是舊站同一批文章），其餘 170 條依客戶決定導回首頁（產生檔 `legacy-archive.ts`） |
 | 覆蓋率檢查 | `node tools/check-legacy-redirects.mjs [--write]`：抓舊站 sitemap 比對，並重產 [`reference/舊站301對照表.md`](reference/舊站301對照表.md) |
 
 兩個實作上的限制，都寫成程式碼註解了：
@@ -189,8 +189,9 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ### ⬜ 未做
 
-- 舊站 170 條 301（100 個標籤封存頁 + 70 篇文章）——**擋在內容遷移**，不是技術問題。
-  全部指到列表頁會被 Google 判成 soft 404，比 404 更糟，所以刻意留空
+- 舊站那 170 條目前是導回首頁，**不是一對一 301**——擋在內容遷移。Google 會判成
+  soft 404、權重傳不過去（客戶知情的取捨，2026-09-07）。內容搬進 CMS 後把落點補進
+  `legacy-redirects.ts` 的 `POSTS` 即可，優先處理 47 篇 Dr.Print 電子報
 - `/solutions` 的 explorer 互動元件仍是寫死的四個方案（它不是卡片列表，
   是有 `data-set` 切換行為的自訂元件；四筆方案的代號固定，之後要接再說）
 
@@ -470,7 +471,7 @@ gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌�
 | 項目 | 擋在哪 | 影響 |
 |---|---|---|
 | **中文文案** | 客戶未提供正式文案 | 已用機器翻譯初稿填滿（111 筆內容，`/zh` 可以驗收了），但**上線前需客戶校閱**。公司中文名與董事長姓名沒有依據，刻意保留 `NTI`／「鄭董事長」 |
-| 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 80 篇文章與 100 個標籤還沒進 CMS，因此那 170 條 301 沒有落點可指（固定頁的 59 條已完成）；缺漏頁面內容同此 |
+| 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 80 篇文章與 100 個標籤還沒進 CMS，那 170 條舊網址只能先導回首頁（拿不回權重）；缺漏頁面內容同此。**建議向客戶要舊站 Search Console 存取權**，按點擊排序決定哪些文章必須遷移 |
 | 公司傳真、地圖嵌入碼 | 客戶未提供 | `SiteSetting` 的 `company.fax`／`company.map_embed` 仍為 NULL；地圖目前用地址字串查 Google Maps embed |
 | SMTP 帳密 | 客戶未提供寄件帳號（`Smtp__Host`／`Port` 已填 Brevo） | 表單收得到資料，但通知信一律 `Failed` |
 | 正式網域 | 客戶端 DNS | 上線 checklist 卡住 |

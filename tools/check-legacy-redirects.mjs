@@ -2,14 +2,19 @@
  * 舊站 301 覆蓋率檢查。
  *
  * 抓 nti-printing.com 的 sitemap（WordPress + All in One SEO 產生的四支子 sitemap），
- * 跟 `apps/web/src/lib/legacy-redirects.ts` 的對照表比對，回報「還有哪些舊網址沒有落點」，
- * 並重新產生 `reference/舊站301對照表.md`。
+ * 跟 `apps/web/src/lib/legacy-redirects.ts` 的對照表比對，回報「哪些舊網址還沒有專屬落點」。
+ *
+ * `--write` 會另外產生兩份：
+ * - `apps/web/src/lib/legacy-archive.ts`：**沒有專屬落點的舊網址**，一律導回首頁
+ *   （客戶 2026-09-07 決定：舊連結進來找不到就回首頁，不要讓使用者撞 404）
+ * - `reference/舊站301對照表.md`：逐條的對照與現況
+ *
+ * 內容遷移（80+ 篇文章、100 個標籤）做完之後回來重跑：把落點補進 `legacy-redirects.ts`
+ * 的 `POSTS`，那幾條就會從「導向首頁」變成專屬落點，這支腳本的數字會跟著動。
  *
  * 用法：
  *   node tools/check-legacy-redirects.mjs          # 只回報
- *   node tools/check-legacy-redirects.mjs --write  # 一併更新 reference/ 的對照表
- *
- * 內容遷移（80+ 篇文章、100 個標籤）做完之後回來重跑，就知道還差多少。
+ *   node tools/check-legacy-redirects.mjs --write  # 一併更新上面那兩份
  */
 import { readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
@@ -65,13 +70,32 @@ for (const [name, locs] of Object.entries(groups)) {
 }
 
 const missing = rows.filter((r) => !r.to)
-console.log(`舊站 ${total} 個網址：已對應 ${covered}，未對應 ${missing.length}`)
+console.log(`舊站 ${total} 個網址：專屬落點 ${covered}，導向首頁 ${missing.length}`)
 for (const [name, locs] of Object.entries(groups)) {
   const m = missing.filter((r) => r.group === name).length
-  console.log(`  ${name.padEnd(9)} ${locs.length - m}/${locs.length}`)
+  console.log(`  ${name.padEnd(9)} 專屬 ${locs.length - m}／${locs.length}`)
 }
 
 if (!process.argv.includes('--write')) process.exit(0)
+
+writeFileSync(
+  path.join(root, 'apps/web/src/lib/legacy-archive.ts'),
+  `/**
+ * 舊站上**沒有專屬落點**的網址（${missing.length} 條），一律 301 回首頁。
+ *
+ * 產生檔，不要手改：\`node tools/check-legacy-redirects.mjs --write\`。
+ * 清單來自舊站 sitemap（${new Date().toISOString().slice(0, 10)} 抓取），
+ * 決策與代價寫在 \`legacy-redirects.ts\` 的檔頭。
+ *
+ * 之後把某條的落點補進 \`legacy-redirects.ts\` 的 \`POSTS\`，重跑本腳本，
+ * 它就會從這份清單消失——那邊的具體落點永遠優先於這裡的首頁。
+ */
+export const LEGACY_ARCHIVE: readonly string[] = [
+${missing.map((r) => `  ${JSON.stringify(r.from)},`).join('\n')}
+]
+`,
+)
+console.log(`已更新 apps/web/src/lib/legacy-archive.ts（${missing.length} 條導向首頁）`)
 
 const GROUP_TITLE = {
   page: '固定頁（page-sitemap.xml）',
@@ -87,10 +111,13 @@ const doc = `# 舊站 301 對照表
 > 實作：[\`apps/web/src/lib/legacy-redirects.ts\`](../apps/web/src/lib/legacy-redirects.ts)，由 middleware 發 301
 > 重新產生：\`node tools/check-legacy-redirects.mjs --write\`
 
-**目前覆蓋 ${covered}／${total}。** 未對應的是 100 個標籤封存頁與 ${missing.filter((r) => r.group === 'post').length} 篇文章——
-新站的 CMS 還沒有這些內容，也還沒有標籤體系，硬指到列表頁會被 Google 判成 soft 404
-（比 404 更難查）。內容遷移（客戶決策 D3／D4：文章全部遷移、標籤逐一對應）做完之後，
-把落點補進 \`legacy-redirects.ts\` 的 \`POSTS\`，再重跑上面那支腳本確認歸零。
+**${total} 條都有去處**：${covered} 條有專屬落點，其餘 ${missing.length} 條（100 個標籤封存頁與
+${missing.filter((r) => r.group === 'post').length} 篇文章）依客戶 2026-09-07 決定**一律導回首頁**——舊連結進來不要讓使用者撞 404。
+
+⚠ 導回首頁的那 ${missing.length} 條，Google 會判成 soft 404，**權重不會傳過去**，效果等同 404；
+買到的是使用者體驗，不是 SEO。內容遷移（客戶決策 D3／D4：文章全部遷移、標籤逐一對應）做完之後，
+把落點補進 \`legacy-redirects.ts\` 的 \`POSTS\`，那幾條就會從「導向首頁」變成真正的 301。
+值得優先處理的是 47 篇 Dr.Print 電子報——那是舊站唯一會帶進陌生流量的內容。
 
 ⚠ 已對應的 12 篇文章目前指向 mockup 的示範頁 \`/news-*\`。那 12 篇正是舊站同一批文章的英文版
 （逐篇比對標題確認），內容遷移把它們搬進 CMS 之後，落點要改成 \`/news/{slug}\`。
@@ -100,17 +127,22 @@ Google 對五跳以內的轉址鏈沒有問題，但**新增對照時 key 一律
 
 | 記號 | 意思 |
 |---|---|
-| ✅ | 已有落點 |
-| ⬜ | 待內容遷移 |
+| ✅ | 有專屬落點 |
+| ↩ | 導回首頁（待內容遷移後補上專屬落點） |
 
 ${Object.entries(GROUP_TITLE)
   .map(([name, title]) => {
     const list = rows.filter((r) => r.group === name)
-    return `## ${title}（${list.filter((r) => r.to).length}／${list.length}）
+    return `## ${title}（專屬落點 ${list.filter((r) => r.to).length}／${list.length}）
 
 | | 舊網址 | 新網址 |
 |---|---|---|
-${list.map((r) => `| ${r.to ? '✅' : '⬜'} | \`${r.from || '/'}\` | ${r.to ? `\`${r.to}\`` : '—' } |`).join('\n')}`
+${list
+      .map(
+        (r) =>
+          `| ${r.to ? '✅' : '↩'} | \`${r.from || '/'}\` | \`${r.to ?? (r.from.startsWith('/en/') ? '/en' : '/zh')}\` |`,
+      )
+      .join('\n')}`
   })
   .join('\n\n')}
 `

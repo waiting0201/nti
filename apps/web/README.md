@@ -245,7 +245,8 @@ node scripts/extract-i18n.mjs --client  # 重產 src/lib/zh-client.ts
 | `src/lib/routes.ts` | **產生檔**：全部靜態路由，`build-pages.mjs` 從 mockup 產出 |
 | `src/lib/breadcrumbs.ts` | **產生檔**：各頁麵包屑（含中文），來自 mockup 的 `.crumb` |
 | `src/lib/jsonld.ts` | 結構化資料建構器（`Organization`／`WebSite`／`BreadcrumbList`／`NewsArticle`） |
-| `src/lib/legacy-redirects.ts` | 舊站 301 對照表，由 `middleware.ts` 發 301 |
+| `src/lib/legacy-redirects.ts` | 舊站 301 對照表（59 條專屬落點），由 `middleware.ts` 發 301 |
+| `src/lib/legacy-archive.ts` | **產生檔**：舊站其餘 170 條網址，一律導回首頁 |
 
 兩件動手前要知道的事：
 
@@ -270,5 +271,7 @@ node tools/check-legacy-redirects.mjs --write  # 一併更新 reference/舊站30
   中文站要換掉需要客戶提供中文版素材。
 - 表單（`/contact`、`/get-a-quote`）目前是 mockup 的前端成功卡，尚未接 API。
 - `img-size.js`（mockup 的素材尺寸標示）依原註解不掛載於正式站。
-- 舊站 301 只覆蓋 59／229：100 個標籤封存頁與 70 篇文章的落點**等內容遷移**，
-  新站還沒有這些內容可指。
+- 舊站 301 有 59 條是專屬落點，其餘 170 條先導回首頁（客戶決定，不讓使用者撞 404）。
+  那 170 條拿不回 SEO 權重，**等內容遷移**後補成一對一。
+  注意只有「舊站 sitemap 上真的存在」的網址會被導首頁——其他不存在的路徑照樣 404，
+  不會把整站變成永不 404。

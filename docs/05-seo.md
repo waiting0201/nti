@@ -81,17 +81,25 @@
 
 1. ✅ **匯出舊站 URL 清單**：`tools/check-legacy-redirects.mjs` 直接抓舊站 sitemap
    （2026-09-07：45 頁 + 82 篇文章 + 2 分類 + 100 標籤＝229 條），可重跑。
-2. 🟡 **301 對照表**：`apps/web/src/lib/legacy-redirects.ts`，由 middleware 發 301，
-   目前覆蓋 **59／229**。全部固定頁與分類已對應；缺的是 100 個標籤封存頁與 70 篇文章——
-   新站還沒有那些內容，也沒有標籤體系。逐條清單見
-   [`reference/舊站301對照表.md`](../reference/舊站301對照表.md)。
+2. 🟡 **301 對照表**：`apps/web/src/lib/legacy-redirects.ts`，由 middleware 發 301。
+   **229 條都有去處**：59 條有專屬落點（全部固定頁與分類），其餘 170 條
+   （100 個標籤封存頁 + 70 篇文章）依客戶 2026-09-07 決定**一律導回首頁**——
+   舊連結進來不要讓使用者撞 404。清單為產生檔 `lib/legacy-archive.ts`，
+   逐條現況見 [`reference/舊站301對照表.md`](../reference/舊站301對照表.md)。
 3. 上線時部署 301、提交新 `sitemap.xml` 至 **Google Search Console**。
 4. 上線後監控 GSC 涵蓋率/索引/排名，異常即修。
 
 > 301 對照表為上線 Gate 必交付物，與 [`07-deployment.md`](07-deployment.md) 連動。
 >
-> ⚠ **不要為了讓數字歸零而把 170 條全部指到列表頁**：大量「內容不對等」的轉址會被
-> Google 判成 soft 404，比 404 更難從 GSC 裡看出問題。內容遷移做完再逐條補。
+> ⚠ **導回首頁買到的是使用者體驗，不是 SEO**：內容不對等的轉址會被 Google 判成
+> soft 404，權重與 404 一樣傳不過去，GSC 也會列出「重新導向但內容不符」。
+> 這是客戶知情下的取捨（2026-09-07）——寧可讓人看到首頁，也不要看到 404。
+>
+> **內容遷移時的優先順序**：舊站 82 篇文章裡，約 25 篇是節慶營運公告（沒有搜尋價值）、
+> 47 篇是 Dr.Print 電子報（綠色印刷／ESG／碳權，**舊站唯一會帶進陌生流量的資產**）。
+> 上線前若能拿到舊站 Search Console 的存取權，按點擊排序取前 20–30 個 URL，
+> 通常就涵蓋八成以上自然流量——那批才是必須遷移並補上一對一 301 的清單，
+> 不需要 80 篇全譯。100 個標籤封存頁是薄內容，新站也沒有標籤體系，維持導回首頁即可。
 >
 > ⚠ 舊網址帶結尾斜線時會經過兩跳（Next 先 308 去掉斜線、middleware 再 301）。
 > 五跳以內 Google 可接受，但新增對照時 key 一律不帶結尾斜線。
@@ -153,6 +161,7 @@
 | 2026-06-12 | Tim（Claude Code） | 初版：定義 SEO harness 作業書 |
 | 2026-06-12 | Tim（Claude Code） | 範圍限定公開站、CMS noindex；補 Next.js SSG+ISR 重生策略與 Pacdora 頁面說明 |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 Pacdora 頁面 SEO 說明 |
+| 2026-09-07 | Tim（Claude Code） | **客戶決定**：舊站沒有專屬落點的 170 條網址一律 301 回首頁（產生檔 `legacy-archive.ts`），不讓使用者撞 404；同時記錄其 SEO 代價（soft 404、不傳權重）與內容遷移的優先順序 |
 | 2026-09-07 | Tim（Claude Code） | §2.3 結構化資料收斂為 `Organization`／`WebSite`／`BreadcrumbList`／`NewsArticle` 四種，並記錄不發 `FAQPage`／`Product`／`VideoObject` 的理由；§2.6 補 `sitemap.ts` 實作；§3 舊站 301 由「待辦」改為 59／229 已實作，附可重跑的覆蓋率檢查 |
 | 2026-09-02 | Tim（Claude Code） | §2.2 雙語 URL 由「子路徑**或** hreflang」二選一收斂為明確採用 `/zh`、`/en` 子路徑，並指向 `Page.RouteTemplate` 與 [`db/seed/140_page.sql`](../db/seed/140_page.sql) 的實際清單（路由細節仍待 02-frontend 定案） |
 
