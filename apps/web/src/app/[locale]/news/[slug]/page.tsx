@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { A } from '@/components/A'
+import { JsonLd } from '@/components/JsonLd'
 import { cmsMedia, getNewsItem, hasApi } from '@/lib/api'
 import { siteUrl, withLocale, type Locale } from '@/lib/i18n'
+import { breadcrumbList, newsArticle } from '@/lib/jsonld'
+import { tr } from '@/lib/t'
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> }
 
@@ -52,13 +55,37 @@ export default async function Page({ params }: Props) {
   const item = hasApi ? await getNewsItem(locale, slug) : null
   if (!item) notFound()
 
+  // 這條路由是 CMS 專用的（mockup 沒有這一頁），不受版面驗收閘的節點比對限制，
+  // 所以結構化資料就近放在頁面裡，資料與畫面同一份來源。
+  const canonical = item.seo.canonicalUrl || `${siteUrl}/${locale}/news/${slug}`
+
   return (
     <>
+      <JsonLd
+        data={newsArticle(locale, {
+          title: item.title,
+          summary: item.summary,
+          publishDate: item.publishDate,
+          categoryName: item.categoryName,
+          image: cmsMedia(item.seo.ogImagePath || item.coverImagePath),
+          url: canonical,
+        })}
+      />
+      {/* 與下方 .crumb 的四層完全一致（含語系——結構化資料不能跟畫面不同語言） */}
+      <JsonLd
+        data={breadcrumbList(locale, [
+          { name: tr(locale, 'Home'), path: '/' },
+          { name: tr(locale, 'Insights'), path: '/insights' },
+          { name: tr(locale, 'Latest News'), path: '/news' },
+          { name: item.categoryName },
+        ])}
+      />
       <section className="section subhead"><div className="wrap">
+        {/* 這一頁是手寫的（mockup 沒有），沒有包在 <T> 裡，所以固定字串各自翻 */}
         <div className="crumb reveal">
-          <A href={l("/")}>Home</A><span>&rsaquo;</span>
-          <A href={l("/insights")}>Insights</A><span>&rsaquo;</span>
-          <A href={l("/news")}>Latest News</A><span>&rsaquo;</span>
+          <A href={l("/")}>{tr(locale, 'Home')}</A><span>&rsaquo;</span>
+          <A href={l("/insights")}>{tr(locale, 'Insights')}</A><span>&rsaquo;</span>
+          <A href={l("/news")}>{tr(locale, 'Latest News')}</A><span>&rsaquo;</span>
           <b>{item.categoryName}</b>
         </div>
         <span className="news-meta reveal">
@@ -76,7 +103,7 @@ export default async function Page({ params }: Props) {
         <div dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
       </div></section>
       <section className="section tight"><div className="wrap reveal">
-        <p><A href={l("/news")} className="btn btn-out">&laquo; All news</A></p>
+        <p><A href={l("/news")} className="btn btn-out">{tr(locale, '« All news')}</A></p>
       </div></section>
     </>
   )

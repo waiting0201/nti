@@ -40,6 +40,7 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [官網資訊架構 IA](reference/官網資訊架構_IA.md) | 依客戶 sitemap 的完整節點→mockup 頁面對照、footer/浮動鈕、對齊異動紀錄 |
 | [品牌簡報：首頁版型](reference/NTI_Brand_Deck_首頁版型.pptx) | 客戶 2026-09-01 版首頁內容順序與 What We Do／Why NTI／Proof 三區塊的文案與配色稿 |
 | [現有網站盤點與內容遷移](reference/現有網站盤點與內容遷移.md) | 舊站 nti-printing.com 頁面/內容盤點、新舊頁面對應、缺漏頁面與待製內容、待決策點 |
+| [舊站 301 對照表](reference/舊站301對照表.md) | 舊站 229 條網址逐條的轉址落點與覆蓋率（由 `tools/check-legacy-redirects.mjs --write` 產生） |
 | [**後端專案說明**](Api/README.md) | `Api/`：Azure Functions .NET 10 API——本機執行、結構、預設拒絕授權與雙 audience 的注意事項 |
 | [前端專案說明](apps/web/README.md) | `apps/web/`：Next.js 公開站——結構、素材同步、版面一致性怎麼保證、`verify:markup` 驗收閘 |
 | [後台專案說明](apps/admin/README.md) | `apps/admin/`：React + Vite 管理後台——22 個單元、權限矩陣、mock 資料來源、接 API 時要改哪裡 |
@@ -87,7 +88,8 @@ NTI/
 │   └── sbk/           # 客戶提供的原始素材（sitemap、CIS、需求書）
 ├── tools/
 │   ├── sync-public.sh # master → public 同步（去除 reference/），推 GitHub 前執行
-│   └── upload-assets.sh # mockup/assets → Azure Blob（stntiprod/assets）
+│   ├── upload-assets.sh # mockup/assets → Azure Blob（stntiprod/assets）
+│   └── check-legacy-redirects.mjs # 舊站 301 覆蓋率檢查（抓舊站 sitemap 比對）
 ├── .githooks/
 │   └── pre-push       # 安全網：擋下含 reference/ 的 ref 推向 Remote_GitHub
 └── .claude/           # Claude Code 本機設定

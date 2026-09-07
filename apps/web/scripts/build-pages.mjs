@@ -341,3 +341,87 @@ ${behaviorTags}    </T>
   count++
 }
 console.log(`已產生 ${count} 個頁面 → ${appDir}` + `，跳過 ${skipped} 頁（已接 CMS，見 HAND_MAINTAINED）`)
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * 衍生資料：路由表與麵包屑
+ *
+ * 這兩份也是「從 mockup 機械式產生」，不是手寫清單——sitemap 與 BreadcrumbList
+ * 結構化資料都吃它們。跟頁面不同的是**連 HAND_MAINTAINED 的 16 頁也要收**：
+ * 那些頁面只是內容改為手動維護，路由與麵包屑仍然來自 mockup。
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+/** mockup 的相對連結 → 正式站路由（不含語系前綴） */
+const hrefToRoute = (href) => {
+  const name = href.replace(/\.html$/, '')
+  return name === 'index' ? '/' : '/' + name
+}
+
+/** 讀 zh.ts 的字典，麵包屑的中文標籤直接在產生時查好，執行期不必再翻譯 */
+function loadZh() {
+  const src = readFileSync(path.join(root, 'src/lib/zh.ts'), 'utf8')
+  const body = src.slice(src.indexOf('= {') + 2, src.lastIndexOf('}') + 1)
+  try {
+    return JSON.parse(body.replace(/,(\s*})$/, '$1'))
+  } catch (e) {
+    throw new Error(`zh.ts 不是單純的物件字面值，無法解析：${e.message}`)
+  }
+}
+
+const ZH = loadZh()
+const routes = []
+const crumbs = []
+
+for (const file of files) {
+  const slug = file.replace(/\.html$/, '')
+  routes.push(slug === 'index' ? '/' : '/' + slug)
+
+  const html = readFileSync(path.join(mockupDir, file), 'utf8')
+  const m = /<div class="crumb[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(html)
+  if (!m) continue // 沒有可見麵包屑的頁面就不發 BreadcrumbList（結構化資料要對得上畫面）
+
+  const trail = []
+  const itemRe = /<a href="([^"]+)"[^>]*>([\s\S]*?)<\/a>|<b>([\s\S]*?)<\/b>/g
+  let item
+  while ((item = itemRe.exec(m[1]))) {
+    const en = decodeEntities((item[2] ?? item[3]).replace(/<[^>]+>/g, '').trim())
+    trail.push({ en, zh: ZH[en] ?? en, ...(item[1] ? { path: hrefToRoute(item[1]) } : {}) })
+  }
+  crumbs.push([slug === 'index' ? '/' : '/' + slug, trail])
+}
+
+writeFileSync(
+  path.join(root, 'src/lib/routes.ts'),
+  `/**
+ * 公開站的全部靜態路由（不含語系前綴），由 scripts/build-pages.mjs 從 mockup 產生。
+ * sitemap.ts 吃這份——手寫清單遲早會跟 mockup 脫節。
+ */
+export const ROUTES: readonly string[] = [
+${routes.map((r) => `  ${JSON.stringify(r)},`).join('\n')}
+]
+`,
+)
+
+writeFileSync(
+  path.join(root, 'src/lib/breadcrumbs.ts'),
+  `/**
+ * 各頁的麵包屑，由 scripts/build-pages.mjs 從 mockup 的 \`.crumb\` 產生。
+ *
+ * 只收**畫面上真的有麵包屑**的頁面（${crumbs.length}／${routes.length} 頁）——BreadcrumbList
+ * 結構化資料必須對得上可見內容，替沒有麵包屑的頁面憑空生一條是違反 Google 規範的。
+ * 中文在產生時就查好 zh.ts（查不到落回英文），執行期不需要字典。
+ */
+export type Crumb = { en: string; zh: string; path?: string }
+
+export const BREADCRUMBS: Record<string, Crumb[]> = {
+${crumbs
+  .map(
+    ([route, trail]) =>
+      `  ${JSON.stringify(route)}: [\n` +
+      trail.map((c) => `    ${JSON.stringify(c)},`).join('\n') +
+      `\n  ],`,
+  )
+  .join('\n')}
+}
+`,
+)
+console.log(`已產生 src/lib/routes.ts（${routes.length} 條路由）與 src/lib/breadcrumbs.ts（${crumbs.length} 頁有麵包屑）`)

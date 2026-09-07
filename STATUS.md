@@ -5,7 +5,7 @@
 > 分工：本檔記錄**狀態**；[`docs/`](docs/README.md) 的十份作業書記錄各領域的**規格與施工標準**；
 > [`CLAUDE.md`](CLAUDE.md) 記錄**專案規範與索引**。三份不要互相抄，各司其職。
 
-**最後更新**：2026-09-06
+**最後更新**：2026-09-07
 
 ---
 
@@ -45,7 +45,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | P4 | 後端／CMS API | ✅ | 程式、資源、內容、CI 全數完成並上線（見 §五、§六） |
 | P5 | 前台頁面開發 | 🟡 | 44 頁切版完成；內容仍為靜態，未接 API |
 | P6 | 報價／聯絡表單 | 🟡 | 表單已切版（`PageForm`），前台尚未接後端 |
-| P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語完成（CMS 內容 + 44 頁靜態文字皆有中文，**待客戶校閱**）；sitemap 與結構化資料未做 |
+| P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語完成（CMS 內容 + 44 頁靜態文字皆有中文，**待客戶校閱**）；sitemap／結構化資料／舊站 301 已做（見 §二），舊站 170 條文章與標籤的落點待內容遷移 |
 | P9 | 整合測試／QA／SEO 稽核 | ⬜ | |
 | P10 | UAT 客戶驗收 | ⬜ | |
 | P11 | 部署 | ✅ | SWA + Blob + CI 全通（見 §六） |
@@ -167,11 +167,30 @@ mockup 內容（現況部署），設了就改吃 CMS。
 ⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
 清單在該腳本的 `HAND_MAINTAINED`。
 
+### ✅ SEO 基礎建設（2026-09-07）
+
+| 項目 | 做法 |
+|---|---|
+| `sitemap.xml` | `src/app/sitemap.ts`：44 條靜態路由 × 2 語系＝88 條，接了 CMS 再加消息詳細頁（實測 112 條）。逐條帶 `xhtml:link` hreflang，消息用 Id 把中英兩篇配對（slug 可翻譯、中英不同） |
+| 路由清單 | `src/lib/routes.ts` 由 `build-pages.mjs` 從 mockup 產生，不是手寫 |
+| `robots.txt` | 開放收錄時補上 sitemap 位址（預設仍是 `Disallow: /`，見 §七） |
+| 結構化資料 | `Organization`＋`WebSite`（全站）、`BreadcrumbList`（25 頁，來自 mockup 的 `.crumb`）、`NewsArticle`（CMS 消息詳細頁）。不發 `FAQPage`／`Product`／`VideoObject`，理由記在 [docs/05 §2.3](docs/05-seo.md) |
+| 舊站 301 | `src/lib/legacy-redirects.ts` + middleware，**59／229**。全部 45 個固定頁與 2 個分類已對應；mockup 那 12 篇示範消息正是舊站同一批文章，也已對上 |
+| 覆蓋率檢查 | `node tools/check-legacy-redirects.mjs [--write]`：抓舊站 sitemap 比對，並重產 [`reference/舊站301對照表.md`](reference/舊站301對照表.md) |
+
+兩個實作上的限制，都寫成程式碼註解了：
+
+- **JSON-LD 不能放在 `</header>` 到 `<footer>` 之間**——版面驗收閘比對那個區間的節點序列。
+  全站的放在 layout 的 body 末端；`BreadcrumbList` 因為只跟路由有關，做成 client component
+  掛在 layout（跟 `SiteHeader` 判 active 同一個做法），44 個 page.tsx 一個都不用改。
+- **舊網址帶結尾斜線會走兩跳**（Next 先 308 去斜線、middleware 再 301）。Google 可接受。
+
+`verify:markup` 仍然「全部 44 頁與 mockup 一致」。
+
 ### ⬜ 未做
 
-- `sitemap.ts`（`robots.ts` 已有）
-- 結構化資料（JSON-LD）
-- 舊站 301 轉址對照表（盤點在 `reference/現有網站盤點與內容遷移.md`）
+- 舊站 170 條 301（100 個標籤封存頁 + 70 篇文章）——**擋在內容遷移**，不是技術問題。
+  全部指到列表頁會被 Google 判成 soft 404，比 404 更糟，所以刻意留空
 - `/solutions` 的 explorer 互動元件仍是寫死的四個方案（它不是卡片列表，
   是有 `data-set` 切換行為的自訂元件；四筆方案的代號固定，之後要接再說）
 
@@ -439,6 +458,9 @@ gh variable set SITE_URL -R waiting0201/nti -b https://www.nti-printing.com
 gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌，要重建才生效
 ```
 
+翻完之後別忘了把 `https://www.nti-printing.com/sitemap.xml` 提交到 Google Search Console
+（`robots.txt` 開放後才會帶出這條位址），並確認舊網域的 301 已經指過來。
+
 其餘見 [`docs/07`](docs/07-deployment.md) §5 DoD。
 
 ---
@@ -448,7 +470,7 @@ gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌�
 | 項目 | 擋在哪 | 影響 |
 |---|---|---|
 | **中文文案** | 客戶未提供正式文案 | 已用機器翻譯初稿填滿（111 筆內容，`/zh` 可以驗收了），但**上線前需客戶校閱**。公司中文名與董事長姓名沒有依據，刻意保留 `NTI`／「鄭董事長」 |
-| 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 301 對照表、缺漏頁面內容 |
+| 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 80 篇文章與 100 個標籤還沒進 CMS，因此那 170 條 301 沒有落點可指（固定頁的 59 條已完成）；缺漏頁面內容同此 |
 | 公司傳真、地圖嵌入碼 | 客戶未提供 | `SiteSetting` 的 `company.fax`／`company.map_embed` 仍為 NULL；地圖目前用地址字串查 Google Maps embed |
 | SMTP 帳密 | 客戶未提供寄件帳號（`Smtp__Host`／`Port` 已填 Brevo） | 表單收得到資料，但通知信一律 `Failed` |
 | 正式網域 | 客戶端 DNS | 上線 checklist 卡住 |

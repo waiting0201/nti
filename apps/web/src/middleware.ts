@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n'
+import { lookupLegacy } from '@/lib/legacy-redirects'
 
 /** 記住使用者選過的語系。名稱沿用 Next 的慣例，一年後過期 */
 const LOCALE_COOKIE = 'NEXT_LOCALE'
@@ -65,6 +66,20 @@ export function middleware(req: NextRequest) {
 
   if (pathname.startsWith('/admin/')) {
     return NextResponse.rewrite(new URL('/admin/index.html', req.url))
+  }
+
+  /*
+   * 舊站（WordPress，中文在根目錄、英文在 /en/）的網址 → 新站對應頁，301。
+   *
+   * 必須排在語系判斷**之前**：`/en/products/` 帶著合法的語系前綴，走到下面
+   * 會被當成新站路由直接放行而 404；`/products/colorbox/` 則會被補成
+   * `/en/products/colorbox` 一樣是 404。對照表與未完成的部分見 lib/legacy-redirects.ts。
+   */
+  const legacy = lookupLegacy(pathname)
+  if (legacy) {
+    const url = req.nextUrl.clone()
+    url.pathname = legacy
+    return NextResponse.redirect(url, 301)
   }
 
   /*

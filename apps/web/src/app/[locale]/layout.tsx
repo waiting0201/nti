@@ -4,7 +4,10 @@ import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { FloatingPanel } from '@/components/FloatingPanel'
 import { SiteChrome } from '@/components/SiteChrome'
+import { JsonLd } from '@/components/JsonLd'
+import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd'
 import { htmlLang, isLocale, locales, siteUrl } from '@/lib/i18n'
+import { siteGraph } from '@/lib/jsonld'
 import '../globals.css'
 
 export const metadata: Metadata = {
@@ -41,6 +44,12 @@ export default async function LocaleLayout({
         <SiteFooter locale={locale} />
         <FloatingPanel locale={locale} />
         <SiteChrome />
+        {/*
+          結構化資料放在 body 末端（footer 之後）—— 版面驗收閘比對的是
+          `</header>` 到 `<footer>` 之間，那個區間不能多出節點。見 components/JsonLd.tsx
+        */}
+        <JsonLd data={siteGraph(locale)} />
+        <BreadcrumbJsonLd />
       </body>
     </html>
   )

@@ -236,6 +236,32 @@ node scripts/extract-i18n.mjs --client  # 重產 src/lib/zh-client.ts
 打進 client bundle，於是 `zh-client.ts` 只放它們用得到的 82 筆，由
 `extract-i18n.mjs --client` 從 `zh.ts` 產生，不會漂移。
 
+## SEO 基礎建設
+
+| 檔案 | 做什麼 |
+|---|---|
+| `src/app/sitemap.ts` | 44 條靜態路由 × 2 語系，接了 CMS 再加消息詳細頁；逐條帶 hreflang |
+| `src/app/robots.ts` | 預設 `Disallow: /`，`NEXT_PUBLIC_ALLOW_INDEXING=1` 才開放並附 sitemap 位址 |
+| `src/lib/routes.ts` | **產生檔**：全部靜態路由，`build-pages.mjs` 從 mockup 產出 |
+| `src/lib/breadcrumbs.ts` | **產生檔**：各頁麵包屑（含中文），來自 mockup 的 `.crumb` |
+| `src/lib/jsonld.ts` | 結構化資料建構器（`Organization`／`WebSite`／`BreadcrumbList`／`NewsArticle`） |
+| `src/lib/legacy-redirects.ts` | 舊站 301 對照表，由 `middleware.ts` 發 301 |
+
+兩件動手前要知道的事：
+
+1. **JSON-LD 不能加在 `</header>` 到 `<footer>` 之間**——`verify:markup` 比對那個區間的
+   節點序列，多一個 `<script>` 就會整頁報差異。全站的掛在 layout 的 body 末端；
+   麵包屑只跟路由有關，所以做成 client component（`BreadcrumbJsonLd`）也掛在 layout，
+   44 個 page.tsx 完全不用動——其中 28 個是產生的，手動加也會被下次 codegen 洗掉。
+2. **兩個產生檔不要手改**，改 mockup 再重跑 `node scripts/build-pages.mjs`。
+
+舊站轉址的覆蓋率（repo 根目錄執行，會連到舊站抓 sitemap）：
+
+```bash
+node tools/check-legacy-redirects.mjs          # 只回報
+node tools/check-legacy-redirects.mjs --write  # 一併更新 reference/舊站301對照表.md
+```
+
 ## 已知待辦
 
 - **中文文案待客戶校閱**（現況為機器翻譯初稿）。
@@ -244,3 +270,5 @@ node scripts/extract-i18n.mjs --client  # 重產 src/lib/zh-client.ts
   中文站要換掉需要客戶提供中文版素材。
 - 表單（`/contact`、`/get-a-quote`）目前是 mockup 的前端成功卡，尚未接 API。
 - `img-size.js`（mockup 的素材尺寸標示）依原註解不掛載於正式站。
+- 舊站 301 只覆蓋 59／229：100 個標籤封存頁與 70 篇文章的落點**等內容遷移**，
+  新站還沒有這些內容可指。

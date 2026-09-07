@@ -38,7 +38,23 @@
 > ⚠️ 路由細節待 [`02-frontend.md`](02-frontend.md) 定案；`db/seed/140_page.sql` 為現行提案值，改動只需更新該檔，不影響 schema。
 
 ### 2.3 結構化資料（JSON-LD）
-依頁型注入：`Website`、`Organization`、`BreadcrumbList`、`Product`（印刷方案）、`Article`（NEWS/Green Vlog）、`FAQPage`、必要時 `VideoObject`（案例/Vlog 影片）。
+依頁型注入。**2026-09-07 實作時收斂為四種**（`apps/web/src/lib/jsonld.ts`）：
+
+| 型別 | 範圍 | 來源 |
+|---|---|---|
+| `Organization` | 全站（layout） | mockup 與客戶提供的台南廠址；中文名 `南台彩藝` 取自舊站 `<title>` |
+| `WebSite` | 全站（layout） | 同上，`publisher` 指回 `Organization` |
+| `BreadcrumbList` | 25／44 頁 | mockup 的 `.crumb`，由 `build-pages.mjs` 產生 `lib/breadcrumbs.ts` |
+| `NewsArticle` | CMS 的 `/news/{slug}` | 消息詳細端點 |
+
+**刻意不發的三種**，理由記在此：
+
+- **`FAQPage`**：Google 2023-08 起只對政府與醫療網站顯示 FAQ 複合結果，一般企業站發了不會有任何呈現。
+- **`Product`／`Offer`**：方案頁沒有價格、庫存、評價，發了只會在 Search Console 累積必填欄位警告。
+- **`VideoObject`**：影片都是 YouTube 嵌入，`thumbnailUrl`／`uploadDate`／`duration` 目前拿不到。
+
+原則：**結構化資料只描述畫面上真的有、且我們有依據的事實**。沒有麵包屑的 19 頁就不發
+`BreadcrumbList`——與可見內容不符是 Google 明列的違規項。
 
 ### 2.4 渲染與可檢索
 - 公開站內容頁採 **Next.js SSG + ISR**（CMS 更新以 webhook 觸發 revalidate）；關鍵內容**不依賴 JS**。
@@ -53,17 +69,32 @@
 
 ### 2.6 索引基礎建設
 - `sitemap.xml`（含雙語）、`robots.txt`、canonical 一致、404/410 正確。
+- 實作：`apps/web/src/app/sitemap.ts`（44 條靜態路由 × 2 語系＋CMS 消息，逐條帶
+  `xhtml:link` hreflang，與各頁 `<head>` 同一組值）、`robots.ts`（預設 `Disallow: /`，
+  由 `ALLOW_INDEXING` 開放並附 sitemap 位址）。
+- 靜態路由清單由 `build-pages.mjs` 從 mockup 產生（`lib/routes.ts`），不是手寫——
+  手寫清單遲早會跟 mockup 脫節。
 
 ---
 
 ## 3. 既有站遷移（上線關鍵）
 
-1. **匯出舊站 URL 清單**（80 篇 + 46 頁）。
-2. **建立 301 轉址對照表**（舊 URL → 新 URL，一對一，避免轉址鏈）。
+1. ✅ **匯出舊站 URL 清單**：`tools/check-legacy-redirects.mjs` 直接抓舊站 sitemap
+   （2026-09-07：45 頁 + 82 篇文章 + 2 分類 + 100 標籤＝229 條），可重跑。
+2. 🟡 **301 對照表**：`apps/web/src/lib/legacy-redirects.ts`，由 middleware 發 301，
+   目前覆蓋 **59／229**。全部固定頁與分類已對應；缺的是 100 個標籤封存頁與 70 篇文章——
+   新站還沒有那些內容，也沒有標籤體系。逐條清單見
+   [`reference/舊站301對照表.md`](../reference/舊站301對照表.md)。
 3. 上線時部署 301、提交新 `sitemap.xml` 至 **Google Search Console**。
 4. 上線後監控 GSC 涵蓋率/索引/排名，異常即修。
 
 > 301 對照表為上線 Gate 必交付物，與 [`07-deployment.md`](07-deployment.md) 連動。
+>
+> ⚠ **不要為了讓數字歸零而把 170 條全部指到列表頁**：大量「內容不對等」的轉址會被
+> Google 判成 soft 404，比 404 更難從 GSC 裡看出問題。內容遷移做完再逐條補。
+>
+> ⚠ 舊網址帶結尾斜線時會經過兩跳（Next 先 308 去掉斜線、middleware 再 301）。
+> 五跳以內 Google 可接受，但新增對照時 key 一律不帶結尾斜線。
 
 ---
 
@@ -122,6 +153,7 @@
 | 2026-06-12 | Tim（Claude Code） | 初版：定義 SEO harness 作業書 |
 | 2026-06-12 | Tim（Claude Code） | 範圍限定公開站、CMS noindex；補 Next.js SSG+ISR 重生策略與 Pacdora 頁面說明 |
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 Pacdora 頁面 SEO 說明 |
+| 2026-09-07 | Tim（Claude Code） | §2.3 結構化資料收斂為 `Organization`／`WebSite`／`BreadcrumbList`／`NewsArticle` 四種，並記錄不發 `FAQPage`／`Product`／`VideoObject` 的理由；§2.6 補 `sitemap.ts` 實作；§3 舊站 301 由「待辦」改為 59／229 已實作，附可重跑的覆蓋率檢查 |
 | 2026-09-02 | Tim（Claude Code） | §2.2 雙語 URL 由「子路徑**或** hreflang」二選一收斂為明確採用 `/zh`、`/en` 子路徑，並指向 `Page.RouteTemplate` 與 [`db/seed/140_page.sql`](../db/seed/140_page.sql) 的實際清單（路由細節仍待 02-frontend 定案） |
 
-*最後更新：2026-09-02*
+*最後更新：2026-09-07*

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { siteUrl } from '@/lib/i18n'
 
 /**
  * 正式上線前一律 noindex。
@@ -23,5 +24,6 @@ export default function robots(): MetadataRoute.Robots {
       // 不擋爬取，所以這裡要明確擋掉。
       disallow: '/admin/',
     },
+    sitemap: `${siteUrl}/sitemap.xml`,
   }
 }
