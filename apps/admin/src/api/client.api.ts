@@ -19,6 +19,9 @@ type ApiRow = Record<string, unknown> & {
   i18n?: Record<string, Record<string, unknown>>
 }
 
+/** 報價附件（單筆端點的 `attachments`）。本期不做病毒掃描，沒有 scanStatus。 */
+type ApiAttachment = { id: number; originalName: string; sizeBytes: number }
+
 /** 後台路徑：子清單掛在 `/admin/solution/item`，其餘等於單元代號。 */
 function pathOf(unit: string): string {
   return unit === 'solution-item' ? 'solution/item' : unit
@@ -147,9 +150,45 @@ export async function listAll(unit: string): Promise<Row[]> {
 
 export async function get(unit: string, id: string): Promise<Row | undefined> {
   try {
-    return toRow(unit, await api.get<ApiRow>(`/admin/${pathOf(unit)}/${toApiId(id)}`))
+    const data = await api.get<ApiRow>(`/admin/${pathOf(unit)}/${toApiId(id)}`)
+
+    // 報價的單筆端點回的是 `{ quote, attachments }`（04-api §3.4），不是平的一列。
+    // 照一般路徑丟給 toRow 會得到 id 為 "undefined"、欄位全空的一列——
+    // 詳細頁看起來就像資料不見了。這裡先攤平再轉。
+    if (unit === 'quote' && data.quote) {
+      const row = toRow(unit, data.quote as ApiRow)
+      row.attachments = (data.attachments as ApiAttachment[] | undefined ?? []).map((a) => ({
+        id: String(a.id),
+        name: a.originalName,
+        sizeBytes: Number(a.sizeBytes ?? 0),
+      }))
+      return row
+    }
+
+    return toRow(unit, data)
   } catch {
     return undefined
+  }
+}
+
+/**
+ * 下載報價附件（`quote.download`，僅超管）。
+ *
+ * 端點要帶 JWT，所以不能用 `<a href>` 直接連——先 fetch 回來再用 object URL 觸發下載。
+ * 後端一律以 `application/octet-stream` 送出，瀏覽器不會直接開啟這些檔案。
+ */
+export async function downloadQuoteAttachment(quoteId: string, attachmentId: string, name: string): Promise<void> {
+  const res = await api.get<Response>(`/admin/quote/${toApiId(quoteId)}/attachments/${attachmentId}`)
+  const url = URL.createObjectURL(await res.blob())
+
+  try {
+    const a = document.createElement('a')
+    a.href = url
+    a.download = name
+    a.click()
+  } finally {
+    // 立刻 revoke 會讓部分瀏覽器來不及取檔，隔一拍再放掉
+    setTimeout(() => URL.revokeObjectURL(url), 10_000)
   }
 }
 

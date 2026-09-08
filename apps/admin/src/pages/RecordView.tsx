@@ -1,8 +1,19 @@
+import { useState } from 'react'
 import type { Row } from '@/api/types'
 import type { Unit } from '@/lib/types'
+import { downloadQuoteAttachment } from '@/api/client'
 import { FieldInput } from '@/components/fields'
 import { Notice, toast } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
+
+/** 報價附件。本期不做病毒掃描（docs/09 §17），所以沒有掃描狀態要顯示。 */
+type Attachment = { id: string; name: string; sizeBytes: number }
+
+function fileSize(bytes: number): string {
+  if (!bytes) return ''
+  const mb = bytes / (1024 * 1024)
+  return mb >= 1 ? `${mb.toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`
+}
 
 /** 每個唯讀單元要以「客戶填了什麼」呈現的欄位（docs §17–18） */
 const VIEW: Record<string, Array<[string, string]>> = {
@@ -44,7 +55,19 @@ export function RecordView({
 }) {
   const { can } = useAuth()
   const pairs = VIEW[unit.code] ?? []
-  const attachments = Array.isArray(row.attachments) ? (row.attachments as string[]) : []
+  const attachments = Array.isArray(row.attachments) ? (row.attachments as Attachment[]) : []
+  const [downloading, setDownloading] = useState('')
+
+  async function download(a: Attachment) {
+    setDownloading(a.id)
+    try {
+      await downloadQuoteAttachment(row.id, a.id, a.name)
+    } catch (err) {
+      toast(err instanceof Error ? err.message : '下載失敗，請稍後再試。')
+    } finally {
+      setDownloading('')
+    }
+  }
 
   return (
     <div className="edit-grid">
@@ -91,13 +114,25 @@ export function RecordView({
                 {attachments.length === 0 ? (
                   <div style={{ fontSize: 13, color: 'var(--grey-2)' }}>無附件</div>
                 ) : can('quote.download') ? (
-                  <div className="btn-row">
-                    {attachments.map((a) => (
-                      <button key={a} className="btn btn-sm" onClick={() => toast(`下載 ${a}（示範）`)}>
-                        ⬇ {a}
-                      </button>
-                    ))}
-                  </div>
+                  <>
+                    <div className="btn-row">
+                      {attachments.map((a) => (
+                        <button
+                          key={a.id}
+                          className="btn btn-sm"
+                          disabled={downloading !== ''}
+                          onClick={() => void download(a)}
+                        >
+                          {downloading === a.id ? '下載中…' : `⬇ ${a.name}`}
+                          {a.sizeBytes ? <span style={{ color: 'var(--grey-2)' }}>（{fileSize(a.sizeBytes)}）</span> : null}
+                        </button>
+                      ))}
+                    </div>
+                    <Notice kind="info">
+                      這些是客戶自行上傳的檔案，<b>系統不做病毒掃描</b>。請存檔後先用防毒軟體確認再開啟，
+                      不要直接在瀏覽器中打開。
+                    </Notice>
+                  </>
                 ) : (
                   <Notice kind="info">
                     附件共 {attachments.length} 個。附件下載限超級管理員（權限碼 <code>quote.download</code>）。

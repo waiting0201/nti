@@ -167,6 +167,11 @@ export async function saveSettings(next: typeof settings) {
 }
 
 /** docs §5.7：刪除前顯示前台影響 —— 這裡算的是引用這個分類的內容筆數 */
+/** 下載報價附件——mock 沒有實際檔案，讓畫面走到同一條錯誤處理。 */
+export async function downloadQuoteAttachment(_quoteId: string, _attachmentId: string, name: string): Promise<void> {
+  throw new Error(`示範資料沒有 ${name} 這個檔案，接上 API 後才會真的下載。`)
+}
+
 export function categoryUsage(categoryId: string): number {
   let n = 0
   for (const rows of Object.values(store)) {

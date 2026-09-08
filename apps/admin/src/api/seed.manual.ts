@@ -48,7 +48,7 @@ export const MANUAL_SEED: Record<string, Row[]> = {
       industry: '食品飲料', quantity: '20,000', size: '180 × 90 × 240 mm', material: 'FSC 白卡 350g',
       expectedDate: '2026-10-15', sustainableAdvice: true,
       message: '外銷日本的餅乾禮盒，需要食品接觸合規文件與碳足跡數字。',
-      attachments: ['dieline-v3.pdf', 'artwork.ai'],
+      attachments: [{ id: '1', name: 'dieline-v3.pdf', sizeBytes: 2_411_520 }, { id: '2', name: 'artwork.ai', sizeBytes: 8_912_896 }],
       status: 'New', assignee: '', internalNote: '', replied: false, submittedAt: '2026-09-01T09:12:00Z',
     },
     {
@@ -57,7 +57,7 @@ export const MANUAL_SEED: Record<string, Row[]> = {
       industry: '美妝保養', quantity: '8,000', size: '120 × 120 × 60 mm', material: '銀卡紙',
       expectedDate: '2026-11-01', sustainableAdvice: true,
       message: 'Looking for a recyclable alternative to our current laminated carton.',
-      attachments: ['brand-guide.pdf'],
+      attachments: [{ id: '3', name: 'brand-guide.pdf', sizeBytes: 5_242_880 }],
       status: 'InProgress', assignee: '王思婷', internalNote: '已請廠務評估無膜方案。', replied: true, submittedAt: '2026-08-29T02:44:00Z',
     },
     {
@@ -73,7 +73,8 @@ export const MANUAL_SEED: Record<string, Row[]> = {
       email: 'yuting.huang@hokuang-bio.com', phone: '04-23456789', productType: '彩盒包裝',
       industry: '醫藥保健', quantity: '15,000', size: '70 × 70 × 130 mm', material: 'FSC 白卡 300g',
       expectedDate: '2026-12-01', sustainableAdvice: true,
-      message: '保健食品外盒，需要 GMP 相關檢驗紀錄。', attachments: ['spec.pdf'],
+      message: '保健食品外盒，需要 GMP 相關檢驗紀錄。',
+      attachments: [{ id: '4', name: 'spec.pdf', sizeBytes: 731_136 }],
       status: 'Closed', assignee: '李昀', internalNote: '已成案，轉訂單 SO-2026-0088。', replied: true, submittedAt: '2026-08-18T11:30:00Z',
     },
     {
@@ -88,7 +89,8 @@ export const MANUAL_SEED: Record<string, Row[]> = {
       email: 'yawen@chunho-culture.tw', phone: '02-27001234', productType: '其他印刷',
       industry: '禮品文創', quantity: '3,000', size: 'A5', material: '再生紙',
       expectedDate: '2026-10-05', sustainableAdvice: true,
-      message: '文創桌曆，希望用低碳油墨。', attachments: ['calendar-layout.pdf'],
+      message: '文創桌曆，希望用低碳油墨。',
+      attachments: [{ id: '5', name: 'calendar-layout.pdf', sizeBytes: 1_887_436 }],
       status: 'New', assignee: '', internalNote: '', replied: false, submittedAt: '2026-09-01T14:20:00Z',
     },
   ],

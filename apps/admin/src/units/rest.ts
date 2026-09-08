@@ -148,7 +148,7 @@ export const quote: Unit = {
   group: '表單',
   phase: 'P6',
   frontend: 'get-a-quote.html',
-  note: '唯讀資料 + 可改狀態，不可編輯客戶填寫內容。附件掃毒未通過者不提供下載。',
+  note: '唯讀資料 + 可改狀態，不可編輯客戶填寫內容。附件下載限超級管理員，且系統不做病毒掃描。',
   readOnly: 'status-only',
   fields: [
     { key: 'status', label: '狀態', type: 'select', required: true, options: QUOTE_STATUS, side: 'neutral' },

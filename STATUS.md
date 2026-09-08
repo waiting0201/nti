@@ -5,7 +5,7 @@
 > 分工：本檔記錄**狀態**；[`docs/`](docs/README.md) 的十份作業書記錄各領域的**規格與施工標準**；
 > [`CLAUDE.md`](CLAUDE.md) 記錄**專案規範與索引**。三份不要互相抄，各司其職。
 
-**最後更新**：2026-09-07
+**最後更新**：2026-09-08
 
 ---
 
@@ -227,6 +227,10 @@ mockup 內容（現況部署），設了就改吃 CMS。
 存檔、新增、缺語系上架被擋（409）、型別不符的分類被擋（409）、軟刪、
 分類引用數、設定的單語／多語判斷。
 
+⚠ 那 21 項**沒有涵蓋報價詳細頁**——2026-09-08 才發現 `GET /admin/quote/{id}` 回的是
+`{ quote, attachments }` 巢狀物件，而 `client.api.ts` 當成平的一列在讀，正式站的報價詳細頁
+其實組不出資料（`row.id` 為 `"undefined"`、欄位全空、附件陣列丟給 React 會直接炸）。已修。
+
 ### 🟡 有缺口
 
 | 項目 | 現況 |
@@ -245,8 +249,9 @@ mockup 內容（現況部署），設了就改吃 CMS。
 - 本機一鍵建置：`cp db/.env.local.example db/.env.local && db/tools/run-local.sh`
 
 - **EF Core Migration（schema 權威來源）已建立**（2026-09-04）：
-  44 個 Entity + Configuration、`Api/Data/Migrations/` 兩支 migration
-  （`InitialSchema` 建立 schema 與種子，`RemoveMemberAndOrder` 於 2026-09-06 移除會員與訂單）。
+  44 個 Entity + Configuration、`Api/Data/Migrations/` 五支 migration
+  （`InitialSchema` 建立 schema 與種子；2026-09-06 的 `RemoveMemberAndOrder`／`AdminUsernameLogin`／
+  `DropAuditLog`；2026-09-08 的 `DropAttachmentScanStatus` 移除附件掃描欄位）。
   `db/` 自此為參考實作與交付腳本。
   - 種子由 `Api/Data/Seed/SeedData.cs` 的 `HasData` 寫入，Id 硬編、跨環境一致：
     角色 3／權限 167／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)
@@ -262,6 +267,8 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 - 本機 `NTI` 庫若仍是 `db/` 腳本建的版本，要切成 EF 版需先砍庫重建
   （`db/local/900_drop_database.sql` → `dotnet ef database update`）
+- `db/migrations/0002` 仍帶著 `QuoteAttachment.ScanStatus` 與 `CK_QuoteAtt_Scan`——
+  EF 已於 2026-09-08 移除。一次性腳本不回頭改，這是 `db/` 參考路徑與權威 schema 的已知漂移
 
 > Azure SQL（`nti-sql-prod`／資料庫 `NTI`，Basic）**已於 2026-09-04 開設**並跑過
 > migration 與 111 筆內容匯入，見 §六。
@@ -389,8 +396,10 @@ mockup 內容（現況部署），設了就改吃 CMS。
 - **中文文案待客戶校閱**：CMS 內容已用 mockup 的實際內容填入（見 §十）
 - **refresh token rotation**（docs/10 §7.3）：schema 無對應資料表，端點清單也未列
   `/auth/refresh`。目前只發 access token（後台 60 分鐘）
-- 附件病毒掃描：`ScanStatus` 寫入後恆為 `Pending`，未接掃描服務。
-  **後台目前下載不到任何報價附件**（未掃過的一律拒絕）
+- ~~附件病毒掃描~~ → **本期不做**（2026-09-08 決策）：接掃描服務是每月固定成本
+  （Defender for Storage ≈ US$10／storage account），與案子規模不成比例。
+  閘已拆除、`ScanStatus` 欄位由 migration `DropAttachmentScanStatus` 移除，
+  下載改為「限超管 + 一律 octet-stream/nosniff + 後台明示未掃描」
 
 ---
 
