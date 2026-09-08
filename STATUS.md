@@ -479,9 +479,16 @@ git push Remote_GitHub    # ← 這一步才觸發部署
 - 正式網域 `www.nti-printing.com` 綁定（custom domain + DNS，卡客戶端）
 - **SMTP 未設定**：`Smtp__Host`／`Port` 已填 Brevo，還缺 `Smtp__User`／`Password`／`From`。
   表單照常收得到資料，只是通知信寄不出去（EmailLog 記 `Failed`，可在後台重寄）
-- **reCAPTCHA secret 未設定**：前端已接上（site key 走 `vars.RECAPTCHA_SITE_KEY`），
-  但 Function App 還缺 `Recaptcha__SecretKey`。**沒設 secret 時後端一律放行**，
-  所以現在兩支表單實際上只有 rate limit（10 次/小時/IP）在擋。**上線前必補**
+- ✅ **reCAPTCHA v3 已完整設定並生效**（2026-09-08）：site key 走 `vars.RECAPTCHA_SITE_KEY`
+  進前端 bundle，secret 已設進 Function App。實測不帶 token 的請求回 400 `BOT_CHECK_FAILED`
+  且不寫入資料，確認驗證真的在跑。
+  - ⚠ **最後一哩沒辦法用自動化驗證**：自動化瀏覽器送出時 Google 一律回 `browser-error`
+    （這正是 v3 該做的事）。網域與金鑰本身沒問題——瀏覽器端取得了正常的 token、
+    console 沒有 domain 錯誤。**需要一次真人手動送出才能確認真實訪客不會被擋。**
+  - ⚠ **目前是 fail closed**：驗證沒過就退件。分數門檻 `Recaptcha__MinScore` 預設 0.5，
+    用 VPN、隱私瀏覽器或公司 NAT 的真人可能被誤擋，而**被擋掉的詢價是直接消失的**。
+    待評估：改成「驗證沒過仍收下，但標記為 `Spam` 狀態」——`ContactMessage`／`QuoteRequest`
+    本來就有這個狀態，後台看得到、可以救回來，比讓客戶的生意消失好
 - mockup 預覽站（Cloudflare Pages `nti-mockup`）**設計定案後下線**
 
 ---
