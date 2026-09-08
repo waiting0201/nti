@@ -16,7 +16,10 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher,
 
     public async Task<IActionResult> GetListAsync(HttpRequest req)
     {
-        var rows = await db.AdminUser.AsNoTracking().Where(u => !u.IsDeleted)
+        var rows = await KeywordSearch
+            .Apply(db.AdminUser.AsNoTracking().Where(u => !u.IsDeleted),
+                   db.Model.FindEntityType(typeof(Models.Entities.AdminUser))!,
+                   QueryValues.Text(req, "keyword"))
             .OrderBy(u => u.Id)
             .Select(u => new
             {
@@ -214,6 +217,8 @@ public sealed class AdminAuditHandler(AppDbContext db, IEmailService email)
 
         var query = db.EmailLog.AsNoTracking().AsQueryable();
         if (status is not null) query = query.Where(e => e.Status == status);
+        query = KeywordSearch.Apply(query, db.Model.FindEntityType(typeof(EmailLog))!,
+            QueryValues.Text(req, "keyword"));
 
         var total = await query.CountAsync();
         var rows  = await query.OrderByDescending(e => e.Id)

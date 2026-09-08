@@ -31,14 +31,6 @@ const SEO_I18N = {
 
 const SEO_ENTITY = { ogImage: 'ogImagePath' } as const
 
-/**
- * ⚠ `ogImageAlt` 在 schema 裡沒有對應欄位。
- * docs/09 §3 要求「每個圖片欄位必附中英 Alt」，但 docs/08 的 *I18n 側表沒有給
- * OG 圖 alt 欄位。OG 圖是 meta 標籤（`og:image` 不吃 alt），所以 schema 這樣設計
- * 是合理的；缺口在 09 的通則過寬。這個欄位目前存不進去。
- */
-const SEO_UNSUPPORTED = ['ogImageAlt']
-
 export const UNIT_MAP: Record<string, UnitMap> = {
   'home-banner': {
     entity: { imageDesktop: 'imagePath', imageMobile: 'imagePathMobile', newWindow: 'openInNewTab' },
@@ -48,7 +40,6 @@ export const UNIT_MAP: Record<string, UnitMap> = {
   solution: {
     entity: { cover: 'coverImagePath', ...SEO_ENTITY },
     i18n: { intro: 'introHtml', ...SEO_I18N },
-    unsupported: SEO_UNSUPPORTED,
   },
 
   // solution 的品項卡（子清單）
@@ -65,13 +56,10 @@ export const UNIT_MAP: Record<string, UnitMap> = {
   news: {
     entity: { cover: 'coverImagePath', featured: 'isFeaturedHome', ...SEO_ENTITY },
     i18n: { body: 'bodyHtml', ...SEO_I18N },
-    unsupported: SEO_UNSUPPORTED,
   },
 
   vlog: {
     entity: { thumbOverride: 'thumbOverridePath', isHero: 'isMainFeature' },
-    // ⚠ VlogI18n 沒有縮圖 alt 欄位（docs/08 §4.6 只給 Title／Description）
-    unsupported: ['thumbAlt'],
   },
 
   faq: {
@@ -117,7 +105,6 @@ export const UNIT_MAP: Record<string, UnitMap> = {
   page: {
     entity: { path: 'routeTemplate', ...SEO_ENTITY },
     i18n: { body: 'bodyHtml', ...SEO_I18N },
-    unsupported: SEO_UNSUPPORTED,
   },
 
   redirect: {
@@ -130,8 +117,7 @@ export const UNIT_MAP: Record<string, UnitMap> = {
   },
 
   contact: {
-    // ⚠ ContactMessage 沒有 AssigneeId 欄位（docs/08 §4.12 只有 QuoteRequest 有）
-    unsupported: ['assignee'],
+    entity: { assignee: 'assigneeId' },
   },
 
 }

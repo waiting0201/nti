@@ -16,7 +16,24 @@ public sealed class AdminPageHandler(AppDbContext db)
 {
     public async Task<IActionResult> GetListAsync(HttpRequest req)
     {
-        var rows = await db.Page.AsNoTracking().Where(p => !p.IsDeleted)
+        // 這個清單不分頁（固定 29 頁），但搜尋一樣走後端：兩套搜尋語意會讓
+        // 「同樣的字在這個單元找得到、在那個單元找不到」，比慢一點更難解釋
+        var keyword = QueryValues.Text(req, "keyword");
+
+        var query = db.Page.AsNoTracking().Where(p => !p.IsDeleted);
+
+        if (keyword is not null)
+        {
+            var onPage = KeywordSearch.Predicate<Models.Entities.Page>(
+                db.Model.FindEntityType(typeof(Models.Entities.Page))!, keyword);
+            var onI18n = KeywordSearch.Predicate<Models.Entities.PageI18n>(
+                db.Model.FindEntityType(typeof(Models.Entities.PageI18n))!, keyword);
+
+            var matched = db.PageI18n.AsNoTracking().Where(onI18n!).Select(i => i.PageId);
+            query = query.Where(KeywordSearch.Or(onPage!, p => matched.Contains(p.Id)));
+        }
+
+        var rows = await query
             .OrderBy(p => p.Id)
             .Select(p => new
             {
@@ -123,6 +140,8 @@ public sealed class AdminRedirectHandler(AppDbContext db)
     {
         var paging = Paging.From(req);
         var query  = db.Redirect.AsNoTracking().Where(r => !r.IsDeleted);
+        query = KeywordSearch.Apply(query, db.Model.FindEntityType(typeof(Redirect))!,
+            QueryValues.Text(req, "keyword"));
 
         var total = await query.CountAsync();
         var rows  = await query.OrderBy(r => r.FromPath)
@@ -188,7 +207,9 @@ public sealed class AdminRedirectHandler(AppDbContext db)
             csv.Append($"{Csv(r.FromPath)},{Csv(r.ToPath)},{r.StatusCode},{(r.IsActive ? 1 : 0)},{r.HitCount}\n");
 
         CacheControl.NoStore(req.HttpContext.Response);
-        return new FileContentResult(new UTF8Encoding(true).GetBytes(csv.ToString()), "text/csv")
+        // BOM 要自己接上去：UTF8Encoding(true) 只影響 GetPreamble()，GetBytes() 不含 BOM
+        return new FileContentResult(
+            [.. Encoding.UTF8.GetPreamble(), .. Encoding.UTF8.GetBytes(csv.ToString())], "text/csv")
         {
             FileDownloadName = $"redirects-{Clock.Today:yyyyMMdd}.csv",
         };

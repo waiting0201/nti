@@ -19,6 +19,8 @@ public sealed class AdminClientHandler(AppDbContext db)
     {
         var paging = Paging.From(req);
         var query  = db.ClientLogo.AsNoTracking().Where(x => !x.IsDeleted);
+        query = KeywordSearch.Apply(query, db.Model.FindEntityType(typeof(ClientLogo))!,
+            QueryValues.Text(req, "keyword"));
 
         var total = await query.CountAsync();
         var rows  = await query.OrderBy(x => x.SortOrder).ThenBy(x => x.Id)
@@ -181,8 +183,24 @@ public sealed class AdminCategoryHandler(AppDbContext db)
         if (type is not null && !CategoryTypes.All.Contains(type))
             throw AppException.BadRequest(ErrorCodes.ValidationFormat, "type 不在值域內。");
 
-        var categories = await db.Category.AsNoTracking()
-            .Where(c => !c.IsDeleted && (type == null || c.CategoryType == type))
+        var keyword = QueryValues.Text(req, "keyword");
+
+        var query = db.Category.AsNoTracking()
+            .Where(c => !c.IsDeleted && (type == null || c.CategoryType == type));
+
+        // 分類看得到的字（名稱）全在 CategoryI18n，主表只有代號與型別
+        if (keyword is not null)
+        {
+            var onCategory = KeywordSearch.Predicate<Models.Entities.Category>(
+                db.Model.FindEntityType(typeof(Models.Entities.Category))!, keyword);
+            var onI18n = KeywordSearch.Predicate<Models.Entities.CategoryI18n>(
+                db.Model.FindEntityType(typeof(Models.Entities.CategoryI18n))!, keyword);
+
+            var matched = db.CategoryI18n.AsNoTracking().Where(onI18n!).Select(i => i.CategoryId);
+            query = query.Where(KeywordSearch.Or(onCategory!, c => matched.Contains(c.Id)));
+        }
+
+        var categories = await query
             .OrderBy(c => c.CategoryType).ThenBy(c => c.SortOrder).ThenBy(c => c.Id)
             .ToListAsync();
 

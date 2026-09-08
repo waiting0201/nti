@@ -30,6 +30,7 @@ export const saveSettings  = impl.saveSettings
 export const categoryUsage = impl.categoryUsage
 export const resetStore    = impl.resetStore
 export const downloadQuoteAttachment = impl.downloadQuoteAttachment
+export const exportQuotesCsv         = impl.exportQuotesCsv
 
 /** 目前是不是接著真的 API（畫面上要顯示「示範資料」提示時用得到）。 */
 export const isLive = hasApi

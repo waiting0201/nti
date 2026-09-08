@@ -117,6 +117,10 @@
   | `/admin/dashboard` | 00 待辦總覽（唯讀聚合） | `dashboard.view` |
 
 - 非 CRUD 的動作端點與其權限碼：`GET /admin/quote/export`（`quote.export`，僅超管）、`GET /admin/quote/{id}/attachments/{attId}`（`quote.download`，僅超管；一律以 octet-stream 送出，不做病毒掃描）、`GET|POST /admin/redirect/export|import`（`redirect.export`）、`POST /admin/audit/emails/{id}/resend`（`audit.resend`）。
+- **清單的共同查詢參數**：`page`／`pageSize`／`status`／`categoryId`／**`keyword`**。
+  `keyword` 比對主表與 i18n 側表所有有長度上限的字串欄（`nvarchar(max)` 的內文不在範圍內），
+  在 SQL 層過濾，因此跨頁也準——後台清單一律分頁，在前端過濾只會搜到當頁那 20 筆。
+- `PATCH /admin/contact/{id}` 可改的欄位與 `/admin/quote/{id}` 相同：狀態、**承辦人**、內部備註、標記已回覆。
 - 中英對照無獨立端點（`/admin/i18n` 已移除），兩語系隨各資源一併讀寫。
 - **未列於上表與權限對照的 `/admin/*` 路徑一律拒絕（403）**。新增後台端點時必須同步補進路由表與權限表，否則不會靜默放行（[`10-backend-design.md` §7.5](10-backend-design.md)）。
 
@@ -182,5 +186,6 @@
 
 | 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：移除 `GET /admin/audit`；單元 24 只剩信件紀錄（`GET /admin/audit/emails`、`POST /admin/audit/emails/{id}/resend`），權限碼 `audit.view`／`audit.resend` 沿用，矩陣仍為 167 列。匯出／下載／重寄三個動作不再有稽核寫入的要求 |
 | 2026-09-08 | Tim（Claude Code） | `GET /admin/quote/{id}/attachments/{attId}` 移除 `ScanStatus <> 'Clean'` 的拒絕條件（本期不做病毒掃描，09 §17），改註明僅超管且一律以 octet-stream 送出 |
+| 2026-09-08 | Tim（Claude Code） | §3.4 補上清單的共同查詢參數 **`keyword`**（後台清單一律分頁，前端過濾只搜得到當頁 20 筆），比對主表與 i18n 側表所有有長度上限的字串欄、在 SQL 層過濾；openapi 新增共用參數 `Keyword`。`PATCH /admin/contact/{id}` 補列承辦人 |
 
 *最後更新：2026-09-08*

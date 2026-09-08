@@ -25,6 +25,8 @@ public sealed class AdminFormHandler(AppDbContext db, IBlobStorageService blobs)
 
         var query = db.QuoteRequest.AsNoTracking().Where(q => !q.IsDeleted);
         if (status is not null) query = query.Where(q => q.Status == status);
+        query = KeywordSearch.Apply(query, db.Model.FindEntityType(typeof(Models.Entities.QuoteRequest))!,
+            QueryValues.Text(req, "keyword"));
 
         var total = await query.CountAsync();
         var rows  = await query.OrderByDescending(q => q.SubmittedAt)
@@ -107,8 +109,11 @@ public sealed class AdminFormHandler(AppDbContext db, IBlobStorageService blobs)
         }
 
         CacheControl.NoStore(req.HttpContext.Response);
-        // BOM：Excel 開 UTF-8 沒有 BOM 的 CSV 會把中文顯示成亂碼
-        return new FileContentResult(new UTF8Encoding(true).GetBytes(csv.ToString()), "text/csv")
+        // BOM：Excel 開 UTF-8 沒有 BOM 的 CSV 會把中文顯示成亂碼。
+        // ⚠ `new UTF8Encoding(true)` 只影響 GetPreamble()，GetBytes() 永遠不含 BOM——
+        // 原本這樣寫等於沒有 BOM，而且從回應本身看不出來（2026-09-08 修正）
+        return new FileContentResult(
+            [.. Encoding.UTF8.GetPreamble(), .. Encoding.UTF8.GetBytes(csv.ToString())], "text/csv")
         {
             FileDownloadName = $"quotes-{Clock.Today:yyyyMMdd}.csv",
         };
@@ -158,6 +163,8 @@ public sealed class AdminFormHandler(AppDbContext db, IBlobStorageService blobs)
 
         var query = db.ContactMessage.AsNoTracking().Where(c => !c.IsDeleted);
         if (status is not null) query = query.Where(c => c.Status == status);
+        query = KeywordSearch.Apply(query, db.Model.FindEntityType(typeof(Models.Entities.ContactMessage))!,
+            QueryValues.Text(req, "keyword"));
 
         var total = await query.CountAsync();
         var rows  = await query.OrderByDescending(c => c.SubmittedAt)
@@ -195,6 +202,7 @@ public sealed class AdminFormHandler(AppDbContext db, IBlobStorageService blobs)
             message.Status = dto.Status;
         }
 
+        message.AssigneeId   = dto.AssigneeId ?? message.AssigneeId;
         message.InternalNote = dto.InternalNote ?? message.InternalNote;
         if (dto.MarkReplied) message.RepliedAt = Clock.UtcNow;
 

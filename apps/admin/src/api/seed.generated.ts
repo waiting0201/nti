@@ -1707,8 +1707,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "NTI wins a 2026 Global Views ESG Award for low-carbon operations",
           "slug": "global-views-esg-award",
           "seoTitle": "NTI wins a 2026 Global Views ESG Award for low-carbon operations",
-          "metaDescription": "The 22nd Global Views ESG Corporate Sustainability Awards were held on 7 May at the Shangri-La Far Eastern Plaza Hotel, Taipei. NTI took the Outstanding Project",
-          "ogImageAlt": "NTI wins a 2026 Global Views ESG Award for low-carbon operations"
+          "metaDescription": "The 22nd Global Views ESG Corporate Sustainability Awards were held on 7 May at the Shangri-La Far Eastern Plaza Hotel, Taipei. NTI took the Outstanding Project"
         },
         "en": {
           "title": "NTI wins a 2026 Global Views ESG Award for low-carbon operations",
@@ -1717,8 +1716,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "NTI wins a 2026 Global Views ESG Award for low-carbon operations",
           "slug": "global-views-esg-award",
           "seoTitle": "NTI wins a 2026 Global Views ESG Award for low-carbon operations",
-          "metaDescription": "The 22nd Global Views ESG Corporate Sustainability Awards were held on 7 May at the Shangri-La Far Eastern Plaza Hotel, Taipei. NTI took the Outstanding Project",
-          "ogImageAlt": "NTI wins a 2026 Global Views ESG Award for low-carbon operations"
+          "metaDescription": "The 22nd Global Views ESG Corporate Sustainability Awards were held on 7 May at the Shangri-La Far Eastern Plaza Hotel, Taipei. NTI took the Outstanding Project"
         }
       }
     },
@@ -1738,8 +1736,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "NTI donates a paper-model board game promoting disaster-prevention education",
           "slug": "firefighter-boardgame",
           "seoTitle": "NTI donates a paper-model board game promoting disaster-prevention education",
-          "metaDescription": "The game turns fire and rescue scenarios into experiential learning — converting firefighting knowledge into material families can work through together. It is ",
-          "ogImageAlt": "NTI donates a paper-model board game promoting disaster-prevention education"
+          "metaDescription": "The game turns fire and rescue scenarios into experiential learning — converting firefighting knowledge into material families can work through together. It is "
         },
         "en": {
           "title": "NTI donates a paper-model board game promoting disaster-prevention education",
@@ -1748,8 +1745,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "NTI donates a paper-model board game promoting disaster-prevention education",
           "slug": "firefighter-boardgame",
           "seoTitle": "NTI donates a paper-model board game promoting disaster-prevention education",
-          "metaDescription": "The game turns fire and rescue scenarios into experiential learning — converting firefighting knowledge into material families can work through together. It is ",
-          "ogImageAlt": "NTI donates a paper-model board game promoting disaster-prevention education"
+          "metaDescription": "The game turns fire and rescue scenarios into experiential learning — converting firefighting knowledge into material families can work through together. It is "
         }
       }
     },
@@ -1769,8 +1765,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "NTI receives the National Sustainable Development Award",
           "slug": "national-sustainable-development-award",
           "seoTitle": "NTI receives the National Sustainable Development Award",
-          "metaDescription": "Chairman Cheng Chun-Ming attended in person to receive the gold trophy from Vice Premier Cheng Li-Chiun. The award recognises years of work on ESG and low-carbo",
-          "ogImageAlt": "NTI receives the National Sustainable Development Award"
+          "metaDescription": "Chairman Cheng Chun-Ming attended in person to receive the gold trophy from Vice Premier Cheng Li-Chiun. The award recognises years of work on ESG and low-carbo"
         },
         "en": {
           "title": "NTI receives the National Sustainable Development Award",
@@ -1779,8 +1774,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "NTI receives the National Sustainable Development Award",
           "slug": "national-sustainable-development-award",
           "seoTitle": "NTI receives the National Sustainable Development Award",
-          "metaDescription": "Chairman Cheng Chun-Ming attended in person to receive the gold trophy from Vice Premier Cheng Li-Chiun. The award recognises years of work on ESG and low-carbo",
-          "ogImageAlt": "NTI receives the National Sustainable Development Award"
+          "metaDescription": "Chairman Cheng Chun-Ming attended in person to receive the gold trophy from Vice Premier Cheng Li-Chiun. The award recognises years of work on ESG and low-carbo"
         }
       }
     },
@@ -1800,8 +1794,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "NTI signs an ESG for Culture letter of intent with TAICCA",
           "slug": "taicca-partnership",
           "seoTitle": "NTI signs an ESG for Culture letter of intent with TAICCA",
-          "metaDescription": "ESG for Culture is TAICCA’s cross-sector programme, pairing corporate sustainability strategy with creative energy to build collaborations that carry both socia",
-          "ogImageAlt": "NTI signs an ESG for Culture letter of intent with TAICCA"
+          "metaDescription": "ESG for Culture is TAICCA’s cross-sector programme, pairing corporate sustainability strategy with creative energy to build collaborations that carry both socia"
         },
         "en": {
           "title": "NTI signs an ESG for Culture letter of intent with TAICCA",
@@ -1810,8 +1803,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "NTI signs an ESG for Culture letter of intent with TAICCA",
           "slug": "taicca-partnership",
           "seoTitle": "NTI signs an ESG for Culture letter of intent with TAICCA",
-          "metaDescription": "ESG for Culture is TAICCA’s cross-sector programme, pairing corporate sustainability strategy with creative energy to build collaborations that carry both socia",
-          "ogImageAlt": "NTI signs an ESG for Culture letter of intent with TAICCA"
+          "metaDescription": "ESG for Culture is TAICCA’s cross-sector programme, pairing corporate sustainability strategy with creative energy to build collaborations that carry both socia"
         }
       }
     },
@@ -1831,8 +1823,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Green printing and digital innovation at NTI Tainan",
           "slug": "green-printing-digital-innovation",
           "seoTitle": "Green printing and digital innovation at NTI Tainan",
-          "metaDescription": "For a business, green printing supports international ESG expectations and strengthens brand credibility by showing real responsibility. For the environment, it",
-          "ogImageAlt": "Green printing and digital innovation at NTI Tainan"
+          "metaDescription": "For a business, green printing supports international ESG expectations and strengthens brand credibility by showing real responsibility. For the environment, it"
         },
         "en": {
           "title": "Green printing and digital innovation at NTI Tainan",
@@ -1841,8 +1832,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Green printing and digital innovation at NTI Tainan",
           "slug": "green-printing-digital-innovation",
           "seoTitle": "Green printing and digital innovation at NTI Tainan",
-          "metaDescription": "For a business, green printing supports international ESG expectations and strengthens brand credibility by showing real responsibility. For the environment, it",
-          "ogImageAlt": "Green printing and digital innovation at NTI Tainan"
+          "metaDescription": "For a business, green printing supports international ESG expectations and strengthens brand credibility by showing real responsibility. For the environment, it"
         }
       }
     },
@@ -1862,8 +1852,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Green Drive × Digital Innovation seminar wraps up",
           "slug": "green-drive-seminar",
           "seoTitle": "Green Drive × Digital Innovation seminar wraps up",
-          "metaDescription": "HP’s Asia-Pacific brand manager on global trends in digital transformation.",
-          "ogImageAlt": "Green Drive × Digital Innovation seminar wraps up"
+          "metaDescription": "HP’s Asia-Pacific brand manager on global trends in digital transformation."
         },
         "en": {
           "title": "Green Drive × Digital Innovation seminar wraps up",
@@ -1872,8 +1861,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Green Drive × Digital Innovation seminar wraps up",
           "slug": "green-drive-seminar",
           "seoTitle": "Green Drive × Digital Innovation seminar wraps up",
-          "metaDescription": "HP’s Asia-Pacific brand manager on global trends in digital transformation.",
-          "ogImageAlt": "Green Drive × Digital Innovation seminar wraps up"
+          "metaDescription": "HP’s Asia-Pacific brand manager on global trends in digital transformation."
         }
       }
     },
@@ -1893,8 +1881,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Speaking up for the leopard cat: NTI joins the Animals of Tomorrow exhibition",
           "slug": "animals-of-tomorrow",
           "seoTitle": "Speaking up for the leopard cat: NTI joins the Animals of Tomorrow exhibition",
-          "metaDescription": "The exhibition focuses on endangered species. NTI and 72 Design co-created interactive paper-model installations built around the Formosan black bear and the le",
-          "ogImageAlt": "Speaking up for the leopard cat: NTI joins the Animals of Tomorrow exhibition"
+          "metaDescription": "The exhibition focuses on endangered species. NTI and 72 Design co-created interactive paper-model installations built around the Formosan black bear and the le"
         },
         "en": {
           "title": "Speaking up for the leopard cat: NTI joins the Animals of Tomorrow exhibition",
@@ -1903,8 +1890,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Speaking up for the leopard cat: NTI joins the Animals of Tomorrow exhibition",
           "slug": "animals-of-tomorrow",
           "seoTitle": "Speaking up for the leopard cat: NTI joins the Animals of Tomorrow exhibition",
-          "metaDescription": "The exhibition focuses on endangered species. NTI and 72 Design co-created interactive paper-model installations built around the Formosan black bear and the le",
-          "ogImageAlt": "Speaking up for the leopard cat: NTI joins the Animals of Tomorrow exhibition"
+          "metaDescription": "The exhibition focuses on endangered species. NTI and 72 Design co-created interactive paper-model installations built around the Formosan black bear and the le"
         }
       }
     },
@@ -1924,8 +1910,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Gentle Wild paper bags: a different animal on every bag",
           "slug": "gentle-wild-paper-bags",
           "seoTitle": "Gentle Wild paper bags: a different animal on every bag",
-          "metaDescription": "The market is unforgiving: however good the product is, if the packaging does not catch the eye the customer may never look. Gentle Wild designed a full series ",
-          "ogImageAlt": "Gentle Wild paper bags: a different animal on every bag"
+          "metaDescription": "The market is unforgiving: however good the product is, if the packaging does not catch the eye the customer may never look. Gentle Wild designed a full series "
         },
         "en": {
           "title": "Gentle Wild paper bags: a different animal on every bag",
@@ -1934,8 +1919,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Gentle Wild paper bags: a different animal on every bag",
           "slug": "gentle-wild-paper-bags",
           "seoTitle": "Gentle Wild paper bags: a different animal on every bag",
-          "metaDescription": "The market is unforgiving: however good the product is, if the packaging does not catch the eye the customer may never look. Gentle Wild designed a full series ",
-          "ogImageAlt": "Gentle Wild paper bags: a different animal on every bag"
+          "metaDescription": "The market is unforgiving: however good the product is, if the packaging does not catch the eye the customer may never look. Gentle Wild designed a full series "
         }
       }
     },
@@ -1955,8 +1939,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "HP variable data printing: small runs that still stand out",
           "slug": "hp-variable-data-printing",
           "seoTitle": "HP variable data printing: small runs that still stand out",
-          "metaDescription": "Variable data printing. Every printed piece can differ — name, serial number, barcode, artwork. One-off printing becomes possible; so does one design per box.",
-          "ogImageAlt": "HP variable data printing: small runs that still stand out"
+          "metaDescription": "Variable data printing. Every printed piece can differ — name, serial number, barcode, artwork. One-off printing becomes possible; so does one design per box."
         },
         "en": {
           "title": "HP variable data printing: small runs that still stand out",
@@ -1965,8 +1948,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "HP variable data printing: small runs that still stand out",
           "slug": "hp-variable-data-printing",
           "seoTitle": "HP variable data printing: small runs that still stand out",
-          "metaDescription": "Variable data printing. Every printed piece can differ — name, serial number, barcode, artwork. One-off printing becomes possible; so does one design per box.",
-          "ogImageAlt": "HP variable data printing: small runs that still stand out"
+          "metaDescription": "Variable data printing. Every printed piece can differ — name, serial number, barcode, artwork. One-off printing becomes possible; so does one design per box."
         }
       }
     },
@@ -1986,8 +1968,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Named a benchmark enterprise in the SME Accelerated Investment Programme",
           "slug": "sme-investment-benchmark",
           "seoTitle": "Named a benchmark enterprise in the SME Accelerated Investment Programme",
-          "metaDescription": "2024 was a milestone year. In eco-friendly packaging printing NTI has held to a green and sustainable direction, earning client trust and then standing out in t",
-          "ogImageAlt": "Named a benchmark enterprise in the SME Accelerated Investment Programme"
+          "metaDescription": "2024 was a milestone year. In eco-friendly packaging printing NTI has held to a green and sustainable direction, earning client trust and then standing out in t"
         },
         "en": {
           "title": "Named a benchmark enterprise in the SME Accelerated Investment Programme",
@@ -1996,8 +1977,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Named a benchmark enterprise in the SME Accelerated Investment Programme",
           "slug": "sme-investment-benchmark",
           "seoTitle": "Named a benchmark enterprise in the SME Accelerated Investment Programme",
-          "metaDescription": "2024 was a milestone year. In eco-friendly packaging printing NTI has held to a green and sustainable direction, earning client trust and then standing out in t",
-          "ogImageAlt": "Named a benchmark enterprise in the SME Accelerated Investment Programme"
+          "metaDescription": "2024 was a milestone year. In eco-friendly packaging printing NTI has held to a green and sustainable direction, earning client trust and then standing out in t"
         }
       }
     },
@@ -2017,8 +1997,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "NTI interviewed by CommonWealth Magazine",
           "slug": "commonwealth-interview",
           "seoTitle": "NTI interviewed by CommonWealth Magazine",
-          "metaDescription": "The conversation went into how NTI builds environmental thinking into every production detail — from material selection through to carbon reduction measures — a",
-          "ogImageAlt": "NTI interviewed by CommonWealth Magazine"
+          "metaDescription": "The conversation went into how NTI builds environmental thinking into every production detail — from material selection through to carbon reduction measures — a"
         },
         "en": {
           "title": "NTI interviewed by CommonWealth Magazine",
@@ -2027,8 +2006,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "NTI interviewed by CommonWealth Magazine",
           "slug": "commonwealth-interview",
           "seoTitle": "NTI interviewed by CommonWealth Magazine",
-          "metaDescription": "The conversation went into how NTI builds environmental thinking into every production detail — from material selection through to carbon reduction measures — a",
-          "ogImageAlt": "NTI interviewed by CommonWealth Magazine"
+          "metaDescription": "The conversation went into how NTI builds environmental thinking into every production detail — from material selection through to carbon reduction measures — a"
         }
       }
     },
@@ -2048,8 +2026,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Our integrated low-carbon production model — company film",
           "slug": "low-carbon-production-film",
           "seoTitle": "Our integrated low-carbon production model — company film",
-          "metaDescription": "As a packaging printer focused on the environment, NTI works to supply products and services that meet the highest environmental standards. The dual green build",
-          "ogImageAlt": "Our integrated low-carbon production model — company film"
+          "metaDescription": "As a packaging printer focused on the environment, NTI works to supply products and services that meet the highest environmental standards. The dual green build"
         },
         "en": {
           "title": "Our integrated low-carbon production model — company film",
@@ -2058,8 +2035,7 @@ export const SEED: Record<string, Row[]> = {
           "coverAlt": "Our integrated low-carbon production model — company film",
           "slug": "low-carbon-production-film",
           "seoTitle": "Our integrated low-carbon production model — company film",
-          "metaDescription": "As a packaging printer focused on the environment, NTI works to supply products and services that meet the highest environmental standards. The dual green build",
-          "ogImageAlt": "Our integrated low-carbon production model — company film"
+          "metaDescription": "As a packaging printer focused on the environment, NTI works to supply products and services that meet the highest environmental standards. The dual green build"
         }
       }
     }
@@ -2517,27 +2493,6 @@ export const SEED: Record<string, Row[]> = {
       "sortOrder": 20,
       "isPublished": true,
       "categoryId": "Certification:certification",
-      "logo": "/assets/cert-gmi.png",
-      "linkUrl": "",
-      "showOnHome": true,
-      "i18n": {
-        "zh": {
-          "name": "GMI Certified Print Facility",
-          "alt": "GMI Certified Print Facility",
-          "description": ""
-        },
-        "en": {
-          "name": "GMI Certified Print Facility",
-          "alt": "GMI Certified Print Facility",
-          "description": ""
-        }
-      }
-    },
-    {
-      "id": "30",
-      "sortOrder": 30,
-      "isPublished": true,
-      "categoryId": "Certification:certification",
       "logo": "/assets/cert-iso9001.png",
       "linkUrl": "",
       "showOnHome": true,
@@ -2555,50 +2510,29 @@ export const SEED: Record<string, Row[]> = {
       }
     },
     {
+      "id": "30",
+      "sortOrder": 30,
+      "isPublished": true,
+      "categoryId": "Certification:certification",
+      "logo": "/assets/cert-gmi.png",
+      "linkUrl": "",
+      "showOnHome": true,
+      "i18n": {
+        "zh": {
+          "name": "GMI Certified Print Facility",
+          "alt": "GMI Certified Print Facility",
+          "description": ""
+        },
+        "en": {
+          "name": "GMI Certified Print Facility",
+          "alt": "GMI Certified Print Facility",
+          "description": ""
+        }
+      }
+    },
+    {
       "id": "40",
       "sortOrder": 40,
-      "isPublished": true,
-      "categoryId": "Certification:certification",
-      "logo": "/assets/cert-iso14001.png",
-      "linkUrl": "",
-      "showOnHome": true,
-      "i18n": {
-        "zh": {
-          "name": "ISO 14001 Environmental Management",
-          "alt": "ISO 14001 Environmental Management",
-          "description": ""
-        },
-        "en": {
-          "name": "ISO 14001 Environmental Management",
-          "alt": "ISO 14001 Environmental Management",
-          "description": ""
-        }
-      }
-    },
-    {
-      "id": "50",
-      "sortOrder": 50,
-      "isPublished": true,
-      "categoryId": "Certification:certification",
-      "logo": "/assets/cert-iso45001.png",
-      "linkUrl": "",
-      "showOnHome": true,
-      "i18n": {
-        "zh": {
-          "name": "ISO 45001 Occupational Health & Safety",
-          "alt": "ISO 45001 Occupational Health & Safety",
-          "description": ""
-        },
-        "en": {
-          "name": "ISO 45001 Occupational Health & Safety",
-          "alt": "ISO 45001 Occupational Health & Safety",
-          "description": ""
-        }
-      }
-    },
-    {
-      "id": "60",
-      "sortOrder": 60,
       "isPublished": true,
       "categoryId": "Certification:certification",
       "logo": "/assets/cert-fsc.png",
@@ -2618,22 +2552,64 @@ export const SEED: Record<string, Row[]> = {
       }
     },
     {
-      "id": "70",
-      "sortOrder": 70,
+      "id": "50",
+      "sortOrder": 50,
       "isPublished": true,
       "categoryId": "Certification:certification",
-      "logo": "/assets/cert-leed-gold.png",
+      "logo": "/assets/cert-iso14001.png",
       "linkUrl": "",
       "showOnHome": true,
       "i18n": {
         "zh": {
-          "name": "LEED Gold 2023",
-          "alt": "LEED Gold 2023",
+          "name": "ISO 14001 Environmental Management",
+          "alt": "ISO 14001 Environmental Management",
           "description": ""
         },
         "en": {
-          "name": "LEED Gold 2023",
-          "alt": "LEED Gold 2023",
+          "name": "ISO 14001 Environmental Management",
+          "alt": "ISO 14001 Environmental Management",
+          "description": ""
+        }
+      }
+    },
+    {
+      "id": "60",
+      "sortOrder": 60,
+      "isPublished": true,
+      "categoryId": "Certification:certification",
+      "logo": "/assets/cert-co2neutral.png",
+      "linkUrl": "",
+      "showOnHome": true,
+      "i18n": {
+        "zh": {
+          "name": "CO2 Neutral",
+          "alt": "CO2 Neutral",
+          "description": ""
+        },
+        "en": {
+          "name": "CO2 Neutral",
+          "alt": "CO2 Neutral",
+          "description": ""
+        }
+      }
+    },
+    {
+      "id": "70",
+      "sortOrder": 70,
+      "isPublished": true,
+      "categoryId": "Certification:certification",
+      "logo": "/assets/cert-green.png",
+      "linkUrl": "",
+      "showOnHome": true,
+      "i18n": {
+        "zh": {
+          "name": "Green Printing",
+          "alt": "Green Printing",
+          "description": ""
+        },
+        "en": {
+          "name": "Green Printing",
+          "alt": "Green Printing",
           "description": ""
         }
       }
@@ -2664,48 +2640,6 @@ export const SEED: Record<string, Row[]> = {
       "sortOrder": 90,
       "isPublished": true,
       "categoryId": "Certification:certification",
-      "logo": "/assets/cert-co2neutral.png",
-      "linkUrl": "",
-      "showOnHome": true,
-      "i18n": {
-        "zh": {
-          "name": "CO2 Neutral",
-          "alt": "CO2 Neutral",
-          "description": ""
-        },
-        "en": {
-          "name": "CO2 Neutral",
-          "alt": "CO2 Neutral",
-          "description": ""
-        }
-      }
-    },
-    {
-      "id": "100",
-      "sortOrder": 100,
-      "isPublished": true,
-      "categoryId": "Certification:certification",
-      "logo": "/assets/cert-green.png",
-      "linkUrl": "",
-      "showOnHome": true,
-      "i18n": {
-        "zh": {
-          "name": "Green Printing",
-          "alt": "Green Printing",
-          "description": ""
-        },
-        "en": {
-          "name": "Green Printing",
-          "alt": "Green Printing",
-          "description": ""
-        }
-      }
-    },
-    {
-      "id": "110",
-      "sortOrder": 110,
-      "isPublished": true,
-      "categoryId": "Certification:certification",
       "logo": "/assets/cert-mof.png",
       "linkUrl": "",
       "showOnHome": true,
@@ -2723,29 +2657,29 @@ export const SEED: Record<string, Row[]> = {
       }
     },
     {
-      "id": "120",
-      "sortOrder": 120,
+      "id": "100",
+      "sortOrder": 100,
       "isPublished": true,
       "categoryId": "Certification:certification",
-      "logo": "/assets/cert-esg.png",
+      "logo": "/assets/cert-iso45001.png",
       "linkUrl": "",
       "showOnHome": true,
       "i18n": {
         "zh": {
-          "name": "ESG — Environmental, Social, Governance",
-          "alt": "ESG — Environmental, Social, Governance",
+          "name": "ISO 45001 Occupational Health & Safety",
+          "alt": "ISO 45001 Occupational Health & Safety",
           "description": ""
         },
         "en": {
-          "name": "ESG — Environmental, Social, Governance",
-          "alt": "ESG — Environmental, Social, Governance",
+          "name": "ISO 45001 Occupational Health & Safety",
+          "alt": "ISO 45001 Occupational Health & Safety",
           "description": ""
         }
       }
     },
     {
-      "id": "130",
-      "sortOrder": 130,
+      "id": "110",
+      "sortOrder": 110,
       "isPublished": true,
       "categoryId": "Certification:certification",
       "logo": "/assets/cert-sedex.png",
@@ -2760,6 +2694,48 @@ export const SEED: Record<string, Row[]> = {
         "en": {
           "name": "Sedex Member",
           "alt": "Sedex Member",
+          "description": ""
+        }
+      }
+    },
+    {
+      "id": "120",
+      "sortOrder": 120,
+      "isPublished": true,
+      "categoryId": "Certification:certification",
+      "logo": "/assets/cert-leed-gold.png",
+      "linkUrl": "",
+      "showOnHome": true,
+      "i18n": {
+        "zh": {
+          "name": "LEED Gold 2023",
+          "alt": "LEED Gold 2023",
+          "description": ""
+        },
+        "en": {
+          "name": "LEED Gold 2023",
+          "alt": "LEED Gold 2023",
+          "description": ""
+        }
+      }
+    },
+    {
+      "id": "130",
+      "sortOrder": 130,
+      "isPublished": true,
+      "categoryId": "Certification:certification",
+      "logo": "/assets/cert-esg.png",
+      "linkUrl": "",
+      "showOnHome": true,
+      "i18n": {
+        "zh": {
+          "name": "ESG — Environmental, Social, Governance",
+          "alt": "ESG — Environmental, Social, Governance",
+          "description": ""
+        },
+        "en": {
+          "name": "ESG — Environmental, Social, Governance",
+          "alt": "ESG — Environmental, Social, Governance",
           "description": ""
         }
       }
@@ -3306,13 +3282,11 @@ export const SEED: Record<string, Row[]> = {
       "i18n": {
         "zh": {
           "title": "The Perfect Partner for Packaging Printing — NTI Printing",
-          "description": "Sustainability",
-          "thumbAlt": "The Perfect Partner for Packaging Printing — NTI Printing"
+          "description": "Sustainability"
         },
         "en": {
           "title": "The Perfect Partner for Packaging Printing — NTI Printing",
-          "description": "Sustainability",
-          "thumbAlt": "The Perfect Partner for Packaging Printing — NTI Printing"
+          "description": "Sustainability"
         }
       }
     },
@@ -3327,13 +3301,11 @@ export const SEED: Record<string, Row[]> = {
       "i18n": {
         "zh": {
           "title": "Nature and Sustainability",
-          "description": "Sustainability",
-          "thumbAlt": "Nature and Sustainability"
+          "description": "Sustainability"
         },
         "en": {
           "title": "Nature and Sustainability",
-          "description": "Sustainability",
-          "thumbAlt": "Nature and Sustainability"
+          "description": "Sustainability"
         }
       }
     },
@@ -3348,13 +3320,11 @@ export const SEED: Record<string, Row[]> = {
       "i18n": {
         "zh": {
           "title": "Integrated Low-Carbon Production",
-          "description": "Low-carbon production",
-          "thumbAlt": "Integrated Low-Carbon Production"
+          "description": "Low-carbon production"
         },
         "en": {
           "title": "Integrated Low-Carbon Production",
-          "description": "Low-carbon production",
-          "thumbAlt": "Integrated Low-Carbon Production"
+          "description": "Low-carbon production"
         }
       }
     },
@@ -3369,13 +3339,11 @@ export const SEED: Record<string, Row[]> = {
       "i18n": {
         "zh": {
           "title": "2024 SME Benchmark Enterprise Award",
-          "description": "Awards",
-          "thumbAlt": "2024 SME Benchmark Enterprise Award"
+          "description": "Awards"
         },
         "en": {
           "title": "2024 SME Benchmark Enterprise Award",
-          "description": "Awards",
-          "thumbAlt": "2024 SME Benchmark Enterprise Award"
+          "description": "Awards"
         }
       }
     }

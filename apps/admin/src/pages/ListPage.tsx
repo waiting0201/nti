@@ -16,6 +16,7 @@ export function ListPage() {
   const { code = '' } = useParams()
   const unit = UNIT_BY_CODE.get(code)
   const { can } = useAuth()
+  const [exporting, setExporting] = useState(false)
   const nav = useNavigate()
   const [sp, setSp] = useSearchParams()
 
@@ -47,6 +48,8 @@ export function ListPage() {
         if (categoryId && r.categoryId !== categoryId) return false
         if (status === 'published' && !r.isPublished) return false
         if (status === 'draft' && r.isPublished) return false
+        // 這條路徑拿到的是整份資料（拖曳排序需要），在前端過濾不會漏掉別頁的資料；
+        // 分頁的那條走後端的 keyword 參數（見 client.api.ts）
         if (keyword && !JSON.stringify(r).toLowerCase().includes(keyword.toLowerCase())) return false
         return true
       })
@@ -68,8 +71,20 @@ export function ListPage() {
   if (!unit) return <Notice kind="danger">找不到這個單元。</Notice>
 
   const canEdit = can(`${unit.code}.edit`)
+  const canExport = unit.code === 'quote' && can('quote.export')
   const canPublish = can(`${unit.code}.publish`)
   const canDelete = can(`${unit.code}.delete`)
+
+  async function exportCsv() {
+    setExporting(true)
+    try {
+      await api.exportQuotesCsv()
+    } catch (err) {
+      toast(err instanceof Error ? err.message : '匯出失敗，請稍後再試。')
+    } finally {
+      setExporting(false)
+    }
+  }
   const readOnlyRecord = unit.readOnly === 'status-only'
 
   const setParam = (k: string, v: string) => {
@@ -184,6 +199,11 @@ export function ListPage() {
                 </button>
               )}
             </>
+          )}
+          {canExport && (
+            <button className="btn btn-sm" disabled={exporting} onClick={() => void exportCsv()}>
+              {exporting ? '匯出中…' : '⬇ 匯出 CSV'}
+            </button>
           )}
           {canEdit && !unit.fixedRows && !readOnlyRecord && (
             <button className="btn btn-primary btn-sm" onClick={() => nav(`/u/${unit.code}/new`)}>

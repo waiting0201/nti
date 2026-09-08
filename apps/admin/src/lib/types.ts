@@ -43,6 +43,11 @@ export type Field = {
   categoryType?: string
   /** 圖片欄位對應的 Alt 欄位 key（docs §3 共通規則：每個圖片欄位必附中英 Alt） */
   altKey?: string
+  /**
+   * 不適用 Alt 規則的圖片欄位，值為理由。§3 的通則只涵蓋「頁面上呈現的 `<img>`」——
+   * meta 標籤用的圖與純裝飾性縮圖都不該有 Alt 欄位，寫上理由比靜默豁免好追。
+   */
+  altExempt?: string
   /** 放在編輯頁哪一側：語系中性欄位在左，文字欄位在右（docs §5.2） */
   side?: 'neutral' | 'locale'
   placeholder?: string

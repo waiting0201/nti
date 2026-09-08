@@ -15,9 +15,10 @@ export const SEO_FIELDS: Field[] = [
   { key: 'canonical', label: 'Canonical', type: 'url', i18n: true, side: 'locale', hint: '留空則自動' },
   { key: 'ogTitle', label: 'OG 標題', type: 'text', i18n: true, side: 'locale', hint: '留空則沿用 SEO Title' },
   { key: 'ogDescription', label: 'OG 描述', type: 'textarea', i18n: true, side: 'locale', hint: '留空則沿用 Meta Description' },
-  { key: 'ogImage', label: 'OG 分享圖', type: 'image', side: 'neutral', hint: HINT.ogImage, altKey: 'ogImageAlt' },
-  { key: 'ogImageAlt', label: 'OG 圖替代文字 Alt', type: 'text', i18n: true, required: true, side: 'locale' },
-  // 註：OG 圖本身選填，所以這個 Alt 只有在真的上傳了圖片時才算必填 —— 判斷在 completeness.ts
+  // OG 圖是 meta 標籤（og:image），不是頁面上的 <img>，沒有替代文字要顯示的位置。
+  // 原本有一個 ogImageAlt 欄位，但 *I18n 側表從來就沒有對應的欄，填了也存不進去（2026-09-08 移除）。
+  { key: 'ogImage', label: 'OG 分享圖', type: 'image', side: 'neutral', hint: HINT.ogImage,
+    altExempt: 'OG 圖是 meta 標籤，不在頁面上呈現' },
 ]
 
 /** 後台單元，順序即側邊選單順序（docs §2；19 會員／20 訂單已移出範圍，16 轉址暫時隱藏）*/
@@ -81,9 +82,9 @@ export function validateUnits(): string[] {
         problems.push(`${unit.code}.${f.key}：上傳欄位缺少建議尺寸提示（docs §3）`)
       }
       if (f.type === 'image') {
-        // client 的 logo 以「名稱」作為 alt（docs §09 單元 09 明訂），是唯一例外
-        const exempt = unit.code === 'client'
-        if (!exempt) {
+        // 豁免的圖片欄位在宣告處寫明理由（Field.altExempt）：客戶 logo 以「名稱」作為 alt、
+        // OG 圖是 meta 標籤、vlog 縮圖是裝飾性圖片。其餘一律要有中英 Alt。
+        if (!f.altExempt) {
           if (!f.altKey) problems.push(`${unit.code}.${f.key}：圖片欄位未指定 altKey`)
           else if (!keys.has(f.altKey)) problems.push(`${unit.code}.${f.key}：altKey「${f.altKey}」找不到對應欄位`)
           else {

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,8 +38,11 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
     // ── 清單 ──────────────────────────────────────────────────────────────
     public async Task<IActionResult> GetListAsync(HttpRequest req)
     {
-        var paging = Paging.From(req);
-        var query  = db.Set<TEntity>().AsNoTracking().Where(e => !e.IsDeleted);
+        var paging  = Paging.From(req);
+        var keyword = QueryValues.Text(req, "keyword");
+        var query   = db.Set<TEntity>().AsNoTracking().Where(e => !e.IsDeleted);
+
+        if (keyword is not null) query = ApplyKeyword(query, keyword);
 
         var total = await query.CountAsync();
 
@@ -66,6 +70,31 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
             pageSize   = paging.PageSize,
             totalPages = Math.Max(1, (int)Math.Ceiling((double)total / paging.PageSize)),
         }));
+    }
+
+    /// <summary>
+    /// 關鍵字搜尋：主表與 i18n 側表的字串欄任一個命中即算（04-api §3.4）。
+    /// <para>
+    /// 側表用子查詢而不是先撈 Id 再 <c>Contains</c> 一串常數——後者在內容長出來之後
+    /// 會產生一條又臭又長的 IN 清單，而且列數一多就得先把側表整個拉回記憶體。
+    /// 這裡的 <c>matched</c> 全程是 <c>IQueryable</c>，轉譯成 <c>WHERE Id IN (SELECT …)</c>。
+    /// </para>
+    /// </summary>
+    private IQueryable<TEntity> ApplyKeyword(IQueryable<TEntity> query, string keyword)
+    {
+        var predicate = KeywordSearch.Predicate<TEntity>(db.Model.FindEntityType(typeof(TEntity))!, keyword);
+        var onI18n    = KeywordSearch.Predicate<TI18n>(db.Model.FindEntityType(typeof(TI18n))!, keyword);
+
+        if (onI18n is not null)
+        {
+            var fk      = ForeignKeyName;
+            var matched = db.Set<TI18n>().AsNoTracking().Where(onI18n).Select(i => EF.Property<int>(i, fk));
+
+            Expression<Func<TEntity, bool>> inI18n = e => matched.Contains(EF.Property<int>(e, "Id"));
+            predicate = predicate is null ? inI18n : KeywordSearch.Or(predicate, inI18n);
+        }
+
+        return predicate is null ? query : query.Where(predicate);
     }
 
     /// <summary>

@@ -663,6 +663,15 @@ components:
       in: query
       description: 分類篩選。id 由 `/categories?type=` 取得。
       schema: { type: integer }
+    Keyword:
+      name: keyword
+      in: query
+      description: |
+        後台清單的關鍵字搜尋。比對主表與 i18n 側表**所有有長度上限的字串欄**；
+        `nvarchar(max)` 的內文 HTML 不在範圍內（後台要找的是標題與名稱，
+        而逐列掃內文會把 Basic 的 5 DTU 吃光）。
+        `%` 與 `_` 視為字面值。**在 SQL 層過濾**，所以跨頁也準。
+      schema: { type: string }
     Page:
       name: page
       in: query

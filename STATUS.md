@@ -231,12 +231,23 @@ mockup 內容（現況部署），設了就改吃 CMS。
 `{ quote, attachments }` 巢狀物件，而 `client.api.ts` 當成平的一列在讀，正式站的報價詳細頁
 其實組不出資料（`row.id` 為 `"undefined"`、欄位全空、附件陣列丟給 React 會直接炸）。已修。
 
+### ✅ 缺口已清（2026-09-08）
+
+| 原缺口 | 處置 |
+|---|---|
+| 3 個欄位存不進去 | **分別處理**：`contact.assignee` 補上 `ContactMessage.AssigneeId`（schema 真的漏了，`QuoteRequest` 早就有）；`vlog.thumbAlt` 與 `ogImageAlt` **從 UI 移除**——前者的縮圖在前台是 `alt=""` 的裝飾性圖片、緊鄰影片標題，補 Alt 會讓螢幕閱讀器把標題唸兩遍，後者是 meta 標籤、頁面上沒有那張圖。docs/09 §3「每個圖片欄位必附 Alt」的通則同步收斂，三個例外在欄位宣告處以 `altExempt` 寫明理由 |
+| 清單搜尋 | **後端補上 `keyword` 參數**（04 §3.4），比對主表與 i18n 側表所有有長度上限的字串欄，`nvarchar(max)` 內文不進來。在 SQL 層過濾，跨頁也準；`%`／`_` 視為字面值。內容單元走 i18n 子查詢（`WHERE Id IN (SELECT …)`），不把側表拉回記憶體 |
+| 匯出 CSV 沒有入口 | 報價清單補上「⬇ 匯出 CSV」鍵（`quote.export`，僅超管）。**順帶修好 BOM**：原本寫 `new UTF8Encoding(true).GetBytes(...)`，但那個旗標只影響 `GetPreamble()`，`GetBytes()` 從來不含 BOM——等於註解說要 BOM、實際一個都沒寫，Excel 開中文會亂碼。報價與轉址兩支匯出都修了 |
+
+**實測 11 項全過**（本機 API + DB）：承辦人存得進去、i18n 側表搜得到、pageSize=1 時
+總數與 pageSize=50 一致（證明在 SQL 層過濾）、扁平表／未分頁清單都搜得到、
+查無資料回 0、搜 `%` 不會全部命中、CSV 帶 BOM。
+
 ### 🟡 有缺口
 
 | 項目 | 現況 |
 |---|---|
-| 3 個欄位存不進去 | `ogImageAlt`、vlog `thumbAlt`、contact `assignee` —— UI 有、schema 沒有對應欄位，列在 `src/api/mapping.ts` |
-| 清單搜尋 | 關鍵字目前在前端過濾當頁資料。後端還沒有搜尋參數（04 §3.4 未列），跨頁搜尋不準 |
+| 可拖曳單元的搜尋 | 走 `listAll`（`pageSize=100`）取整份再在前端過濾，資料完整所以結果是準的；但單元超過 100 筆時 `listAll` 會靜默截斷，拖曳排序也會一起失準 |
 
 ---
 

@@ -172,6 +172,11 @@ export async function downloadQuoteAttachment(_quoteId: string, _attachmentId: s
   throw new Error(`示範資料沒有 ${name} 這個檔案，接上 API 後才會真的下載。`)
 }
 
+/** 匯出報價 CSV——mock 不產檔，同樣走錯誤處理提示尚未接 API。 */
+export async function exportQuotesCsv(): Promise<void> {
+  throw new Error('匯出 CSV 需要連上 API，示範資料不產生檔案。')
+}
+
 export function categoryUsage(categoryId: string): number {
   let n = 0
   for (const rows of Object.values(store)) {

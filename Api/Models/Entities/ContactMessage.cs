@@ -14,6 +14,7 @@ public sealed class ContactMessage : IAuditable
     public string    Message      { get; set; } = null!;
     public DateTime  ConsentAt    { get; set; }
     public string    Status       { get; set; } = "New";
+    public int?      AssigneeId   { get; set; }                     // AdminUser.Id，刻意不建 FK（同 QuoteRequest）
     public string?   InternalNote { get; set; }
     public DateTime? RepliedAt    { get; set; }
 

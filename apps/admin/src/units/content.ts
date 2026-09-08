@@ -166,8 +166,10 @@ export const vlog: Unit = {
   fields: [
     { key: 'youtubeId', label: 'YouTube 影片 ID／網址', type: 'youtube', required: true, side: 'neutral', hint: '貼完整網址系統自動抽出 ID，並即時顯示縮圖預覽' },
     { key: 'categoryId', label: '分類', type: 'select', required: true, categoryType: 'Vlog', side: 'neutral' },
-    { key: 'thumbOverride', label: '縮圖覆蓋', type: 'image', hint: HINT.vlogThumb, altKey: 'thumbAlt', side: 'neutral' },
-    alt('thumbAlt', '縮圖替代文字 Alt'),
+    // 縮圖在前台是裝飾性圖片（alt=""），緊鄰著影片標題；補 Alt 會讓螢幕閱讀器把標題唸兩遍。
+    // VlogI18n 也沒有對應的欄，原本的 thumbAlt 欄位填了存不進去（2026-09-08 移除）。
+    { key: 'thumbOverride', label: '縮圖覆蓋', type: 'image', hint: HINT.vlogThumb, side: 'neutral',
+      altExempt: '縮圖緊鄰影片標題，前台以 alt="" 呈現' },
     { key: 'title', label: '標題', type: 'text', i18n: true, required: true, side: 'locale' },
     { key: 'description', label: '說明', type: 'textarea', i18n: true, side: 'locale' },
     { key: 'isHero', label: '設為頁面主打影片', type: 'switch', side: 'neutral', hint: '全站僅一支；開啟新的會自動關閉舊的' },
@@ -260,7 +262,8 @@ export const client: Unit = {
   countHint: { min: 6, message: '客戶輪播建議至少 6 筆，數量太少輪播會顯得空。' },
   fields: [
     { key: 'name', label: '名稱', type: 'text', required: true, side: 'neutral', hint: '同時作為圖片 alt，品牌名不翻譯' },
-    { key: 'logo', label: 'Logo', type: 'image', required: true, hint: HINT.clientLogo, side: 'neutral' },
+    { key: 'logo', label: 'Logo', type: 'image', required: true, hint: HINT.clientLogo, side: 'neutral',
+      altExempt: '客戶 logo 以品牌名稱作為 alt（docs/09 單元 09）' },
     { key: 'linkUrl', label: '連結', type: 'url', side: 'neutral' },
   ],
   columns: [

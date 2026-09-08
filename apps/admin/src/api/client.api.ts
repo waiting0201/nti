@@ -124,16 +124,11 @@ export async function list(unit: string, q: ListQuery = {}): Promise<ListResult>
   params.set('pageSize', String(q.pageSize ?? 20))
   if (q.categoryId) params.set('categoryId', q.categoryId)
   if (q.status && q.status !== 'all') params.set('status', q.status)
+  // 搜尋交給後端（04-api §3.4 的 keyword）：清單是分頁的，在前端過濾只會搜到當頁那 20 筆
+  if (q.keyword) params.set('keyword', q.keyword)
 
   const data = unwrap(await api.get<PagedResponse | ApiRow[]>(`/admin/${pathOf(unit)}?${params}`))
-  let rows = data.items.map((r) => toRow(unit, r))
-
-  // 關鍵字目前在前端過濾：後端還沒有搜尋端點（04-api §3.4 沒有列），
-  // 而清單已經分頁，跨頁搜尋要等後端補 keyword 參數才會準。
-  if (q.keyword) {
-    const needle = q.keyword.toLowerCase()
-    rows = rows.filter((r) => JSON.stringify(r).toLowerCase().includes(needle))
-  }
+  const rows = data.items.map((r) => toRow(unit, r))
 
   return { rows, total: data.total }
 }
@@ -172,13 +167,13 @@ export async function get(unit: string, id: string): Promise<Row | undefined> {
 }
 
 /**
- * 下載報價附件（`quote.download`，僅超管）。
+ * 把一支回檔案的端點存成本機檔案。
  *
- * 端點要帶 JWT，所以不能用 `<a href>` 直接連——先 fetch 回來再用 object URL 觸發下載。
- * 後端一律以 `application/octet-stream` 送出，瀏覽器不會直接開啟這些檔案。
+ * 這些端點都要帶 JWT，所以不能用 `<a href>` 直接連——先 fetch 回來
+ * （http.ts 對非 JSON 的回應會把 Response 原樣交回），再用 object URL 觸發下載。
  */
-export async function downloadQuoteAttachment(quoteId: string, attachmentId: string, name: string): Promise<void> {
-  const res = await api.get<Response>(`/admin/quote/${toApiId(quoteId)}/attachments/${attachmentId}`)
+async function saveAs(path: string, name: string): Promise<void> {
+  const res = await api.get<Response>(path)
   const url = URL.createObjectURL(await res.blob())
 
   try {
@@ -190,6 +185,20 @@ export async function downloadQuoteAttachment(quoteId: string, attachmentId: str
     // 立刻 revoke 會讓部分瀏覽器來不及取檔，隔一拍再放掉
     setTimeout(() => URL.revokeObjectURL(url), 10_000)
   }
+}
+
+/**
+ * 下載報價附件（`quote.download`，僅超管）。
+ * 後端一律以 `application/octet-stream` 送出，瀏覽器不會直接開啟這些檔案。
+ */
+export function downloadQuoteAttachment(quoteId: string, attachmentId: string, name: string): Promise<void> {
+  return saveAs(`/admin/quote/${toApiId(quoteId)}/attachments/${attachmentId}`, name)
+}
+
+/** 匯出報價 CSV（`quote.export`，僅超管）。檔案帶 BOM，Excel 開中文不會亂碼。 */
+export function exportQuotesCsv(): Promise<void> {
+  const today = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+  return saveAs('/admin/quote/export', `quotes-${today}.csv`)
 }
 
 export async function save(unit: string, row: Row): Promise<Row> {

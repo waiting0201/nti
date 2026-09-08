@@ -165,8 +165,8 @@ function news() {
       cover: asset(img),
       featured: order === 10,
       i18n: {
-        zh: { title: decode(title), summary: decode(summary), body: detailBody(href) || `<p>${decode(summary)}</p>`, coverAlt: decode(title), slug: href.replace(/^news-|\.html$/g, ''), seoTitle: decode(title), metaDescription: decode(summary).slice(0, 160), ogImageAlt: decode(title) },
-        en: { title: decode(title), summary: decode(summary), body: detailBody(href) || `<p>${decode(summary)}</p>`, coverAlt: decode(title), slug: href.replace(/^news-|\.html$/g, ''), seoTitle: decode(title), metaDescription: decode(summary).slice(0, 160), ogImageAlt: decode(title) },
+        zh: { title: decode(title), summary: decode(summary), body: detailBody(href) || `<p>${decode(summary)}</p>`, coverAlt: decode(title), slug: href.replace(/^news-|\.html$/g, ''), seoTitle: decode(title), metaDescription: decode(summary).slice(0, 160) },
+        en: { title: decode(title), summary: decode(summary), body: detailBody(href) || `<p>${decode(summary)}</p>`, coverAlt: decode(title), slug: href.replace(/^news-|\.html$/g, ''), seoTitle: decode(title), metaDescription: decode(summary).slice(0, 160) },
       },
     })
   }
@@ -370,7 +370,7 @@ function vlogs() {
       categoryId: `Vlog:${cat}`,
       thumbOverride: '',
       isHero,
-      i18n: { zh: { title, description: ep, thumbAlt: title }, en: { title, description: ep, thumbAlt: title } },
+      i18n: { zh: { title, description: ep }, en: { title, description: ep } },
     })
   }
   // 頁面主打影片（iframe，title 屬性即標題）
