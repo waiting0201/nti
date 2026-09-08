@@ -6,8 +6,8 @@ public sealed class LoginDto
     public string? Username { get; set; }
     public string? Password { get; set; }
 
-    /// <summary>Turnstile token（登入也受機器人防護，docs/10 §9.6）。</summary>
-    public string? TurnstileToken { get; set; }
+    /// <summary>reCAPTCHA v3 token（登入也受機器人防護，docs/10 §9.6）。</summary>
+    public string? RecaptchaToken { get; set; }
 }
 
 /// <summary>

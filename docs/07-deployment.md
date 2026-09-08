@@ -194,7 +194,7 @@ az functionapp config appsettings set -g $RG -n $APP --settings \
   "BlobStorageConnection=<stntiprod 連線字串>" \
   "Smtp__Host=<...>" "Smtp__Port=587" "Smtp__User=<...>" \
   "Smtp__Password=<...>" "Smtp__From=<...>" \
-  "Turnstile__SecretKey=<...>" \
+  "Recaptcha__SecretKey=<...>" "Recaptcha__MinScore=0.5" \
   "PublishScheduleCron=0 */5 * * * *" \
   "OrphanMediaCron=0 0 4 * * 0"
 
@@ -305,6 +305,7 @@ repo:waiting0201@5709750/nti@1354276527:environment:production
 | 2026-09-04 | Tim（Claude Code） | 新增 §7.4：API 與資料庫的資源建立指令、OIDC 聯合身分設定、GitHub secrets／variables 清單、部署後的 schema 驗收閘。CI 為 `.github/workflows/api.yml`（觸發於 `Api/**`，含 health 冒煙測試與「產物不得含 local.settings.json」的斷言）。資源本身尚未開設 |
 
 | 2026-09-06 | Tim（Claude Code） | 會員系統移出範圍：app settings 刪除 `Jwt__AudienceWeb`／`Jwt__ExpiryMinutesWeb` |
+| 2026-09-08 | Tim（Claude Code） | Function App 設定的機器人防護金鑰由 `Turnstile__SecretKey` 改為 `Recaptcha__SecretKey` + `Recaptcha__MinScore`（改用 Google reCAPTCHA v3，見 10 §9.6） |
 
-*最後更新：2026-09-06*
+*最後更新：2026-09-08*
 

@@ -58,7 +58,8 @@
   不帶分頁參數時 `data` 為平面陣列（供下拉選單與前台完整清單）。
 - **檔案**：上傳走 multipart；下載一律經後端代理路由 `/files/{container}/{*path}`（Blob 容器全為 private）。回傳 Blob 相對路徑（無資產表，見 [`08-database.md` §2.6](08-database.md)）。
 - **CORS**：allow-list 兩個 origin（公開站、CMS SPA），**不使用 `*`**。
-- **公開寫入端點防護**：`POST /quotes`、`POST /contacts`、`POST /auth/admin/login` 需通過 **Turnstile** 驗證並受 rate limit（超限回 429 `RATE_LIMITED`）。
+- **公開寫入端點防護**：`POST /quotes`、`POST /contacts`、`POST /auth/admin/login` 需通過 **Google reCAPTCHA v3** 驗證並受 rate limit（超限回 429 `RATE_LIMITED`）。
+  v3 是分數制：後端另比對 `action`（`quote`／`contact`／`admin_login`）並套用分數門檻，未達回 400 `BOT_CHECK_FAILED`。
 - **快取**：前台唯讀端點帶 `s-maxage` + `stale-while-revalidate` 供 Next.js ISR 消費；後台端點一律 `no-store`。
 - **文件化**：OpenAPI/Swagger 為單一事實來源，與本文件對齊（產生方式待定，見 [`10-backend-design.md` §13](10-backend-design.md)）。
 
@@ -96,7 +97,7 @@
   **無「主旨」欄位** —— `mockup/contact.html` 與 `ContactMessage` 皆無此欄。
 
 ### 3.3 後台認證
-- `POST /auth/admin/login`（Turnstile + rate limit；body 為 `username` + `password`——
+- `POST /auth/admin/login`（reCAPTCHA v3 + rate limit；body 為 `username` + `password`——
   **帳號不限定 email 格式**，2026-09-06；回 access token、角色、權限碼、`mustChangePassword`）
 - `POST /auth/admin/change-password`（需有效的後台 token，但不需權限碼——首登強制改密碼時使用者還沒有任何權限）
 
@@ -187,5 +188,6 @@
 | 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：移除 `GET /admin/audit`；單元 24 只剩信件紀錄（`GET /admin/audit/emails`、`POST /admin/audit/emails/{id}/resend`），權限碼 `audit.view`／`audit.resend` 沿用，矩陣仍為 167 列。匯出／下載／重寄三個動作不再有稽核寫入的要求 |
 | 2026-09-08 | Tim（Claude Code） | `GET /admin/quote/{id}/attachments/{attId}` 移除 `ScanStatus <> 'Clean'` 的拒絕條件（本期不做病毒掃描，09 §17），改註明僅超管且一律以 octet-stream 送出 |
 | 2026-09-08 | Tim（Claude Code） | §3.4 補上清單的共同查詢參數 **`keyword`**（後台清單一律分頁，前端過濾只搜得到當頁 20 筆），比對主表與 i18n 側表所有有長度上限的字串欄、在 SQL 層過濾；openapi 新增共用參數 `Keyword`。`PATCH /admin/contact/{id}` 補列承辦人 |
+| 2026-09-08 | Tim（Claude Code） | 公開寫入端點的機器人防護由 **Turnstile 改為 Google reCAPTCHA v3**：§2 與 §3.3 更新，請求欄位 `turnstileToken` → `recaptchaToken`，另註明 v3 是分數制且後端會比對 `action`（`quote`／`contact`／`admin_login`） |
 
 *最後更新：2026-09-08*

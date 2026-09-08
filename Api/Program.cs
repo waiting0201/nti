@@ -69,8 +69,8 @@ var host = new HostBuilder()
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<IBlobStorageService, BlobStorageService>();
 
-        // 顯式短 timeout：Turnstile 正常 < 1s，異常時寧可快速失敗也不要讓表單卡住
-        services.AddHttpClient<ITurnstileService, TurnstileService>(c => c.Timeout = TimeSpan.FromSeconds(8));
+        // 顯式短 timeout：reCAPTCHA 正常 < 1s，異常時寧可快速失敗也不要讓表單卡住
+        services.AddHttpClient<IBotCheckService, RecaptchaService>(c => c.Timeout = TimeSpan.FromSeconds(8));
 
         // ── Scoped：碰 AppDbContext / IDbConnection 的一律 Scoped，沒有例外 ────
         //    誤設 Singleton 會捕獲已釋放的 DbContext，且只在高併發下才浮現（docs/10 §4.1）

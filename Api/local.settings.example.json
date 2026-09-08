@@ -19,7 +19,8 @@
     "Smtp__User": "REPLACE_WITH_SMTP_USER",
     "Smtp__Password": "REPLACE_WITH_SMTP_PASSWORD",
     "Smtp__From": "REPLACE_WITH_FROM_ADDRESS",
-    "Turnstile__SecretKey": "REPLACE_WITH_TURNSTILE_SECRET",
+    "Recaptcha__SecretKey": "REPLACE_WITH_RECAPTCHA_SECRET",
+    "Recaptcha__MinScore": "0.5",
     "PublishScheduleCron": "0 */5 * * * *",
     "OrphanMediaCron": "0 0 4 * * 0"
   },

@@ -179,7 +179,7 @@ var host = new HostBuilder()
         services.AddSingleton<IJwtService, JwtService>();
         services.AddSingleton<IBlobStorageService, BlobStorageService>();
         services.AddSingleton<IEmailService, EmailService>();
-        services.AddHttpClient<ITurnstileService, TurnstileService>(c => c.Timeout = TimeSpan.FromSeconds(8));
+        services.AddHttpClient<IBotCheckService, RecaptchaService>(c => c.Timeout = TimeSpan.FromSeconds(8));
 
         // Scoped：碰 AppDbContext / IDbConnection
         services.AddScoped<IAuditService, AuditService>();
@@ -296,7 +296,7 @@ int pageSize = int.TryParse(req.Query["pageSize"], out var ps) ? Math.Clamp(ps, 
 | `UPLOAD_TYPE` | 400 | 副檔名或 magic bytes 不在白名單 |
 | `UPLOAD_SIZE` | 400 | 單檔 > 20MB 或超過 5 個 |
 | `RATE_LIMITED` | 429 | 公開表單／登入頻率限制（§9.6） |
-| `BOT_CHECK_FAILED` | 400 | Turnstile 驗證未通過 |
+| `BOT_CHECK_FAILED` | 400 | reCAPTCHA v3 未通過（分數低於門檻、action 不符或驗證服務異常） |
 | `INTERNAL` | 500 | 未預期例外（不得洩漏堆疊） |
 
 新增錯誤碼時同步更新本表與 `Common/ErrorCodes.cs`，並在 04 的變更紀錄補記。
@@ -574,7 +574,13 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 
 Jabez 是內網 ERP，無此需求；NTI 的 `/quotes`、`/contacts`、`/auth/*` 對外開放：
 
-- **Turnstile**：前端取 token，後端 `TurnstileService` 呼叫 siteverify 驗證後才處理。失敗回 400 `BOT_CHECK_FAILED`。（repo 內有 `turnstile-spin` skill 可用於建置）
+- **Google reCAPTCHA v3**（2026-09-08 由 Cloudflare Turnstile 換來）：前端 `grecaptcha.execute(siteKey, { action })`
+  取 token，後端 `RecaptchaService` 呼叫 siteverify 驗證後才處理。失敗回 400 `BOT_CHECK_FAILED`。
+  - **v3 不回「過／不過」，回 0.0–1.0 的分數**，門檻由 `Recaptcha__MinScore` 決定（預設 0.5，Google 建議值）。
+    上線後要看實際分佈再調：訂太高會擋掉用 VPN 或隱私瀏覽器的真人，訂太低等於沒擋。拒絕時分數會進 log。
+  - **一定要比對 `action`**：少了這道，攻擊者可以拿在別頁取得的合法 token 打這支端點。
+    動作名稱定義在 `BotCheckActions`（`quote`／`contact`／`admin_login`），前端 execute 時要送一模一樣的字串。
+  - 介面是 `IBotCheckService`，刻意不帶供應商名稱——已經換過一次，呼叫端不該再因為換供應商而改動。
 - **Rate limit**：以 IP + 端點為鍵，公開表單 10 次／小時、登入 5 次／15 分鐘。Consumption plan 無共享記憶體，**狀態存 DB 或 Blob**，不要用 `MemoryCache`（多實例會失效）。超限回 429 `RATE_LIMITED`
 - 隱私同意：`consent` 為必填，伺服器端另記 `ConsentAt`／IP／UA／來源語系
 - 表單回應**不回傳內部 Id**，只回 `quoteNo`（`Q20260901-0001`）
@@ -619,7 +625,7 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 | `Jwt__Secret` / `__Issuer` / `__AudienceAdmin` / `__ExpiryMinutes` / `__RefreshExpiryDays` | §7 |
 | `Smtp__Host` / `__Port` / `__User` / `__Password` / `__From` | 通知信 |
 | `BlobStorageConnection` | §9.5，本機為 Azurite |
-| `Turnstile__SecretKey` | §9.6 |
+| `Recaptcha__SecretKey` / `__MinScore` | §9.6（site key 是前端的，不放這裡） |
 | `PublishScheduleCron` / `OrphanMediaCron` | §9.9 |
 | `Cors__AllowedOrigins` | 參考用；實際生效在平台層 |
 
@@ -698,7 +704,7 @@ traces | where timestamp > ago(30m)
 - [ ] 內容刪除為軟刪，非 `Remove()`
 - [ ] 多表寫入包在 `CreateExecutionStrategy()` + transaction 內
 - [ ] 上傳有副檔名白名單 + 大小限制 + **magic bytes 驗證**
-- [ ] 公開寫入端點有 Turnstile + rate limit
+- [ ] 公開寫入端點有 reCAPTCHA v3（含 action 比對與分數門檻）+ rate limit
 - [ ] 新增／修改端點已同步更新 [`04-api.md`](04-api.md) §3 與 `Api/openapi.yaml`，並補變更紀錄（`node tools/check-openapi.mjs` 應通過）
 - [ ] `dotnet ef migrations script` 已對照 §8.6 的 Azure SQL Basic checklist
 - [ ] 日誌無密碼／token／個資
@@ -736,5 +742,6 @@ traces | where timestamp > ago(30m)
 | 2026-09-06 | Tim（Claude Code） | §11.1 第 2 條擴充為「不要依賴約束的名稱」（原本只講 DEFAULT）：`AdminUsernameLogin` 的 `DropUniqueConstraint` 在正式庫回 SQL 3728，即使 model／InitialSchema／`db/0002` 三處命名一致。附上查 `sys.key_constraints`／`sys.indexes` 取實際名稱的寫法，並提醒唯一鍵可能是索引而非約束 |
 | 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：§9.3 改為移除說明；刪除 `AuditLog` 實體與表、`IAuditService`／`AuditService`、`AppRouter` 分派後的稽核寫入、`RetentionCleanupFunction` 與 `RetentionCleanupCron`，以及 Coding Checklist 的稽核那條。`IAuditable` 的稽核五欄不受影響。單元 24 只剩信件紀錄（§9.4），權限碼 `audit.*` 沿用 |
 | 2026-09-08 | Tim（Claude Code） | **報價附件不做病毒掃描**（09 §17）：錯誤碼表移除 `UPLOAD_UNSCANNED`，§9.5 上傳流程第 7 條與 Blob 代理段落改為「下載限 `quote.download`、一律 octet-stream」。`QuoteAttachment.ScanStatus` 欄位與 `CK_QuoteAtt_Scan` 由 migration `DropAttachmentScanStatus` 移除——該 migration 依 §11.1 用 `sys.default_constraints` 查名再砍，不寫死 `DF_QuoteAttachment_ScanStatus` |
+| 2026-09-08 | Tim（Claude Code） | **機器人防護由 Cloudflare Turnstile 改為 Google reCAPTCHA v3**：§9.6 改寫（v3 是分數制，需 `Recaptcha__MinScore` 門檻與 `action` 比對）、§4.2 註冊改為 `IBotCheckService`／`RecaptchaService`（介面刻意不帶供應商名稱）、錯誤碼 `BOT_CHECK_FAILED` 的說明與 §12 環境變數表同步。前端 DTO 欄位 `turnstileToken` → `recaptchaToken` |
 
 *最後更新：2026-09-08*

@@ -20,7 +20,7 @@ public sealed class AuthHandler(
     AppDbContext      db,
     IPasswordHasher   hasher,
     IJwtService       jwt,
-    ITurnstileService turnstile,
+    IBotCheckService  botCheck,
     IConfiguration    cfg)
 {
     /// <summary>連續失敗 5 次鎖 15 分鐘（docs/09 §23）。</summary>
@@ -34,7 +34,7 @@ public sealed class AuthHandler(
     {
         var dto = await req.ReadFromJsonAsync<LoginDto>() ?? new LoginDto();
 
-        if (!await turnstile.VerifyAsync(dto.TurnstileToken, RequestContext.SourceIp(req)))
+        if (!await botCheck.VerifyAsync(dto.RecaptchaToken, BotCheckActions.AdminLogin, RequestContext.SourceIp(req)))
             throw AppException.BadRequest(ErrorCodes.BotCheckFailed, "機器人驗證未通過。");
 
         if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.Password))

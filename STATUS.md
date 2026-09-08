@@ -18,7 +18,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 
 **整條線已經在 Azure 上跑起來了**：API、資料庫、111 筆內容都上線，公開站與後台
 都已切換到 CMS，客戶現在可以在線上後台改內容、在線上公開站看到結果。
-剩下的是上線前的收尾（正式網域、Turnstile、SMTP、中文校閱）。
+剩下的是上線前的收尾（正式網域、reCAPTCHA、SMTP、中文校閱）。
 ⚠ **中文是機器翻譯初稿，上線前必須由客戶校閱**（見 db/content/README）。
 
 ---
@@ -354,12 +354,12 @@ mockup 內容（現況部署），設了就改吃 CMS。
 | 群組 | 端點數 | 狀態 |
 |---|---|---|
 | 3.1 前台內容（公開唯讀） | 20 | ✅ |
-| 3.2 表單（公開寫入） | 2 | ✅ 含 Turnstile、rate limit、附件上傳與 magic bytes 驗證 |
+| 3.2 表單（公開寫入） | 2 | ✅ 含 reCAPTCHA v3、rate limit、附件上傳與 magic bytes 驗證 |
 | 3.4 後台管理（RBAC） | 22 單元 + 動作端點 | ✅ 含 dashboard、上傳、匯出入、稽核 |
 | 3.3 後台認證（契約原本沒有） | 2 | ✅ `/auth/admin/login`、`/auth/admin/change-password` |
 
 支援服務：`PasswordHasher`（BCrypt）、`BlobStorageService`、`EmailService`（+EmailLog）、
-`TurnstileService`、`RateLimitService`、`AuditService`、`QuoteNumberGenerator`、
+`RecaptchaService`、`RateLimitService`、`AuditService`、`QuoteNumberGenerator`、
 `SuperAdminBootstrapper`（第一位超管由部署流程建立）。
 
 實測結果（`func start` + Azurite，51 項自動化斷言 + 逐項手驗）：
@@ -461,7 +461,11 @@ git push Remote_GitHub    # ← 這一步才觸發部署
 - 正式網域 `www.nti-printing.com` 綁定（custom domain + DNS，卡客戶端）
 - **SMTP 未設定**：`Smtp__Host`／`Port` 已填 Brevo，還缺 `Smtp__User`／`Password`／`From`。
   表單照常收得到資料，只是通知信寄不出去（EmailLog 記 `Failed`，可在後台重寄）
-- **Turnstile 未設定**：兩支公開表單目前只靠 rate limit（10 次/小時/IP）擋。**上線前必補**
+- **reCAPTCHA v3 未設定**：兩支公開表單與後台登入目前只靠 rate limit（10 次/小時/IP）擋。**上線前必補**
+  （2026-09-08 由 Cloudflare Turnstile 改為 Google reCAPTCHA v3；後端已就緒，要設
+  `Recaptcha__SecretKey`／`Recaptcha__MinScore`）。
+  ⚠ **前端還沒有可以放的位置**：`PageForm` 目前只是把表單藏起來顯示成功卡，
+  兩支表單都還沒真的 `POST` 到 API（P6 未完成）。要讓防護實際生效，得先把表單接上後端
 - mockup 預覽站（Cloudflare Pages `nti-mockup`）**設計定案後下線**
 
 ---

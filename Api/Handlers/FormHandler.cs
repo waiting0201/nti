@@ -19,7 +19,7 @@ public sealed class FormHandler(
     IQuoteNumberGenerator  quoteNumbers,
     IBlobStorageService    blobs,
     IEmailService          email,
-    ITurnstileService      turnstile,
+    IBotCheckService       botCheck,
     IRateLimitService      rateLimit)
 {
     /// <summary>SQL Server 唯一鍵衝突的錯誤碼（2601 唯一索引／2627 唯一約束）。</summary>
@@ -33,7 +33,7 @@ public sealed class FormHandler(
         var (dto, files) = await ReadQuoteAsync(req);
         var sourceIp     = RequestContext.SourceIp(req);
 
-        await GuardPublicWriteAsync(req, dto.TurnstileToken, sourceIp,
+        await GuardPublicWriteAsync(req, dto.RecaptchaToken, BotCheckActions.Quote, sourceIp,
             () => rateLimit.IsQuoteLimitExceededAsync(sourceIp));
 
         ValidateQuote(dto, files);
@@ -76,7 +76,7 @@ public sealed class FormHandler(
         var dto      = await ReadJsonOrFormAsync<ContactCreateDto>(req, BindContact);
         var sourceIp = RequestContext.SourceIp(req);
 
-        await GuardPublicWriteAsync(req, dto.TurnstileToken, sourceIp,
+        await GuardPublicWriteAsync(req, dto.RecaptchaToken, BotCheckActions.Contact, sourceIp,
             () => rateLimit.IsContactLimitExceededAsync(sourceIp));
 
         Require(dto.Name, "name");
@@ -113,9 +113,9 @@ public sealed class FormHandler(
 
     // ── 公開寫入的共同防護（docs/10 §9.6）────────────────────────────────
     private async Task GuardPublicWriteAsync(
-        HttpRequest req, string? turnstileToken, string? sourceIp, Func<Task<bool>> isLimitExceeded)
+        HttpRequest req, string? token, string action, string? sourceIp, Func<Task<bool>> isLimitExceeded)
     {
-        if (!await turnstile.VerifyAsync(turnstileToken, sourceIp))
+        if (!await botCheck.VerifyAsync(token, action, sourceIp))
             throw AppException.BadRequest(ErrorCodes.BotCheckFailed, "機器人驗證未通過，請重新整理後再試。");
 
         if (await isLimitExceeded())
@@ -286,7 +286,7 @@ public sealed class FormHandler(
         NeedsSustainableAdvice = ParseBool(form["needsSustainableAdvice"]),
         Requirement            = form["requirement"],
         Consent                = ParseBool(form["consent"]),
-        TurnstileToken         = form["turnstileToken"],
+        RecaptchaToken         = form["recaptchaToken"],
     };
 
     private static ContactCreateDto BindContact(IFormCollection form) => new()
@@ -297,7 +297,7 @@ public sealed class FormHandler(
         Phone          = form["phone"],
         Message        = form["message"],
         Consent        = ParseBool(form["consent"]),
-        TurnstileToken = form["turnstileToken"],
+        RecaptchaToken = form["recaptchaToken"],
     };
 
     private static int? ParseInt(string? value) => int.TryParse(value, out var v) ? v : null;

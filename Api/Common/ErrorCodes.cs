@@ -23,7 +23,7 @@ public static class ErrorCodes
     public const string UploadSize      = "UPLOAD_SIZE";       // 400 單檔 > 20MB 或超過 5 個
 
     public const string RateLimited     = "RATE_LIMITED";      // 429 公開表單／登入頻率限制
-    public const string BotCheckFailed  = "BOT_CHECK_FAILED";  // 400 Turnstile 未通過
+    public const string BotCheckFailed  = "BOT_CHECK_FAILED";  // 400 reCAPTCHA v3 未通過（分數過低或 action 不符）
 
     public const string Internal        = "INTERNAL";          // 500 未預期例外（不得洩漏堆疊）
 }

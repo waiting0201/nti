@@ -29,7 +29,7 @@ tags:
   - name: 前台內容
     description: 公開唯讀，供 Next.js ISR 消費（帶 s-maxage 快取標頭）
   - name: 表單
-    description: 公開寫入，受 Turnstile 與 rate limit 保護
+    description: 公開寫入，受 reCAPTCHA v3 與 rate limit 保護
   - name: 後台認證
   - name: 後台內容單元
     description: 01–14，CRUD 形狀一致
@@ -260,7 +260,7 @@ paths:
       summary: 送出報價需求
       description: |
         JSON 或 multipart 皆可；有附件時必須用 multipart。
-        受 Turnstile 與 rate limit（10 次／小時／IP）保護。
+        受 reCAPTCHA v3 與 rate limit（10 次／小時／IP）保護。
         **回應只給 quoteNo，不回內部 Id。**
       requestBody:
         required: true
@@ -800,7 +800,7 @@ components:
         needsSustainableAdvice: { type: boolean, default: false }
         requirement:            { type: string }
         consent:                { type: boolean, description: 必須為 true。伺服器端另記同意時間、IP、UA、來源語系。 }
-        turnstileToken:         { type: string }
+        recaptchaToken:         { type: string, description: 'grecaptcha.execute(siteKey, { action: "quote" }) 取得的 token' }
 
     ContactCreate:
       type: object
@@ -812,7 +812,7 @@ components:
         phone:          { type: string, maxLength: 40 }
         message:        { type: string }
         consent:        { type: boolean }
-        turnstileToken: { type: string }
+        recaptchaToken: { type: string, description: 'action 須為 contact' }
 
     Login:
       type: object
@@ -820,7 +820,7 @@ components:
       properties:
         username:       { type: string, description: 登入帳號。不限定 email 格式（2026-09-06）。 }
         password:       { type: string, description: 至少 6 碼 }
-        turnstileToken: { type: string }
+        recaptchaToken: { type: string, description: 'action 須為 admin_login' }
 
     AuthToken:
       type: object

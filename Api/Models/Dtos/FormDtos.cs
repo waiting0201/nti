@@ -22,8 +22,8 @@ public sealed class QuoteCreateDto
     /// <summary>隱私權同意。必填且必須為 true——伺服器端另記同意時間、IP、UA。</summary>
     public bool     Consent                { get; set; }
 
-    /// <summary>Turnstile token（docs/10 §9.6）。</summary>
-    public string?  TurnstileToken         { get; set; }
+    /// <summary>reCAPTCHA v3 token（docs/10 §9.6）。</summary>
+    public string?  RecaptchaToken         { get; set; }
 }
 
 /// <summary>報價送出的回應。<b>不回傳內部 Id</b>，只回單號（docs/10 §9.6）。</summary>
@@ -41,5 +41,5 @@ public sealed class ContactCreateDto
     public string? Phone          { get; set; }
     public string? Message        { get; set; }
     public bool    Consent        { get; set; }
-    public string? TurnstileToken { get; set; }
+    public string? RecaptchaToken { get; set; }
 }

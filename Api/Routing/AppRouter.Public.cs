@@ -42,7 +42,7 @@ public sealed partial class AppRouter
             // Blob 代理。只開 media 容器——報價附件另有帶授權的路徑（見 FileHandler）
             ("GET",  ["files", "media", ..]) or
 
-            // ── 04-api §3.2 表單（Turnstile + rate limit 擋在 Handler 裡）──
+            // ── 04-api §3.2 表單（reCAPTCHA v3 + rate limit 擋在 Handler 裡）──
             ("POST", ["quotes"]) or
             ("POST", ["contacts"]) or
 

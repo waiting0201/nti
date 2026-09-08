@@ -85,7 +85,7 @@ Api/
 
 - **端點全部完成**：§3.1 前台唯讀 20 支、§3.2 表單 2 支、
   §3.4 後台 22 單元，外加契約原本沒有的後台認證 2 支
-- **支援服務**：BCrypt 密碼、Blob、Email（+EmailLog）、Turnstile、rate limit、
+- **支援服務**：BCrypt 密碼、Blob、Email（+EmailLog）、reCAPTCHA v3、rate limit、
   報價單號、第一位超管的 bootstrap
 
 - **兩支 Timer Function**：上下架排程、孤兒檔清除

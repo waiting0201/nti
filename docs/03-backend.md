@@ -64,7 +64,7 @@
    `db/` 保留為參考實作與交付腳本（本機一鍵建置 `db/tools/run-local.sh` 仍可用）；`db/verify/verify.sql` 的 24 項斷言保留為 EF Migration 產出的驗收閘。
 2. **CMS 後台**：依 [`09-cms-admin.md`](09-cms-admin.md) 的 22 個單元實作 CRUD + 排序 + 上下架排程 + 富文本 + 欄位級檔案上傳（Azure Blob，**不做 Media Library**）+ 角色權限。
 3. **API 實作**：對齊 [`04-api.md`](04-api.md) 契約（前台讀取 + 後台管理 + 表單），寫法依 [`10-backend-design.md`](10-backend-design.md)。
-4. **表單後端**（P6）：信件通知、Turnstile、rate limit、檔案上傳防護。
+4. **表單後端**（P6）：信件通知、reCAPTCHA v3、rate limit、檔案上傳防護。
 5. **內容遷移**（P8）：WordPress → 新 CMS（含媒體、分類、上架狀態），配合 301 對照表（見 05-seo）。
 
 ---
