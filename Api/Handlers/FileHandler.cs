@@ -13,8 +13,8 @@ namespace Nti.Api.Handlers;
 /// </para>
 /// <para>
 /// <b>只開放 <c>media</c> 容器</b>：報價附件走 <c>/admin/quote/{id}/attachments/{attId}</c>，
-/// 那條有 <c>quote.download</c> 權限與掃描狀態檢查。若把容器名開放成參數，
-/// 任何人只要猜到路徑就能繞過那些檢查把附件抓走。
+/// 那條限 <c>quote.download</c>（僅超管）。若把容器名開放成參數，
+/// 任何人只要猜到路徑就能繞過權限把客戶的設計稿抓走。
 /// </para>
 /// </summary>
 public sealed class FileHandler(IBlobStorageService blobs)

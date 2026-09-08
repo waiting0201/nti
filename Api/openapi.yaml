@@ -540,9 +540,9 @@ paths:
       tags: [後台其他單元]
       summary: 下載報價附件（quote.download，僅超管）
       description: |
-        **`scanStatus` 非 `Clean` 一律拒絕（403 `UPLOAD_UNSCANNED`）**——
-        附件是外部上傳的檔案，沒掃過就給後台人員下載等於用自己的電腦當沙箱。
-        同樣屬於「唯讀但必須留痕」的動作。
+        **本期不做病毒掃描**（2026-09-08 決策，09 §17）：一律以 `application/octet-stream`
+        搭配 `X-Content-Type-Options: nosniff` 送出，瀏覽器不會直接開啟這些檔案。
+        風險由「限超管」與後台介面的警語承擔。
       security: [{ AdminAuth: [] }]
       parameters:
         - { name: id, in: path, required: true, schema: { type: integer } }

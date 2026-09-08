@@ -178,7 +178,6 @@ public sealed class FormHandler(
                 OriginalName = file.FileName,
                 ContentType  = file.ContentType,
                 SizeBytes    = file.Length,
-                ScanStatus   = "Pending",     // 掃描通過前不提供下載（docs/09 §17）
                 CreatedAt    = Clock.UtcNow,
             });
         }

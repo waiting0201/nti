@@ -295,7 +295,6 @@ int pageSize = int.TryParse(req.Query["pageSize"], out var ps) ? Math.Clamp(ps, 
 | `CONFLICT_STATE` | 409 | 狀態不允許此操作（如上架但缺英文語系） |
 | `UPLOAD_TYPE` | 400 | 副檔名或 magic bytes 不在白名單 |
 | `UPLOAD_SIZE` | 400 | 單檔 > 20MB 或超過 5 個 |
-| `UPLOAD_UNSCANNED` | 403 | `ScanStatus <> 'Clean'` 的附件下載請求 |
 | `RATE_LIMITED` | 429 | 公開表單／登入頻率限制（§9.6） |
 | `BOT_CHECK_FAILED` | 400 | Turnstile 驗證未通過 |
 | `INTERNAL` | 500 | 未預期例外（不得洩漏堆疊） |
@@ -567,9 +566,9 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 4. **magic bytes 驗證**（`Common/FileSignatureValidator.cs`）—— 只信任檔頭，不信任 `Content-Type` 與副檔名（Jabez 已驗證，防偽造）
 5. 上傳 Blob，路徑 `{container}/{yyyy}/{MM}/{guid}{ext}`
 6. 影像另存 WebP 衍生檔、原檔保留；命名慣例 `{原檔名}.webp` 同目錄（補上 `db/README.md` 已知缺口 #4）
-7. 報價附件寫 `QuoteAttachment.ScanStatus = 'Pending'`，掃描後更新
+7. 報價附件不做病毒掃描（2026-09-08 決策，09 §17）——下載限超管且一律以 octet-stream 送出
 
-**所有 Blob 容器一律 private**（`PublicAccessType.None`），前端經後端代理路由 `/files/{container}/{*path}` 取檔，避開 403/CORS 並可施加授權（附件下載需 `quote.download` 且 `ScanStatus = 'Clean'`）。
+**所有 Blob 容器一律 private**（`PublicAccessType.None`），前端經後端代理路由 `/files/{container}/{*path}` 取檔，避開 403/CORS 並可施加授權（附件下載需 `quote.download`，僅超管）。
 
 ### 9.6 公開端點防護（NTI 特有）
 
@@ -736,5 +735,6 @@ traces | where timestamp > ago(30m)
 
 | 2026-09-06 | Tim（Claude Code） | §11.1 第 2 條擴充為「不要依賴約束的名稱」（原本只講 DEFAULT）：`AdminUsernameLogin` 的 `DropUniqueConstraint` 在正式庫回 SQL 3728，即使 model／InitialSchema／`db/0002` 三處命名一致。附上查 `sys.key_constraints`／`sys.indexes` 取實際名稱的寫法，並提醒唯一鍵可能是索引而非約束 |
 | 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：§9.3 改為移除說明；刪除 `AuditLog` 實體與表、`IAuditService`／`AuditService`、`AppRouter` 分派後的稽核寫入、`RetentionCleanupFunction` 與 `RetentionCleanupCron`，以及 Coding Checklist 的稽核那條。`IAuditable` 的稽核五欄不受影響。單元 24 只剩信件紀錄（§9.4），權限碼 `audit.*` 沿用 |
+| 2026-09-08 | Tim（Claude Code） | **報價附件不做病毒掃描**（09 §17）：錯誤碼表移除 `UPLOAD_UNSCANNED`，§9.5 上傳流程第 7 條與 Blob 代理段落改為「下載限 `quote.download`、一律 octet-stream」。`QuoteAttachment.ScanStatus` 欄位與 `CK_QuoteAtt_Scan` 由 migration `DropAttachmentScanStatus` 移除——該 migration 依 §11.1 用 `sys.default_constraints` 查名再砍，不寫死 `DF_QuoteAttachment_ScanStatus` |
 
-*最後更新：2026-09-06*
+*最後更新：2026-09-08*

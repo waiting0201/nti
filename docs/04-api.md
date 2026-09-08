@@ -116,7 +116,7 @@
   | `/admin/admin`、`/admin/audit/emails` | 23 管理員與角色、24 信件紀錄 | `admin.*`、`audit.*` |
   | `/admin/dashboard` | 00 待辦總覽（唯讀聚合） | `dashboard.view` |
 
-- 非 CRUD 的動作端點與其權限碼：`GET /admin/quote/export`（`quote.export`，僅超管）、`GET /admin/quote/{id}/attachments/{attId}`（`quote.download`，`ScanStatus <> 'Clean'` 者拒絕）、`GET|POST /admin/redirect/export|import`（`redirect.export`）、`POST /admin/audit/emails/{id}/resend`（`audit.resend`）。
+- 非 CRUD 的動作端點與其權限碼：`GET /admin/quote/export`（`quote.export`，僅超管）、`GET /admin/quote/{id}/attachments/{attId}`（`quote.download`，僅超管；一律以 octet-stream 送出，不做病毒掃描）、`GET|POST /admin/redirect/export|import`（`redirect.export`）、`POST /admin/audit/emails/{id}/resend`（`audit.resend`）。
 - 中英對照無獨立端點（`/admin/i18n` 已移除），兩語系隨各資源一併讀寫。
 - **未列於上表與權限對照的 `/admin/*` 路徑一律拒絕（403）**。新增後台端點時必須同步補進路由表與權限表，否則不會靜默放行（[`10-backend-design.md` §7.5](10-backend-design.md)）。
 
@@ -181,5 +181,6 @@
 | 2026-09-06 | Tim（Claude Code） | **會員系統與訂單／生產進度移出專案範圍**（客戶 2026-08-31 sitemap 無此節點，見 STATUS.md）。移除 §3.3 的 `/auth/register`、`/auth/login`、`/auth/forgot-password`、`/auth/reset-password`、`/me`、`/me/quotes`、`/me/orders*` 共 9 支，§3.3 改為後台認證；移除 §3.4 的 `/admin/member`、`/admin/order` 共 9 支與 `member.*`／`order.*` 權限碼（矩陣 171 → 167 列）；JWT 只剩 `nti-admin` 一個 audience；受控文件 `RequireLogin` 概念整個移除，供應商下載一律公開 |
 
 | 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：移除 `GET /admin/audit`；單元 24 只剩信件紀錄（`GET /admin/audit/emails`、`POST /admin/audit/emails/{id}/resend`），權限碼 `audit.view`／`audit.resend` 沿用，矩陣仍為 167 列。匯出／下載／重寄三個動作不再有稽核寫入的要求 |
+| 2026-09-08 | Tim（Claude Code） | `GET /admin/quote/{id}/attachments/{attId}` 移除 `ScanStatus <> 'Clean'` 的拒絕條件（本期不做病毒掃描，09 §17），改註明僅超管且一律以 octet-stream 送出 |
 
-*最後更新：2026-09-06*
+*最後更新：2026-09-08*

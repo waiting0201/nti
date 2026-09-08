@@ -44,7 +44,8 @@ public sealed class QuoteRequest : IAuditable
 }
 
 /// <summary>
-/// 報價附件（設計稿）。<see cref="ScanStatus"/> 非 <c>Clean</c> 者不提供下載（docs/09 §17）。
+/// 報價附件（設計稿）。下載限 <c>quote.download</c>（僅超管），且一律以 octet-stream 送出——
+/// 本期不做病毒掃描（2026-09-08 決策，docs/09 §17）。
 /// </summary>
 public sealed class QuoteAttachment
 {
@@ -54,6 +55,5 @@ public sealed class QuoteAttachment
     public string   OriginalName   { get; set; } = null!;
     public string   ContentType    { get; set; } = null!;
     public long     SizeBytes      { get; set; }
-    public string   ScanStatus     { get; set; } = "Pending";  // Pending|Clean|Infected
     public DateTime CreatedAt      { get; set; }
 }

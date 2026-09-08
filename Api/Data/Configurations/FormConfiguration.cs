@@ -52,13 +52,9 @@ public sealed class QuoteAttachmentConfiguration : IEntityTypeConfiguration<Quot
 {
     public void Configure(EntityTypeBuilder<QuoteAttachment> b)
     {
-        b.ToTable("QuoteAttachment", t => t.HasCheckConstraint(
-            "CK_QuoteAtt_Scan", "[ScanStatus] IN ('Pending','Clean','Infected')"));
-
         b.Property(x => x.FilePath).HasMaxLength(260);
         b.Property(x => x.OriginalName).HasMaxLength(200);
         b.Property(x => x.ContentType).Ascii(100);
-        b.Property(x => x.ScanStatus).Ascii(10).HasDefaultValue("Pending");
         b.Property(x => x.CreatedAt).HasDefaultValueSql("SYSUTCDATETIME()");
 
         b.HasOne<QuoteRequest>().WithMany()

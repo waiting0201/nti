@@ -4,7 +4,7 @@ namespace Nti.Api.Services;
 /// Blob 儲存（docs/10 §9.5）。
 /// <para>
 /// <b>所有容器一律 private</b>：前台取檔一律經後端代理路由，不給直連 URL——
-/// 這樣才能對報價附件施加授權（需 <c>quote.download</c> 且 <c>ScanStatus = 'Clean'</c>）。
+/// 這樣才能對報價附件施加授權（需 <c>quote.download</c>，僅超管）。
 /// </para>
 /// <para>
 /// DB 只存**相對路徑**（docs/08 §2.6），不存完整 URL：換儲存體或換網域時不用改資料。

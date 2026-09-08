@@ -54,7 +54,7 @@ public sealed class AdminFormHandler(AppDbContext db, IBlobStorageService blobs)
 
         var attachments = await db.QuoteAttachment.AsNoTracking()
             .Where(a => a.QuoteRequestId == id)
-            .Select(a => new { a.Id, a.OriginalName, a.ContentType, a.SizeBytes, a.ScanStatus, a.CreatedAt })
+            .Select(a => new { a.Id, a.OriginalName, a.ContentType, a.SizeBytes, a.CreatedAt })
             .ToListAsync();
 
         CacheControl.NoStore(req.HttpContext.Response);
@@ -116,8 +116,16 @@ public sealed class AdminFormHandler(AppDbContext db, IBlobStorageService blobs)
 
     /// <summary>
     /// 下載報價附件（權限 <c>quote.download</c>，僅超管）。
-    /// <b>掃描未通過的一律拒絕</b>（docs/09 §17）——附件是外部上傳的檔案，
-    /// 沒掃過就給後台人員下載等於用自己的電腦當沙箱。
+    /// <para>
+    /// <b>本期不做病毒掃描</b>（2026-09-08 決策，見 docs/09 §17）：接掃描服務要每月固定成本，
+    /// 與這個案子的規模不成比例。原本擋在 <c>ScanStatus = 'Clean'</c> 的閘因此拿掉——
+    /// 留著只會讓後台永遠下載不到任何附件，等於報價功能有一半是壞的。
+    /// </para>
+    /// <para>
+    /// 拿掉閘之後靠三件事把風險壓住：權限限超管、<b>一律以 <c>application/octet-stream</c>
+    /// 送出</b>（不讓瀏覽器依 Content-Type 直接開啟 PDF／SVG，SVG 尤其可以帶腳本）、
+    /// 外加 <c>nosniff</c> 擋掉瀏覽器自行猜型別。檔案本身仍未經掃描，後台介面有明示警語。
+    /// </para>
     /// </summary>
     public async Task<IActionResult> DownloadAttachmentAsync(HttpRequest req, string rawQuoteId, string rawAttachmentId)
     {
@@ -128,15 +136,15 @@ public sealed class AdminFormHandler(AppDbContext db, IBlobStorageService blobs)
             .FirstOrDefaultAsync(a => a.Id == attachmentId && a.QuoteRequestId == quoteId)
             ?? throw AppException.NotFound("QuoteAttachment");
 
-        if (attachment.ScanStatus != "Clean")
-            throw new AppException(ErrorCodes.UploadUnscanned,
-                $"附件尚未通過掃描（目前狀態：{attachment.ScanStatus}），不提供下載。", 403);
-
         var file = await blobs.DownloadAsync(UploadRules.Containers.QuoteAttachments, attachment.FilePath)
             ?? throw AppException.NotFound("附件檔案");
 
         CacheControl.NoStore(req.HttpContext.Response);
-        return new FileStreamResult(file.Content, file.ContentType)
+        req.HttpContext.Response.Headers["X-Content-Type-Options"] = "nosniff";
+
+        // 一律 octet-stream：存進來的 ContentType 是上傳端說了算，照它送等於讓外部
+        // 檔案決定瀏覽器怎麼開。附件只有「存檔」一種用途，不需要能預覽。
+        return new FileStreamResult(file.Content, "application/octet-stream")
         {
             FileDownloadName = attachment.OriginalName,
         };

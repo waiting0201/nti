@@ -21,7 +21,6 @@ public static class ErrorCodes
 
     public const string UploadType      = "UPLOAD_TYPE";       // 400 副檔名或 magic bytes 不在白名單
     public const string UploadSize      = "UPLOAD_SIZE";       // 400 單檔 > 20MB 或超過 5 個
-    public const string UploadUnscanned = "UPLOAD_UNSCANNED";  // 403 ScanStatus <> 'Clean' 的附件下載
 
     public const string RateLimited     = "RATE_LIMITED";      // 429 公開表單／登入頻率限制
     public const string BotCheckFailed  = "BOT_CHECK_FAILED";  // 400 Turnstile 未通過
