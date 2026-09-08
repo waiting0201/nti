@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,8 @@ public sealed class FormHandler(
     IBlobStorageService    blobs,
     IEmailService          email,
     IBotCheckService       botCheck,
-    IRateLimitService      rateLimit)
+    IRateLimitService      rateLimit,
+    ILogger<FormHandler>   logger)
 {
     /// <summary>SQL Server 唯一鍵衝突的錯誤碼（2601 唯一索引／2627 唯一約束）。</summary>
     private static readonly int[] UniqueViolationNumbers = [2601, 2627];
@@ -45,11 +47,13 @@ public sealed class FormHandler(
             Company                = dto.Company!.Trim(),
             Email                  = dto.Email!.Trim(),
             Phone                  = dto.Phone?.Trim(),
-            SolutionId             = dto.SolutionId,
-            IndustryCategoryId     = dto.IndustryCategoryId,
+            SolutionId             = dto.SolutionId ?? await SolutionIdByCodeAsync(dto.SolutionCode),
+            IndustryCategoryId     = dto.IndustryCategoryId
+                                     ?? await CategoryIdByCodeAsync(CategoryTypes.Industry, dto.IndustryCode),
             Quantity               = dto.Quantity!.Trim(),
             SizeText               = dto.SizeText?.Trim(),
-            MaterialCategoryId     = dto.MaterialCategoryId,
+            MaterialCategoryId     = dto.MaterialCategoryId
+                                     ?? await CategoryIdByCodeAsync(CategoryTypes.QuoteMaterial, dto.MaterialCode),
             TargetDate             = dto.TargetDate,
             NeedsSustainableAdvice = dto.NeedsSustainableAdvice,
             Requirement            = dto.Requirement!.Trim(),
@@ -145,6 +149,37 @@ public sealed class FormHandler(
         if (files.Count > UploadRules.QuoteAttachmentMaxCount)
             throw AppException.BadRequest(ErrorCodes.UploadSize,
                 $"附件最多 {UploadRules.QuoteAttachmentMaxCount} 個。");
+    }
+
+    /// <summary>
+    /// 代號 → Id。查不到就回 null 而不是丟錯：這三個欄位本來就是選填，
+    /// 因為一個對不到的代號把整張詢價單擋掉，是拿客戶的生意去換資料整齊。
+    /// 對不到會留一行 log，才知道表單與種子資料何時對不上。
+    /// </summary>
+    private async Task<int?> CategoryIdByCodeAsync(string categoryType, string? code)
+    {
+        if (string.IsNullOrWhiteSpace(code)) return null;
+
+        var id = await db.Category.AsNoTracking()
+            .Where(c => c.CategoryType == categoryType && c.Code == code && c.IsActive && !c.IsDeleted)
+            .Select(c => (int?)c.Id)
+            .FirstOrDefaultAsync();
+
+        if (id is null) logger.LogWarning("報價表單送來對不到的分類代號：{Type}／{Code}。", categoryType, code);
+        return id;
+    }
+
+    private async Task<int?> SolutionIdByCodeAsync(string? code)
+    {
+        if (string.IsNullOrWhiteSpace(code)) return null;
+
+        var id = await db.Solution.AsNoTracking()
+            .Where(s => s.Code == code && !s.IsDeleted)
+            .Select(s => (int?)s.Id)
+            .FirstOrDefaultAsync();
+
+        if (id is null) logger.LogWarning("報價表單送來對不到的方案代號：{Code}。", code);
+        return id;
     }
 
     private async Task<List<QuoteAttachment>> UploadAttachmentsAsync(IFormFileCollection files)
@@ -286,6 +321,9 @@ public sealed class FormHandler(
         NeedsSustainableAdvice = ParseBool(form["needsSustainableAdvice"]),
         Requirement            = form["requirement"],
         Consent                = ParseBool(form["consent"]),
+        SolutionCode           = form["solution"],
+        IndustryCode           = form["industry"],
+        MaterialCode           = form["material"],
         RecaptchaToken         = form["recaptchaToken"],
     };
 

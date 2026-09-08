@@ -39,31 +39,31 @@ export default async function Page({ params }: Props) {
             <div>
               <div className="flegend">1 &middot; Contact</div>
               <div className="f2col">
-                <label className="field">Full name *<input required type="text" placeholder="Jane Chen" /></label>{' '}
-                <label className="field">Company *<input required type="text" placeholder="Brand Co., Ltd." /></label>{' '}
-                <label className="field">Email *<input required type="email" placeholder="jane@brand.com" /></label>{' '}
-                <label className="field">Phone<input type="tel" placeholder="+886 &hellip;" /></label>
+                <label className="field">Full name *<input required name="fullName" type="text" placeholder="Jane Chen" /></label>{' '}
+                <label className="field">Company *<input required name="company" type="text" placeholder="Brand Co., Ltd." /></label>{' '}
+                <label className="field">Email *<input required name="email" type="email" placeholder="jane@brand.com" /></label>{' '}
+                <label className="field">Phone<input name="phone" type="tel" placeholder="+886 &hellip;" /></label>
               </div>
             </div>
             <div>
               <div className="flegend">2 &middot; Project</div>
               <div className="f2col">
-                <label className="field">Product type *<select required><option value="">Select&hellip;</option><option>Color Box Packaging</option><option>Packaging Paperboard</option><option>UV Printing</option><option>Other Printing</option></select></label>{' '}
-                <label className="field">Industry<select><option value="">Select&hellip;</option><option>Food &amp; Beverage</option><option>Electronics</option><option>Beauty &amp; Skincare</option><option>Medical &amp; Healthcare</option><option>Luxury &amp; Gift Packaging</option><option>Hardware &amp; Hand Tools</option><option>Automotive</option><option>Publishing &amp; Stationery</option><option>Home &amp; Lifestyle</option><option>Industrial &amp; Consumer Goods</option></select></label>{' '}
-                <label className="field">Quantity *<input required type="text" placeholder="e.g. 10,000" /></label>{' '}
-                <label className="field">Size (L&times;W&times;H mm)<input type="text" placeholder="e.g. 220 &times; 160 &times; 60" /></label>{' '}
-                <label className="field">Material preference<select><option value="">No preference &mdash; advise me</option><option>FSC&trade;-certified board</option><option>Recycled board</option><option>Kraft</option><option>Specialty / metallized</option></select></label>{' '}
-                <label className="field">Target date<input type="date" /></label>
+                <label className="field">Product type *<select required name="solution"><option value="">Select&hellip;</option><option value="boxes">Color Box Packaging</option><option value="cardboard">Packaging Paperboard</option><option value="uv">UV Printing</option><option value="other">Other Printing</option></select></label>{' '}
+                <label className="field">Industry<select name="industry"><option value="">Select&hellip;</option><option value="food-beverage">Food &amp; Beverage</option><option value="electronics">Electronics</option><option value="beauty">Beauty &amp; Skincare</option><option value="medical">Medical &amp; Healthcare</option><option value="luxury-gift">Luxury &amp; Gift Packaging</option><option value="hardware">Hardware &amp; Hand Tools</option><option value="automotive">Automotive</option><option value="publishing">Publishing &amp; Stationery</option><option value="home-lifestyle">Home &amp; Lifestyle</option><option value="industrial">Industrial &amp; Consumer Goods</option></select></label>{' '}
+                <label className="field">Quantity *<input required name="quantity" type="text" placeholder="e.g. 10,000" /></label>{' '}
+                <label className="field">Size (L&times;W&times;H mm)<input name="sizeText" type="text" placeholder="e.g. 220 &times; 160 &times; 60" /></label>{' '}
+                <label className="field">Material preference<select name="material"><option value="">No preference &mdash; advise me</option><option value="fsc">FSC&trade;-certified board</option><option value="recycled">Recycled board</option><option value="kraft">Kraft</option><option value="specialty">Specialty / metallized</option></select></label>{' '}
+                <label className="field">Target date<input name="targetDate" type="date" /></label>
               </div>
-              <label className="fcheck" style={{ marginTop: "18px", fontSize: ".88rem", color: "var(--grey)", fontWeight: "700" }}><input type="checkbox" /><span>Include a per-order carbon estimate</span></label>
+              <label className="fcheck" style={{ marginTop: "18px", fontSize: ".88rem", color: "var(--grey)", fontWeight: "700" }}><input name="needsSustainableAdvice" type="checkbox" /><span>Include a per-order carbon estimate</span></label>
             </div>
             <div>
               <div className="flegend">3 &middot; Details</div>
-              <label className="field">Describe the requirement *<textarea required rows={5} placeholder="What must this package do? Food contact, export market, shelf finish, compliance&hellip;"></textarea></label>
-              <div className="fupload"><b>Attach files</b> &mdash; dieline, artwork or reference photos (PDF/AI/PSD/JPG/PNG/ZIP, &le; 20 MB each, up to 5 files)</div>
+              <label className="field">Describe the requirement *<textarea required name="requirement" rows={5} placeholder="What must this package do? Food contact, export market, shelf finish, compliance&hellip;"></textarea></label>
+              <div className="fupload"><b>Attach files</b> &mdash; dieline, artwork or reference photos (PDF/AI/PSD/JPG/PNG/ZIP, &le; 20 MB each, up to 5 files)<input type="file" name="files" multiple accept=".pdf,.ai,.psd,.jpg,.jpeg,.png,.zip" /></div>
             </div>
             <div className="ffoot">
-              <label className="fcheck"><input required type="checkbox" /><span>I agree to the processing of my data per the <A href={l("/privacy-legal")}>Privacy &amp; Legal</A> policy.</span></label>{' '}
+              <label className="fcheck"><input required name="consent" type="checkbox" /><span>I agree to the processing of my data per the <A href={l("/privacy-legal")}>Privacy &amp; Legal</A> policy.</span></label>{' '}
               <button type="submit" className="btn btn-solid">Submit request <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
             </div>
           </form>

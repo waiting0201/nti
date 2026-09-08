@@ -46,13 +46,13 @@ export default async function Page({ params }: Props) {
             <form className="form-card reveal" id="pgForm">
               <h2 style={{ fontSize: "1.25rem", fontWeight: "800", color: "var(--grey)" }}>Send us a message</h2>
               <div className="f2col">
-                <label className="field">Name *<input required type="text" placeholder="Your name" /></label>{' '}
-                <label className="field">Email *<input required type="email" placeholder="you@company.com" /></label>{' '}
-                <label className="field">Company<input type="text" placeholder="Company name" /></label>{' '}
-                <label className="field">Phone<input type="tel" placeholder="+886 &hellip;" /></label>
+                <label className="field">Name *<input required name="name" type="text" placeholder="Your name" /></label>{' '}
+                <label className="field">Email *<input required name="email" type="email" placeholder="you@company.com" /></label>{' '}
+                <label className="field">Company<input name="company" type="text" placeholder="Company name" /></label>{' '}
+                <label className="field">Phone<input name="phone" type="tel" placeholder="+886 &hellip;" /></label>
               </div>
-              <label className="field">Message *<textarea required rows={6} placeholder="How can we help?"></textarea></label>{' '}
-              <label className="fcheck"><input required type="checkbox" /><span>I agree to the processing of my data per the <A href={l("/privacy-legal")}>Privacy &amp; Legal</A> policy.</span></label>{' '}
+              <label className="field">Message *<textarea required name="message" rows={6} placeholder="How can we help?"></textarea></label>{' '}
+              <label className="fcheck"><input required name="consent" type="checkbox" /><span>I agree to the processing of my data per the <A href={l("/privacy-legal")}>Privacy &amp; Legal</A> policy.</span></label>{' '}
               <button type="submit" className="btn btn-solid" style={{ alignSelf: "flex-start" }}>Send message <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
             </form>
           </div>

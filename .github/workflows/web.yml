@@ -64,6 +64,9 @@ jobs:
           # 上線前一律 noindex（apps/web/src/app/robots.ts）。
           # 正式上線那次才把這個 variable 設成 1。
           NEXT_PUBLIC_ALLOW_INDEXING: ${{ vars.ALLOW_INDEXING }}
+          # reCAPTCHA v3 的 site key（公開值，會出現在頁面上）。
+          # 對應的 secret key 在 Function App 設定裡（Recaptcha__SecretKey），不放這裡。
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ vars.RECAPTCHA_SITE_KEY }}
 
       # postbuild 已經跑過 250MB gate（apps/web/scripts/check-size.mjs），
       # 這裡只把數字留在 log 裡，方便日後回頭看是哪一次開始變大的

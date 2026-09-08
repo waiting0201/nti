@@ -99,5 +99,6 @@
 | 2026-08-31 | Tim（Claude Code） | 依客戶 sitemap 對齊 §3 範圍與路由（5 個頂層、Other Printing、Post-Press Processing、Projects 錨點、Insights/Careers/Industry Trends）；標註切版以 mockup 為準 |
 
 | 2026-09-06 | Tim（Claude Code） | 會員系統移出專案範圍：§3 刪除 Member 功能頁與頁首會員入口、渲染策略的「會員/個人化頁」改為表單頁、工作分解第 4 項改為表單流程 |
+| 2026-09-08 | Tim（Claude Code） | 兩支公開表單接上後端（P6）：`PageForm` 改為真的 `POST /quotes`／`/contacts`，含 reCAPTCHA v3 取 token、附件上傳、依錯誤碼顯示中英訊息。mockup 的表單欄位補上 `name`、下拉選項補上 `db/seed` 的代號、`.fupload` 補上真的 `<input type="file">`（設計稿一直寫著可附檔卻沒有輸入欄位）。錯誤訊息節點在 client 端才插入，`verify:markup` 仍 44 頁全過 |
 
-*最後更新：2026-09-06*
+*最後更新：2026-09-08*

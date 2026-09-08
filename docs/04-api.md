@@ -189,5 +189,6 @@
 | 2026-09-08 | Tim（Claude Code） | `GET /admin/quote/{id}/attachments/{attId}` 移除 `ScanStatus <> 'Clean'` 的拒絕條件（本期不做病毒掃描，09 §17），改註明僅超管且一律以 octet-stream 送出 |
 | 2026-09-08 | Tim（Claude Code） | §3.4 補上清單的共同查詢參數 **`keyword`**（後台清單一律分頁，前端過濾只搜得到當頁 20 筆），比對主表與 i18n 側表所有有長度上限的字串欄、在 SQL 層過濾；openapi 新增共用參數 `Keyword`。`PATCH /admin/contact/{id}` 補列承辦人 |
 | 2026-09-08 | Tim（Claude Code） | 公開寫入端點的機器人防護由 **Turnstile 改為 Google reCAPTCHA v3**：§2 與 §3.3 更新，請求欄位 `turnstileToken` → `recaptchaToken`，另註明 v3 是分數制且後端會比對 `action`（`quote`／`contact`／`admin_login`） |
+| 2026-09-08 | Tim（Claude Code） | `POST /quotes` 新增三個選填的代號欄位 `solutionCode`／`industryCode`／`materialCode`（未給對應 Id 時由伺服器換算）。公開表單不該知道資料庫 Id，代號是 `db/seed` 裡穩定的公開識別；對不到只留 log 不擋單，因為那三欄本來就選填 |
 
 *最後更新：2026-09-08*

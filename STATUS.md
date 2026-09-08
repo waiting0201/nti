@@ -44,7 +44,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | P3 | 前端框架／元件 | ✅ | Next.js App Router，共用元件與各頁行為自 mockup 移植 |
 | P4 | 後端／CMS API | ✅ | 程式、資源、內容、CI 全數完成並上線（見 §五、§六） |
 | P5 | 前台頁面開發 | 🟡 | 44 頁切版完成；內容仍為靜態，未接 API |
-| P6 | 報價／聯絡表單 | 🟡 | 表單已切版（`PageForm`），前台尚未接後端 |
+| P6 | 報價／聯絡表單 | ✅ | 兩支表單已接上後端，含附件上傳與 reCAPTCHA v3（2026-09-08） |
 | P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語完成（CMS 內容 + 44 頁靜態文字皆有中文，**待客戶校閱**）；sitemap／結構化資料／舊站 301 已做（見 §二），舊站 170 條文章與標籤的落點待內容遷移 |
 | P9 | 整合測試／QA／SEO 稽核 | ⬜ | |
 | P10 | UAT 客戶驗收 | ⬜ | |
@@ -77,7 +77,6 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | 中文文案 | 已補齊（見下方「靜態文字雙語」），但**是機器翻譯初稿，待客戶校閱** |
 | 首頁 hero 素材 | 英文標語**燒在圖裡**（`ref-home-banner*.png`），中文站需要客戶提供中文版素材 |
 | 公司傳真與地圖嵌入碼 | 仍待客戶提供（地址與電話已於 2026-09-06 更新，見下方） |
-| 表單送出 | `PageForm` 只有前端行為，送出無後端（P6） |
 
 ### ✅ 靜態文字雙語（2026-09-06）
 
@@ -186,6 +185,25 @@ mockup 內容（現況部署），設了就改吃 CMS。
 - **舊網址帶結尾斜線會走兩跳**（Next 先 308 去斜線、middleware 再 301）。Google 可接受。
 
 `verify:markup` 仍然「全部 44 頁與 mockup 一致」。
+
+### ✅ 兩支表單已接上後端（2026-09-08）
+
+`PageForm` 原本只是把表單藏起來、顯示成功卡，沒有送出任何資料。現在：
+
+- **欄位有名字了**：mockup 的 input 原本連 `name` 都沒有（只靠 label 文字辨識），
+  已在 `mockup/contact.html`／`get-a-quote.html` 補上，再由 `build-pages.mjs` 同步。
+- **報價表單真的能附檔**：設計稿的 `.fupload` 一直寫著「dieline、artwork… 最多 5 個」，
+  底下卻沒有 `<input type="file">`。已補上（客戶 2026-09-08 確認），
+  否則後台的附件下載永遠沒有東西可下載。
+- **三個下拉送代號不送 Id**：`boxes`／`food-beverage`／`fsc` 這種 `db/seed` 的穩定代號，
+  由 API 換算成 Id。公開表單不該知道資料庫的 Id。
+- **reCAPTCHA v3**：`grecaptcha.execute` 取 token 後一併送出，action 為 `quote`／`contact`。
+- 送出失敗的訊息依 API 錯誤碼中英對照顯示；節點是失敗時才在 client 端插入的，
+  **`verify:markup` 仍然 44 頁全過**。
+
+**真瀏覽器實測 5 項全過**（headless Chrome + 本機 API + DB）：兩支表單都確實
+`POST` 出去並顯示成功卡；報價單的代號正確換成 Id（`boxes`→1、`food-beverage`→31、
+`fsc`→41）、`SourceLang` 為 `zh`、附件 `browser-dieline.pdf` 存進 Blob 與資料表。
 
 ### ⬜ 未做
 
@@ -461,11 +479,9 @@ git push Remote_GitHub    # ← 這一步才觸發部署
 - 正式網域 `www.nti-printing.com` 綁定（custom domain + DNS，卡客戶端）
 - **SMTP 未設定**：`Smtp__Host`／`Port` 已填 Brevo，還缺 `Smtp__User`／`Password`／`From`。
   表單照常收得到資料，只是通知信寄不出去（EmailLog 記 `Failed`，可在後台重寄）
-- **reCAPTCHA v3 未設定**：兩支公開表單與後台登入目前只靠 rate limit（10 次/小時/IP）擋。**上線前必補**
-  （2026-09-08 由 Cloudflare Turnstile 改為 Google reCAPTCHA v3；後端已就緒，要設
-  `Recaptcha__SecretKey`／`Recaptcha__MinScore`）。
-  ⚠ **前端還沒有可以放的位置**：`PageForm` 目前只是把表單藏起來顯示成功卡，
-  兩支表單都還沒真的 `POST` 到 API（P6 未完成）。要讓防護實際生效，得先把表單接上後端
+- **reCAPTCHA secret 未設定**：前端已接上（site key 走 `vars.RECAPTCHA_SITE_KEY`），
+  但 Function App 還缺 `Recaptcha__SecretKey`。**沒設 secret 時後端一律放行**，
+  所以現在兩支表單實際上只有 rate limit（10 次/小時/IP）在擋。**上線前必補**
 - mockup 預覽站（Cloudflare Pages `nti-mockup`）**設計定案後下線**
 
 ---

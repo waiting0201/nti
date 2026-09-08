@@ -15,6 +15,18 @@ public sealed class QuoteCreateDto
     public string?  Quantity               { get; set; }
     public string?  SizeText               { get; set; }
     public int?     MaterialCategoryId     { get; set; }
+
+    /// <summary>
+    /// 三個下拉也可以送**代號**而不是 Id，未給 Id 時由伺服器換算。
+    /// <para>
+    /// 公開表單不該知道資料庫的 Id：那是內部識別、跨環境未必一致，寫進頁面等於把
+    /// DB 細節外洩到 HTML。代號（<c>boxes</c>／<c>food-beverage</c>／<c>fsc</c>）是
+    /// 種子檔裡穩定的公開識別，也讓 mockup 的選項讀得懂。
+    /// </para>
+    /// </summary>
+    public string?  SolutionCode           { get; set; }
+    public string?  IndustryCode           { get; set; }
+    public string?  MaterialCode           { get; set; }
     public DateOnly? TargetDate            { get; set; }
     public bool     NeedsSustainableAdvice { get; set; }
     public string?  Requirement            { get; set; }
