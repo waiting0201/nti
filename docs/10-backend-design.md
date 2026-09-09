@@ -485,6 +485,9 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 - 新增 → `CreatedAt = Clock.UtcNow`、`CreatedBy = 目前 AdminUser.Id`
 - 修改 → `UpdatedAt` / `UpdatedBy`
 - 刪除 → 一律**軟刪**（`IsDeleted = 1`），禁止 `Remove()` 硬刪內容表
+  - **唯一例外：`AdminUser` 為真刪**（2026-09-09）。帳號不是內容，軟刪的那一列仍佔著
+    `UQ_AdminUser_Username`，同名重建會被擋成「此帳號已存在」——操作者看到的是「刪了卻沒刪掉」。
+    走 `ExecuteDeleteAsync()` 繞過這裡的改寫；舊的軟刪列由 migration `PurgeDeletedAdminUsers` 清掉
 - 目前使用者由 `IHttpContextAccessor` 取 `sub` claim
 
 前台所有查詢共用 §8.2 的 `PublicFilter`。
@@ -704,7 +707,7 @@ traces | where timestamp > ago(30m)
 - [ ] 無字面值狀態碼／權限碼／`CategoryType`／`PageKey`（一律用 `Constants`）
 - [ ] 前台查詢帶 `PublicFilter`（`IsDeleted` + `IsPublished` + 上下架時間窗）
 - [ ] 前台 i18n 用 `INNER JOIN`（不 fallback）；後台用 `LEFT JOIN`
-- [ ] 內容刪除為軟刪，非 `Remove()`
+- [ ] 內容刪除為軟刪，非 `Remove()`（`AdminUser` 是唯一的真刪例外，見 §8.4）
 - [ ] 多表寫入包在 `CreateExecutionStrategy()` + transaction 內
 - [ ] 上傳有副檔名白名單 + 大小限制 + **magic bytes 驗證**
 - [ ] 公開寫入端點有 reCAPTCHA v3（含 action 比對與分數門檻）+ rate limit
@@ -747,5 +750,6 @@ traces | where timestamp > ago(30m)
 | 2026-09-08 | Tim（Claude Code） | **報價附件不做病毒掃描**（09 §17）：錯誤碼表移除 `UPLOAD_UNSCANNED`，§9.5 上傳流程第 7 條與 Blob 代理段落改為「下載限 `quote.download`、一律 octet-stream」。`QuoteAttachment.ScanStatus` 欄位與 `CK_QuoteAtt_Scan` 由 migration `DropAttachmentScanStatus` 移除——該 migration 依 §11.1 用 `sys.default_constraints` 查名再砍，不寫死 `DF_QuoteAttachment_ScanStatus` |
 | 2026-09-08 | Tim（Claude Code） | **機器人防護由 Cloudflare Turnstile 改為 Google reCAPTCHA v3**：§9.6 改寫（v3 是分數制，需 `Recaptcha__MinScore` 門檻與 `action` 比對）、§4.2 註冊改為 `IBotCheckService`／`RecaptchaService`（介面刻意不帶供應商名稱）、錯誤碼 `BOT_CHECK_FAILED` 的說明與 §12 環境變數表同步。前端 DTO 欄位 `turnstileToken` → `recaptchaToken` |
 | 2026-09-09 | Tim（Claude Code） | §7.4 補一條：後台帳號的密碼由建立者直接指定（`POST /admin/admin` 的 `password`、`PUT /admin/admin/{id}/password`），不寄信、不回傳密碼、`MustChangePassword` 清為 false。`AdminAccountHandler` 因此不再相依 `IEmailService` |
+| 2026-09-09 | Tim（Claude Code） | §8.4 補上軟刪鐵律的唯一例外：**`AdminUser` 改為真刪**。軟刪的帳號雖然從清單消失也登不進來，卻永久佔著 `UQ_AdminUser_Username`，同名重建被擋成「此帳號已存在」。改用 `ExecuteDeleteAsync()`；既有的軟刪列由 migration `PurgeDeletedAdminUsers` 一次清掉 |
 
 *最後更新：2026-09-09*

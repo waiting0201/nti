@@ -34,6 +34,9 @@
 
 ### 2.3 稽核與軟刪（所有內容表皆含）
 
+> `AdminUser` 雖然也有這五欄，但**刪除走真刪**（2026-09-09，見 [10 §8.4](10-backend-design.md)）：
+> 軟刪的帳號會永久佔住 `UQ_AdminUser_Username`，同名再也建不起來。
+
 ```sql
 CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
 CreatedBy INT NULL, UpdatedAt DATETIME2(0) NULL, UpdatedBy INT NULL,
@@ -846,5 +849,6 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-09-06 | Tim（Claude Code） | **後台登入識別改為 `AdminUser.Username`**（不限定 email 格式）：新增 `Username NVARCHAR(80) NOT NULL UNIQUE`，唯一鍵由 `UQ_AdminUser_Email` 換成 `UQ_AdminUser_Username`，`Email` 降為選填的通知信箱（沒填就寄不出啟用信，初始密碼改由建立者當場轉交）。既有帳號的 email 原封搬進 `Username`，登入方式不變。遷移：`Api/Data/Migrations/20260906130926_AdminUsernameLogin` ↔ `db/migrations/0005_admin_username.sql` |
 | 2026-09-06 | Tim（Claude Code） | **會員與訂單移出專案範圍**：移除 `Member`／`MemberToken`／`Orders`／`OrderProgress` 四張表、`QuoteRequest.MemberId` 外鍵、`SupplierDownload.RequireLogin`（受控文件概念一併取消）與三條相關索引。表數 49 → 45、外鍵 35 → 30、非 PK/UQ 索引 20 → 17、權限矩陣 171 → 167 列（SuperAdmin 83 → 79）。§4.13 保留節次編號並註明移除原因，避免既有交叉引用失效 |
 | 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：移除 `AuditLog` 表與 `IX_AuditLog_Entity`。表數 45 → 44、非 PK/UQ 索引 17 → 16。單元 24 保留但只剩信件紀錄（`EmailLog`），權限碼 `audit.view`／`audit.resend` 沿用，權限矩陣仍為 167 列 |
+| 2026-09-09 | Tim（Claude Code） | `AdminUser` 的刪除改為真刪（§2.3 加註）：軟刪列會佔住 `UQ_AdminUser_Username`。遷移 `Api/Data/Migrations/20260909125600_PurgeDeletedAdminUsers` 把既有的 `IsDeleted = 1` 帳號一次刪除 |
 
-*最後更新：2026-09-06*
+*最後更新：2026-09-09*

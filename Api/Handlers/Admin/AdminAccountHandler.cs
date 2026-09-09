@@ -178,8 +178,13 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher)
                 throw AppException.Conflict(ErrorCodes.ConflictState, "至少要保留一位可用的超級管理員。");
         }
 
-        db.AdminUser.Remove(user);   // 軟刪
-        await db.SaveChangesAsync();
+        // 帳號不是內容，這裡是**真刪**：軟刪只會讓那一列繼續佔著 Username 的唯一鍵，
+        // 從清單消失、也登不進去，可是同名重建會被擋成「此帳號已存在」——
+        // 對操作者而言就是「刪了卻沒刪掉」。ExecuteDelete 直接下 DELETE，
+        // 繞過 SaveChanges 對 IAuditable 的軟刪改寫（docs/10 §8.4）。
+        // 內容的 CreatedBy/UpdatedBy 與表單的 AssigneeId 指向 AdminUser.Id 但刻意無 FK，
+        // 刪掉不會擋住這裡，那些欄位本來就只是 id。
+        await db.AdminUser.Where(x => x.Id == user.Id).ExecuteDeleteAsync();
 
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok("已刪除。"));

@@ -286,8 +286,10 @@ export async function updateAdmin(id: string, patch: AdminPatch): Promise<void> 
 
 export async function deleteAdmin(id: string): Promise<void> {
   await delay()
-  const row = table('adminUser').find((r) => r.id === id)
-  if (!row) throw new Error('查無此帳號。')
-  row.isDeleted = true
+  const rows = table('adminUser')
+  const i = rows.findIndex((r) => r.id === id)
+  if (i < 0) throw new Error('查無此帳號。')
+  // 與真 API 一致：管理員是真刪，不是軟刪——軟刪會讓帳號名被永久佔住
+  rows.splice(i, 1)
   persist()
 }

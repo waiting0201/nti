@@ -573,7 +573,8 @@ export function AdminUsersPage() {
             load()
           }}
         >
-          「{confirm.displayName}（{confirm.username}）」將無法再登入後台。已留下的操作紀錄不受影響。
+          「{confirm.displayName}（{confirm.username}）」會被<b>真的刪除</b>，之後同一個帳號名可以重新建立。
+          此人建立或修改過的內容不受影響，只是不再對得回一個帳號。
         </Modal>
       )}
 
