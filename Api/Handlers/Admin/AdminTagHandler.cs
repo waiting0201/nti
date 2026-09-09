@@ -161,8 +161,9 @@ public sealed partial class AdminTagHandler(AppDbContext db)
     {
         var tag = await FindAsync(rawId);
 
-        // 還掛著消息就不給刪，與分類同一條規則：這裡是軟刪，關聯留著會讓
-        // 前台詳細頁的標籤 INNER JOIN 查不到名稱而整個標籤消失，靜靜地壞掉。
+        // 還掛著消息就不給刪，與分類同一條規則。NewsTag → Tag 的 FK 是 Restrict，
+        // 不先擋的話 DB 一樣會擋，只是操作者看不到「是哪些消息還掛著」這個理由。
+
         if (await db.NewsTag.AnyAsync(nt => nt.TagId == tag.Id))
             throw AppException.Conflict(ErrorCodes.ConflictState, "仍有消息使用此標籤，請先從那些消息移除。");
 

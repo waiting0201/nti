@@ -17,7 +17,7 @@
 |------|------|
 | [`04-api.md`](04-api.md) | API 契約：端點清單、權限碼對照、回應信封（本文件 §5 為其實作規格） |
 | [`08-database.md`](08-database.md) | 資料表 DDL、多語策略、索引、種子 —— 本文件 §8 定義如何以 EF Core 表達 |
-| [`09-cms-admin.md`](09-cms-admin.md) | 23 個後台單元、上傳尺寸規則、**權限矩陣（170 列，權威來源）** |
+| [`09-cms-admin.md`](09-cms-admin.md) | 23 個後台單元、上傳尺寸規則、**權限矩陣（173 列，權威來源）** |
 | [`03-backend.md`](03-backend.md) | 領域範圍與模組邊界 |
 | [`07-deployment.md`](07-deployment.md) | Azure 資源與部署地圖（本文件 §11 為其 CI/CD 落地） |
 | [`db/README.md`](../db/README.md) | **Azure SQL Basic 相容性 checklist**（§8.6 沿用該表） |
@@ -290,7 +290,8 @@ int pageSize = int.TryParse(req.Query["pageSize"], out var ps) ? Math.Clamp(ps, 
 | `AUTH_MUST_CHANGE_PASSWORD` | 403 | `MustChangePassword=1` 尚未改密碼 |
 | `AUTH_ACCOUNT_INACTIVE` | 403 | 帳號停用 |
 | `FORBIDDEN` | 403 | 權限碼不足（§7.5） |
-| `NOT_FOUND` | 404 | 資源不存在／已軟刪／未上架 |
+| `NOT_FOUND` | 404 | 資源不存在／未上架 |
+
 | `CONFLICT_DUPLICATE` | 409 | slug、`Code`、email 重複 |
 | `CONFLICT_STATE` | 409 | 狀態不允許此操作（如上架但缺英文語系） |
 | `UPLOAD_TYPE` | 400 | 副檔名或 magic bytes 不在白名單 |
@@ -397,7 +398,7 @@ private static string? GetRequiredPermission(string method, string[] segments) =
 
 > Jabez 此處的預設是 `_ => null`（＝登入即可），其文件自承是已知風險。**NTI 改為預設拒絕**：新增 `/admin/*` 端點若忘了補權限表，會直接 403 而不是靜默放行。非 `/admin/*` 的公開路由走 `IsPublicRoute` 白名單，不經此表。
 
-`RequirePermission` 檢查 `permissions` claim；`is_superadmin=true` 自動通過。權限碼值域＝[`09-cms-admin.md` §6](09-cms-admin.md) 的 170 列，與 `db/seed/110_role_permission.sql` 逐字對應（§9.2）。
+`RequirePermission` 檢查 `permissions` claim；`is_superadmin=true` 自動通過。權限碼值域＝[`09-cms-admin.md` §6](09-cms-admin.md) 的 173 列，與 `db/seed/110_role_permission.sql` 逐字對應（§9.2）。
 
 ### 7.6 公開路由白名單
 
@@ -484,10 +485,21 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 
 - 新增 → `CreatedAt = Clock.UtcNow`、`CreatedBy = 目前 AdminUser.Id`
 - 修改 → `UpdatedAt` / `UpdatedBy`
-- 刪除 → 一律**軟刪**（`IsDeleted = 1`），禁止 `Remove()` 硬刪內容表
-  - **唯一例外：`AdminUser` 為真刪**（2026-09-09）。帳號不是內容，軟刪的那一列仍佔著
-    `UQ_AdminUser_Username`，同名重建會被擋成「此帳號已存在」——操作者看到的是「刪了卻沒刪掉」。
-    走 `ExecuteDeleteAsync()` 繞過這裡的改寫；舊的軟刪列由 migration `PurgeDeletedAdminUsers` 清掉
+- 刪除 → **真刪**（2026-09-09 改，原為一律軟刪）。`Remove()` 就是 `DELETE`，`SaveChangesAsync`
+  不再把 `Deleted` 改寫成 `IsDeleted = 1`
+  - 改的理由與 `AdminUser` 當初改真刪是同一個：軟刪的那一列從清單消失、前台也查不到，
+    卻仍佔著 slug、分類代號這些唯一鍵，同名重建被擋成「已存在」——操作者看到的是
+    「刪了卻沒刪掉，而且名字再也用不回來」
+  - 子表（17 張 `*I18n`、`SolutionItem`、`QuoteAttachment`、`NewsTag`）的 FK 為
+    `ON DELETE CASCADE`，跟著主檔走。**新增子表時要一併設 Cascade**，
+    否則那個單元一按刪除就撞 FK；`db/verify` 有「CASCADE 外鍵數 = 20」的斷言守著
+  - 仍是 `Restrict` 的是「被引用」而非「被擁有」的關聯：`Category`、`Tag`、
+    `QuoteRequest → Solution`。這類刪除由 handler 先擋並給出理由（「仍有 N 筆內容引用」），
+    漏擋的則由 `ExceptionMiddleware` 把 SQL 547 翻成 409
+  - `IsDeleted` 欄位與查詢中的 `IsDeleted = 0` 條件**保留**（索引依賴它、日後要對特定表
+    恢復軟刪也不必再開遷移），但**沒有任何一處寫入它**
+  - 既有的軟刪列由 migration `HardDeleteCascades` 一次清掉
+
 - 目前使用者由 `IHttpContextAccessor` 取 `sub` claim
 
 前台所有查詢共用 §8.2 的 `PublicFilter`。
@@ -542,7 +554,7 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 
 | class | 內容 | 權威來源 |
 |---|---|---|
-| `PermissionCodes` | 170 列權限碼 | [`09-cms-admin.md` §6](09-cms-admin.md) ＝ `db/seed/110_role_permission.sql` |
+| `PermissionCodes` | 173 列權限碼 | [`09-cms-admin.md` §6](09-cms-admin.md) ＝ `db/seed/110_role_permission.sql` |
 | `RoleNames` | 超級管理員／內容編輯／檢視者 | 09 §6 |
 | `CategoryTypes` | 九種 `CategoryType` | [`08-database.md`](08-database.md) §4.1 |
 | `PageKeys` | 29 個固定頁 key | 08 §4／`db/seed/140_page.sql` |
@@ -707,7 +719,8 @@ traces | where timestamp > ago(30m)
 - [ ] 無字面值狀態碼／權限碼／`CategoryType`／`PageKey`（一律用 `Constants`）
 - [ ] 前台查詢帶 `PublicFilter`（`IsDeleted` + `IsPublished` + 上下架時間窗）
 - [ ] 前台 i18n 用 `INNER JOIN`（不 fallback）；後台用 `LEFT JOIN`
-- [ ] 內容刪除為軟刪，非 `Remove()`（`AdminUser` 是唯一的真刪例外，見 §8.4）
+- [ ] 刪除為真刪；新增的子表 FK 已設 `ON DELETE CASCADE`，「被引用」的關聯維持 `Restrict` 並在 handler 給出擋下的理由（見 §8.4）
+
 - [ ] 多表寫入包在 `CreateExecutionStrategy()` + transaction 內
 - [ ] 上傳有副檔名白名單 + 大小限制 + **magic bytes 驗證**
 - [ ] 公開寫入端點有 reCAPTCHA v3（含 action 比對與分數門檻）+ rate limit
@@ -752,4 +765,7 @@ traces | where timestamp > ago(30m)
 | 2026-09-09 | Tim（Claude Code） | §7.4 補一條：後台帳號的密碼由建立者直接指定（`POST /admin/admin` 的 `password`、`PUT /admin/admin/{id}/password`），不寄信、不回傳密碼、`MustChangePassword` 清為 false。`AdminAccountHandler` 因此不再相依 `IEmailService` |
 | 2026-09-09 | Tim（Claude Code） | §8.4 補上軟刪鐵律的唯一例外：**`AdminUser` 改為真刪**。軟刪的帳號雖然從清單消失也登不進來，卻永久佔著 `UQ_AdminUser_Username`，同名重建被擋成「此帳號已存在」。改用 `ExecuteDeleteAsync()`；既有的軟刪列由 migration `PurgeDeletedAdminUsers` 一次清掉 |
 
+| 2026-09-09 | Tim（Claude Code） | §8.4 的軟刪鐵律**整條翻面：刪除一律真刪**。`AdminUser` 的例外變成通則——軟刪列佔著唯一鍵，操作者看到的是「刪了卻沒刪掉、名字再也用不回來」。`SaveChangesAsync` 不再改寫 `Deleted`；子表 FK 改 `ON DELETE CASCADE`（共 20 條，`db/verify` 有斷言）；「被引用」的關聯維持 `Restrict`，並由 `ExceptionMiddleware` 把 DELETE 撞到的 SQL 547 翻成一句看得懂的 409。`IsDeleted` 欄位保留但不再寫入 |
+
 *最後更新：2026-09-09*
+

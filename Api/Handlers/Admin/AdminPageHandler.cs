@@ -9,9 +9,14 @@ using System.Text;
 namespace Nti.Api.Handlers.Admin;
 
 /// <summary>
-/// 15 page。29 筆固定頁**不可增刪**（權限矩陣也沒有 <c>page.delete</c>），
-/// 只能改 SEO 欄位；<c>HasRichBody = 1</c> 的兩頁另可編輯內文。
+/// 15 page。29 筆固定頁**不可新增**（是寫死對應前台路由的），只能改 SEO 欄位；
+/// <c>HasRichBody = 1</c> 的兩頁另可編輯內文。
+/// <para>
+/// 刪除自 2026-09-09 開放，但只給 SuperAdmin（<c>page.delete</c>）：刪掉之後前台那條路由
+/// 還在，只是再也讀不到它的 SEO 設定，等於整頁的 title／description 消失。
+/// </para>
 /// </summary>
+
 public sealed class AdminPageHandler(AppDbContext db)
 {
     public async Task<IActionResult> GetListAsync(HttpRequest req)
@@ -104,7 +109,23 @@ public sealed class AdminPageHandler(AppDbContext db)
         return new OkObjectResult(ApiResponse.Ok("已更新。"));
     }
 
+    /// <summary>
+    /// 刪除一筆固定頁（真刪，docs/10 §8.4）。<c>PageI18n</c> 由 FK 的 CASCADE 一起帶走。
+    /// </summary>
+    public async Task<IActionResult> DeleteAsync(HttpRequest req, string pageKey)
+    {
+        var page = await db.Page.FirstOrDefaultAsync(p => p.PageKey == pageKey && !p.IsDeleted)
+            ?? throw AppException.NotFound("Page");
+
+        db.Page.Remove(page);
+        await db.SaveChangesAsync();
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok("已刪除。"));
+    }
+
     /// <summary>SEO 欄位長度上限（05-seo）。超過就擋，不要靜默截斷。</summary>
+
     private static string? Limit(string? value, int max, string field)
     {
         if (value is null) return null;

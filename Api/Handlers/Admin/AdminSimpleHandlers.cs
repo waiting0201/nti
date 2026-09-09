@@ -74,7 +74,8 @@ public sealed class AdminClientHandler(AppDbContext db)
 
     public async Task<IActionResult> DeleteAsync(HttpRequest req, string rawId)
     {
-        db.ClientLogo.Remove(await FindAsync(rawId));   // 軟刪，由 SaveChanges 改寫
+        db.ClientLogo.Remove(await FindAsync(rawId));   // 真刪（docs/10 §8.4）
+
         await db.SaveChangesAsync();
 
         CacheControl.NoStore(req.HttpContext.Response);
@@ -93,7 +94,7 @@ public sealed class AdminClientHandler(AppDbContext db)
 
 /// <summary>
 /// 後台圖片上傳。掛在各單元底下（<c>POST /admin/{unit}/upload</c>）並沿用該單元的
-/// <c>{unit}.edit</c> 權限——另開一個 <c>media.*</c> 權限碼會讓 171 列的矩陣對不上。
+/// <c>{unit}.edit</c> 權限——另開一個 <c>media.*</c> 權限碼會讓 173 列的矩陣對不上。
 /// </summary>
 public sealed class AdminMediaHandler(IBlobStorageService blobs)
 {
@@ -300,7 +301,9 @@ public sealed class AdminCategoryHandler(AppDbContext db)
     {
         var category = await FindAsync(rawId);
 
-        // 有內容掛在底下就不給刪：軟刪主檔會讓那些內容的分類名稱查不到（前台 INNER JOIN 會整筆消失）
+        // 有內容掛在底下就不給刪。這條先擋是為了給得出理由：不擋的話 CategoryGuard 的
+        // 複合 FK 一樣會擋下來，但操作者只會拿到一句籠統的「資料仍被引用」。
+
         if (await IsInUseAsync(category.Id))
             throw AppException.Conflict(ErrorCodes.ConflictState, "仍有內容使用此分類，請先移除或改分類。");
 

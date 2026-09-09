@@ -79,7 +79,8 @@ Api/
 - **骨架**：統一信封與錯誤碼、例外處理、JWT（雙 audience）、集中式路由與預設拒絕授權、
   `Common/` 常數（權限碼 79／CategoryType 9／PageKey 29）、`GET /health`
 - **資料層**：43 張表的 Entity 與 Configuration、Migration（`InitialSchema` → `RemoveMemberAndOrder` → `AdminUsernameLogin` → `DropAuditLog`）、
-  `AppDbContext`（稽核欄位統一填寫、軟刪改寫）
+  `AppDbContext`（稽核欄位統一填寫；刪除為真刪，見 docs/10 §8.4）
+
 - **種子**：角色 3／權限 167／分類 44(+88)／設定 15／固定頁 29(+58)／方案 4(+8)，
   由 `Data/Seed/SeedData.cs` 的 `HasData` 寫入，Id 硬編、跨環境一致
 

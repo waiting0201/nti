@@ -126,10 +126,17 @@ export async function create(unit: string, row: Omit<Row, 'id'>): Promise<Row> {
   return created
 }
 
-/** docs §5.7：一律軟刪，列表隱藏 */
-export async function softDelete(unit: string, ids: string[]): Promise<void> {
+/**
+ * docs §5.7：**真的刪掉**，不是標記。與真 API 一致（後端的 DELETE 是 DELETE），
+ * 示範模式若只標 isDeleted，同一個 slug／代號就再也建不回來，
+ * 而客戶在示範站上看到的正是那個行為。
+ */
+export async function remove(unit: string, ids: string[]): Promise<void> {
   await delay()
-  for (const r of table(unit)) if (ids.includes(r.id)) r.isDeleted = true
+  const rows = table(unit)
+  // 子清單（目前只有方案的品項卡）跟著母體走，對應後端 FK 的 ON DELETE CASCADE
+  for (let i = rows.length - 1; i >= 0; i--)
+    if (ids.includes(rows[i].id) || (rows[i].parentId && ids.includes(rows[i].parentId!))) rows.splice(i, 1)
   persist()
 }
 

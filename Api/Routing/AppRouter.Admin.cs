@@ -37,10 +37,11 @@ public sealed partial class AppRouter
             (_, ["admin", var unit, ..]) when ContentUnits.Contains(unit) =>
                 ContentPermission(method, unit, segments),
 
-            // ── 15 page：29 筆固定頁不可增刪，故無 delete ────────────────
+            // ── 15 page：29 筆固定頁不可新增；刪除僅超管（刪掉前台就沒有該頁的 SEO）──
             ("POST",           ["admin", "page", "upload"]) => PermissionCodes.PageEdit,
             ("GET",            ["admin", "page", ..])       => PermissionCodes.PageView,
             ("PUT" or "PATCH", ["admin", "page", _])        => PermissionCodes.PageEdit,
+            ("DELETE",         ["admin", "page", _])        => PermissionCodes.PageDelete,
 
             // ── 16 redirect ──────────────────────────────────────────────
             ("GET",            ["admin", "redirect", "export"]) => PermissionCodes.RedirectExport,
@@ -55,10 +56,12 @@ public sealed partial class AppRouter
             ("GET",            ["admin", "quote", _, "attachments", _])   => PermissionCodes.QuoteDownload,
             ("GET",            ["admin", "quote", ..])                    => PermissionCodes.QuoteView,
             ("PUT" or "PATCH", ["admin", "quote", _])                     => PermissionCodes.QuoteEdit,
+            ("DELETE",         ["admin", "quote", _])                     => PermissionCodes.QuoteDelete,
 
             // ── 18 contact ───────────────────────────────────────────────
             ("GET",            ["admin", "contact", ..]) => PermissionCodes.ContactView,
             ("PUT" or "PATCH", ["admin", "contact", _])  => PermissionCodes.ContactEdit,
+            ("DELETE",         ["admin", "contact", _])  => PermissionCodes.ContactDelete,
 
             // ── 21 setting ───────────────────────────────────────────────
             ("POST",           ["admin", "setting", "upload"]) => PermissionCodes.SettingEdit,
@@ -110,11 +113,12 @@ public sealed partial class AppRouter
         {
             // ── 01 home-banner ───────────────────────────────────────────
             _ when segments is ["admin", "home-banner", ..] => await Content(adminBanners, req, method, segments),
-            // ── 02 solution（固定 4 筆：不開放新增與刪除）────────────────
+            // ── 02 solution（固定 4 筆：不開放新增，但可刪除）────────────
             _ when segments is ["admin", "solution", "item", ..] =>
                 await Content(adminSolutionItems, req, method, segments[1..]),
             _ when segments is ["admin", "solution", ..] =>
-                await Content(adminSolutions, req, method, segments, allowCreate: false, allowDelete: false),
+                await Content(adminSolutions, req, method, segments, allowCreate: false),
+
             // ── 03–14 ────────────────────────────────────────────────────
             _ when segments is ["admin", "project", ..]           => await Content(adminProjects, req, method, segments),
             _ when segments is ["admin", "news", ..]              => await Content(adminNews, req, method, segments),
@@ -141,6 +145,7 @@ public sealed partial class AppRouter
             ("GET",            ["admin", "page"])           => await adminPages.GetListAsync(req),
             ("GET",            ["admin", "page", var key])  => await adminPages.GetByKeyAsync(req, key),
             ("PUT" or "PATCH", ["admin", "page", var key])  => await adminPages.UpdateAsync(req, key),
+            ("DELETE",         ["admin", "page", var key])  => await adminPages.DeleteAsync(req, key),
 
             // ── 16 redirect ──────────────────────────────────────────────
             ("GET",            ["admin", "redirect", "export"]) => await adminRedirects.ExportAsync(req),
@@ -158,11 +163,13 @@ public sealed partial class AppRouter
             ("GET",            ["admin", "quote"])                           => await adminForms.GetQuotesAsync(req),
             ("GET",            ["admin", "quote", var id])                   => await adminForms.GetQuoteAsync(req, id),
             ("PUT" or "PATCH", ["admin", "quote", var id])                   => await adminForms.UpdateQuoteAsync(req, id),
+            ("DELETE",         ["admin", "quote", var id])                   => await adminForms.DeleteQuoteAsync(req, id),
 
             // ── 18 contact ───────────────────────────────────────────────
             ("GET",            ["admin", "contact"])          => await adminForms.GetContactsAsync(req),
             ("GET",            ["admin", "contact", var id])  => await adminForms.GetContactAsync(req, id),
             ("PUT" or "PATCH", ["admin", "contact", var id])  => await adminForms.UpdateContactAsync(req, id),
+            ("DELETE",         ["admin", "contact", var id])  => await adminForms.DeleteContactAsync(req, id),
 
             // ── 21 setting ───────────────────────────────────────────────
             ("POST",           ["admin", "setting", "upload"]) => await adminMedia.UploadAsync(req),

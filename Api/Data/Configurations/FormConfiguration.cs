@@ -57,10 +57,11 @@ public sealed class QuoteAttachmentConfiguration : IEntityTypeConfiguration<Quot
         b.Property(x => x.ContentType).Ascii(100);
         b.Property(x => x.CreatedAt).HasDefaultValueSql("SYSUTCDATETIME()");
 
+        // 附件沒有獨立於報價的意義，報價刪掉就一起走（Blob 檔案由 OrphanMediaFunction 回收）
         b.HasOne<QuoteRequest>().WithMany()
             .HasForeignKey(x => x.QuoteRequestId)
             .HasConstraintName("FK_QuoteAttachment_QuoteRequest")
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         b.HasIndex(x => x.QuoteRequestId).HasDatabaseName("IX_QuoteAttachment_Quote");
     }

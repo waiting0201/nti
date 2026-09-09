@@ -270,8 +270,9 @@ export async function create(unit: string, row: Omit<Row, 'id'>): Promise<Row> {
   return { ...row, id: String(created.id) } as Row
 }
 
-/** docs §5.7：一律軟刪。後端的 DELETE 本來就是軟刪（`Remove()` 被改寫）。 */
-export async function softDelete(unit: string, ids: string[]): Promise<void> {
+/** docs §5.7：真刪。後端的 DELETE 就是 DELETE，子表由 FK 的 CASCADE 帶走（docs/10 §8.4）。 */
+export async function remove(unit: string, ids: string[]): Promise<void> {
+
   for (const id of ids) await api.delete(`/admin/${pathOf(unit)}/${toApiId(id)}`)
 }
 

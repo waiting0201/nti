@@ -28,7 +28,7 @@
 
 > 本節定義**契約形狀**；對應的實作寫法（類別、middleware、Router）見 [`10-backend-design.md`](10-backend-design.md)。
 
-- **執行環境**：**Azure Functions .NET 10（isolated）+ ASP.NET Core Integration**。**單一 `RouterFunction` catch-all（`Route = "{*route}"`）+ `AppRouter` 集中式分派**，不是每個資源群組一支 Function —— 路由表與權限表集中在一處，便於與 [`09-cms-admin.md` §6](09-cms-admin.md) 的 171 列權限矩陣逐條對照。詳見 [`10-backend-design.md` §3](10-backend-design.md)。
+- **執行環境**：**Azure Functions .NET 10（isolated）+ ASP.NET Core Integration**。**單一 `RouterFunction` catch-all（`Route = "{*route}"`）+ `AppRouter` 集中式分派**，不是每個資源群組一支 Function —— 路由表與權限表集中在一處，便於與 [`09-cms-admin.md` §6](09-cms-admin.md) 的 173 列權限矩陣逐條對照。詳見 [`10-backend-design.md` §3](10-backend-design.md)。
 - **風格**：RESTful（資源導向）；JSON。
 - **路徑前綴**：**`/api/v1`**（`host.json` 的 `routePrefix`）。下方 §3 列出的路徑一律省略此前綴，例如 `GET /solutions` 的實際位址是 `GET /api/v1/solutions`。
 - **JSON 命名**：一律 **camelCase**（請求與回應皆然）。

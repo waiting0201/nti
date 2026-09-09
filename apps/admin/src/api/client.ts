@@ -21,7 +21,8 @@ export const listAll       = impl.listAll
 export const get           = impl.get
 export const save          = impl.save
 export const create        = impl.create
-export const softDelete    = impl.softDelete
+export const remove        = impl.remove
+
 export const setPublished  = impl.setPublished
 export const reorder       = impl.reorder
 export const listChildren  = impl.listChildren

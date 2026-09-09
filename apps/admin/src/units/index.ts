@@ -64,13 +64,13 @@ export function unitFields(unit: Unit): Field[] {
 export function validateUnits(): string[] {
   const problems: string[] = []
 
-  // 權限矩陣展開後應與 db/seed/110_role_permission.sql 的 170 列一致；
+  // 權限矩陣展開後應與 db/seed/110_role_permission.sql 的 173 列一致；
   // 對不上代表前後端對權限的認知已岔開，要先修正再往下做。
   const perm = permissionRowCount()
-  if (perm.SuperAdmin !== 81 || perm.Editor !== 68 || perm.Viewer !== 21) {
+  if (perm.SuperAdmin !== 84 || perm.Editor !== 68 || perm.Viewer !== 21) {
     problems.push(
       `權限矩陣與 db/seed/110_role_permission.sql 不一致：` +
-        `SuperAdmin ${perm.SuperAdmin}（應 81）／Editor ${perm.Editor}（應 68）／Viewer ${perm.Viewer}（應 21）`,
+        `SuperAdmin ${perm.SuperAdmin}（應 84）／Editor ${perm.Editor}（應 68）／Viewer ${perm.Viewer}（應 21）`,
     )
   }
 

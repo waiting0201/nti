@@ -32,10 +32,12 @@
 - 一律 `DATETIME2(0)`，**存 UTC**（`SYSUTCDATETIME()`）；顯示時由前端／後台轉 `Asia/Taipei`。
 - 純日期性質（新聞發佈日、公告日）用 `DATE`，不帶時區問題。
 
-### 2.3 稽核與軟刪（所有內容表皆含）
+### 2.3 稽核欄位（所有內容表皆含）
 
-> `AdminUser` 雖然也有這五欄，但**刪除走真刪**（2026-09-09，見 [10 §8.4](10-backend-design.md)）：
-> 軟刪的帳號會永久佔住 `UQ_AdminUser_Username`，同名再也建不起來。
+> ⚠ **`IsDeleted` 已不再被寫入**（2026-09-09）：後台的刪除全面改為真刪，
+> 見 [10 §8.4](10-backend-design.md)、[09 §5.7](09-cms-admin.md)。
+> 欄位與各處查詢的 `IsDeleted = 0` 條件保留——既有索引依賴它，日後若要對特定表
+> 恢復軟刪也不必再開一次遷移。既有的軟刪列由遷移 `HardDeleteCascades` 一次清掉。
 
 ```sql
 CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
@@ -677,7 +679,9 @@ Azure SQL **Basic（5 DTU / 2 GB）**，索引寧缺勿濫；下列為必要清�
 
 ```sql
 -- slug 路由（前台每次詳細頁都會打）
--- 刻意不含 IsDeleted：軟刪的內容仍永久佔用 slug。SEO 上舊網址不該被回收後指向不同內容。
+-- 刻意不含 IsDeleted：這條件在軟刪年代是為了讓刪掉的內容仍佔著 slug。
+-- 改真刪之後刪掉就不再有列，加不加都一樣；索引留著是為了擋「兩筆現存內容用同一個 slug」。
+
 CREATE UNIQUE INDEX UX_NewsI18n_Lang_Slug ON dbo.NewsI18n(Lang, Slug);
 CREATE UNIQUE INDEX UX_SolutionI18n_Lang_Slug ON dbo.SolutionI18n(Lang, Slug);
 CREATE UNIQUE INDEX UX_PageI18n_Lang_Slug ON dbo.PageI18n(Lang, Slug);
@@ -730,7 +734,7 @@ CREATE INDEX IX_NewsletterSubscriber_Status ON dbo.NewsletterSubscriber(Status, 
 | `Editor` | 內容編輯 | 內容單元 01–14 的 `view/edit/publish/delete`；15 頁面 SEO 與 16 轉址；17 報價／18 聯絡的檢視與改狀態。**不可** `quote.download`／`quote.export`，不可觸及 21 設定、22 分類、23 管理員、24 信件紀錄（67 列） |
 | `Viewer` | 檢視者 | 內容單元 01–14、15、16、17、18、21、22 的 `view`。**對 23 管理員、24 信件紀錄無任何權限**（21 列） |
 
-權限碼格式 `{單元代號}.{action}`，`unit` 對應 [09-cms-admin.md](09-cms-admin.md) 的單元代號（如 `news.edit`、`quote.export`）。合計 **170 列**，由 `db/verify/verify.sql` 斷言。
+權限碼格式 `{單元代號}.{action}`，`unit` 對應 [09-cms-admin.md](09-cms-admin.md) 的單元代號（如 `news.edit`、`quote.export`）。合計 **173 列**，由 `db/verify/verify.sql` 斷言。
 
 矩陣描述到、但原本未定代號的三項，本次補上：`quote.download`（報價附件下載）、`redirect.export`（轉址 CSV 匯入匯出）、`audit.resend`（`EmailLog` 重寄）。
 
@@ -834,7 +838,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 - [ ] 有網址的實體（`Page`／`News`／`Solution`）具備完整 SEO 欄位組。
 - [ ] 每個圖片欄位都有對應的多語 `Alt` 欄位。
 - [ ] 遷移腳本可從空庫一次建置到位並帶入 §6 種子。
-- [ ] `db/verify/verify.sql` 全數 PASS（48 張表、33 條外鍵、0 個匿名約束、170 列權限、種子筆數相符）。
+- [ ] `db/verify/verify.sql` 全數 PASS（48 張表、33 條外鍵、0 個匿名約束、173 列權限、種子筆數相符）。
 - [ ] 冪等實測：`db/tools/run-local.sh` **連續跑兩次**零錯誤且 verify 輸出相同。
 
 ---
@@ -850,5 +854,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-09-06 | Tim（Claude Code） | **會員與訂單移出專案範圍**：移除 `Member`／`MemberToken`／`Orders`／`OrderProgress` 四張表、`QuoteRequest.MemberId` 外鍵、`SupplierDownload.RequireLogin`（受控文件概念一併取消）與三條相關索引。表數 49 → 45、外鍵 35 → 30、非 PK/UQ 索引 20 → 17、權限矩陣 171 → 167 列（SuperAdmin 83 → 79）。§4.13 保留節次編號並註明移除原因，避免既有交叉引用失效 |
 | 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：移除 `AuditLog` 表與 `IX_AuditLog_Entity`。表數 45 → 44、非 PK/UQ 索引 17 → 16。單元 24 保留但只剩信件紀錄（`EmailLog`），權限碼 `audit.view`／`audit.resend` 沿用，權限矩陣仍為 167 列 |
 | 2026-09-09 | Tim（Claude Code） | `AdminUser` 的刪除改為真刪（§2.3 加註）：軟刪列會佔住 `UQ_AdminUser_Username`。遷移 `Api/Data/Migrations/20260909125600_PurgeDeletedAdminUsers` 把既有的 `IsDeleted = 1` 帳號一次刪除 |
+| 2026-09-09 | Tim（Claude Code） | **全站刪除改為真刪**（§2.3 改寫）：`IsDeleted` 欄位保留但不再被寫入。子表的外鍵改 `ON DELETE CASCADE`（17 張 `*I18n`＋`SolutionItem`＋`QuoteAttachment`，加上原有的 `NewsTag` 共 20 條）；「被引用」的關聯（`Category`／`Tag`／`QuoteRequest → Solution`）維持 `Restrict`。權限矩陣 170 → 173 列（新增 `page.delete`／`quote.delete`／`contact.delete`，僅 SuperAdmin，81 → 84）。遷移 `Api/Data/Migrations/20260909135945_HardDeleteCascades` 與 `db/migrations/0009_hard_delete_cascades.sql` 一對一，並一次清掉既有的軟刪列 |
 
 *最後更新：2026-09-09*
+

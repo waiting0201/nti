@@ -40,8 +40,8 @@
 
 | 腳本 | 檢核對象 | 斷言數 |
 |---|---|---|
-| [`verify/verify.sql`](verify/verify.sql) | `db/migrations/` + `db/seed/` 建出來的庫（含 `SchemaVersion`） | 25 |
-| [`verify/verify-ef.sql`](verify/verify-ef.sql) | **EF Migration 建出來的庫**（含 `__EFMigrationsHistory`），正式環境用這支 | 27 |
+| [`verify/verify.sql`](verify/verify.sql) | `db/migrations/` + `db/seed/` 建出來的庫（含 `SchemaVersion`） | 28 |
+| [`verify/verify-ef.sql`](verify/verify-ef.sql) | **EF Migration 建出來的庫**（含 `__EFMigrationsHistory`），正式環境用這支 | 30 |
 
 兩份斷言逐條對應，數字有異動時要一起改。`verify-ef.sql` 另外多守三件 EF 特有的事：
 非 PK/UQ 索引數必須是 16（EF 會自動幫每條外鍵建索引，`AppDbContext` 已移除該慣例）、
@@ -263,11 +263,14 @@ DeployChanges.To.SqlDatabase(conn)
 `Solution` 固定 4 筆、`Page` 固定 29 筆**不在 DB 層加約束**。可行方案只有 INSTEAD OF
 trigger 或 DDL trigger，但：(a) Basic 5 DTU 下每次寫入多一次 trigger 是實打實的成本；
 (b) 內容遷移（P8）與資料修補會被自己的 trigger 擋住，屆時得 `DISABLE TRIGGER`，反而
-製造事故面；(c) docs/09 §4 已明訂後台不提供新增／刪除按鈕。
+製造事故面；(c) docs/09 §4 已明訂後台不提供新增按鈕。
 **改為由 `verify.sql` 斷言筆數**，效果相同、零執行期成本。
+（2026-09-09 起這兩個單元**可以刪除**，只是不能新增，所以那兩條筆數斷言的意思變成
+「沒有人刪過」——真的刪了一頁之後要記得同步預期值。）
 
-`UX_NewsI18n_Lang_Slug` 等 slug 唯一索引**刻意不含 `IsDeleted`** —— 軟刪的內容仍永久佔用
-slug。SEO 上舊網址不該被回收後指向不同內容，這是設計而非疏漏。
+`UX_NewsI18n_Lang_Slug` 等 slug 唯一索引**刻意不含 `IsDeleted`**。這在軟刪年代是為了讓
+刪掉的內容仍佔著 slug；2026-09-09 刪除改為真刪之後刪掉就不再有列，加不加都一樣，
+索引留著是為了擋「兩筆現存內容用同一個 slug」。
 
 ---
 

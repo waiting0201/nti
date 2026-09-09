@@ -40,8 +40,10 @@ public sealed class SolutionI18nConfiguration : IEntityTypeConfiguration<Solutio
         b.Property(x => x.OgTitle).HasMaxLength(90);
         b.Property(x => x.OgDescription).HasMaxLength(200);
 
-        // 刻意不含 IsDeleted：軟刪的內容仍永久佔用 slug。
-        // SEO 上舊網址不該被回收後指向不同內容 —— 這是設計而非疏漏。
+        // 刻意不含 IsDeleted：這個索引在軟刪年代是為了讓刪掉的內容仍佔著 slug。
+        // 刪除改真刪之後（docs/10 §8.4）刪掉就不再有列，條件加不加都一樣，
+        // 留著是因為它同時擋住「兩筆現存內容用同一個 slug」——那才是這條索引現在的工作。
+
         b.HasIndex(x => new { x.Lang, x.Slug }).IsUnique().HasDatabaseName("UX_SolutionI18n_Lang_Slug");
 
         b.HasData(SeedData.SolutionI18ns);
@@ -58,10 +60,11 @@ public sealed class SolutionItemConfiguration : IEntityTypeConfiguration<Solutio
         b.Property(x => x.IsPublished).HasDefaultValue(true);
         b.Audit();
 
+        // 品項卡是方案的附屬（後台就長在方案的編輯頁裡），方案刪掉就跟著走
         b.HasOne<Solution>().WithMany()
             .HasForeignKey(x => x.SolutionId)
             .HasConstraintName("FK_SolutionItem_Solution")
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         b.HasIndex(x => new { x.SolutionId, x.SortOrder }).HasDatabaseName("IX_SolutionItem_Solution");
     }

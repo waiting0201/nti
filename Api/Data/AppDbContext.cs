@@ -136,9 +136,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAc
     /// <summary>
     /// 統一填稽核欄位（docs/10 §8.4）：新增填 CreatedAt/By、修改填 UpdatedAt/By。
     /// <para>
-    /// 刪除一律軟刪：對 <see cref="IAuditable"/> 呼叫 <c>Remove()</c> 會被在這裡改寫成
-    /// <c>IsDeleted = 1</c>，避免任何一處漏寫就把內容真的刪掉。
+    /// <b>刪除是真刪</b>（2026-09-09）：<c>Remove()</c> 就是 <c>DELETE</c>，這裡不再把它改寫成
+    /// <c>IsDeleted = 1</c>。軟刪的那一列從清單消失、前台也查不到，卻仍佔著 slug 這類唯一鍵，
+    /// 操作者看到的是「刪了卻沒刪掉，而且同一個名字再也建不回來」。
+    /// 子表（<c>*I18n</c>、方案品項、報價附件）由 FK 的 <c>ON DELETE CASCADE</c> 一起帶走。
     /// </para>
+    /// <para>
+    /// <c>IsDeleted</c> 欄位與查詢裡的 <c>IsDeleted = 0</c> 條件刻意保留：既有索引與 Dapper SQL
+    /// 都依賴它，日後若要對特定表恢復軟刪也不必再開一次遷移。現在沒有任何一處寫入它。
+    /// </para>
+
     /// </summary>
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
@@ -159,12 +166,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAc
                     entry.Entity.UpdatedBy = userId;
                     break;
 
-                case EntityState.Deleted:
-                    entry.State            = EntityState.Modified;
-                    entry.Entity.IsDeleted = true;
-                    entry.Entity.UpdatedAt = now;
-                    entry.Entity.UpdatedBy = userId;
-                    break;
+                // Deleted 不再改寫：刪除就是刪除（見上方註解）
             }
         }
 

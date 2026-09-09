@@ -10,7 +10,7 @@ public sealed class Role
 }
 
 /// <summary>
-/// 角色權限（docs/09 §6 的 171 列矩陣）。
+/// 角色權限（docs/09 §6 的 173 列矩陣）。
 /// <para>權限碼值域見 <see cref="Common.PermissionCodes"/>；SuperAdmin 亦逐列展開，不用萬用碼。</para>
 /// </summary>
 public sealed class RolePermission

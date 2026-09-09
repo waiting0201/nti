@@ -125,6 +125,8 @@ const CATEGORY_TYPES: Array<[string, string]> = [
 export function CategoryPage() {
   const { can } = useAuth()
   const canEdit = can('category.edit')
+  const canDelete = can('category.delete')
+
   const [type, setType] = useState('News')
   const [rows, setRows] = useState<Row[]>([])
   const [confirm, setConfirm] = useState<Row | null>(null)
@@ -181,9 +183,16 @@ export function CategoryPage() {
                     <Badge kind={c.isActive === false ? 'off' : 'ok'}>{c.isActive === false ? '停用' : '啟用'}</Badge>
                   </td>
                   <td>
-                    <button className="btn btn-sm btn-danger" disabled={!canEdit} onClick={() => setConfirm(c)}>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      // 停用是改欄位（category.edit），刪除是刪除（category.delete）——
+                      // 兩顆按鈕長在同一個位置，權限也要各認各的
+                      disabled={usage > 0 ? !canEdit : !canDelete}
+                      onClick={() => setConfirm(c)}
+                    >
                       {usage > 0 ? '停用' : '刪除'}
                     </button>
+
                   </td>
                 </tr>
               )
@@ -200,11 +209,17 @@ export function CategoryPage() {
           onCancel={() => setConfirm(null)}
           onConfirm={async () => {
             const usage = api.categoryUsage(confirm.id)
-            await api.save('category', usage > 0 ? { ...confirm, isActive: false } : { ...confirm, isDeleted: true })
+            try {
+              if (usage > 0) await api.save('category', { ...confirm, isActive: false })
+              else await api.remove('category', [confirm.id])
+              toast(usage > 0 ? '分類已停用' : '分類已刪除')
+            } catch (err) {
+              toast(err instanceof Error ? err.message : '操作失敗，請稍後再試。')
+            }
             setConfirm(null)
-            toast(usage > 0 ? '分類已停用' : '分類已刪除')
             load()
           }}
+
         >
           {api.categoryUsage(confirm.id) > 0 ? (
             <>
@@ -212,8 +227,13 @@ export function CategoryPage() {
               停用後不會再出現在新增內容的下拉選單，既有內容不受影響。
             </>
           ) : (
-            <>沒有任何內容引用「{String(confirm.i18n?.zh?.name)}」，可以安全刪除。</>
+            <>
+              沒有任何內容引用「{String(confirm.i18n?.zh?.name)}」，可以安全刪除。
+              <br />
+              <b>這是真的刪除，無法還原</b>；要再用同一個代號得重新建立一筆。
+            </>
           )}
+
         </Modal>
       )}
     </>
@@ -228,9 +248,12 @@ const MATRIX_ROWS: Array<{ label: string; codes: string[] }> = [
   { label: '內容單元 01–14 上下架', codes: CONTENT_UNITS.map((u) => `${u}.publish`) },
   { label: '內容單元 01–14 刪除', codes: CONTENT_UNITS.map((u) => `${u}.delete`) },
   { label: '15 頁面 SEO', codes: ['page.edit'] },
+  { label: '15 頁面：刪除', codes: ['page.delete'] },
   { label: '17 報價 ／ 18 聯絡：檢視・改狀態', codes: ['quote.edit', 'contact.edit'] },
   { label: '17 報價：附件下載・匯出 CSV', codes: ['quote.download', 'quote.export'] },
+  { label: '17 報價 ／ 18 聯絡：刪除', codes: ['quote.delete', 'contact.delete'] },
   { label: '21 網站設定 ／ 22 分類', codes: ['setting.edit', 'category.edit'] },
+
   { label: '23 管理員與角色', codes: ['admin.edit'] },
   { label: '24 信件紀錄', codes: ['audit.view'] },
 ]

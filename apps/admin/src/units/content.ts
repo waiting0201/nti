@@ -62,7 +62,8 @@ export const solution: Unit = {
   group: '內容',
   phase: 'P4',
   frontend: 'solutions.html 列表、四個方案頁、首頁 Printing Solutions 四張卡',
-  note: '固定 4 筆，不可新增／刪除（新增方案屬改版範圍）。品項卡為子清單，可自由增刪。',
+  note: '固定 4 筆，不可新增（新增方案屬改版範圍）；刪除只給超管，且已有報價引用的方案刪不掉。品項卡為子清單，可自由增刪。',
+
   fixedRows: true,
   sortable: true,
   hasStatus: true,

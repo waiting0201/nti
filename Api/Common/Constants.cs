@@ -2,7 +2,7 @@ namespace Nti.Api.Common;
 
 /// <summary>
 /// 權限碼（docs/10 §9.2）。權威來源：docs/09 §6 的權限矩陣
-/// ＝ <c>db/seed/110_role_permission.sql</c>（170 列＝SuperAdmin 81／Editor 68／Viewer 21）
+/// ＝ <c>db/seed/110_role_permission.sql</c>（173 列＝SuperAdmin 84／Editor 68／Viewer 21）
 /// ＝ <c>apps/admin/src/lib/permissions.ts</c>。
 /// <para>格式 <c>{單元代號}.{action}</c>，單元代號逐字對應 docs/09 §2，不做單複數轉換。</para>
 /// <para>這些字串在程式中不得再出現字面值。</para>
@@ -67,9 +67,11 @@ public static class PermissionCodes
     public const string SupplierDownloadPublish    = "supplier-download.publish";
     public const string SupplierDownloadDelete     = "supplier-download.delete";
 
-    // ── 15 固定頁：29 筆不可增刪，故無 delete ──
+    // ── 15 固定頁：29 筆是寫死對應前台路由的，刪掉那一頁就沒有 SEO 設定可讀，
+    //    故 page.delete 只給 SuperAdmin（2026-09-09）──
     public const string PageView                   = "page.view";
     public const string PageEdit                   = "page.edit";
+    public const string PageDelete                 = "page.delete";
 
     // ── 16 轉址 ──
     public const string RedirectView               = "redirect.view";
@@ -77,15 +79,17 @@ public static class PermissionCodes
     public const string RedirectDelete             = "redirect.delete";
     public const string RedirectExport             = "redirect.export";
 
-    // ── 17 報價：download／export 僅 SuperAdmin ──
+    // ── 17 報價：download／export／delete 僅 SuperAdmin ──
     public const string QuoteView                  = "quote.view";
     public const string QuoteEdit                  = "quote.edit";
     public const string QuoteDownload              = "quote.download";
     public const string QuoteExport                = "quote.export";
+    public const string QuoteDelete                = "quote.delete";
 
-    // ── 18 聯絡訊息 ──
+    // ── 18 聯絡訊息：delete 同報價，僅 SuperAdmin ──
     public const string ContactView                = "contact.view";
     public const string ContactEdit                = "contact.edit";
+    public const string ContactDelete              = "contact.delete";
 
     // 19 會員／20 訂單已於 2026-09-06 移出專案範圍，編號不再使用。
 
@@ -111,7 +115,8 @@ public static class PermissionCodes
     public const string AuditResend                = "audit.resend";
 
 
-    /// <summary>全部 82 個權限碼（SuperAdmin 的授權範圍）。</summary>
+    /// <summary>全部 84 個權限碼（SuperAdmin 的授權範圍）。</summary>
+
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
     {
         HomeBannerView, HomeBannerEdit, HomeBannerPublish, HomeBannerDelete,
@@ -128,13 +133,15 @@ public static class PermissionCodes
         SupplierNoticeView, SupplierNoticeEdit, SupplierNoticePublish, SupplierNoticeDelete,
         SupplierSpecView, SupplierSpecEdit, SupplierSpecPublish, SupplierSpecDelete,
         SupplierDownloadView, SupplierDownloadEdit, SupplierDownloadPublish, SupplierDownloadDelete,
-        PageView, PageEdit, RedirectView, RedirectEdit,
-        RedirectDelete, RedirectExport, QuoteView, QuoteEdit,
-        QuoteDownload, QuoteExport, ContactView, ContactEdit,
+        PageView, PageEdit, PageDelete, RedirectView,
+        RedirectEdit, RedirectDelete, RedirectExport, QuoteView,
+        QuoteEdit, QuoteDownload, QuoteExport, QuoteDelete,
+        ContactView, ContactEdit, ContactDelete,
         SettingView, SettingEdit, TagView, TagEdit,
         TagDelete, CategoryView, CategoryEdit, CategoryDelete,
         AdminView, AdminEdit, AdminDelete, AuditView,
         AuditResend,
+
     };
 }
 

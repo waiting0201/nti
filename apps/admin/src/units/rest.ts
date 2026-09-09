@@ -80,7 +80,8 @@ export const page: Unit = {
   group: '頁面／SEO',
   phase: 'P4',
   frontend: '全站 29 筆固定頁',
-  note: '29 筆固定頁，不可新增／刪除，只可編輯。「頁面內容」欄位僅 HasRichBody = 1 的頁面（privacy-legal、預留的 green-csr）顯示。',
+  note: '29 筆固定頁，不可新增；刪除只給超管，刪掉之後前台那一頁就沒有 SEO 設定可讀。「頁面內容」欄位僅 HasRichBody = 1 的頁面（privacy-legal、預留的 green-csr）顯示。',
+
   fixedRows: true,
   hasSeo: true,
   fields: [
@@ -148,7 +149,8 @@ export const quote: Unit = {
   group: '表單',
   phase: 'P6',
   frontend: 'get-a-quote.html',
-  note: '唯讀資料 + 可改狀態，不可編輯客戶填寫內容。附件下載限超級管理員，且系統不做病毒掃描。',
+  note: '唯讀資料 + 可改狀態，不可編輯客戶填寫內容。附件下載與刪除限超級管理員，且系統不做病毒掃描。刪除是真刪，附件檔案一併移除。',
+
   readOnly: 'status-only',
   fields: [
     { key: 'status', label: '狀態', type: 'select', required: true, options: QUOTE_STATUS, side: 'neutral' },
@@ -173,7 +175,8 @@ export const contact: Unit = {
   group: '表單',
   phase: 'P6',
   frontend: 'contact.html',
-  note: '唯讀資料 + 可改狀態，不可編輯客戶填寫內容。',
+  note: '唯讀資料 + 可改狀態，不可編輯客戶填寫內容。刪除限超級管理員，且是真刪。',
+
   readOnly: 'status-only',
   fields: [
     {
@@ -222,7 +225,8 @@ export const category: Unit = {
   title: '分類管理',
   group: '系統',
   phase: 'P4',
-  note: '已被引用的分類不可刪除，只能停用；刪除前顯示引用筆數。',
+  note: '已被引用的分類不可刪除，只能停用；刪除前顯示引用筆數。沒有引用的分類是真刪，刪掉後代號可以重新使用。',
+
   custom: true,
   fields: [],
   columns: [],

@@ -42,8 +42,16 @@ SELECT N'*I18n 多語子表數', N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.
 INSERT @r (Item, Expected, Actual)
 SELECT N'外鍵數', N'33', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
 
+/* 刪除改真刪之後（docs/10 §8.4），子表的外鍵必須是 CASCADE：17 張 *I18n
+   ＋ NewsTag→News ＋ SolutionItem→Solution ＋ QuoteAttachment→QuoteRequest。
+   少一條就代表某個單元一按刪除就撞 FK，而那只有實際去刪才會發現。 */
+INSERT @r (Item, Expected, Actual)
+SELECT N'ON DELETE CASCADE 的外鍵數', N'20', CAST(COUNT(*) AS NVARCHAR(20))
+FROM sys.foreign_keys WHERE delete_referential_action_desc = N'CASCADE';
+
 INSERT @r (Item, Expected, Actual)
 SELECT N'Category 型別安全複合外鍵數', N'9', CAST(COUNT(*) AS NVARCHAR(20))
+
 FROM sys.foreign_keys fk
 WHERE fk.referenced_object_id = OBJECT_ID(N'dbo.Category')
   AND (SELECT COUNT(*) FROM sys.foreign_key_columns c WHERE c.constraint_object_id = fk.object_id) = 2;
@@ -116,8 +124,9 @@ WHERE t.name LIKE '%I18n'
 
 /* ---------- 種子（Api/Data/Seed/SeedData.cs 的 HasData）---------- */
 INSERT @r (Item, Expected, Actual) SELECT N'Role', N'3', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Role;
-INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'170', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
-INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'81', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
+INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'173', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
+
+INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'84', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'68', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'21', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
 INSERT @r (Item, Expected, Actual) SELECT N'Category',       N'44', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category;
@@ -138,7 +147,7 @@ INSERT @r (Item, Expected, Actual) SELECT N'Solution（固定 4 筆）', N'4', C
    green-csr 的 noindex 斷言把關（同一個機制，而 green-csr 是種子的一部分，
    不會被內容匯入改動）。 */
 INSERT @r (Item, Expected, Actual) SELECT N'SolutionI18n',   N'8',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SolutionI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'已套用的 Migration 數', N'10', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.__EFMigrationsHistory;
+INSERT @r (Item, Expected, Actual) SELECT N'已套用的 Migration 數', N'11', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.__EFMigrationsHistory;
 
 /* ---------- 輸出 ---------- */
 SELECT Item AS [檢查項], Expected AS [預期], Actual AS [實際],

@@ -25,7 +25,8 @@ export function ListPage() {
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [confirmDelete, setConfirmDelete] = useState(false)
+  // 'selected' = 工具列的批次刪除；字串 id = 該列自己的刪除鈕
+  const [confirmDelete, setConfirmDelete] = useState<'selected' | string | null>(null)
   const [dragId, setDragId] = useState<string | null>(null)
   const [dropId, setDropId] = useState<string | null>(null)
 
@@ -144,9 +145,16 @@ export function ListPage() {
   }
 
   const doDelete = async () => {
-    await api.softDelete(unit.code, [...selected])
-    setConfirmDelete(false)
-    toast(`已刪除 ${selected.size} 筆（軟刪，資料仍保留在資料庫）`)
+    const ids = confirmDelete === 'selected' ? [...selected] : [confirmDelete!]
+    try {
+      await api.remove(unit.code, ids)
+      toast(`已刪除 ${ids.length} 筆`)
+    } catch (err) {
+      // 被別的資料引用而刪不掉時後端回 409，理由要照原文顯示——
+      // 吞掉只會讓操作者一直重按同一顆按鈕
+      toast(err instanceof Error ? err.message : '刪除失敗，請稍後再試。')
+    }
+    setConfirmDelete(null)
     void load()
   }
 
@@ -185,7 +193,10 @@ export function ListPage() {
       {unit.note && <Notice kind="info">{unit.note}</Notice>}
       {countWarning && <Notice>{countWarning}</Notice>}
       {unit.fixedRows && (
-        <Notice kind="info">此單元為固定筆數，不可新增或刪除；要增減項目屬改版範圍。</Notice>
+        <Notice kind="info">
+          此單元為固定筆數，<b>不可新增</b>（要增加項目屬改版範圍）。刪除是真的刪掉，
+          前台對應的頁面會因此讀不到內容，請確定之後再刪。
+        </Notice>
       )}
 
       <div className="card" style={{ marginTop: 14 }}>
@@ -235,8 +246,8 @@ export function ListPage() {
                   </button>
                 </>
               )}
-              {canDelete && !unit.fixedRows && (
-                <button className="btn btn-sm btn-danger" onClick={() => setConfirmDelete(true)}>
+              {canDelete && (
+                <button className="btn btn-sm btn-danger" onClick={() => setConfirmDelete('selected')}>
                   刪除
                 </button>
               )}
@@ -292,7 +303,7 @@ export function ListPage() {
                     {c.label}
                   </th>
                 ))}
-                <th style={{ width: 80 }} />
+                <th style={{ width: canDelete ? 140 : 80 }} />
               </tr>
             </thead>
             <tbody>
@@ -325,10 +336,17 @@ export function ListPage() {
                       <Cell unit={unit} row={row} colKey={c.key} render={c.render} />
                     </td>
                   ))}
-                  <td>
+                  <td style={{ display: 'flex', gap: 6 }}>
                     <Link className="btn btn-sm" to={`/u/${unit.code}/${row.id}`}>
                       {canEdit ? '編輯' : '檢視'}
                     </Link>
+                    {/* 逐列的刪除鈕。只有工具列那顆的話，得先勾選才看得到刪除這件事存在——
+                        客戶回報「後台沒有刪除功能」正是因為它藏在勾選之後（2026-09-09） */}
+                    {canDelete && (
+                      <button className="btn btn-sm btn-danger" onClick={() => setConfirmDelete(row.id)}>
+                        刪除
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -350,15 +368,16 @@ export function ListPage() {
 
       {confirmDelete && (
         <Modal
-          title={`刪除 ${selected.size} 筆資料`}
+          title={confirmDelete === 'selected' ? `刪除 ${selected.size} 筆資料` : '刪除這筆資料'}
           confirmLabel="確定刪除"
           confirmKind="btn-danger"
           onConfirm={doDelete}
-          onCancel={() => setConfirmDelete(false)}
+          onCancel={() => setConfirmDelete(null)}
         >
           刪除後這些內容會立刻從前台消失。
           <br />
-          系統採軟刪除，資料仍留在資料庫，可由工程端還原。
+          <b>這是真的刪除，資料不會留在資料庫，無法還原</b>
+          （中英文字、圖片欄位與附屬項目一併刪除）。
         </Modal>
       )}
     </>

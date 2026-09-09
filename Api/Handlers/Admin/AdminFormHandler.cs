@@ -91,8 +91,39 @@ public sealed class AdminFormHandler(AppDbContext db, IBlobStorageService blobs)
     }
 
     /// <summary>
+    /// 刪除一筆報價（權限 <c>quote.delete</c>，僅超管；真刪，docs/10 §8.4）。
+    /// <para>
+    /// <c>QuoteAttachment</c> 的列由 FK 的 CASCADE 帶走，但 <b>Blob 上的檔案要自己刪</b>：
+    /// 附件放在私有容器 <c>quote-attachments</c>，不在 <see cref="Functions.OrphanMediaFunction"/>
+    /// 掃的 <c>media</c> 容器裡，不刪就會留下沒有任何列指得到的客戶檔案。
+    /// </para>
+    /// <para>
+    /// 檔案先刪、DB 後刪：反過來的話刪檔失敗會留下「列沒了、檔還在」的孤兒，
+    /// 而這個順序失敗時列還在，重按一次就好。
+    /// </para>
+    /// </summary>
+    public async Task<IActionResult> DeleteQuoteAsync(HttpRequest req, string rawId)
+    {
+        var id = ParseId(rawId);
+
+        var quote = await db.QuoteRequest.FirstOrDefaultAsync(q => q.Id == id && !q.IsDeleted)
+            ?? throw AppException.NotFound("QuoteRequest");
+
+        var attachments = await db.QuoteAttachment.Where(a => a.QuoteRequestId == quote.Id).ToListAsync();
+        foreach (var attachment in attachments)
+            await blobs.DeleteAsync(UploadRules.Containers.QuoteAttachments, attachment.FilePath);
+
+        db.QuoteRequest.Remove(quote);
+        await db.SaveChangesAsync();
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok("已刪除。"));
+    }
+
+    /// <summary>
     /// 匯出 CSV（權限 <c>quote.export</c>，僅超管）——匯出等於把一整份客戶個資帶出系統。
     /// </summary>
+
     public async Task<IActionResult> ExportQuotesAsync(HttpRequest req)
     {
         var rows = await db.QuoteRequest.AsNoTracking().Where(q => !q.IsDeleted)
@@ -212,7 +243,23 @@ public sealed class AdminFormHandler(AppDbContext db, IBlobStorageService blobs)
         return new OkObjectResult(ApiResponse.Ok("已更新。"));
     }
 
+    /// <summary>刪除一筆聯絡訊息（權限 <c>contact.delete</c>，僅超管；真刪）。無附件、無子表。</summary>
+    public async Task<IActionResult> DeleteContactAsync(HttpRequest req, string rawId)
+    {
+        var id = ParseId(rawId);
+
+        var message = await db.ContactMessage.FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted)
+            ?? throw AppException.NotFound("ContactMessage");
+
+        db.ContactMessage.Remove(message);
+        await db.SaveChangesAsync();
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok("已刪除。"));
+    }
+
     private static readonly string[] QuoteStatusValues =
+
         [QuoteStatuses.New, QuoteStatuses.InProgress, QuoteStatuses.Quoted, QuoteStatuses.Closed, QuoteStatuses.Spam];
 
     private static readonly string[] ContactStatusValues =

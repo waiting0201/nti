@@ -28,7 +28,7 @@ VITE_API_BASE=http://localhost:7071/api/v1 pnpm --filter admin dev
 |---|---|---|
 | 實作 | `src/api/client.mock.ts`（localStorage） | `src/api/client.api.ts`（打 `/api/v1/admin/*`） |
 | 登入 | 選角色即進入 | 帳號 + 密碼（帳號不限定 email 格式），首登強制改密碼 |
-| 權限 | 查本地的 170 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
+| 權限 | 查本地的 173 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
 | 圖片 | `public/assets` 或 `VITE_MEDIA_BASE` | 上傳到 Blob，經 `/files/media/*` 代理取回 |
 
 兩者**簽章完全一樣**，上層的清單／編輯畫面不知道資料從哪來（`src/api/client.ts` 是門面）。
@@ -83,7 +83,7 @@ dev 與 build 兩種形態的差別只有素材來源：
 ## 驗收閘
 
 ```bash
-pnpm --filter admin check:units   # → 「✓ 每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 170 列」
+pnpm --filter admin check:units   # → 「✓ 每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 173 列」
 pnpm --filter admin typecheck
 ```
 
@@ -97,13 +97,15 @@ pnpm --filter admin typecheck
 | §2 各單元 | [`src/units/`](src/units/) —— 一個單元一份宣告（欄位、清單欄、排序、上下架、固定筆數…） |
 | §3 上傳建議尺寸 | [`src/units/content.ts`](src/units/content.ts) 的 `HINT`，**逐字**引用規格文字，顯示在欄位旁 |
 | §3 共通規則 | 每個圖片欄位都配一個中英 Alt；[`validateUnits()`](src/units/index.ts) 會在開發模式檢查並在 console 指出違規 |
-| §5.1 清單頁 | [`ListPage`](src/pages/ListPage.tsx)：分頁 20 筆、關鍵字、狀態／分類篩選、中英完成度 badge、批次上下架、批次軟刪、拖曳排序 |
+| §5.1 清單頁 | [`ListPage`](src/pages/ListPage.tsx)：分頁 20 筆、關鍵字、狀態／分類篩選、中英完成度 badge、批次上下架、逐列與批次刪除（真刪）、拖曳排序 |
+
 | §5.2 編輯頁 | [`EditPage`](src/pages/EditPage.tsx)：左側語系中性欄位、右側中文／English 分頁，切換不離頁、離開前攔截未存變更 |
 | §5.3 多語 | [`completeness.ts`](src/lib/completeness.ts)：上架前檢查兩語系必填，缺漏逐欄指出；另有「複製中文到英文」 |
 | §5.4 上下架 | `publishState()` 推導草稿／已排程／上架中／已下架；上架時間、下架時間 |
 | §5.5 富文本 | [`sanitizeHtml`](src/components/fields.tsx) 白名單 `p h3 h4 strong em ul ol li a blockquote img figure figcaption br`，貼上時去樣式 |
 | §5.6 SEO 欄位組 | [`SEO_FIELDS`](src/units/index.ts)，只掛在 `page`／`news`／`solution`；Title 70／Description 180 即時字數與超長警示 |
-| §5.7 刪除 | 一律軟刪；分類改為「有引用就只能停用」，對話框顯示引用筆數 |
+| §5.7 刪除 | **一律真刪**（2026-09-09 改）；每列一顆刪除鈕、勾選後另有批次刪除，對話框明說無法還原。分類與標籤「有引用就只能停用」，對話框顯示引用筆數 |
+
 | §6 權限矩陣 | [`permissions.ts`](src/lib/permissions.ts) 逐格對照規格，選單與按鈕依權限顯示；[管理員頁](src/pages/custom.tsx)可看到整張矩陣與展開列數 |
 | §7 固定文字區 | 這些區塊**沒有**對應單元，符合決議 3 |
 | 決議 2 | 沒有「媒體管理」選單，圖片只能從所屬欄位上傳 |

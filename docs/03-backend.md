@@ -45,7 +45,7 @@
 規劃書 §3-1 的部分區塊名稱（COURAGE、Project 精選、NTI Difference、Advantages 數據）已被 2026-08-31 IA 改版與 2026-09-01 首頁改版取代，逐項差異與**三個待確認缺口**（電子報／CSR／Banner 影片）見 [`09-cms-admin.md` §2.1](09-cms-admin.md)。
 
 **系統管理**：
-- **管理員與權限角色**：超級管理員 / 內容編輯 / 檢視者（RBAC），權限矩陣以 [`09-cms-admin.md` §6](09-cms-admin.md) 為權威（展開後 170 列）。
+- **管理員與權限角色**：超級管理員 / 內容編輯 / 檢視者（RBAC），權限矩陣以 [`09-cms-admin.md` §6](09-cms-admin.md) 為權威（展開後 173 列）。
 - **報價需求管理**：檢視／改狀態／指派承辦人／匯出，狀態五態 `待處理 / 處理中 / 已報價 / 已結案 / 垃圾訊息`（DB 值 `New / InProgress / Quoted / Closed / Spam`）。客戶填寫內容唯讀。
 - **聯絡表單管理**：檢視／改狀態，狀態四態 `待處理 / 已回覆 / 已結案 / 垃圾訊息`（`New / Replied / Closed / Spam`）。
 

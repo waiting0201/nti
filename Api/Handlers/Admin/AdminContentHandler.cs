@@ -337,13 +337,15 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
         return new OkObjectResult(ApiResponse.Ok($"已更新 {entities.Count} 筆排序。"));
     }
 
-    // ── 刪除（一律軟刪）───────────────────────────────────────────────────
+    // ── 刪除（真刪，docs/10 §8.4）─────────────────────────────────────────
     public async Task<IActionResult> DeleteAsync(HttpRequest req, string rawId)
     {
         var entity = await FindAsync(ParseId(rawId));
 
-        // Remove() 會被 AppDbContext 改寫成 IsDeleted = 1（docs/10 §8.4）
+        // i18n 側表（與方案的品項卡）由 FK 的 CASCADE 一起帶走；
+        // 被別張表引用而刪不掉時，SQL 的 FK 錯誤由 ExceptionMiddleware 翻成 409。
         db.Set<TEntity>().Remove(entity);
+
         await db.SaveChangesAsync();
 
         CacheControl.NoStore(req.HttpContext.Response);

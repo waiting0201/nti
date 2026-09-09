@@ -388,11 +388,16 @@ paths:
         '404': { $ref: '#/components/responses/NotFound' }
     delete:
       tags: [後台內容單元]
-      summary: 刪除（權限 `{unit}.delete`，一律軟刪）
+      summary: 刪除（權限 `{unit}.delete`，真刪）
+      description: |
+        **真刪**（2026-09-09 改，原為軟刪；09 §5.7、10 §8.4）：中英文字（`*I18n`）、
+        方案的品項卡都由 FK 的 CASCADE 一起刪，救不回來。
+        被別的資料引用而刪不掉時回 409 `CONFLICT_STATE`（例如已有報價引用的 `solution`）。
       security: [{ AdminAuth: [] }]
       responses:
         '200': { $ref: '#/components/responses/Ok' }
         '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
 
   /admin/{unit}/{id}/publish:
     patch:
@@ -453,7 +458,7 @@ paths:
       tags: [後台其他單元]
       summary: 修改固定頁 SEO（page.edit）
       description: |
-        29 筆固定頁不可增刪，權限矩陣也沒有 `page.delete`。
+        29 筆固定頁不可新增（是寫死對應前台路由的）。
         `pageKey` 與 `routeTemplate` 不可改；內文只有 `hasRichBody = true` 的兩頁能編。
         SEO 欄位超長回 400 `VALIDATION_RANGE`（不靜默截斷）。
       security: [{ AdminAuth: [] }]
@@ -461,6 +466,17 @@ paths:
       responses:
         '200': { $ref: '#/components/responses/Ok' }
         '400': { $ref: '#/components/responses/BadRequest' }
+    delete:
+      tags: [後台其他單元]
+      summary: 刪除固定頁（page.delete，僅超管）
+      description: |
+        **真刪**（2026-09-09，09 §5.7）：`PageI18n` 由 FK 的 CASCADE 一起刪。
+        刪掉之後前台那條路由還在，只是再也讀不到該頁的 SEO 設定，因此限超管。
+      security: [{ AdminAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /admin/redirect:
     get:  { tags: [後台其他單元], summary: '轉址清單（redirect.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
@@ -512,8 +528,20 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/FormStatus' } } } }
       responses:
         '200': { $ref: '#/components/responses/Ok' }
+    delete:
+      tags: [後台其他單元]
+      summary: 刪除報價（quote.delete，僅超管）
+      description: |
+        **真刪**（2026-09-09，09 §5.7）：`QuoteAttachment` 的列由 FK 的 CASCADE 一起刪，
+        Blob 上的附件檔案也一併移除（先刪檔再刪列）。客戶送出的紀錄刪掉就沒了，因此限超管。
+      security: [{ AdminAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /admin/quote/export:
+
     get:
       tags: [後台其他單元]
       summary: 匯出報價 CSV（quote.export，僅超管）
@@ -548,6 +576,15 @@ paths:
     parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
     get:   { tags: [後台其他單元], summary: '聯絡訊息單筆（contact.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
     patch: { tags: [後台其他單元], summary: '改狀態（contact.edit）', security: [{ AdminAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/FormStatus' } } } }, responses: { '200': { $ref: '#/components/responses/Ok' } } }
+    delete:
+      tags: [後台其他單元]
+      summary: 刪除聯絡訊息（contact.delete，僅超管）
+      description: '**真刪**（2026-09-09，09 §5.7）。無附件、無子表。'
+      security: [{ AdminAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /admin/setting:
     get: { tags: [後台其他單元], summary: '全站設定（setting.view）。後台看得到 Mail 群組', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }

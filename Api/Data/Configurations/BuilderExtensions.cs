@@ -39,7 +39,12 @@ internal static class BuilderExtensions
 
     /// <summary>
     /// 多語子表：PK (<paramref name="parentIdColumn"/>, Lang)、FK 指向主表、Lang 值域 CHECK。
+    /// <para>
+    /// FK 為 <b>CASCADE</b>：i18n 側表是主檔的一部分，沒有獨立生命週期。刪除改為真刪之後
+    /// （docs/10 §8.4），Restrict 只會讓每一次刪除都撞上 FK 而失敗。
+    /// </para>
     /// </summary>
+
     public static EntityTypeBuilder<T> I18nOf<T, TParent>(
         this EntityTypeBuilder<T> b, string parentIdColumn)
         where T : class, II18n
@@ -56,7 +61,7 @@ internal static class BuilderExtensions
             .WithMany()
             .HasForeignKey(parentIdColumn)
             .HasConstraintName($"FK_{table}_{parent}")
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         return b;
     }

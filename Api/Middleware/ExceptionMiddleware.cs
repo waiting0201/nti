@@ -62,10 +62,17 @@ public sealed class ExceptionMiddleware(ILogger<ExceptionMiddleware> logger) : I
             // （Category 型別安全的複合外鍵，docs/08 §4.16），使用者完全不知道要改什麼。
             logger.LogWarning(dbEx, "DB 約束擋下寫入：{Number} {Message}", sql.Number, sql.Message);
 
-            var (code, message) = sql.Number switch
+            // DELETE 撞到 FK 的意思跟寫入完全不同：是「還有東西指著這一筆」。
+            // 沿用寫入那句「請確認選擇的分類、狀態」會把操作者導向一個不存在的欄位。
+            var isDelete = string.Equals(
+                context.GetHttpContext()?.Request.Method, "DELETE", StringComparison.OrdinalIgnoreCase);
+
+            var (code, message) = (sql.Number, isDelete) switch
             {
-                UniqueViolation or UniqueIndexViolation =>
+                (UniqueViolation or UniqueIndexViolation, _) =>
                     (ErrorCodes.ConflictDuplicate, "資料重複，請檢查唯一欄位（如 slug、代號、Email）。"),
+                (_, true) =>
+                    (ErrorCodes.ConflictState, "這筆資料仍被其他資料引用（例如已送出的報價），無法刪除。"),
                 _ =>
                     (ErrorCodes.ConflictState, "資料關聯或值域檢查未通過，請確認選擇的分類、狀態是否正確。"),
             };

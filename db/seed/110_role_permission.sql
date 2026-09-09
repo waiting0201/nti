@@ -15,7 +15,7 @@
    SuperAdmin 亦逐列展開，不用萬用碼 —— RBAC 檢查邏輯保持單一（一律查
    RolePermission），且可稽核。新增後台單元時只需在本檔加一列 VALUES。
 
-   預期列數：SuperAdmin 81、Editor 68、Viewer 21 → 合計 170（由 verify.sql 斷言）。
+   預期列數：SuperAdmin 84、Editor 68、Viewer 21 → 合計 173（由 verify.sql 斷言）。
 
    單元 19 會員 ／ 20 訂單與生產進度已於 2026-09-06 移出專案範圍，編號不再使用。
    ============================================================================= */
@@ -43,8 +43,9 @@ grants (RoleCode, Code) AS (
     SELECT 'Viewer', u.u + '.view' FROM ContentUnit u
     UNION ALL
     SELECT * FROM (VALUES
-        -- 15 page：29 筆固定頁不可增刪，故無 delete
-        ('SuperAdmin','page.view'),('SuperAdmin','page.edit'),
+        -- 15 page：29 筆固定頁不可新增；刪除只給超管（刪掉前台那頁就沒有 SEO 設定可讀）
+        ('SuperAdmin','page.view'),('SuperAdmin','page.edit'),('SuperAdmin','page.delete'),
+
         ('Editor','page.view'),('Editor','page.edit'),
         ('Viewer','page.view'),
         -- 25 tag（消息標籤；刪除會改動前台網址，只給超管）
@@ -57,13 +58,14 @@ grants (RoleCode, Code) AS (
         ('Editor','redirect.view'),('Editor','redirect.edit'),
         ('Editor','redirect.delete'),('Editor','redirect.export'),
         ('Viewer','redirect.view'),
-        -- 17 quote：附件下載與匯出 CSV 僅 SuperAdmin（矩陣第 7 列）
+        -- 17 quote：附件下載、匯出 CSV 與刪除僅 SuperAdmin（矩陣第 7 列）
         ('SuperAdmin','quote.view'),('SuperAdmin','quote.edit'),
-        ('SuperAdmin','quote.download'),('SuperAdmin','quote.export'),
+        ('SuperAdmin','quote.download'),('SuperAdmin','quote.export'),('SuperAdmin','quote.delete'),
         ('Editor','quote.view'),('Editor','quote.edit'),
         ('Viewer','quote.view'),
-        -- 18 contact
-        ('SuperAdmin','contact.view'),('SuperAdmin','contact.edit'),
+        -- 18 contact：刪除同報價，只給超管（客戶送出的紀錄是真刪）
+        ('SuperAdmin','contact.view'),('SuperAdmin','contact.edit'),('SuperAdmin','contact.delete'),
+
         ('Editor','contact.view'),('Editor','contact.edit'),
         ('Viewer','contact.view'),
         -- 21 setting ／ 22 category：SuperAdmin 全權、Viewer 檢視、Editor 無
