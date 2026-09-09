@@ -47,7 +47,6 @@ public sealed class AdminUserConfiguration : IEntityTypeConfiguration<AdminUser>
         b.Property(x => x.PasswordHash).HasMaxLength(200);
         b.Property(x => x.DisplayName).HasMaxLength(80);
         b.Property(x => x.IsActive).HasDefaultValue(true);
-        b.Property(x => x.FailedLoginCount).HasDefaultValue((byte)0);
         b.Property(x => x.MustChangePassword).HasDefaultValue(true);
         b.Audit();
 

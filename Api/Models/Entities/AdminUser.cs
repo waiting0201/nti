@@ -17,8 +17,8 @@ public sealed class AdminUser : IAuditable
     public int       RoleId             { get; set; }
     public bool      IsActive           { get; set; } = true;
     public DateTime? LastLoginAt        { get; set; }
-    public byte      FailedLoginCount   { get; set; }   // 連續 5 次鎖 15 分鐘（docs/09 §23）
-    public DateTime? LockoutEndAt       { get; set; }
+    // FailedLoginCount／LockoutEndAt 於 2026-09-09 移除：連續失敗鎖定帳號等於
+    // 開放對帳號的阻斷服務，暴力破解改由登入端點的 reCAPTCHA v3 擋（見 AuthHandler）
     public bool      MustChangePassword { get; set; } = true;
 
     public DateTime  CreatedAt { get; set; }

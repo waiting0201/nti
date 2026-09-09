@@ -289,7 +289,8 @@ export function AdminUsersPage() {
         <div className="card-b">
           <Notice kind="info">
             帳號不限定 email 格式；有填通知信箱才寄得出啟用信，沒填就由建立者當場轉交初始密碼。
-            一律強制首次登入改密碼；連續 5 次登入失敗鎖定 15 分鐘。
+            一律強制首次登入改密碼。登入失敗不鎖定帳號（那會讓人被惡意鎖在外面），
+            暴力破解由登入頁的 reCAPTCHA 擋。
           </Notice>
         </div>
       </div>

@@ -533,8 +533,21 @@ git push Remote_GitHub    # ← 這一步才觸發部署
   （少了它前端一樣拿不到 token）。**要重新部署一次才會生效。**
   - ⚠ **這個檢查讓後台登入相依於 Google 可連線**：`RecaptchaService` 是 fail closed，
     script 被廣告阻擋器或公司防火牆擋掉時，客戶會被鎖在自己的 CMS 外面而沒有救援途徑。
-    後端本來就有「連續 5 次失敗鎖 15 分鐘」的保護，登入這條要不要保留 reCAPTCHA
-    值得再確認一次——目前維持原設計（docs/10 §9.6）。
+    帳號鎖定已於同日移除（見下一條），所以 reCAPTCHA 現在是登入端點**唯一**的
+    暴力破解防護，不宜再拿掉。真的被 script 擋住時的救援途徑：暫時把 Function App 的
+    `Recaptcha__SecretKey` 清成 `REPLACE_WITH_RECAPTCHA_SECRET`，驗證會整個略過。
+
+- ✅ **移除後台登入的帳號鎖定**（2026-09-09，客戶決定）：原本「連續 5 次失敗鎖 15 分鐘」
+  已拿掉，`AdminUser.FailedLoginCount`／`LockoutEndAt` 兩個死欄位一併移除
+  （EF Migration `DropAdminLockout`、`db/migrations/0008`）。
+  理由是那種鎖定會變成對帳號本身的阻斷服務——只要持續用錯誤密碼打某個帳號，
+  就能讓真正的管理員登不進來，而攻擊者不必知道任何密碼。
+  暴力破解改由登入端點的 reCAPTCHA v3 擋。
+  - ⚠ **登入端點目前沒有 IP rate limit**：[docs/10 §9.6](docs/10-backend-design.md) 設計了
+    「登入 5 次／15 分鐘」，但只有兩支公開表單實作了（`FormHandler` 用 `IRateLimitService`），
+    登入這支從來沒接。鎖定拿掉之後，reCAPTCHA 就是這支端點唯一的暴力破解防護。
+    **要不要補上 IP rate limit 需要你決定**——它沒有「鎖住特定帳號」的問題（鍵是 IP 不是帳號），
+    但同一個 NAT 後面的整間辦公室會共用配額，本質上是把阻斷服務的對象從帳號換成 IP。
 - ✅ **reCAPTCHA v3 已完整設定並生效**（2026-09-08）：site key 走 `vars.RECAPTCHA_SITE_KEY`
   進前端 bundle，secret 已設進 Function App。實測不帶 token 的請求回 400 `BOT_CHECK_FAILED`
   且不寫入資料，確認驗證真的在跑。

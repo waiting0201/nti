@@ -34,7 +34,7 @@ function LoginHead({ title, sub }: { title: string; sub?: React.ReactNode }) {
 }
 
 /** 接了 API：帳號 + 密碼。帳號不限定 email 格式（2026-09-06）。
- *  連續 5 次失敗鎖 15 分鐘（後端擋，docs/09 §23）。 */
+ *  登入失敗不鎖定帳號（2026-09-09 移除，理由見後端 AuthHandler）。 */
 function PasswordLogin() {
   const { loginWithPassword } = useAuth()
   const nav = useNavigate()
@@ -115,7 +115,7 @@ function PasswordLogin() {
           </button>
         </div>
 
-        <p className="login-foot">連續 5 次失敗會鎖定 15 分鐘。忘記密碼請聯絡超級管理員重設。</p>
+        <p className="login-foot">忘記密碼請聯絡超級管理員重設。</p>
       </form>
     </div>
   )

@@ -585,8 +585,6 @@ CREATE TABLE dbo.AdminUser (
   RoleId INT NOT NULL REFERENCES dbo.Role(Id),
   IsActive BIT NOT NULL DEFAULT 1,
   LastLoginAt DATETIME2(0) NULL,
-  FailedLoginCount TINYINT NOT NULL DEFAULT 0,
-  LockoutEndAt DATETIME2(0) NULL,
   MustChangePassword BIT NOT NULL DEFAULT 1,
   /* audit */
 );

@@ -12,6 +12,12 @@ namespace Nti.Api.Handlers;
 /// <summary>
 /// 後台登入（docs/09 §23）。
 /// <para>
+/// ⚠ <b>刻意沒有「連續失敗鎖定帳號」</b>（2026-09-09 依客戶決定移除）。
+/// 那種鎖定會變成對帳號本身的阻斷服務——只要一直用錯誤密碼打某個帳號，
+/// 就能讓真正的管理員登不進來，而攻擊者不必知道任何密碼。
+/// 暴力破解由這支端點的 reCAPTCHA v3 擋（<see cref="IBotCheckService"/>）。
+/// </para>
+/// <para>
 /// 04-api §3 沒有列後台的 auth 端點（§3.3 講的是前台會員），但後台一定要登得進去，
 /// 故補 <c>/auth/admin/login</c> 與 <c>/auth/admin/change-password</c>，已回寫 04 的變更紀錄。
 /// </para>
@@ -23,10 +29,6 @@ public sealed class AuthHandler(
     IBotCheckService  botCheck,
     IConfiguration    cfg)
 {
-    /// <summary>連續失敗 5 次鎖 15 分鐘（docs/09 §23）。</summary>
-    private const int  MaxFailedAttempts = 5;
-    private const int  LockoutMinutes    = 15;
-
     /// <summary>密碼長度下限（2026-09-06 由 8 放寬為 6；前端 Login.tsx 同步）。</summary>
     public  const int  MinPasswordLength = 6;
 
@@ -46,14 +48,7 @@ public sealed class AuthHandler(
 
         // 帳號不存在與密碼錯誤回同一個錯誤（docs/10 §7.4）：分開回等於送對方一個帳號列舉工具
         if (user is null || !hasher.Verify(dto.Password, user.PasswordHash))
-        {
-            if (user is not null) await RecordFailedAttemptAsync(user);
             throw new AppException(ErrorCodes.AuthInvalidCredentials, "帳號或密碼錯誤。", 401);
-        }
-
-        if (user.LockoutEndAt is not null && user.LockoutEndAt > Clock.UtcNow)
-            throw new AppException(ErrorCodes.AuthAccountInactive,
-                $"帳號已鎖定，請於 {LockoutMinutes} 分鐘後再試。", 403);
 
         if (!user.IsActive)
             throw new AppException(ErrorCodes.AuthAccountInactive, "帳號已停用。", 403);
@@ -63,9 +58,7 @@ public sealed class AuthHandler(
                                                  .Select(p => p.PermissionCode)
                                                  .ToArrayAsync();
 
-        user.FailedLoginCount = 0;
-        user.LockoutEndAt     = null;
-        user.LastLoginAt      = Clock.UtcNow;
+        user.LastLoginAt = Clock.UtcNow;
         await db.SaveChangesAsync();
 
         var token = jwt.GenerateAdminToken(user.Id, user.DisplayName, user.Username, user.Email,
@@ -113,18 +106,5 @@ public sealed class AuthHandler(
 
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok("密碼已更新。"));
-    }
-
-    private async Task RecordFailedAttemptAsync(Models.Entities.AdminUser user)
-    {
-        user.FailedLoginCount = (byte)Math.Min(byte.MaxValue, user.FailedLoginCount + 1);
-
-        if (user.FailedLoginCount >= MaxFailedAttempts)
-        {
-            user.LockoutEndAt     = Clock.UtcNow.AddMinutes(LockoutMinutes);
-            user.FailedLoginCount = 0;
-        }
-
-        await db.SaveChangesAsync();
     }
 }
