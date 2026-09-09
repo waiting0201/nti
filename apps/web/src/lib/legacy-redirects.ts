@@ -28,6 +28,134 @@ import { LEGACY_ARCHIVE } from './legacy-archive'
 /** 一列對照：`zh` 是舊站中文網址、`en` 是 WPML 的英文版（沒有就省略） */
 type Legacy = { zh?: string; en?: string; to: string }
 
+/**
+ * 舊站的 100 個 `/tag/*` 封存頁。
+ *
+ * 內容遷移的決策 D4 是「全部保留標籤體系並逐一 301 對應」，落點就是新站的標籤封存頁
+ * `/news/tag/{slug}`（後台單元 25，路由在 `app/[locale]/news/tag/[slug]`）。
+ * 在這一版之前，這 100 條全部落在 `legacy-archive.ts` 導回首頁——那是 soft 404，
+ * 權重一點都傳不過去（代價寫在本檔檔頭）。
+ *
+ * 舊標籤是同義詞氾濫的（綠色印刷／環保印刷／永續印刷／綠色印刷工廠指同一件事），
+ * 所以是**多對一**：100 個舊標籤收斂到 17 個新標籤。收斂的理由見
+ * `Api/Data/Seed/SeedData.cs` 的 `Tags`。
+ *
+ * ⚠ 舊標籤都在中文站的根目錄底下（`/tag/*`），WPML 沒有產英文版，所以只有 `zh`。
+ * 舊 slug 有中文（`/tag/企業社會責任`），瀏覽器送 percent-encoding 過來，
+ * `lookupLegacy()` 會先解碼再查（見該函式）。
+ */
+const TAGS: Legacy[] = [
+  { zh: '/tag/綠色印刷', to: '/news/tag/green-printing' },
+  { zh: '/tag/環保印刷', to: '/news/tag/green-printing' },
+  { zh: '/tag/永續印刷', to: '/news/tag/green-printing' },
+  { zh: '/tag/綠色印刷工廠', to: '/news/tag/green-printing' },
+  { zh: '/tag/南台彩藝-綠色印刷工廠', to: '/news/tag/green-printing' },
+  { zh: '/tag/地球友善', to: '/news/tag/green-printing' },
+  { zh: '/tag/永續製造', to: '/news/tag/green-printing' },
+  { zh: '/tag/低碳印刷', to: '/news/tag/low-carbon' },
+  { zh: '/tag/低碳營運', to: '/news/tag/low-carbon' },
+  { zh: '/tag/減碳', to: '/news/tag/low-carbon' },
+  { zh: '/tag/淨零轉型', to: '/news/tag/low-carbon' },
+  { zh: '/tag/台南永續印刷-ai-數位轉型', to: '/news/tag/low-carbon' },
+  { zh: '/tag/碳足跡', to: '/news/tag/carbon-footprint' },
+  { zh: '/tag/碳中和', to: '/news/tag/carbon-footprint' },
+  { zh: '/tag/碳權', to: '/news/tag/carbon-footprint' },
+  { zh: '/tag/碳交易', to: '/news/tag/carbon-footprint' },
+  { zh: '/tag/碳權交易', to: '/news/tag/carbon-footprint' },
+  { zh: '/tag/carbon-neutral', to: '/news/tag/carbon-footprint' },
+  { zh: '/tag/carbon-permit', to: '/news/tag/carbon-footprint' },
+  { zh: '/tag/carbon-tax', to: '/news/tag/carbon-footprint' },
+  { zh: '/tag/esg', to: '/news/tag/esg' },
+  { zh: '/tag/esg教育', to: '/news/tag/esg' },
+  { zh: '/tag/csr', to: '/news/tag/csr' },
+  { zh: '/tag/企業社會責任', to: '/news/tag/csr' },
+  { zh: '/tag/何謂csr？', to: '/news/tag/csr' },
+  { zh: '/tag/取之社會用之社會', to: '/news/tag/csr' },
+  { zh: '/tag/社會與企業間的共生共存', to: '/news/tag/csr' },
+  { zh: '/tag/綠建築', to: '/news/tag/green-building' },
+  { zh: '/tag/leed', to: '/news/tag/green-building' },
+  { zh: '/tag/eewh', to: '/news/tag/green-building' },
+  { zh: '/tag/台灣鑽石級綠建築', to: '/news/tag/green-building' },
+  { zh: '/tag/美國綠建築黃金級認證', to: '/news/tag/green-building' },
+  { zh: '/tag/green-supply-chain', to: '/news/tag/green-supply-chain' },
+  { zh: '/tag/gsc', to: '/news/tag/green-supply-chain' },
+  { zh: '/tag/綠色供應鏈', to: '/news/tag/green-supply-chain' },
+  { zh: '/tag/倉存管理', to: '/news/tag/green-supply-chain' },
+  { zh: '/tag/永續包裝', to: '/news/tag/sustainable-packaging' },
+  { zh: '/tag/綠色包裝', to: '/news/tag/sustainable-packaging' },
+  { zh: '/tag/包裝材質', to: '/news/tag/sustainable-packaging' },
+  { zh: '/tag/紙張包材', to: '/news/tag/sustainable-packaging' },
+  { zh: '/tag/搖籃到搖籃', to: '/news/tag/sustainable-packaging' },
+  { zh: '/tag/包裝設計', to: '/news/tag/packaging-design' },
+  { zh: '/tag/包裝結構設計', to: '/news/tag/packaging-design' },
+  { zh: '/tag/包裝彩盒', to: '/news/tag/packaging-design' },
+  { zh: '/tag/彩盒印刷', to: '/news/tag/packaging-design' },
+  { zh: '/tag/紙盒印刷', to: '/news/tag/packaging-design' },
+  { zh: '/tag/金箔銀箔紙張包裝', to: '/news/tag/packaging-design' },
+  { zh: '/tag/數位印刷', to: '/news/tag/digital-printing' },
+  { zh: '/tag/少量印刷', to: '/news/tag/digital-printing' },
+  { zh: '/tag/客製化印刷', to: '/news/tag/digital-printing' },
+  { zh: '/tag/獨立版', to: '/news/tag/digital-printing' },
+  { zh: '/tag/拼版印刷', to: '/news/tag/digital-printing' },
+  { zh: '/tag/節省時間', to: '/news/tag/digital-printing' },
+  { zh: '/tag/rfid', to: '/news/tag/variable-data-printing' },
+  { zh: '/tag/rfid技術', to: '/news/tag/variable-data-printing' },
+  { zh: '/tag/動物紙模型', to: '/news/tag/paper-craft' },
+  { zh: '/tag/紙模型桌遊', to: '/news/tag/paper-craft' },
+  { zh: '/tag/紙袋印刷', to: '/news/tag/paper-craft' },
+  { zh: '/tag/保育類動物', to: '/news/tag/conservation' },
+  { zh: '/tag/石虎', to: '/news/tag/conservation' },
+  { zh: '/tag/黑熊', to: '/news/tag/conservation' },
+  { zh: '/tag/明日動物', to: '/news/tag/conservation' },
+  { zh: '/tag/海洋保育', to: '/news/tag/conservation' },
+  { zh: '/tag/小虎鯨救援隊', to: '/news/tag/conservation' },
+  { zh: '/tag/永續環境', to: '/news/tag/conservation' },
+  { zh: '/tag/防災教育', to: '/news/tag/disaster-education' },
+  { zh: '/tag/永續獎', to: '/news/tag/awards' },
+  { zh: '/tag/遠見esg企業永續獎', to: '/news/tag/awards' },
+  { zh: '/tag/國際認證', to: '/news/tag/awards' },
+  { zh: '/tag/印刷認證', to: '/news/tag/awards' },
+  { zh: '/tag/g7', to: '/news/tag/awards' },
+  { zh: '/tag/gmi', to: '/news/tag/awards' },
+  { zh: '/tag/競爭力', to: '/news/tag/awards' },
+  { zh: '/tag/天下雜誌', to: '/news/tag/media-coverage' },
+  { zh: '/tag/文策院', to: '/news/tag/partnership' },
+  { zh: '/tag/夥伴', to: '/news/tag/partnership' },
+  { zh: '/tag/永續交流會', to: '/news/tag/partnership' },
+
+  /*
+   * 這幾個舊標籤在新的 17 個裡沒有對應主題（多半是單篇專用的長尾詞），
+   * 轉到內容最相近的頁面而不是硬塞一個標籤——那會做出名不副實的封存頁。
+   */
+  { zh: '/tag/桌曆', to: '/products-other' },
+  { zh: '/tag/桌曆印刷', to: '/products-other' },
+  { zh: '/tag/桌曆設計', to: '/products-other' },
+  { zh: '/tag/設計桌曆', to: '/products-other' },
+  { zh: '/tag/抽卡式桌曆', to: '/products-other' },
+  { zh: '/tag/2024龍年桌曆', to: '/products-other' },
+  { zh: '/tag/年曆', to: '/products-other' },
+  { zh: '/tag/報價單', to: '/get-a-quote' },
+  { zh: '/tag/印刷工藝', to: '/facility' },
+  { zh: '/tag/印刷機', to: '/facility' },
+  { zh: '/tag/平版印刷', to: '/facility' },
+  { zh: '/tag/高品質印刷', to: '/facility' },
+  { zh: '/tag/合板', to: '/products-cardboard' },
+  { zh: '/tag/合板印刷', to: '/products-cardboard' },
+  { zh: '/tag/包裝印刷', to: '/solutions' },
+  { zh: '/tag/packaging-and-printing', to: '/solutions' },
+  { zh: '/tag/南台彩藝', to: '/differences' },
+  { zh: '/tag/減輕工業汙水', to: '/green-materials' },
+
+  // 這四個是同一批新年桌曆活動的標籤（舊站掛在桌曆文章上），比照上面的「桌曆」
+  { zh: '/tag/2024', to: '/products-other' },
+  { zh: '/tag/2024happynewyear', to: '/products-other' },
+  { zh: '/tag/happy-new-year', to: '/products-other' },
+  { zh: '/tag/新年快樂', to: '/products-other' },
+
+  // 唯一沒有落點的是 `/tag/美國`：舊站拿它標「美國通路／美國認證」兩類不相干的文章，
+  // 對到任何一頁都名不副實，維持 legacy-archive 的首頁轉址（客戶 2026-09-07 的決定）。
+]
+
 /** 固定頁：舊站的資訊架構 → 新站頁面 */
 const PAGES: Legacy[] = [
   { zh: '/home/vision', en: '/en/home/vision', to: '/about-difference' },
@@ -117,6 +245,7 @@ const archive = Object.fromEntries(
 // 展開順序＝優先順序：有專屬落點的會蓋掉 archive 的首頁
 export const LEGACY_REDIRECTS: Record<string, string> = {
   ...archive,
+  ...flatten(TAGS),
   ...flatten(PAGES),
   ...flatten(POSTS),
 }

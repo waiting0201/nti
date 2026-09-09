@@ -124,7 +124,23 @@ export type NewsCard = {
   slug: string
 }
 
-export type NewsDetail = Omit<NewsCard, 'isFeaturedHome'> & { bodyHtml: string; seo: Seo }
+/**
+ * 消息標籤（後台單元 25）。`slug` 不分語系、`name` 分語系，
+ * 所以 `/zh/news/tag/esg` 與 `/en/news/tag/esg` 是同一個 slug、不同的顯示名。
+ */
+export type Tag = {
+  id: number
+  slug: string
+  name: string
+  /** 只有標籤清單／單筆端點有值；消息詳細頁帶出來的標籤不算篇數 */
+  newsCount: number
+}
+
+export type NewsDetail = Omit<NewsCard, 'isFeaturedHome'> & {
+  bodyHtml: string
+  tags: Tag[]
+  seo: Seo
+}
 
 export type Project = {
   id: number
@@ -228,6 +244,13 @@ export async function getSolutionByCode(locale: Locale, code: string) {
 export const getProjects       = (l: Locale) => fetchApi<Project[]>(`/projects${q(l)}`)
 export const getNews           = (l: Locale) => fetchApi<NewsCard[]>(`/news${q(l)}`)
 export const getNewsItem       = (l: Locale, slug: string) => fetchApi<NewsDetail>(`/news/${slug}${q(l)}`)
+
+// ── 標籤（單元 25）──────────────────────────────────────────────────────────
+// 後端只回「有已上架消息」的標籤，所以清單與封存頁都不會出現空標籤（見 TagReadService）
+export const getTags           = (l: Locale) => fetchApi<Tag[]>(`/tags${q(l)}`)
+export const getTag            = (l: Locale, slug: string) => fetchApi<Tag>(`/tags/${slug}${q(l)}`)
+export const getNewsByTag      = (l: Locale, slug: string) =>
+  fetchApi<NewsCard[]>(`/news${q(l, `&tag=${encodeURIComponent(slug)}`)}`)
 export const getVlogs          = (l: Locale) => fetchApi<Vlog[]>(`/green-vlog${q(l)}`)
 export const getFaqs           = (l: Locale) => fetchApi<Faq[]>(`/faq${q(l)}`)
 export const getTrends         = (l: Locale) => fetchApi<Trend[]>(`/industry-trends${q(l)}`)

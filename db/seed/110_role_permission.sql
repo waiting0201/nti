@@ -15,7 +15,7 @@
    SuperAdmin 亦逐列展開，不用萬用碼 —— RBAC 檢查邏輯保持單一（一律查
    RolePermission），且可稽核。新增後台單元時只需在本檔加一列 VALUES。
 
-   預期列數：SuperAdmin 79、Editor 67、Viewer 21 → 合計 167（由 verify.sql 斷言）。
+   預期列數：SuperAdmin 82、Editor 69、Viewer 22 → 合計 173（由 verify.sql 斷言）。
 
    單元 19 會員 ／ 20 訂單與生產進度已於 2026-09-06 移出專案範圍，編號不再使用。
    ============================================================================= */
@@ -49,6 +49,10 @@ grants (RoleCode, Code) AS (
         ('SuperAdmin','page.view'),('SuperAdmin','page.edit'),
         ('Editor','page.view'),('Editor','page.edit'),
         ('Viewer','page.view'),
+        -- 25 tag（消息標籤；刪除會改動前台網址，只給超管）
+        ('SuperAdmin','tag.view'),('SuperAdmin','tag.edit'),('SuperAdmin','tag.delete'),
+        ('Editor','tag.view'),('Editor','tag.edit'),
+        ('Viewer','tag.view'),
         -- 16 redirect
         ('SuperAdmin','redirect.view'),('SuperAdmin','redirect.edit'),
         ('SuperAdmin','redirect.delete'),('SuperAdmin','redirect.export'),

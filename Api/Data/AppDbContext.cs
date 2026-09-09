@@ -38,6 +38,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAc
     public DbSet<ProjectI18n>          ProjectI18n          => Set<ProjectI18n>();
     public DbSet<News>                 News                 => Set<News>();
     public DbSet<NewsI18n>             NewsI18n             => Set<NewsI18n>();
+    public DbSet<Tag>                  Tag                  => Set<Tag>();
+    public DbSet<TagI18n>              TagI18n              => Set<TagI18n>();
+    public DbSet<NewsTag>              NewsTag              => Set<NewsTag>();
     public DbSet<Vlog>                 Vlog                 => Set<Vlog>();
     public DbSet<VlogI18n>             VlogI18n             => Set<VlogI18n>();
     public DbSet<Faq>                  Faq                  => Set<Faq>();

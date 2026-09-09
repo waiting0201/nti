@@ -31,7 +31,7 @@ internal static class SeedData
     ];
 
     /// <summary>
-    /// 權限矩陣 167 列（docs/09 §6 ＝ db/seed/110_role_permission.sql
+    /// 權限矩陣 173 列（docs/09 §6 ＝ db/seed/110_role_permission.sql
     /// ＝ apps/admin/src/lib/permissions.ts）。
     /// <para>
     /// 用規則展開而非逐列硬寫：內容單元 01–14 的四個動作規則一致，逐列寫遲早會與
@@ -56,18 +56,20 @@ internal static class SeedData
             "dashboard.view", "page.view", "page.edit", "redirect.view", "redirect.edit", "redirect.delete",
             "redirect.export", "quote.view", "quote.edit", "quote.download", "quote.export", "contact.view",
             "contact.edit", "setting.view",
-            "setting.edit", "category.view", "category.edit", "category.delete", "admin.view", "admin.edit",
+            "setting.edit", "tag.view", "tag.edit", "tag.delete",
+            "category.view", "category.edit", "category.delete", "admin.view", "admin.edit",
             "admin.delete", "audit.view", "audit.resend",
         ],
         [2] =   // Editor
         [
             "dashboard.view", "page.view", "page.edit", "redirect.view", "redirect.edit", "redirect.delete",
             "redirect.export", "quote.view", "quote.edit", "contact.view", "contact.edit",
+            "tag.view", "tag.edit",
         ],
         [3] =   // Viewer
         [
             "dashboard.view", "page.view", "redirect.view", "quote.view", "contact.view", "setting.view",
-            "category.view",
+            "tag.view", "category.view",
         ],
     };
 
@@ -79,7 +81,7 @@ internal static class SeedData
         [3] = ["view"],
     };
 
-    private const int ExpectedRolePermissionRows = 167;   // db/verify/verify.sql 的斷言
+    private const int ExpectedRolePermissionRows = 173;   // db/verify/verify.sql 的斷言
 
     // ⚠ 這個宣告必須排在上面三個 static 欄位之後：static 欄位是照「文字順序」初始化的，
     //   放前面的話 BuildRolePermissions() 會拿到 null 的 ContentUnits／ExplicitGrants。
@@ -103,7 +105,7 @@ internal static class SeedData
                 $"權限矩陣展開為 {rows.Count} 列，應為 {ExpectedRolePermissionRows} 列。" +
                 "請對照 docs/09 §6、db/seed/110_role_permission.sql 與 apps/admin/src/lib/permissions.ts。");
 
-        // 值域自我檢查：所有展開的碼都必須在 PermissionCodes.All（79 個）之內
+        // 值域自我檢查：所有展開的碼都必須在 PermissionCodes.All（82 個）之內
         var unknown = rows.Select(r => r.PermissionCode).Distinct()
                           .Where(c => !Common.PermissionCodes.All.Contains(c)).ToArray();
         if (unknown.Length > 0)
@@ -438,5 +440,79 @@ internal static class SeedData
             Name = "其他印刷", H1 = "其他印刷服務",
             CoverAlt = "NTI 其他印刷服務成品", Slug = "other-printing",
         },
+    ];
+
+    /// <summary>
+    /// 消息標籤 17 筆（後台單元 25）。
+    /// <para>
+    /// 這一組是**收斂過的**：舊站有 100 個 <c>/tag/*</c> 封存頁，但其中大量是同義詞
+    /// （綠色印刷／環保印刷／永續印刷／綠色印刷工廠）或單篇專用的長尾詞（2024龍年桌曆）。
+    /// 100 個標籤攤在 12 篇消息上，多數封存頁只會有一兩篇文章 —— 那是 Google 眼中的
+    /// thin content，做出來反而扣分。這裡先收斂成 17 個真的有內容支撐的主題，
+    /// 舊網址則逐條 301 到對應的新標籤（<c>apps/web/src/lib/legacy-redirects.ts</c> 的 TAGS）。
+    /// </para>
+    /// <para>
+    /// ⚠ Slug 一律 ASCII 小寫、連字號分隔（客戶 2026-09-08 SEO 簡報：網址避免使用中文、
+    /// 字詞之間用 "-" 非 "_"）。中文名稱在 <see cref="TagI18ns"/>。
+    /// </para>
+    /// </summary>
+    public static readonly Tag[] Tags =
+    [
+        new() { Id = 1, Slug = "green-printing", SortOrder = 10, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 2, Slug = "low-carbon", SortOrder = 20, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 3, Slug = "carbon-footprint", SortOrder = 30, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 4, Slug = "esg", SortOrder = 40, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 5, Slug = "csr", SortOrder = 50, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 6, Slug = "green-building", SortOrder = 60, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 7, Slug = "green-supply-chain", SortOrder = 70, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 8, Slug = "sustainable-packaging", SortOrder = 80, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 9, Slug = "packaging-design", SortOrder = 90, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 10, Slug = "digital-printing", SortOrder = 100, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 11, Slug = "variable-data-printing", SortOrder = 110, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 12, Slug = "paper-craft", SortOrder = 120, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 13, Slug = "conservation", SortOrder = 130, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 14, Slug = "disaster-education", SortOrder = 140, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 15, Slug = "awards", SortOrder = 150, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 16, Slug = "media-coverage", SortOrder = 160, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 17, Slug = "partnership", SortOrder = 170, IsActive = true, CreatedAt = SeedAt },
+    ];
+
+    /// <summary>標籤名稱中英各一，共 34 列。</summary>
+    public static readonly TagI18n[] TagI18ns =
+    [
+        new() { TagId = 1, Lang = "en", Name = "Green Printing" },
+        new() { TagId = 1, Lang = "zh", Name = "綠色印刷" },
+        new() { TagId = 2, Lang = "en", Name = "Low Carbon" },
+        new() { TagId = 2, Lang = "zh", Name = "低碳製程" },
+        new() { TagId = 3, Lang = "en", Name = "Carbon Footprint" },
+        new() { TagId = 3, Lang = "zh", Name = "碳足跡" },
+        new() { TagId = 4, Lang = "en", Name = "ESG" },
+        new() { TagId = 4, Lang = "zh", Name = "ESG" },
+        new() { TagId = 5, Lang = "en", Name = "Corporate Social Responsibility" },
+        new() { TagId = 5, Lang = "zh", Name = "企業社會責任" },
+        new() { TagId = 6, Lang = "en", Name = "Green Building" },
+        new() { TagId = 6, Lang = "zh", Name = "綠建築" },
+        new() { TagId = 7, Lang = "en", Name = "Green Supply Chain" },
+        new() { TagId = 7, Lang = "zh", Name = "綠色供應鏈" },
+        new() { TagId = 8, Lang = "en", Name = "Sustainable Packaging" },
+        new() { TagId = 8, Lang = "zh", Name = "永續包裝" },
+        new() { TagId = 9, Lang = "en", Name = "Packaging Design" },
+        new() { TagId = 9, Lang = "zh", Name = "包裝設計" },
+        new() { TagId = 10, Lang = "en", Name = "Digital Printing" },
+        new() { TagId = 10, Lang = "zh", Name = "數位印刷" },
+        new() { TagId = 11, Lang = "en", Name = "Variable Data Printing" },
+        new() { TagId = 11, Lang = "zh", Name = "可變資料印刷" },
+        new() { TagId = 12, Lang = "en", Name = "Paper Craft" },
+        new() { TagId = 12, Lang = "zh", Name = "紙藝與紙模型" },
+        new() { TagId = 13, Lang = "en", Name = "Conservation" },
+        new() { TagId = 13, Lang = "zh", Name = "生態保育" },
+        new() { TagId = 14, Lang = "en", Name = "Disaster-Prevention Education" },
+        new() { TagId = 14, Lang = "zh", Name = "防災教育" },
+        new() { TagId = 15, Lang = "en", Name = "Awards & Recognition" },
+        new() { TagId = 15, Lang = "zh", Name = "獲獎與認證" },
+        new() { TagId = 16, Lang = "en", Name = "Media Coverage" },
+        new() { TagId = 16, Lang = "zh", Name = "媒體報導" },
+        new() { TagId = 17, Lang = "en", Name = "Partnership" },
+        new() { TagId = 17, Lang = "zh", Name = "產業合作" },
     ];
 }

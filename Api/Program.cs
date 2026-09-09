@@ -87,6 +87,7 @@ var host = new HostBuilder()
         services.AddScoped<ISolutionReadService, SolutionReadService>();
         services.AddScoped<IProjectReadService, ProjectReadService>();
         services.AddScoped<INewsReadService, NewsReadService>();
+        services.AddScoped<ITagReadService, TagReadService>();
         services.AddScoped<IVlogReadService, VlogReadService>();
         services.AddScoped<IFaqReadService, FaqReadService>();
         services.AddScoped<ITrendReadService, TrendReadService>();
@@ -103,6 +104,7 @@ var host = new HostBuilder()
         services.AddScoped<SolutionHandler>();
         services.AddScoped<ProjectHandler>();
         services.AddScoped<NewsHandler>();
+        services.AddScoped<TagHandler>();
         services.AddScoped<VlogHandler>();
         services.AddScoped<FaqHandler>();
         services.AddScoped<TrendHandler>();
@@ -139,6 +141,7 @@ var host = new HostBuilder()
         services.AddScoped<AdminSupplierDownloadHandler>();
         services.AddScoped<AdminPageHandler>();
         services.AddScoped<AdminRedirectHandler>();
+        services.AddScoped<AdminTagHandler>();
         services.AddScoped<AdminFormHandler>();
         services.AddScoped<AdminSettingHandler>();
         services.AddScoped<AdminCategoryHandler>();

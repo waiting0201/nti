@@ -24,15 +24,15 @@ DECLARE @r TABLE (
 
 /* ---------- 結構 ---------- */
 INSERT @r (Item, Expected, Actual)
-SELECT N'資料表總數（42 設計 + Newsletter + SchemaVersion）', N'44',
+SELECT N'資料表總數（45 設計 + Newsletter + SchemaVersion）', N'47',
        CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables;
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'*I18n 多語子表數', N'16',
+SELECT N'*I18n 多語子表數', N'17',
        CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables WHERE name LIKE '%I18n';
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'外鍵數', N'30', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
+SELECT N'外鍵數', N'33', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
 
 INSERT @r (Item, Expected, Actual)
 SELECT N'Category 型別安全複合外鍵數', N'9', CAST(COUNT(*) AS NVARCHAR(20))
@@ -86,11 +86,13 @@ WHERE t.name LIKE '%I18n'
 
 /* ---------- 種子資料 ---------- */
 INSERT @r (Item, Expected, Actual) SELECT N'Role',           N'3',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Role;
-INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'167', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
-INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'79', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
-INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'67', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
-INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'21', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
+INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'173', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
+INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'82', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
+INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'69', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
+INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'22', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
 INSERT @r (Item, Expected, Actual) SELECT N'Category',       N'44', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category;
+INSERT @r (Item, Expected, Actual) SELECT N'Tag',            N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Tag;
+INSERT @r (Item, Expected, Actual) SELECT N'TagI18n',        N'34', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.TagI18n;
 INSERT @r (Item, Expected, Actual) SELECT N'CategoryI18n',   N'88', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.CategoryI18n;
 INSERT @r (Item, Expected, Actual) SELECT N'  └ CategoryType 種類', N'9', CAST(COUNT(DISTINCT CategoryType) AS NVARCHAR(20)) FROM dbo.Category;
 INSERT @r (Item, Expected, Actual) SELECT N'SiteSetting',    N'15', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SiteSetting;

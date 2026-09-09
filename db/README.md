@@ -105,7 +105,7 @@ dev 管理員帳號為 `sa` / `Admin@123`（BCrypt 雜湊，與 API 的 `Passwor
 |---|---|---|
 | `local/` | **只在本機執行** | 建庫／砍庫／dev 帳號。Azure 永不執行，runner 也不掃這裡。 |
 | `migrations/` | 一次性、依序 | 由 `SchemaVersion` 記錄；**套用後不可再修改**。 |
-| `seed/` | run-always、冪等 | 參照資料（角色／權限／分類／設定／頁面／方案）。 |
+| `seed/` | run-always、冪等 | 參照資料（角色／權限／分類／設定／頁面／方案／標籤）。 |
 | `verify/` | 檢核 | 部署後跑一次，有 FAIL 即回傳非 0。 |
 | `tools/` | 執行封裝 | `sqlcmd.sh`（單檔）、`run-local.sh`（全流程）。 |
 

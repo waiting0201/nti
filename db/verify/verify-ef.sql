@@ -10,7 +10,7 @@
    由 db/seed 的腳本灌種子）。2026-09-02 起 schema 的權威來源改為 EF Migration
    （docs/10 §8），正式環境的庫由 Api 啟動時的 MigrateAsync() 建立，兩處差異：
 
-     - SchemaVersion 由 __EFMigrationsHistory 取代（故表數仍為 45，組成不同）
+     - SchemaVersion 由 __EFMigrationsHistory 取代（故表數仍為 47，組成不同）
      - 種子改由 Api/Data/Seed/SeedData.cs 的 HasData 寫入，筆數斷言完全相同
 
    斷言內容與 verify.sql 逐條對應，數字有異動時兩份要一起改。
@@ -34,13 +34,13 @@ DECLARE @r TABLE (
 
 /* ---------- 結構 ---------- */
 INSERT @r (Item, Expected, Actual)
-SELECT N'資料表總數（43 + __EFMigrationsHistory）', N'44', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables;
+SELECT N'資料表總數（46 + __EFMigrationsHistory）', N'47', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables;
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'*I18n 多語子表數', N'16', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables WHERE name LIKE '%I18n';
+SELECT N'*I18n 多語子表數', N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables WHERE name LIKE '%I18n';
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'外鍵數', N'30', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
+SELECT N'外鍵數', N'33', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
 
 INSERT @r (Item, Expected, Actual)
 SELECT N'Category 型別安全複合外鍵數', N'9', CAST(COUNT(*) AS NVARCHAR(20))
@@ -115,11 +115,13 @@ WHERE t.name LIKE '%I18n'
 
 /* ---------- 種子（Api/Data/Seed/SeedData.cs 的 HasData）---------- */
 INSERT @r (Item, Expected, Actual) SELECT N'Role', N'3', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Role;
-INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'167', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
-INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'79', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
-INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'67', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
-INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'21', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
+INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'173', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
+INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'82', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
+INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'69', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
+INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'22', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
 INSERT @r (Item, Expected, Actual) SELECT N'Category',       N'44', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category;
+INSERT @r (Item, Expected, Actual) SELECT N'Tag',            N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Tag;
+INSERT @r (Item, Expected, Actual) SELECT N'TagI18n',        N'34', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.TagI18n;
 INSERT @r (Item, Expected, Actual) SELECT N'CategoryI18n',   N'88', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.CategoryI18n;
 INSERT @r (Item, Expected, Actual) SELECT N'SiteSetting',    N'15', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SiteSetting;
 INSERT @r (Item, Expected, Actual) SELECT N'Page（固定 28 + 預留 csr）', N'29', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Page;

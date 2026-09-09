@@ -7,8 +7,8 @@ namespace Nti.Api.Services.Dapper;
 
 public interface INewsReadService
 {
-    Task<IEnumerable<NewsListDto>> GetAllAsync(string lang, int? categoryId);
-    Task<PagedResult<NewsListDto>> GetPagedAsync(string lang, int? categoryId, Paging paging);
+    Task<IEnumerable<NewsListDto>> GetAllAsync(string lang, int? categoryId, string? tagSlug = null);
+    Task<PagedResult<NewsListDto>> GetPagedAsync(string lang, int? categoryId, Paging paging, string? tagSlug = null);
     Task<IEnumerable<NewsListDto>> GetFeaturedAsync(string lang, int take);
     Task<NewsDetailDto?> GetBySlugAsync(string lang, string slug);
 }
@@ -23,10 +23,20 @@ public sealed class NewsReadService(IDbConnection db) : INewsReadService
         INNER JOIN CategoryI18n ci ON ci.CategoryId = c.Id AND ci.Lang = @Lang
         """;
 
-    /// <summary>清單與詳細頁共用同一份可見性條件，避免「列表看得到、點進去 404」。</summary>
+    /// <summary>
+    /// 清單與詳細頁共用同一份可見性條件，避免「列表看得到、點進去 404」。
+    /// <para>
+    /// 標籤篩選用 EXISTS 而不是 JOIN NewsTag：一篇消息可以掛多個標籤，JOIN 會讓
+    /// 同一篇在結果裡出現多次，總數也會跟著虛胖。
+    /// </para>
+    /// </summary>
     private static readonly string Where = $"""
         WHERE {Common.Sql.PublicFilter("n")}
           AND (@CategoryId IS NULL OR n.CategoryId = @CategoryId)
+          AND (@TagSlug IS NULL OR EXISTS (
+                SELECT 1 FROM NewsTag nt
+                INNER JOIN Tag t ON t.Id = nt.TagId AND t.IsDeleted = 0 AND t.IsActive = 1
+                WHERE nt.NewsId = n.Id AND t.Slug = @TagSlug))
         """;
 
     private static readonly string ListSelect = $"""
@@ -56,6 +66,13 @@ public sealed class NewsReadService(IDbConnection db) : INewsReadService
         SELECT h.Lang, h.Slug
         FROM NewsI18n h
         WHERE h.NewsId = (SELECT NewsId FROM NewsI18n WHERE Lang = @Lang AND Slug = @Slug);
+
+        SELECT t.Id, t.Slug, ti.Name
+        FROM NewsTag nt
+        INNER JOIN Tag t ON t.Id = nt.TagId AND t.IsDeleted = 0 AND t.IsActive = 1
+        INNER JOIN TagI18n ti ON ti.TagId = t.Id AND ti.Lang = @Lang
+        WHERE nt.NewsId = (SELECT NewsId FROM NewsI18n WHERE Lang = @Lang AND Slug = @Slug)
+        ORDER BY t.SortOrder, t.Id;
         """;
 
     private static readonly string FeaturedSql = $"""
@@ -67,13 +84,13 @@ public sealed class NewsReadService(IDbConnection db) : INewsReadService
         ORDER BY n.PublishDate DESC, n.Id DESC
         """;
 
-    public async Task<IEnumerable<NewsListDto>> GetAllAsync(string lang, int? categoryId) =>
+    public async Task<IEnumerable<NewsListDto>> GetAllAsync(string lang, int? categoryId, string? tagSlug = null) =>
         await db.QueryAsync<NewsListDto>(ListSelect,
-            new { Lang = lang, Now = Clock.UtcNow, CategoryId = categoryId });
+            new { Lang = lang, Now = Clock.UtcNow, CategoryId = categoryId, TagSlug = tagSlug });
 
-    public async Task<PagedResult<NewsListDto>> GetPagedAsync(string lang, int? categoryId, Paging paging)
+    public async Task<PagedResult<NewsListDto>> GetPagedAsync(string lang, int? categoryId, Paging paging, string? tagSlug = null)
     {
-        var p = new { Lang = lang, Now = Clock.UtcNow, CategoryId = categoryId, Skip = paging.Skip, Take = paging.PageSize };
+        var p = new { Lang = lang, Now = Clock.UtcNow, CategoryId = categoryId, TagSlug = tagSlug, Skip = paging.Skip, Take = paging.PageSize };
 
         var total = await db.ExecuteScalarAsync<int>(CountSql, p);
         var rows  = await db.QueryAsync<NewsListDto>(PagedSql, p);
@@ -92,7 +109,8 @@ public sealed class NewsReadService(IDbConnection db) : INewsReadService
         if (row is null) return null;
 
         var hreflang = await grid.ReadAsync<(string Lang, string Slug)>();
-        return row.ToDto(hreflang);
+        var tags     = await grid.ReadAsync<TagDto>();
+        return row.ToDto(hreflang, [.. tags]);
     }
 
     private sealed class NewsDetailRow
@@ -115,11 +133,12 @@ public sealed class NewsReadService(IDbConnection db) : INewsReadService
         public string?  OgDescription  { get; set; }
         public string?  OgImagePath    { get; set; }
 
-        public NewsDetailDto ToDto(IEnumerable<(string Lang, string Slug)> hreflang) => new()
+        public NewsDetailDto ToDto(IEnumerable<(string Lang, string Slug)> hreflang, IReadOnlyList<TagDto> tags) => new()
         {
             Id = Id, CategoryId = CategoryId, CategoryCode = CategoryCode, CategoryName = CategoryName,
             PublishDate = PublishDate, CoverImagePath = CoverImagePath,
             Title = Title, Summary = Summary, BodyHtml = BodyHtml, CoverAlt = CoverAlt,
+            Tags = tags,
             Seo = new SeoDto
             {
                 Slug = Slug, SeoTitle = SeoTitle, SeoDescription = SeoDescription,

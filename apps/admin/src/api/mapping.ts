@@ -111,6 +111,11 @@ export const UNIT_MAP: Record<string, UnitMap> = {
     entity: { isEnabled: 'isActive' },
   },
 
+  tag: {
+    // usageCount 是後端算出來的（掛了幾篇消息），唯讀，寫回去沒有對應欄位
+    unsupported: ['usageCount'],
+  },
+
   quote: {
     entity: { assignee: 'assigneeId' },
     // replied 是 switch，對應 repliedAt 有沒有值（見 client 的特例處理）

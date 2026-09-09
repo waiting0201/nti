@@ -17,6 +17,7 @@ export function ListPage() {
   const unit = UNIT_BY_CODE.get(code)
   const { can } = useAuth()
   const [exporting, setExporting] = useState(false)
+  const [importing, setImporting] = useState(false)
   const nav = useNavigate()
   const [sp, setSp] = useSearchParams()
 
@@ -71,18 +72,41 @@ export function ListPage() {
   if (!unit) return <Notice kind="danger">找不到這個單元。</Notice>
 
   const canEdit = can(`${unit.code}.edit`)
-  const canExport = unit.code === 'quote' && can('quote.export')
+  // 兩個單元有 CSV：報價（quote.export）與 301 轉址（redirect.export）。
+  // 301 另外可以「匯入」——舊站 229 條要一次帶進來，逐筆新增不切實際。
+  const canExport =
+    (unit.code === 'quote' && can('quote.export')) ||
+    (unit.code === 'redirect' && can('redirect.export'))
+  const canImport = unit.code === 'redirect' && can('redirect.export') && can('redirect.edit')
   const canPublish = can(`${unit.code}.publish`)
   const canDelete = can(`${unit.code}.delete`)
 
   async function exportCsv() {
     setExporting(true)
     try {
-      await api.exportQuotesCsv()
+      if (unit!.code === 'redirect') await api.exportRedirectsCsv()
+      else await api.exportQuotesCsv()
     } catch (err) {
       toast(err instanceof Error ? err.message : '匯出失敗，請稍後再試。')
     } finally {
       setExporting(false)
+    }
+  }
+
+  /**
+   * 匯入 301 CSV。後端以 `fromPath` 為鍵覆寫，重跑同一份檔案不會產生重複，
+   * 所以不必先清空——但被跳過的列只有這裡的提示會講，別把回傳的數字吞掉。
+   */
+  async function importCsv(file: File) {
+    setImporting(true)
+    try {
+      const { created, updated, skipped } = await api.importRedirectsCsv(file)
+      toast(`匯入完成：新增 ${created} 筆、更新 ${updated} 筆${skipped ? `、略過 ${skipped} 筆（格式不符）` : ''}`)
+      void load()
+    } catch (err) {
+      toast(err instanceof Error ? err.message : '匯入失敗，請稍後再試。')
+    } finally {
+      setImporting(false)
     }
   }
   const readOnlyRecord = unit.readOnly === 'status-only'
@@ -204,6 +228,23 @@ export function ListPage() {
             <button className="btn btn-sm" disabled={exporting} onClick={() => void exportCsv()}>
               {exporting ? '匯出中…' : '⬇ 匯出 CSV'}
             </button>
+          )}
+          {canImport && (
+            <label className="btn btn-sm" style={{ cursor: importing ? 'default' : 'pointer' }}>
+              {importing ? '匯入中…' : '⬆ 匯入 CSV'}
+              <input
+                type="file"
+                accept=".csv,text/csv"
+                hidden
+                disabled={importing}
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  // 同一個檔案連選兩次也要能觸發 change，所以選完就把 input 清空
+                  e.target.value = ''
+                  if (file) void importCsv(file)
+                }}
+              />
+            </label>
           )}
           {canEdit && !unit.fixedRows && !readOnlyRecord && (
             <button className="btn btn-primary btn-sm" onClick={() => nav(`/u/${unit.code}/new`)}>

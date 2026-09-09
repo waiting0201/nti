@@ -19,7 +19,7 @@
 | 既有 WordPress 站 `nti-printing.com`（約 80 篇文章 / 46 頁） | 內容遷移來源（P8） |
 | [`05-seo.md`](05-seo.md) | CMS 需提供的 SEO 欄位（meta/slug/alt/canonical/hreflang） |
 | [`08-database.md`](08-database.md) | **資料表 DDL、多語策略、索引、種子**（本文件 §4.1 的落地規格） |
-| [`09-cms-admin.md`](09-cms-admin.md) | **後台 22 個單元的欄位／操作／權限規格**（本文件 §3 的落地規格） |
+| [`09-cms-admin.md`](09-cms-admin.md) | **後台 23 個單元的欄位／操作／權限規格**（本文件 §3 的落地規格） |
 | [`10-backend-design.md`](10-backend-design.md) | **後端技術規範**：分層、命名、回應信封、資料存取、設定與 Coding Checklist（本文件 §2 的落地規格） |
 
 ---
@@ -41,11 +41,11 @@
 
 ## 3. 範圍 — CMS 模組（對應規劃書 §3 功能清單）
 
-**內容維護**：以 **22 個後台單元**實作，單元清單、欄位與權限見 [`09-cms-admin.md`](09-cms-admin.md)。
+**內容維護**：以 **23 個後台單元**實作，單元清單、欄位與權限見 [`09-cms-admin.md`](09-cms-admin.md)。
 規劃書 §3-1 的部分區塊名稱（COURAGE、Project 精選、NTI Difference、Advantages 數據）已被 2026-08-31 IA 改版與 2026-09-01 首頁改版取代，逐項差異與**三個待確認缺口**（電子報／CSR／Banner 影片）見 [`09-cms-admin.md` §2.1](09-cms-admin.md)。
 
 **系統管理**：
-- **管理員與權限角色**：超級管理員 / 內容編輯 / 檢視者（RBAC），權限矩陣以 [`09-cms-admin.md` §6](09-cms-admin.md) 為權威（展開後 167 列）。
+- **管理員與權限角色**：超級管理員 / 內容編輯 / 檢視者（RBAC），權限矩陣以 [`09-cms-admin.md` §6](09-cms-admin.md) 為權威（展開後 173 列）。
 - **報價需求管理**：檢視／改狀態／指派承辦人／匯出，狀態五態 `待處理 / 處理中 / 已報價 / 已結案 / 垃圾訊息`（DB 值 `New / InProgress / Quoted / Closed / Spam`）。客戶填寫內容唯讀。
 - **聯絡表單管理**：檢視／改狀態，狀態四態 `待處理 / 已回覆 / 已結案 / 垃圾訊息`（`New / Replied / Closed / Spam`）。
 
@@ -62,7 +62,7 @@
 1. **資料層**（P4）：依 [`08-database.md`](08-database.md) 建立 **45 張表**（內容模型 + 多語 i18n 子表 + 報價/聯絡 + RBAC + 版本表 + 預留的 `NewsletterSubscriber`）。
    **schema 權威為 EF Core Migration**：既有 [`db/`](../db/) 的 4 支 migration 與 6 支 seed 需搬遷為 `Data/Configurations/<Entity>Configuration.cs` + `HasData`（表達方式對照表見 [`10-backend-design.md` §8.5](10-backend-design.md)），這是 P4 的第一項工作。
    `db/` 保留為參考實作與交付腳本（本機一鍵建置 `db/tools/run-local.sh` 仍可用）；`db/verify/verify.sql` 的 24 項斷言保留為 EF Migration 產出的驗收閘。
-2. **CMS 後台**：依 [`09-cms-admin.md`](09-cms-admin.md) 的 22 個單元實作 CRUD + 排序 + 上下架排程 + 富文本 + 欄位級檔案上傳（Azure Blob，**不做 Media Library**）+ 角色權限。
+2. **CMS 後台**：依 [`09-cms-admin.md`](09-cms-admin.md) 的 23 個單元實作 CRUD + 排序 + 上下架排程 + 富文本 + 欄位級檔案上傳（Azure Blob，**不做 Media Library**）+ 角色權限。
 3. **API 實作**：對齊 [`04-api.md`](04-api.md) 契約（前台讀取 + 後台管理 + 表單），寫法依 [`10-backend-design.md`](10-backend-design.md)。
 4. **表單後端**（P6）：信件通知、reCAPTCHA v3、rate limit、檔案上傳防護。
 5. **內容遷移**（P8）：WordPress → 新 CMS（含媒體、分類、上架狀態），配合 301 對照表（見 05-seo）。

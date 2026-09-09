@@ -1,6 +1,6 @@
 # admin — NTI Printing 管理後台（React + Vite SPA）
 
-依 [`docs/09-cms-admin.md`](../docs/09-cms-admin.md) 實作的 **22 個後台單元**（19 會員／20 訂單已移出範圍；16 轉址暫時隱藏，宣告仍在 `src/units/rest.ts`）。
+依 [`docs/09-cms-admin.md`](../docs/09-cms-admin.md) 實作的 **23 個後台單元**（19 會員／20 訂單已移出範圍；16 轉址暫時隱藏，宣告仍在 `src/units/rest.ts`）。
 純 SPA、靜態輸出、`noindex`。資料來源有兩種，由 `VITE_API_BASE` 決定——見下方〈資料從哪來〉。
 
 ## 快速開始
@@ -28,7 +28,7 @@ VITE_API_BASE=http://localhost:7071/api/v1 pnpm --filter admin dev
 |---|---|---|
 | 實作 | `src/api/client.mock.ts`（localStorage） | `src/api/client.api.ts`（打 `/api/v1/admin/*`） |
 | 登入 | 選角色即進入 | 帳號 + 密碼（帳號不限定 email 格式），首登強制改密碼 |
-| 權限 | 查本地的 167 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
+| 權限 | 查本地的 173 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
 | 圖片 | `public/assets` 或 `VITE_MEDIA_BASE` | 上傳到 Blob，經 `/files/media/*` 代理取回 |
 
 兩者**簽章完全一樣**，上層的清單／編輯畫面不知道資料從哪來（`src/api/client.ts` 是門面）。
@@ -83,7 +83,7 @@ dev 與 build 兩種形態的差別只有素材來源：
 ## 驗收閘
 
 ```bash
-pnpm --filter admin check:units   # → 「✓ 每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 167 列」
+pnpm --filter admin check:units   # → 「✓ 每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 173 列」
 pnpm --filter admin typecheck
 ```
 

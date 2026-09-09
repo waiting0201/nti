@@ -21,7 +21,7 @@ export const SEO_FIELDS: Field[] = [
     altExempt: 'OG 圖是 meta 標籤，不在頁面上呈現' },
 ]
 
-/** 後台單元，順序即側邊選單順序（docs §2；19 會員／20 訂單已移出範圍，16 轉址暫時隱藏）*/
+/** 後台單元，順序即側邊選單順序（docs §2；19 會員／20 訂單已移出範圍）*/
 export const UNITS: Unit[] = [
   rest.dashboard,
   content.homeBanner,
@@ -39,11 +39,12 @@ export const UNITS: Unit[] = [
   rest.supplierSpec,
   rest.supplierDownload,
   rest.page,
-  // rest.redirect —— 301 轉址單元暫時隱藏（宣告仍留在 rest.ts，要開啟把這行還原即可）
+  rest.redirect,
   rest.quote,
   rest.contact,
   rest.setting,
   rest.category,
+  rest.tag,
   rest.admin,
   rest.audit,
 ]
@@ -64,13 +65,13 @@ export function unitFields(unit: Unit): Field[] {
 export function validateUnits(): string[] {
   const problems: string[] = []
 
-  // 權限矩陣展開後應與 db/seed/110_role_permission.sql 的 167 列一致；
+  // 權限矩陣展開後應與 db/seed/110_role_permission.sql 的 173 列一致；
   // 對不上代表前後端對權限的認知已岔開，要先修正再往下做。
   const perm = permissionRowCount()
-  if (perm.SuperAdmin !== 79 || perm.Editor !== 67 || perm.Viewer !== 21) {
+  if (perm.SuperAdmin !== 82 || perm.Editor !== 69 || perm.Viewer !== 22) {
     problems.push(
       `權限矩陣與 db/seed/110_role_permission.sql 不一致：` +
-        `SuperAdmin ${perm.SuperAdmin}（應 79）／Editor ${perm.Editor}（應 67）／Viewer ${perm.Viewer}（應 21）`,
+        `SuperAdmin ${perm.SuperAdmin}（應 82）／Editor ${perm.Editor}（應 69）／Viewer ${perm.Viewer}（應 22）`,
     )
   }
 

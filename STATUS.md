@@ -5,14 +5,14 @@
 > 分工：本檔記錄**狀態**；[`docs/`](docs/README.md) 的十份作業書記錄各領域的**規格與施工標準**；
 > [`CLAUDE.md`](CLAUDE.md) 記錄**專案規範與索引**。三份不要互相抄，各司其職。
 
-**最後更新**：2026-09-08
+**最後更新**：2026-09-09
 
 ---
 
 ## 一句話現況
 
 **前端切版、後台介面、部署管線三條線已完成並在 Azure 上運作**——
-公開站 44 頁與後台 24 單元同站部署於 `stapp-nti-prod`，素材走 Blob，
+公開站 44 頁與後台 23 單元同站部署於 `stapp-nti-prod`，素材走 Blob，
 push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內容都是從 mockup 與 `db/seed`
 產生的種子資料——**資料庫與業務端點都還沒做**。
 
@@ -45,7 +45,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 | P4 | 後端／CMS API | ✅ | 程式、資源、內容、CI 全數完成並上線（見 §五、§六） |
 | P5 | 前台頁面開發 | 🟡 | 44 頁切版完成；內容仍為靜態，未接 API |
 | P6 | 報價／聯絡表單 | ✅ | 兩支表單已接上後端，含附件上傳與 reCAPTCHA v3（2026-09-08） |
-| P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語完成（CMS 內容 + 44 頁靜態文字皆有中文，**待客戶校閱**）；sitemap／結構化資料／舊站 301 已做（見 §二），舊站 170 條文章與標籤的落點待內容遷移 |
+| P8 | 內容遷移／雙語／SEO 實作 | 🟡 | 雙語完成（CMS 內容 + 44 頁靜態文字皆有中文，**待客戶校閱**）；sitemap／結構化資料／舊站 301 已做，客戶 SEO 清單的 meta description／WebP／客製 404／OG＋Twitter 四項於 2026-09-09 補齊（見 §二）。標籤體系與 301 轉址單元於 2026-09-09 完成（舊站 100 個 `/tag/*` 有 99 條 1:1 轉址）。仍缺 GA4／GSC（要客戶帳號）；舊站 80 篇文章的落點待內容遷移 |
 | P9 | 整合測試／QA／SEO 稽核 | ⬜ | |
 | P10 | UAT 客戶驗收 | ⬜ | |
 | P11 | 部署 | ✅ | SWA + Blob + CI 全通（見 §六） |
@@ -177,6 +177,50 @@ mockup 內容（現況部署），設了就改吃 CMS。
 | 舊站 301 | `src/lib/legacy-redirects.ts` + middleware，**229 條全部有去處**：59 條專屬落點（45 個固定頁、2 個分類，加上 mockup 那 12 篇示範消息——它們正是舊站同一批文章），其餘 170 條依客戶決定導回首頁（產生檔 `legacy-archive.ts`） |
 | 覆蓋率檢查 | `node tools/check-legacy-redirects.mjs [--write]`：抓舊站 sitemap 比對，並重產 [`reference/舊站301對照表.md`](reference/舊站301對照表.md) |
 
+### ✅ 依客戶 SEO 清單補上的四項（2026-09-09）
+
+對照客戶 2026-09-08 的《網站建置 SEO 注意事項》逐條稽核後補的。
+
+| 項目 | 做法 | 驗證 |
+|---|---|---|
+| **meta description** | 原本 44 頁只有 4 頁有。描述寫進 **mockup 的 `<meta name="description">`**（英文的權威來源），由 `build-pages.mjs` 帶到 28 頁，`HAND_MAINTAINED` 的 13 頁手動補；中文照舊走 `zh.ts`。全部 ≤155 字元（客戶簡報的上限），首頁那條原本 216 字元也一併修短 | 88 個網址（44×2）全部有、無重複、無過長 |
+| **圖片 WebP** | 被引用且 >150KB 的 36 張轉 WebP（q82），原檔保留在 `mockup/assets-original/`（不在 `sync-assets` 的範圍內）。`ref-home-banner1` 另外從 10667×4000 縮到 2560 寬 | 47MB→4.8MB；最大單張 448K（原 3.2MB），符合簡報的 300–500K；首頁圖片總重 2.0MB |
+| **客製化 404** | `app/[locale]/page-not-found/page.tsx`＋`middleware.ts` 的路由比對。**真的回 404 狀態碼**，不是 soft 404 | `/en/xxx`、`/zh/a/b/c`、`/{locale}/page-not-found` 皆 404，且有完整 header／footer／浮動鈕與正確 `<html lang>` |
+| **OG 預設圖與 Twitter Cards** | `lib/i18n.ts` 補 `DEFAULT_OG_IMAGE`（`assets/og-default.jpg`，1200×630）與 `twitter: summary_large_image`；消息詳細頁同步 | 88 個網址全部有 `og:image` 與 `twitter:card` |
+
+**404 的實作為什麼繞這麼遠**（三個註解裡都寫了，這裡只留結論）：
+本專案的 root layout 是 `app/[locale]/layout.tsx`（`<html lang>` 要吃語系）。這種結構下
+Next 的 `not-found.tsx` **兩種放法都不會有站台版型**——放 `[locale]/` 底下不會被編成
+not-found 邊界，放 root 又在 `[locale]` 的 layout 樹之外，實測都只得到內建的
+`__next_error__` 空殼。`NextResponse.rewrite(url, { status: 404 })` 也會被 Next 攔掉
+（狀態碼對、但回的是同一個空殼）。最後的做法是 middleware 比對 `ROUTES`，
+對不到就把 `/{locale}/page-not-found` 的 HTML 取回來、用 404 狀態碼回傳。
+
+### ✅ 標籤體系與 301 轉址單元（2026-09-09）
+
+| 項目 | 做法 |
+|---|---|
+| **單元 16 301 轉址** | 由隱藏改為啟用。後端 CRUD 與 CSV 匯入匯出本來就寫好了（`AdminRedirectHandler`），缺的是後台入口——補上「⬆ 匯入 CSV」按鈕（`ListPage`）。匯入以 `fromPath` 為鍵覆寫，**重跑同一份檔案不會產生重複**，客戶可以改完試算表再整份丟一次 |
+| **單元 25 消息標籤** | 全新一條：`Tag`／`TagI18n`／`NewsTag` 三張表（EF Migration `AddNewsTags`，`db/migrations/0007` 為參考實作）、公開端點 `GET /tags`｜`/tags/{slug}`｜`/news?tag=`、後台 CRUD 與拖曳排序、消息單元的標籤多選欄位 |
+| **前台封存頁** | `/{語系}/news/tag/{slug}`，含麵包屑結構化資料、hreflang、OG／Twitter；消息詳細頁底部有標籤列（客戶簡報的「站內連結」來源之一） |
+| **舊站 100 個 `/tag/*`** | **99 條改為 1:1 轉址**（原本全部導回首頁＝soft 404）。舊標籤同義詞氾濫，收斂成 17 個有內容支撐的主題；沒有對應主題的長尾詞轉到內容最相近的頁面。唯一沒落點的是 `/tag/美國`（舊站拿它標兩類不相干的文章），維持導首頁 |
+| 權限 | 167 → **173 列**（SuperAdmin 82／Editor 69／Viewer 22）。`tag.delete` 只給超管——刪標籤會改動前台網址 |
+
+**兩個刻意的設計決定**（三處註解都寫了）：
+
+- **Tag.Slug 不分語系**，與消息不同（消息的 slug 在 `NewsI18n`）。客戶簡報明訂網址
+  「避免使用中文」，中文標籤名沒辦法當網址；而且中英共用同一個 slug 之後，
+  封存頁的 hreflang 是恆等式，不必像消息那樣用 Id 兩邊配對。
+- **沒有已上架消息的標籤前台一律 404**，不做「目前沒有文章」的空頁面。
+  一個標籤體系最容易搞砸的方式就是產出一百個沒有內容的封存頁——那是 thin content。
+  後台看得到全部標籤（編輯要先建才能掛），前台只看得到有東西可看的那些。
+
+⚠ **仍未做**（需要客戶提供或屬另一批工作）：GA4／Search Console（要客戶帳號）、
+HTML 網站地圖頁、19 頁沒有麵包屑（設計稿本來就沒有）。
+另外 `/news/{slug}` 打到不存在的 slug 時，狀態碼正確但畫面是 Next 空殼——
+middleware 在 Edge runtime 查不到 CMS 的 slug，只能整個前綴放行。
+舊站那 80 篇文章與其標籤仍待內容遷移；文章進 CMS 後，標籤的封存頁才會真正有量。
+
 兩個實作上的限制，都寫成程式碼註解了：
 
 - **JSON-LD 不能放在 `</header>` 到 `<footer>` 之間**——版面驗收閘比對那個區間的節點序列。
@@ -221,10 +265,10 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ### ✅ 已完成
 
-- **22 個單元 + 儀表板**，依 [`docs/09`](docs/09-cms-admin.md) 實作（19 會員／20 訂單已移出範圍；16 轉址暫時隱藏）
+- **23 個單元 + 儀表板**，依 [`docs/09`](docs/09-cms-admin.md) 實作（19 會員／20 訂單已移出範圍）
 - **驗收閘**：`pnpm --filter admin check:units` →
-  「每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 167 列」
-- **權限矩陣**與 [`db/seed/110_role_permission.sql`](db/README.md) 一對一（167 列），數字對不上時 dev 模式 console 直接報錯
+  「每個上傳欄位都有 §3 提示、每個圖片欄位都有中英 Alt、權限矩陣 173 列」
+- **權限矩陣**與 [`db/seed/110_role_permission.sql`](db/README.md) 一對一（173 列），數字對不上時 dev 模式 console 直接報錯
 - **角色切換登入**（SuperAdmin／Editor／Viewer）用來驗權限矩陣
 
 ### ✅ 已接上 API（2026-09-04）
@@ -235,7 +279,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 |---|---|---|
 | 實作 | `client.mock.ts`（localStorage） | `client.api.ts`（打 `/api/v1/admin/*`） |
 | 登入 | 選角色即進入 | 帳號 + 密碼（帳號不限定 email 格式），首登強制改密碼 |
-| 權限 | 查本地 167 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
+| 權限 | 查本地 173 列矩陣 | 由 JWT 的 `permissions` claim 決定 |
 | 圖片 | 本機素材 | 上傳 Blob，經 `/files/media/*` 代理取回 |
 
 保留 mock 是因為後台已部署在 SWA 的 `/admin/` 供客戶操作，而 API 資源還沒開——

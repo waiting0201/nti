@@ -1,3 +1,5 @@
+using System.Text.Json.Nodes;
+using Microsoft.EntityFrameworkCore;
 using Nti.Api.Data;
 using Nti.Api.Models.Entities;
 
@@ -23,7 +25,47 @@ public sealed class AdminSolutionItemHandler(AppDbContext db) : AdminContentHand
 public sealed class AdminProjectHandler(AppDbContext db) : AdminContentHandler<Project, ProjectI18n>(db);
 
 /// <summary>04 news。無 SortOrder——列表照 PublishDate 排。</summary>
-public sealed class AdminNewsHandler(AppDbContext db) : AdminContentHandler<News, NewsI18n>(db);
+public sealed class AdminNewsHandler(AppDbContext db) : AdminContentHandler<News, NewsI18n>(db)
+{
+    // 用基底的 Db，不要另外擷取一份 db（CS9107，見 AdminContentHandler.Db）
+    /// <summary>
+    /// 標籤（`NewsTag`）。請求裡的 <c>tags</c> 是標籤 Id 的陣列，**整組取代**——
+    /// 後台的編輯畫面送回來的就是完整的勾選結果，逐一 diff 只會多一層出錯的機會。
+    /// <para>
+    /// 沒有帶 <c>tags</c> 的請求不動關聯：`UpdateAsync` 是 PATCH 語意（沒帶的欄位保持原值），
+    /// 這裡跟著同一條規則，否則從別的地方送一個只改上架狀態的請求就會把標籤清光。
+    /// </para>
+    /// </summary>
+    protected override async Task SaveRelationsAsync(int id, JsonObject body)
+    {
+        if (body["tags"] is not JsonArray array) return;
+
+        var wanted = array.Select(n => (int?)n?.GetValue<int>() ?? 0).Where(x => x > 0).Distinct().ToList();
+
+        // 不存在或已軟刪的標籤直接濾掉，不要讓 FK 在 SaveChanges 才爆
+        var valid = await Db.Tag.Where(t => wanted.Contains(t.Id) && !t.IsDeleted)
+            .Select(t => t.Id).ToListAsync();
+
+        var current = await Db.NewsTag.Where(nt => nt.NewsId == id).ToListAsync();
+
+        Db.NewsTag.RemoveRange(current.Where(nt => !valid.Contains(nt.TagId)));
+        foreach (var tagId in valid.Where(t => current.All(nt => nt.TagId != t)))
+            Db.NewsTag.Add(new NewsTag { NewsId = id, TagId = tagId });
+
+        await Db.SaveChangesAsync();
+    }
+
+    /// <summary>編輯畫面要知道這篇目前掛了哪些標籤，才能把晶片勾起來。</summary>
+    protected override async Task DecorateAsync(int id, Dictionary<string, object?> row)
+    {
+        row["tags"] = await Db.NewsTag.AsNoTracking()
+            .Where(nt => nt.NewsId == id)
+            .Join(Db.Tag.Where(t => !t.IsDeleted), nt => nt.TagId, t => t.Id, (_, t) => new { t.Id, t.SortOrder })
+            .OrderBy(t => t.SortOrder).ThenBy(t => t.Id)
+            .Select(t => t.Id)
+            .ToListAsync();
+    }
+}
 
 /// <summary>05 vlog。</summary>
 public sealed class AdminVlogHandler(AppDbContext db) : AdminContentHandler<Vlog, VlogI18n>(db);

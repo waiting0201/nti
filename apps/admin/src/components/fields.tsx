@@ -28,6 +28,31 @@ export function useCategories(type?: string) {
   return type ? all.filter((c) => c.categoryType === type && c.isActive !== false) : all
 }
 
+/* ── 標籤快取（給 tags 型欄位用；與分類同一個模式）─────── */
+let tagCache: Row[] | null = null
+const tagListeners = new Set<() => void>()
+
+/**
+ * 全部標籤（含停用的）。停用的標籤前台不顯示，但既有消息可能還掛著，
+ * 編輯畫面要看得到才知道自己掛了什麼——只是不會出現在可新增的清單裡。
+ */
+export function useTags() {
+  const [, force] = useState(0)
+  useEffect(() => {
+    if (tagCache) return
+    const fn = () => force((n) => n + 1)
+    tagListeners.add(fn)
+    api.listAll('tag').then((rows) => {
+      tagCache = rows
+      tagListeners.forEach((l) => l())
+    })
+    return () => {
+      tagListeners.delete(fn)
+    }
+  }, [])
+  return tagCache ?? []
+}
+
 export function categoryName(id: unknown, locale: Locale = 'zh'): string {
   if (typeof id !== 'string') return ''
   const c = (categoryCache ?? []).find((x) => x.id === id)
@@ -290,6 +315,8 @@ export function FieldInput({
             ))}
           </select>
         )
+      case 'tags':
+        return <TagPicker value={value} onChange={onChange} />
       case 'date':
         return <input type="date" value={str} onChange={(e) => onChange(e.target.value)} />
       case 'number':
@@ -332,4 +359,51 @@ export function extractYoutubeId(input: string): string {
     /(?:youtube\.com\/(?:watch\?v=|embed\/|vi?\/)|youtu\.be\/)([\w-]{6,})/.exec(input) ??
     /^([\w-]{6,})$/.exec(input.trim())
   return m ? m[1] : input.trim()
+}
+
+/**
+ * 標籤多選（單元 04 消息的「標籤」欄位）。
+ *
+ * 值是標籤 id 的陣列。用勾選晶片而不是 `<select multiple>`：後者在 macOS 上要按住
+ * ⌘ 才能複選，客戶那邊的編輯不會知道，實測會變成「每點一個就取消上一個」。
+ *
+ * 停用中的標籤只有在這篇已經掛著時才出現（灰底），避免編輯把新消息掛到
+ * 前台看不見的標籤上——那會做出一個永遠 404 的封存頁連結。
+ */
+function TagPicker({ value, onChange }: { value: unknown; onChange: (v: unknown) => void }) {
+  const tags = useTags()
+  const selected = Array.isArray(value) ? value.map(String) : []
+
+  const visible = tags.filter((t) => t.isActive !== false || selected.includes(t.id))
+
+  if (tags.length === 0) {
+    return <Hint text="尚未建立任何標籤。請先到「25 · 消息標籤」新增。" />
+  }
+
+  const toggle = (id: string) => {
+    onChange(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id])
+  }
+
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+      {visible.map((t) => {
+        const on = selected.includes(t.id)
+        const off = t.isActive === false
+        return (
+          <button
+            key={t.id}
+            type="button"
+            className={`btn btn-sm${on ? ' btn-primary' : ''}`}
+            title={off ? '此標籤已停用，前台不會顯示' : `/news/tag/${String(t.slug ?? '')}`}
+            style={off ? { opacity: 0.55 } : undefined}
+            onClick={() => toggle(t.id)}
+          >
+            {on ? '✓ ' : ''}
+            {String(t.i18n?.zh?.name ?? t.slug ?? t.id)}
+            {off ? '（停用）' : ''}
+          </button>
+        )
+      })}
+    </div>
+  )
 }

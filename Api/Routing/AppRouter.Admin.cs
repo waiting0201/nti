@@ -68,6 +68,13 @@ public sealed partial class AppRouter
             ("GET",            ["admin", "setting"])           => PermissionCodes.SettingView,
             ("PUT" or "PATCH", ["admin", "setting"])           => PermissionCodes.SettingEdit,
 
+            // ── 25 tag（消息標籤）─────────────────────────────────────────
+            ("GET",            ["admin", "tag", ..]) => PermissionCodes.TagView,
+            ("POST",           ["admin", "tag"])     => PermissionCodes.TagEdit,
+            ("PUT",            ["admin", "tag", "sort"]) => PermissionCodes.TagEdit,
+            ("PUT" or "PATCH", ["admin", "tag", _])  => PermissionCodes.TagEdit,
+            ("DELETE",         ["admin", "tag", _])  => PermissionCodes.TagDelete,
+
             // ── 22 category ──────────────────────────────────────────────
             ("GET",            ["admin", "category", ..]) => PermissionCodes.CategoryView,
             ("POST",           ["admin", "category"])     => PermissionCodes.CategoryEdit,
@@ -165,6 +172,13 @@ public sealed partial class AppRouter
             ("POST",           ["admin", "setting", "upload"]) => await adminMedia.UploadAsync(req),
             ("GET",            ["admin", "setting"]) => await adminSettings.GetListAsync(req),
             ("PUT" or "PATCH", ["admin", "setting"]) => await adminSettings.UpdateAsync(req),
+
+            // ── 25 tag ───────────────────────────────────────────────────
+            ("PUT",            ["admin", "tag", "sort"])       => await adminTags.SortAsync(req),
+            ("GET",            ["admin", "tag"])               => await adminTags.GetListAsync(req),
+            ("POST",           ["admin", "tag"])               => await adminTags.CreateAsync(req),
+            ("PUT" or "PATCH", ["admin", "tag", var tagId])    => await adminTags.UpdateAsync(req, tagId),
+            ("DELETE",         ["admin", "tag", var delTagId]) => await adminTags.DeleteAsync(req, delTagId),
 
             // ── 22 category ──────────────────────────────────────────────
             ("GET",            ["admin", "category"])          => await adminCategories.GetListAsync(req),

@@ -62,6 +62,9 @@ function toRow(unit: string, source: ApiRow): Row {
   // quote 的「已回覆」是 switch，DB 存的是 repliedAt 有沒有值
   if (unit === 'quote') row.replied = Boolean(source.repliedAt)
 
+  // news 的標籤：API 回整數 Id，UI 的 id 一律字串（見檔頭 toApiId 的說明）
+  if (unit === 'news' && Array.isArray(source.tags)) row.tags = source.tags.map(String)
+
   return row
 }
 
@@ -82,8 +85,13 @@ function toPayload(unit: string, row: Row): Record<string, unknown> {
     payload[uiToApiEntity(unit, key)] = value
   }
 
-  // 分類的 API 要的是 `i18n: { zh: "名稱" }`，不是欄位物件
-  if (unit === 'category' && row.i18n) {
+  // news 的標籤送整數陣列——後端拿它直接比對 Tag.Id（見 AdminNewsHandler.SaveRelationsAsync）
+  if (unit === 'news' && Array.isArray(row.tags)) {
+    payload.tags = (row.tags as unknown[]).map(Number).filter((n) => Number.isInteger(n) && n > 0)
+  }
+
+  // 分類與標籤的 API 要的是 `i18n: { zh: "名稱" }`，不是欄位物件
+  if ((unit === 'category' || unit === 'tag') && row.i18n) {
     payload.i18n = Object.fromEntries(
       Object.entries(row.i18n).map(([lang, fields]) => [lang, String((fields as Record<string, string>).name ?? '')]),
     )
@@ -199,6 +207,25 @@ export function downloadQuoteAttachment(quoteId: string, attachmentId: string, n
 export function exportQuotesCsv(): Promise<void> {
   const today = new Date().toISOString().slice(0, 10).replace(/-/g, '')
   return saveAs('/admin/quote/export', `quotes-${today}.csv`)
+}
+
+/** 匯出 301 對照 CSV（`redirect.export`）。內容遷移時要跟舊站清單在試算表裡比對。 */
+export function exportRedirectsCsv(): Promise<void> {
+  const today = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+  return saveAs('/admin/redirect/export', `redirects-${today}.csv`)
+}
+
+/**
+ * 匯入 301 對照 CSV（`redirect.export`，與匯出同一個權限）。
+ *
+ * 後端以 `fromPath` 為鍵：已存在的更新、沒有的新增，所以**重跑同一份檔案不會產生重複**，
+ * 客戶可以改完試算表再整份丟一次。回傳的三個數字直接顯示給操作者，
+ * 因為被跳過的列（欄位不足、狀態碼不合法）不會有其他提示。
+ */
+export function importRedirectsCsv(file: File): Promise<{ created: number; updated: number; skipped: number }> {
+  const form = new FormData()
+  form.append('file', file)
+  return api.upload('/admin/redirect/import', form)
 }
 
 export async function save(unit: string, row: Row): Promise<Row> {

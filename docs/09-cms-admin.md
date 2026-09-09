@@ -45,6 +45,7 @@
 | 系統 | 22 | 分類管理 | `category` | `Category` | P4 |
 | 系統 | 23 | 管理員與角色 | `admin` | `AdminUser`／`Role` | P4 |
 | 系統 | 24 | 信件紀錄 | `audit` | `EmailLog` | P4 |
+| 系統 | 25 | 消息標籤 | `tag` | `Tag`／`TagI18n`／`NewsTag` | P8 |
 
 
 ### 2.1 與規劃書 §3-1 功能清單的差異
@@ -366,8 +367,9 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 | 21 網站設定 ／ 22 分類 | ✓ | — | 檢視 |
 | 23 管理員與角色 | ✓ | — | — |
 | 24 信件紀錄 | ✓ | — | — |
+| 25 消息標籤 | ✓ 檢視／編輯／刪除 | ✓ 檢視／編輯 | ✓ 檢視 |
 
-權限碼 `{單元代號}.{view|edit|publish|delete|export}`，存於 `RolePermission`。上表逐格展開為種子列共 **167 列**（SuperAdmin 79／Editor 67／Viewer 21），見 [`db/seed/110_role_permission.sql`](../db/seed/110_role_permission.sql)；**本表為權限的權威來源**，[08-database.md §6.1](08-database.md) 僅為摘要。
+權限碼 `{單元代號}.{view|edit|publish|delete|export}`，存於 `RolePermission`。上表逐格展開為種子列共 **173 列**（SuperAdmin 82／Editor 69／Viewer 22），見 [`db/seed/110_role_permission.sql`](../db/seed/110_role_permission.sql)；**本表為權限的權威來源**，[08-database.md §6.1](08-database.md) 僅為摘要。
 
 矩陣描述到、但原本未定代號的三項（2026-09-02 補）：
 
@@ -427,4 +429,7 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 | 2026-09-08 | Tim（Claude Code） | **報價附件不做病毒掃描**：§17 原規格「掃毒未通過者不提供下載」改為無掃描的知情下載。接掃描服務是每月固定成本（Defender for Storage ≈ US$10／storage account），與案子規模不成比例；閘留著卻沒有東西會把狀態改成 `Clean`，結果是後台永遠下載不到附件。改以「限超管 + octet-stream/nosniff + 介面警語」承擔風險 |
 | 2026-09-08 | Tim（Claude Code） | **後台三個「存不進去」的欄位分別處置**：§18 聯絡訊息補上承辦人（`ContactMessage.AssigneeId`，先前只有 `QuoteRequest` 有）；vlog 縮圖 Alt 與 OG 圖 Alt 從 UI 移除，§3 的「每個圖片欄位必附中英 Alt」收斂為「頁面上呈現的 `<img>`」，三個例外（客戶 logo／OG 圖／vlog 縮圖）在欄位宣告以 `altExempt` 寫明理由，§8 DoD 同步。另補報價清單的 CSV 匯出入口 |
 
-*最後更新：2026-09-08*
+| 2026-09-09 | Tim（Claude Code） | **新增單元 25 消息標籤**（客戶 2026-09-08 SEO 簡報的 CMS「標籤」欄位，以及內容遷移決策 D4「保留標籤體系並逐一 301 對應」）。`Tag`／`TagI18n`／`NewsTag` 三張表、前台封存頁 `/{語系}/news/tag/{slug}`、消息單元加標籤多選欄位。權限矩陣 167 → 173 列（SuperAdmin 79 → 82、Editor 67 → 69、Viewer 21 → 22）。舊站 100 個 `/tag/*` 收斂為 17 個新標籤，99 條 1:1 轉址 |
+| 2026-09-09 | Tim（Claude Code） | **單元 16 301 轉址由隱藏改為啟用**，並補上 CSV 匯入的入口（後端 `POST /admin/redirect/import` 早就在，只是後台沒有按鈕）。匯入以 `fromPath` 為鍵覆寫，重跑同一份檔案不會產生重複 |
+
+*最後更新：2026-09-09*

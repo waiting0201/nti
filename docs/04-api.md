@@ -77,6 +77,10 @@
 - `GET /projects`（分類篩選）、`GET /facility?group={code}`、`GET /certifications`、`GET /clients`
 - `GET /categories?type={CategoryType}`（下拉／篩選選項來源；`type` 值域為 `08-database.md` §4.1 的九種 `CategoryType`）——供 `projects.html` 的分類篩選與 Industries 清單、`get-a-quote` 的產業與材質下拉、`faq` 分組使用
 - `GET /news`、`GET /news/{slug}`、`GET /green-vlog`
+  - `GET /news` 另吃 `?tag={slug}`（標籤封存頁用；slug 不分語系，中英同一個值）
+  - `GET /news/{slug}` 的回應含 `tags: TagDto[]`
+- `GET /tags`、`GET /tags/{slug}` — 消息標籤（單元 25）。**只回有已上架消息的標籤**；
+  `NewsCount = 0` 的標籤在 `/tags/{slug}` 回 404，避免產出空的封存頁
 - `GET /faq`、`GET /industry-trends`、`GET /careers`
 - `GET /supplier/notices`、`/supplier/specs`、`/supplier/downloads`
 - `POST /supplier/downloads/{id}/hit`（累計 `SupplierDownload.DownloadCount`；全部項目一律公開下載）
@@ -110,6 +114,7 @@
 
   | 路徑 | 單元 | 權限碼前綴 |
   |---|---|---|
+  | `/admin/tag` | 25 標籤 | `tag.view`／`tag.edit`／`tag.delete`（`PUT /admin/tag/sort` 為 `tag.edit`）|
   | `/admin/home-banner`、`/admin/solution`、`/admin/project`、`/admin/news`、`/admin/vlog`、`/admin/faq`、`/admin/trend`、`/admin/certification`、`/admin/client`、`/admin/facility`、`/admin/job`、`/admin/supplier-notice`、`/admin/supplier-spec`、`/admin/supplier-download` | 01–14 內容 | 同路徑名 |
   | `/admin/page`、`/admin/redirect` | 15、16 | `page.*`、`redirect.*` |
   | `/admin/quote`、`/admin/contact` | 17、18（檢視／改狀態／匯出） | `quote.*`、`contact.*` |

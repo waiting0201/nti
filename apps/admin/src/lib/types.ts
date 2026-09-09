@@ -26,6 +26,8 @@ export type FieldType =
   | 'email-list'
   | 'embed'
   | 'number'
+  /** 多選標籤晶片（單元 04 消息）；值是標籤 id 的陣列 */
+  | 'tags'
 
 export type Field = {
   key: string

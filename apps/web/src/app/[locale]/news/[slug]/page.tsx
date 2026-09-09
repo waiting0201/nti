@@ -29,19 +29,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     languages[lang === 'zh' ? 'zh-Hant' : lang] = `${siteUrl}/${lang}/news/${s}`
   }
 
+  // OG 與 Twitter 共用同一份，避免兩邊漂移。消息一定有封面圖，所以不需要預設圖 fallback
+  const ogTitle = item.seo.ogTitle || item.title
+  const ogDescription = item.seo.ogDescription || item.summary
+  const image = cmsMedia(item.seo.ogImagePath || item.coverImagePath)
+
   return {
     title: item.seo.seoTitle || item.title,
     ...(item.seo.seoDescription || item.summary
       ? { description: item.seo.seoDescription || item.summary! }
       : {}),
     openGraph: {
-      title: item.seo.ogTitle || item.title,
-      ...(item.seo.ogDescription || item.summary
-        ? { description: item.seo.ogDescription || item.summary! }
-        : {}),
+      title: ogTitle,
+      ...(ogDescription ? { description: ogDescription } : {}),
       url: canonical,
-      images: [cmsMedia(item.seo.ogImagePath || item.coverImagePath)],
+      siteName: 'NTI Printing',
+      locale: locale === 'zh' ? 'zh_TW' : 'en_US',
+      images: [image],
       type: 'article',
+      publishedTime: item.publishDate,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: ogTitle,
+      ...(ogDescription ? { description: ogDescription } : {}),
+      images: [image],
     },
     alternates: { canonical, languages },
   }
@@ -102,6 +114,30 @@ export default async function Page({ params }: Props) {
         {/* 後台富文本編輯器產生的內容，不是使用者輸入 */}
         <div dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
       </div></section>
+      {/*
+        標籤列。這是客戶 2026-09-08 SEO 簡報的「站內連結」建議來源之一，也是舊站
+        100 個 /tag/* 封存頁在新站的落點（見 news/tag/[slug]/page.tsx 的檔頭）。
+        後端只回還在啟用中的標籤，所以這裡不需要再過濾一次。
+      */}
+      {item.tags.length > 0 && (
+        <section className="section tight"><div className="wrap reveal">
+          <div style={{ display: 'flex', gap: '.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <span style={{ fontSize: 12, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', opacity: .6 }}>
+              {tr(locale, 'Tags')}
+            </span>
+            {item.tags.map((t) => (
+              <A
+                key={t.id}
+                href={l(`/news/tag/${t.slug}`)}
+                className="btn btn-out btn-sm"
+                style={{ fontSize: '.8rem', padding: '.45em 1em' }}
+              >
+                {t.name}
+              </A>
+            ))}
+          </div>
+        </div></section>
+      )}
       <section className="section tight"><div className="wrap reveal">
         <p><A href={l("/news")} className="btn btn-out">{tr(locale, '« All news')}</A></p>
       </div></section>

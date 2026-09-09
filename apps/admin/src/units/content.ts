@@ -143,6 +143,10 @@ export const news: Unit = {
     { key: 'summary', label: '摘要', type: 'textarea', i18n: true, required: true, max: 500, side: 'locale', hint: '列表卡片 + 詳細頁導言' },
     { key: 'body', label: '內文', type: 'richtext', i18n: true, required: true, side: 'locale', hint: `內文插圖${HINT.newsInline}` },
     { key: 'featured', label: '上首頁／精選', type: 'switch', side: 'neutral' },
+    // 標籤不分語系（slug 共用、名稱才分中英），所以是 neutral 側的欄位。
+    // 標籤本身在單元 25 維護，這裡只挑既有的。
+    { key: 'tags', label: '標籤', type: 'tags', side: 'neutral',
+      hint: '決定這篇會出現在哪些 /news/tag/{slug} 封存頁；建議 2–4 個' },
     // OG 分享圖由 SEO 欄位組提供（docs §5.6），不在此重複定義
   ],
   columns: [

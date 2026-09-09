@@ -350,6 +350,66 @@ section({
   i18nColumns: { Title: ['title'], Description: ['description'] },
 })
 
+
+/* ── news × tag → NewsTag ──────────────────────────────────────────────────
+ *
+ * 標籤與消息的關聯。mockup 沒有標籤這個概念（那是 CMS 的東西），所以這份對照
+ * 寫在這裡，性質與 content-zh.mjs 的翻譯一樣：**編輯決定的初始值**，匯入之後
+ * 就歸後台管，重跑本腳本只會補回缺的關聯、不會刪掉客戶後來加的。
+ *
+ * 標籤主檔（17 筆）在 EF 的 Migration 種子裡（Api/Data/Seed/SeedData.cs 的 Tags），
+ * 這裡只認 slug；slug 打錯的話下面的 INSERT 會因為子查詢回 NULL 而被 WHERE 擋掉，
+ * 所以產生器自己先比對一次，對不到就中止。
+ */
+const TAG_SLUGS = new Set([
+  'green-printing', 'low-carbon', 'carbon-footprint', 'esg', 'csr',
+  'green-building', 'green-supply-chain', 'sustainable-packaging', 'packaging-design',
+  'digital-printing', 'variable-data-printing', 'paper-craft', 'conservation',
+  'disaster-education', 'awards', 'media-coverage', 'partnership',
+])
+
+const NEWS_TAGS = {
+  'news-global-views-esg-award':                 ['awards', 'esg', 'low-carbon', 'green-printing'],
+  'news-national-sustainable-development-award': ['awards', 'esg', 'low-carbon', 'green-building'],
+  'news-sme-investment-benchmark':               ['awards', 'digital-printing', 'sustainable-packaging'],
+  'news-taicca-partnership':                     ['partnership', 'esg', 'csr', 'paper-craft'],
+  'news-commonwealth-interview':                 ['media-coverage', 'green-printing', 'low-carbon'],
+  'news-low-carbon-production-film':             ['low-carbon', 'green-building', 'carbon-footprint', 'sustainable-packaging'],
+  'news-green-printing-digital-innovation':      ['green-printing', 'digital-printing', 'low-carbon'],
+  'news-green-drive-seminar':                    ['green-supply-chain', 'digital-printing', 'partnership'],
+  'news-hp-variable-data-printing':              ['variable-data-printing', 'digital-printing', 'packaging-design'],
+  'news-gentle-wild-paper-bags':                 ['variable-data-printing', 'packaging-design', 'sustainable-packaging', 'conservation'],
+  'news-animals-of-tomorrow':                    ['conservation', 'paper-craft', 'csr', 'partnership'],
+  'news-firefighter-boardgame':                  ['disaster-education', 'paper-craft', 'csr', 'green-printing'],
+}
+
+{
+  const unknown = [...new Set(Object.values(NEWS_TAGS).flat())].filter((t) => !TAG_SLUGS.has(t))
+  if (unknown.length) {
+    console.error(`NEWS_TAGS 用到不存在的標籤 slug：${unknown.join(', ')}`)
+    console.error('標籤主檔在 Api/Data/Seed/SeedData.cs 的 Tags，兩邊要一致。')
+    process.exit(1)
+  }
+
+  const rows = SEED.news ?? []
+  const missing = rows.filter((r) => !NEWS_TAGS[r.id]).map((r) => r.id)
+  if (missing.length) {
+    console.error(`這幾篇消息沒有指定標籤：${missing.join(', ')}`)
+    process.exit(1)
+  }
+
+  w('/* ── news × tag → NewsTag ──────────────────────────── */')
+  for (const row of rows) {
+    const news = `(SELECT Id FROM dbo.News WHERE CoverImagePath = ${q(asset(row.cover))})`
+    for (const slug of NEWS_TAGS[row.id]) {
+      const tag = `(SELECT Id FROM dbo.Tag WHERE Slug = ${q(slug)} AND IsDeleted = 0)`
+      w(`IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = ${news} AND TagId = ${tag})`)
+      w(`    INSERT dbo.NewsTag (NewsId, TagId) SELECT ${news}, ${tag} WHERE ${news} IS NOT NULL AND ${tag} IS NOT NULL;`)
+    }
+  }
+  w('')
+}
+
 w('COMMIT;')
 w(`PRINT N'mockup 內容已匯入。';`)
 w('GO')

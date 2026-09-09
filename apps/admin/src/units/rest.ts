@@ -228,6 +228,38 @@ export const category: Unit = {
   columns: [],
 }
 
+/**
+ * 25 消息標籤。
+ *
+ * 舊站有 100 個 `/tag/*` 封存頁，依內容遷移的決策 D4「全部保留標籤體系並逐一 301 對應」，
+ * 標籤在新站是有前台封存頁（`/{語系}/news/tag/{slug}`）的正式體系。
+ * 種子先收斂成 17 個有內容支撐的主題，舊網址逐條 301 過來。
+ */
+export const tag: Unit = {
+  code: 'tag',
+  no: '25',
+  title: '消息標籤',
+  group: '系統',
+  phase: 'P8',
+  frontend: '/{語系}/news/tag/{slug} 封存頁 + 消息詳細頁的標籤列',
+  note: 'Slug 會直接進網址，一律小寫英數與連字號（例：green-printing），且不分中英。仍有消息掛著的標籤不可刪除，只能停用；沒有已上架消息的標籤前台不會出現（不做空的封存頁）。',
+  sortable: true,
+  fields: [
+    { key: 'slug', label: 'Slug（網址）', type: 'text', required: true, side: 'neutral',
+      placeholder: 'green-printing', hint: '小寫英數與連字號；中英共用同一個，改動等於改前台網址' },
+    { key: 'name', label: '標籤名稱', type: 'text', i18n: true, required: true, max: 80, side: 'locale' },
+    { key: 'isActive', label: '啟用', type: 'switch', side: 'neutral', hint: '關閉 → 前台封存頁與標籤列都不顯示' },
+    { key: 'usageCount', label: '已掛消息數', type: 'readonly', side: 'neutral' },
+  ],
+  columns: [
+    { key: 'name', label: '名稱' },
+    { key: 'slug', label: 'Slug', width: '200px' },
+    { key: 'usageCount', label: '消息數', width: '90px' },
+    { key: 'isActive', label: '啟用', render: 'bool', width: '80px' },
+    { key: 'i18n', label: '中/英', render: 'i18n', width: '90px' },
+  ],
+}
+
 export const admin: Unit = {
   code: 'admin',
   no: '23',

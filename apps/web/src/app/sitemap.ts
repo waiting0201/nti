@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getNews } from '@/lib/api'
+import { getNews, getTags } from '@/lib/api'
 import { locales, siteUrl, type Locale } from '@/lib/i18n'
 import { ROUTES } from '@/lib/routes'
 
@@ -71,6 +71,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         alternates: {
           languages: siblings.en ? { ...languages, 'x-default': url('en', `/news/${siblings.en}`) } : languages,
         },
+      })
+    }
+  }
+
+  /*
+   * 標籤封存頁。後端只回有已上架消息的標籤（見 TagReadService），所以這裡不會
+   * 產生空頁面的網址——sitemap 裡出現一堆 thin content 反而會拖累整站的評估。
+   *
+   * slug 不分語系，中英是同一個值，hreflang 因此是恆等式（與消息詳細頁不同，
+   * 那邊的 slug 可翻譯、要用 Id 配對）。
+   */
+  const tags = (await getTags('en')) ?? []
+  for (const tag of tags) {
+    for (const locale of locales) {
+      entries.push({
+        url: url(locale, `/news/tag/${tag.slug}`),
+        alternates: { languages: languages(`/news/tag/${tag.slug}`) },
       })
     }
   }

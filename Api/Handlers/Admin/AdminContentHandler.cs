@@ -30,6 +30,25 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
     /// <summary>單元代號，用於錯誤訊息。</summary>
     protected virtual string EntityName => typeof(TEntity).Name;
 
+    /// <summary>
+    /// 給子類別用的 DbContext。子類別不要自己再宣告一個主建構式參數接
+    /// <see cref="AppDbContext"/>——那會同時被基底擷取一次、子類別擷取一次（CS9107）。
+    /// </summary>
+    protected AppDbContext Db => db;
+
+    /// <summary>
+    /// 主表與 i18n 存好之後、**同一個交易之內**，讓子類別處理額外的關聯。
+    /// 目前只有 04 news 用它寫 <c>NewsTag</c>（見 <see cref="AdminNewsHandler"/>）。
+    /// <para>
+    /// 放在交易內是刻意的：關聯寫失敗時主表也要一起回滾，否則會留下一篇
+    /// 標籤只存了一半的消息，而畫面上看起來像成功。
+    /// </para>
+    /// </summary>
+    protected virtual Task SaveRelationsAsync(int id, JsonObject body) => Task.CompletedTask;
+
+    /// <summary>單筆讀取時，讓子類別補上主表以外的欄位（news 的 <c>tags</c>）。</summary>
+    protected virtual Task DecorateAsync(int id, Dictionary<string, object?> row) => Task.CompletedTask;
+
     /// <summary>i18n 側表指向主表的外鍵欄位名（由 EF 模型推導，不必各單元自己寫）。</summary>
     private string ForeignKeyName => db.Model.FindEntityType(typeof(TI18n))!
         .FindPrimaryKey()!.Properties
@@ -184,6 +203,7 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
         row["i18n"] = i18ns.ToDictionary(i => i.Lang, i => (object)i);
         row["hasZh"] = i18ns.Any(i => i.Lang == Langs.Zh);
         row["hasEn"] = i18ns.Any(i => i.Lang == Langs.En);
+        await DecorateAsync(id, row);
 
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(row));
@@ -212,7 +232,9 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
             db.Set<TEntity>().Add(entity);
             await db.SaveChangesAsync();
 
-            await UpsertI18nAsync((int)db.Entry(entity).Property("Id").CurrentValue!, i18nNode, replace: true);
+            var newId = (int)db.Entry(entity).Property("Id").CurrentValue!;
+            await UpsertI18nAsync(newId, i18nNode, replace: true);
+            await SaveRelationsAsync(newId, body);
             await tx.CommitAsync();
         });
 
@@ -237,6 +259,7 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
 
             await db.SaveChangesAsync();
             await UpsertI18nAsync(id, i18nNode, replace: false);
+            await SaveRelationsAsync(id, body);
             await tx.CommitAsync();
         });
 

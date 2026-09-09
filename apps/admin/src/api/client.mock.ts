@@ -177,6 +177,16 @@ export async function exportQuotesCsv(): Promise<void> {
   throw new Error('匯出 CSV 需要連上 API，示範資料不產生檔案。')
 }
 
+/** 匯出 301 對照 CSV——同上。 */
+export async function exportRedirectsCsv(): Promise<void> {
+  throw new Error('匯出 CSV 需要連上 API，示範資料不產生檔案。')
+}
+
+/** 匯入 301 對照 CSV——mock 不寫入，避免讓人以為示範資料真的收下了那份檔案。 */
+export async function importRedirectsCsv(_file: File): Promise<{ created: number; updated: number; skipped: number }> {
+  throw new Error('匯入 CSV 需要連上 API，示範資料不會被寫入。')
+}
+
 export function categoryUsage(categoryId: string): number {
   let n = 0
   for (const rows of Object.values(store)) {

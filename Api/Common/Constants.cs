@@ -2,7 +2,7 @@ namespace Nti.Api.Common;
 
 /// <summary>
 /// 權限碼（docs/10 §9.2）。權威來源：docs/09 §6 的權限矩陣
-/// ＝ <c>db/seed/110_role_permission.sql</c>（167 列＝SuperAdmin 79／Editor 67／Viewer 21）
+/// ＝ <c>db/seed/110_role_permission.sql</c>（173 列＝SuperAdmin 82／Editor 69／Viewer 22）
 /// ＝ <c>apps/admin/src/lib/permissions.ts</c>。
 /// <para>格式 <c>{單元代號}.{action}</c>，單元代號逐字對應 docs/09 §2，不做單複數轉換。</para>
 /// <para>這些字串在程式中不得再出現字面值。</para>
@@ -97,6 +97,9 @@ public static class PermissionCodes
     public const string SettingEdit                = "setting.edit";
 
     // ── 22 分類 ──
+    public const string TagView                    = "tag.view";
+    public const string TagEdit                    = "tag.edit";
+    public const string TagDelete                  = "tag.delete";
     public const string CategoryView               = "category.view";
     public const string CategoryEdit               = "category.edit";
     public const string CategoryDelete             = "category.delete";
@@ -111,7 +114,7 @@ public static class PermissionCodes
     public const string AuditResend                = "audit.resend";
 
 
-    /// <summary>全部 79 個權限碼（SuperAdmin 的授權範圍）。</summary>
+    /// <summary>全部 82 個權限碼（SuperAdmin 的授權範圍）。</summary>
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
     {
         HomeBannerView, HomeBannerEdit, HomeBannerPublish, HomeBannerDelete,
@@ -131,7 +134,8 @@ public static class PermissionCodes
         DashboardView, PageView, PageEdit, RedirectView,
         RedirectEdit, RedirectDelete, RedirectExport, QuoteView,
         QuoteEdit, QuoteDownload, QuoteExport, ContactView,
-        ContactEdit, SettingView, SettingEdit, CategoryView,
+        ContactEdit, SettingView, SettingEdit, TagView,
+        TagEdit, TagDelete, CategoryView,
         CategoryEdit, CategoryDelete, AdminView, AdminEdit,
         AdminDelete, AuditView, AuditResend,
     };

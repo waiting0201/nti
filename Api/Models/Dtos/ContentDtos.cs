@@ -101,7 +101,23 @@ public sealed class NewsDetailDto
     public string   BodyHtml       { get; set; } = null!;
     public string   CoverAlt       { get; set; } = null!;
 
+    /// <summary>這篇的標籤（前台詳細頁列出，連到 <c>/{lang}/news/tag/{slug}</c>）。</summary>
+    public IReadOnlyList<TagDto> Tags { get; set; } = [];
+
     public SeoDto   Seo            { get; set; } = null!;
+}
+
+/// <summary>
+/// 消息標籤（後台單元 25）。<c>Slug</c> 不分語系、<c>Name</c> 分語系，理由見
+/// <c>Models/Entities/Tag.cs</c>。<c>NewsCount</c> 只在標籤清單端點有值，
+/// 詳細頁帶出來的標籤不算數量（省一次 join，畫面上也用不到）。
+/// </summary>
+public sealed class TagDto
+{
+    public int    Id        { get; set; }
+    public string Slug      { get; set; } = null!;
+    public string Name      { get; set; } = null!;
+    public int    NewsCount { get; set; }
 }
 
 /// <summary>Green Vlog（後台單元 05）。無詳細頁，外連 YouTube。</summary>

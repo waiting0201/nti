@@ -32,13 +32,64 @@ export const MANUAL_SEED: Record<string, Row[]> = {
     },
   ],
 
+  /*
+   * 標籤主檔。權威來源是 EF 的 Migration 種子（Api/Data/Seed/SeedData.cs 的 Tags），
+   * 這裡是同一份的 mock 副本——接上 API 之後就走真資料。
+   * usageCount 在真 API 是後端算的，mock 這裡是寫死的示意值。
+   */
+  tag: [
+    { id: '1', slug: 'green-printing', sortOrder: 10, isActive: true, usageCount: 4,
+      i18n: bi({ name: '綠色印刷' }, { name: 'Green Printing' }) },
+    { id: '2', slug: 'low-carbon', sortOrder: 20, isActive: true, usageCount: 4,
+      i18n: bi({ name: '低碳製程' }, { name: 'Low Carbon' }) },
+    { id: '3', slug: 'carbon-footprint', sortOrder: 30, isActive: true, usageCount: 1,
+      i18n: bi({ name: '碳足跡' }, { name: 'Carbon Footprint' }) },
+    { id: '4', slug: 'esg', sortOrder: 40, isActive: true, usageCount: 3,
+      i18n: bi({ name: 'ESG' }, { name: 'ESG' }) },
+    { id: '5', slug: 'csr', sortOrder: 50, isActive: true, usageCount: 3,
+      i18n: bi({ name: '企業社會責任' }, { name: 'Corporate Social Responsibility' }) },
+    { id: '6', slug: 'green-building', sortOrder: 60, isActive: true, usageCount: 2,
+      i18n: bi({ name: '綠建築' }, { name: 'Green Building' }) },
+    { id: '7', slug: 'green-supply-chain', sortOrder: 70, isActive: true, usageCount: 1,
+      i18n: bi({ name: '綠色供應鏈' }, { name: 'Green Supply Chain' }) },
+    { id: '8', slug: 'sustainable-packaging', sortOrder: 80, isActive: true, usageCount: 3,
+      i18n: bi({ name: '永續包裝' }, { name: 'Sustainable Packaging' }) },
+    { id: '9', slug: 'packaging-design', sortOrder: 90, isActive: true, usageCount: 2,
+      i18n: bi({ name: '包裝設計' }, { name: 'Packaging Design' }) },
+    { id: '10', slug: 'digital-printing', sortOrder: 100, isActive: true, usageCount: 4,
+      i18n: bi({ name: '數位印刷' }, { name: 'Digital Printing' }) },
+    { id: '11', slug: 'variable-data-printing', sortOrder: 110, isActive: true, usageCount: 2,
+      i18n: bi({ name: '可變資料印刷' }, { name: 'Variable Data Printing' }) },
+    { id: '12', slug: 'paper-craft', sortOrder: 120, isActive: true, usageCount: 3,
+      i18n: bi({ name: '紙藝與紙模型' }, { name: 'Paper Craft' }) },
+    { id: '13', slug: 'conservation', sortOrder: 130, isActive: true, usageCount: 2,
+      i18n: bi({ name: '生態保育' }, { name: 'Conservation' }) },
+    { id: '14', slug: 'disaster-education', sortOrder: 140, isActive: true, usageCount: 1,
+      i18n: bi({ name: '防災教育' }, { name: 'Disaster-Prevention Education' }) },
+    { id: '15', slug: 'awards', sortOrder: 150, isActive: true, usageCount: 3,
+      i18n: bi({ name: '獲獎與認證' }, { name: 'Awards & Recognition' }) },
+    { id: '16', slug: 'media-coverage', sortOrder: 160, isActive: true, usageCount: 1,
+      i18n: bi({ name: '媒體報導' }, { name: 'Media Coverage' }) },
+    { id: '17', slug: 'partnership', sortOrder: 170, isActive: true, usageCount: 3,
+      i18n: bi({ name: '產業合作' }, { name: 'Partnership' }) },
+  ],
+
+  /*
+   * 取自 `apps/web/src/lib/legacy-redirects.ts` 的實際對照（舊站 nti-printing.com
+   * 的中文在根目錄、英文在 /en/）。刻意用真的網址而不是編出來的 `/about.html`：
+   * 客戶在這一頁要核對的就是舊站網址有沒有對到正確的新頁面，假路徑核對不了。
+   *
+   * 這只是 mock 的開場資料。接上 API 之後，權威來源是 DB 的 Redirect 表，
+   * 由這個單元的 CSV 匯入把 `reference/舊站301對照表.md` 整批帶進去。
+   */
   redirect: [
-    { id: '1', fromPath: '/about.html', toPath: '/zh/about/difference', statusCode: '301', isEnabled: true, hitCount: 412 },
-    { id: '2', fromPath: '/products.html', toPath: '/zh/solutions', statusCode: '301', isEnabled: true, hitCount: 1268 },
-    { id: '3', fromPath: '/news/index.html', toPath: '/zh/insights/news', statusCode: '301', isEnabled: true, hitCount: 733 },
-    { id: '4', fromPath: '/green.html', toPath: '/zh/sustainability', statusCode: '301', isEnabled: true, hitCount: 205 },
-    { id: '5', fromPath: '/contact-us.html', toPath: '/zh/contact', statusCode: '301', isEnabled: true, hitCount: 96 },
-    { id: '6', fromPath: '/old-quote', toPath: '/zh/get-a-quote', statusCode: '302', isEnabled: false, hitCount: 0 },
+    { id: '1', fromPath: '/home/vision', toPath: '/zh/about-difference', statusCode: '301', isEnabled: true, hitCount: 412 },
+    { id: '2', fromPath: '/en/home/vision', toPath: '/en/about-difference', statusCode: '301', isEnabled: true, hitCount: 168 },
+    { id: '3', fromPath: '/home/recognition', toPath: '/zh/about-certifications', statusCode: '301', isEnabled: true, hitCount: 233 },
+    { id: '4', fromPath: '/home/factory', toPath: '/zh/facility-tour', statusCode: '301', isEnabled: true, hitCount: 1268 },
+    { id: '5', fromPath: '/home/green-printing', toPath: '/zh/green-our-advantage', statusCode: '301', isEnabled: true, hitCount: 733 },
+    { id: '6', fromPath: '/home/csr', toPath: '/zh/green-esg', statusCode: '301', isEnabled: true, hitCount: 205 },
+    { id: '7', fromPath: '/old-quote', toPath: '/zh/get-a-quote', statusCode: '302', isEnabled: false, hitCount: 0 },
   ],
 
   quote: [
@@ -174,7 +225,7 @@ export const SETTING_VALUES: Record<string, string | { zh: string; en: string }>
   'social.facebook': '',
   'social.linkedin': '',
   'social.youtube': '',
-  'home.gallery': '/assets/ref-home-mid1.png',
+  'home.gallery': '/assets/ref-home-mid1.webp',
   'home.galleryAlt': { zh: 'NTI 印刷廠區形象', en: 'NTI Printing plant' },
   'mail.quoteTo': 'sales@nti-printing.com',
   'mail.contactTo': 'service@nti-printing.com',
