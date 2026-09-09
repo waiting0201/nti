@@ -151,6 +151,18 @@ public sealed class AdminRedirectHandler(AppDbContext db)
         return new OkObjectResult(ApiResponse.Ok(PagedResult<Redirect>.From(rows, total, paging.Page, paging.PageSize)));
     }
 
+    /// <summary>
+    /// 取單筆。後台的編輯畫面進去就打這支——先前漏了這條路由，點任何一筆都是 404
+    /// （2026-09-09 補；單元 16 在那之前是隱藏的，所以沒被發現）。
+    /// </summary>
+    public async Task<IActionResult> GetByIdAsync(HttpRequest req, string rawId)
+    {
+        var item = await FindAsync(rawId);
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok(item));
+    }
+
     public async Task<IActionResult> CreateAsync(HttpRequest req)
     {
         var dto = await req.ReadFromJsonAsync<Redirect>()

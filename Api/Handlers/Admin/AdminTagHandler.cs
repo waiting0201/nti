@@ -65,6 +65,28 @@ public sealed partial class AdminTagHandler(AppDbContext db)
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 
+    /// <summary>
+    /// 取單筆。後台的編輯畫面進去就打這支——少了它點任何一筆標籤都是 404
+    /// （與單元 16 轉址同一個疏漏，2026-09-09 一起補）。
+    /// </summary>
+    public async Task<IActionResult> GetByIdAsync(HttpRequest req, string rawId)
+    {
+        var tag = await FindAsync(rawId);
+
+        var names = await db.TagI18n.AsNoTracking()
+            .Where(i => i.TagId == tag.Id)
+            .Select(i => new { i.Lang, i.Name })
+            .ToListAsync();
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok(new
+        {
+            tag.Id, tag.Slug, tag.SortOrder, tag.IsActive,
+            usageCount = await db.NewsTag.CountAsync(nt => nt.TagId == tag.Id),
+            i18n = names.ToDictionary(n => n.Lang, n => n.Name),
+        }));
+    }
+
     public async Task<IActionResult> CreateAsync(HttpRequest req)
     {
         var dto = await req.ReadFromJsonAsync<TagUpsertDto>()

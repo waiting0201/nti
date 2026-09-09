@@ -29,7 +29,10 @@ function pathOf(unit: string): string {
 
 /** API 的一列 → UI 的 Row（欄位改名、id 轉字串、組出 fileMeta 這類顯示欄位）。 */
 function toRow(unit: string, source: ApiRow): Row {
-  const row: Row = { id: String(source.id) }
+  // 15 page 的識別是 PageKey 不是整數 Id —— 後端的 GET/PUT 都吃 key
+  // （`/admin/page/{pageKey}`，見 AdminPageHandler；公開端點 `/pages/{key}` 也一樣）。
+  // 送整數過去會查不到任何一頁而 404，編輯畫面就開不起來。
+  const row: Row = { id: unit === 'page' ? String(source.pageKey ?? '') : String(source.id) }
 
   for (const [name, value] of Object.entries(source)) {
     if (name === 'id' || name === 'i18n') continue
@@ -39,7 +42,15 @@ function toRow(unit: string, source: ApiRow): Row {
   if (source.i18n) {
     const i18n: Record<string, Record<string, string>> = {}
 
-    for (const [lang, fields] of Object.entries(source.i18n)) {
+    // page 的清單端點回的是**陣列** `[{ lang, slug, seoTitle, … }]`，不是以語系為鍵的物件。
+    // 直接 Object.entries 會得到 i18n["0"]／i18n["1"]，中/英欄與完整度檢查就全錯了。
+    const byLang = Array.isArray(source.i18n)
+      ? Object.fromEntries(
+          (source.i18n as Array<Record<string, unknown>>).map((x) => [String(x.lang), x]),
+        )
+      : source.i18n
+
+    for (const [lang, fields] of Object.entries(byLang)) {
       // 分類的 i18n 只有一個名稱欄位，API 直接回 `{ zh: "最新消息" }`；
       // 其餘單元回的是欄位物件。UI 兩者都當成 `i18n[lang][key]` 讀。
       i18n[lang] =
@@ -166,6 +177,12 @@ export async function get(unit: string, id: string): Promise<Row | undefined> {
         sizeBytes: Number(a.sizeBytes ?? 0),
       }))
       return row
+    }
+
+    // 固定頁的單筆端點回的是 `{ item, i18n }`（AdminPageHandler.GetByKeyAsync），
+    // 也不是平的一列。與上面的報價同一種狀況：不攤平的話整頁欄位會是空的。
+    if (unit === 'page' && data.item) {
+      return toRow(unit, { ...(data.item as ApiRow), i18n: data.i18n as ApiRow['i18n'] })
     }
 
     return toRow(unit, data)

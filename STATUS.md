@@ -203,6 +203,24 @@ not-found 邊界，放 root 又在 `[locale]` 的 layout 樹之外，實測都�
 > 會過，但部署到 SWA 之後**每個 404 都變成 500**。
 > **驗證這條路徑一定要用 `pnpm --filter web start:standalone`。**
 
+### 🔴 三個單元接真 API 後才發現的編輯缺陷（2026-09-09 修）
+
+後台先前只在 mock 模式下被點過，接上真 API 後這三個單元的「點進去編輯」全都是 404。
+
+| 單元 | 問題 | 修法 |
+|---|---|---|
+| **15 頁面設定與 SEO** | 後端用 `PageKey` 當識別（`/admin/page/{pageKey}`，公開端點 `/pages/{key}` 也一樣），後台卻送整數 `Id` → **每一頁點進去都 404**。另外清單的 `i18n` 是**陣列** `[{lang,…}]` 不是以語系為鍵的物件（中/英欄與完整度檢查全錯），單筆端點回的是 `{item, i18n}` 信封不是平的一列（欄位全空） | 三處都修在 `client.api.ts`：`page` 以 `pageKey` 當 UI 的 id、i18n 陣列轉成以 lang 為鍵、單筆比照 quote 攤平 |
+| **16 301 轉址** | **沒有取單筆的路由**（只有清單／新增／修改／刪除／匯入匯出），點任何一筆都 404 | 補 `AdminRedirectHandler.GetByIdAsync` 與路由；排在 `export` 之後，`export` 不會被當成 id |
+| **25 消息標籤** | 同上，我新加時漏了取單筆 | 補 `AdminTagHandler.GetByIdAsync`（一併回 `usageCount` 與雙語名稱） |
+
+實測方式：本機起 API（`func start --port 7072`，連 Docker SQL Server）＋真 token，
+逐一驗證 29 個固定頁全部取得成功、三個單元的 GET／PUT 都 200。
+
+⚠ **App Insights 完全沒有遙測**（requests／traces／exceptions 都是 0），所以線上出問題
+時查不到任何線索——這次是靠本機重現才定位的。isolated worker 需要
+`ConfigureFunctionsApplicationInsights()`＋`AddApplicationInsightsTelemetryWorkerService()`，
+連線字串雖然設了但沒生效。**上線前應該補**，否則等於沒有可觀測性。
+
 ### ✅ 標籤體系與 301 轉址單元（2026-09-09）
 
 | 項目 | 做法 |

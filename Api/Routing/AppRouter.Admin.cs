@@ -151,6 +151,7 @@ public sealed partial class AppRouter
             ("GET",            ["admin", "redirect", "export"]) => await adminRedirects.ExportAsync(req),
             ("POST",           ["admin", "redirect", "import"]) => await adminRedirects.ImportAsync(req),
             ("GET",            ["admin", "redirect"])           => await adminRedirects.GetListAsync(req),
+            ("GET",            ["admin", "redirect", var rid])  => await adminRedirects.GetByIdAsync(req, rid),
             ("POST",           ["admin", "redirect"])           => await adminRedirects.CreateAsync(req),
             ("PUT" or "PATCH", ["admin", "redirect", var id])   => await adminRedirects.UpdateAsync(req, id),
             ("DELETE",         ["admin", "redirect", var id])   => await adminRedirects.DeleteAsync(req, id),
@@ -176,6 +177,7 @@ public sealed partial class AppRouter
             // ── 25 tag ───────────────────────────────────────────────────
             ("PUT",            ["admin", "tag", "sort"])       => await adminTags.SortAsync(req),
             ("GET",            ["admin", "tag"])               => await adminTags.GetListAsync(req),
+            ("GET",            ["admin", "tag", var getTagId])  => await adminTags.GetByIdAsync(req, getTagId),
             ("POST",           ["admin", "tag"])               => await adminTags.CreateAsync(req),
             ("PUT" or "PATCH", ["admin", "tag", var tagId])    => await adminTags.UpdateAsync(req, tagId),
             ("DELETE",         ["admin", "tag", var delTagId]) => await adminTags.DeleteAsync(req, delTagId),
