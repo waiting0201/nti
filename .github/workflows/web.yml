@@ -49,6 +49,10 @@ jobs:
           # 設了就打真的 API 並要求帳號 + 密碼登入。
           # Azure 的 Function App 開好之後設這個 variable，後台就自動接上去。
           VITE_API_BASE: ${{ vars.API_BASE }}
+          # 後台登入也走 reCAPTCHA v3（後端 /auth/admin/login 會驗）。
+          # ⚠ 少了這個變數，Function App 一設 Recaptcha__SecretKey 就沒有人登得進後台——
+          #   前端拿不到 token，後端一律回 BOT_CHECK_FAILED。與公開站同一個 variable。
+          VITE_RECAPTCHA_SITE_KEY: ${{ vars.RECAPTCHA_SITE_KEY }}
 
       # 素材走 Blob（stntiprod）。少了這個變數，頁面會指向 /assets/... 而
       # public/assets 在 CI 上根本不存在（mockup/ 未進版控）—— 站台會整片缺圖，

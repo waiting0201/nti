@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth, type RoleCode } from '@/lib/auth'
 import { MANUAL_SEED } from '@/api/seed.manual'
 import { hasApi, ApiError } from '@/api/http'
+import { loadRecaptcha } from '@/lib/recaptcha'
 
 /** 密碼長度下限，與後端 AuthHandler.MinPasswordLength 一致（2026-09-06 由 8 放寬為 6）。 */
 const MIN_PASSWORD_LENGTH = 6
@@ -41,6 +42,12 @@ function PasswordLogin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+
+  // 進到登入畫面就先把 reCAPTCHA 的 script 載起來。等按下送出才開始載的話，
+  // 第一次登入會多等 script 下載的時間，逾時就變成「機器人驗證未通過」。
+  useEffect(() => {
+    loadRecaptcha()
+  }, [])
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()

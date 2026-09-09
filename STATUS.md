@@ -523,6 +523,18 @@ git push Remote_GitHub    # ← 這一步才觸發部署
 - 正式網域 `www.nti-printing.com` 綁定（custom domain + DNS，卡客戶端）
 - **SMTP 未設定**：`Smtp__Host`／`Port` 已填 Brevo，還缺 `Smtp__User`／`Password`／`From`。
   表單照常收得到資料，只是通知信寄不出去（EmailLog 記 `Failed`，可在後台重寄）
+- 🔴 **後台登入被 reCAPTCHA 擋住（2026-09-09 修）**：後端的 `/auth/admin/login` 在
+  2026-09-08 隨 v3 一起加了機器人檢查，但**後台 SPA 從來沒送過 token**——
+  `apps/admin/` 裡當時一行 reCAPTCHA 程式碼都沒有。Function App 一設
+  `Recaptcha__SecretKey`，登入就必然回 `BOT_CHECK_FAILED`，畫面顯示
+  「機器人驗證未通過，請重新整理後再試」，**沒有人登得進後台**。
+  已補 `apps/admin/src/lib/recaptcha.ts`（與公開站的 `PageForm.tsx` 同一套做法）、
+  登入時帶 token，並在 CI 的 admin build 補上 `VITE_RECAPTCHA_SITE_KEY`
+  （少了它前端一樣拿不到 token）。**要重新部署一次才會生效。**
+  - ⚠ **這個檢查讓後台登入相依於 Google 可連線**：`RecaptchaService` 是 fail closed，
+    script 被廣告阻擋器或公司防火牆擋掉時，客戶會被鎖在自己的 CMS 外面而沒有救援途徑。
+    後端本來就有「連續 5 次失敗鎖 15 分鐘」的保護，登入這條要不要保留 reCAPTCHA
+    值得再確認一次——目前維持原設計（docs/10 §9.6）。
 - ✅ **reCAPTCHA v3 已完整設定並生效**（2026-09-08）：site key 走 `vars.RECAPTCHA_SITE_KEY`
   進前端 bundle，secret 已設進 Function App。實測不帶 token 的請求回 400 `BOT_CHECK_FAILED`
   且不寫入資料，確認驗證真的在跑。

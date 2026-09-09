@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
 import { can as canDo, ROLE_LABEL, type RoleCode } from './permissions'
 import { api, hasApi, loadSession as loadApiSession, saveSession as saveApiSession, type Session as ApiSession } from '@/api/http'
+import { RECAPTCHA_ACTIONS, recaptchaToken as getRecaptchaToken } from './recaptcha'
 
 /**
  * 登入狀態。兩種模式，由 `VITE_API_BASE` 有沒有設定決定（見 `api/client.ts`）：
@@ -90,7 +91,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
 
       loginWithPassword: async (username, password) => {
-        const data = await api.post<ApiSession>('/auth/admin/login', { username, password })
+        // 後端的登入端點也走機器人防護（docs/10 §9.6）。拿不到 token 就送 undefined，
+        // 由後端決定要不要擋——它沒設 secret 時本來就會放行（見 lib/recaptcha.ts）。
+        const recaptchaToken = (await getRecaptchaToken(RECAPTCHA_ACTIONS.adminLogin)) ?? undefined
+        const data = await api.post<ApiSession>('/auth/admin/login', { username, password, recaptchaToken })
         saveApiSession(data)
         setSession(fromApiSession(data))
       },
