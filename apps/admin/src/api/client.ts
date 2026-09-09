@@ -34,5 +34,14 @@ export const exportQuotesCsv         = impl.exportQuotesCsv
 export const exportRedirectsCsv      = impl.exportRedirectsCsv
 export const importRedirectsCsv      = impl.importRedirectsCsv
 
+// 23 admin：帳號與角色不走泛用的 list/create/save（形狀不同，見 client.api.ts）
+export const listAdmins   = impl.listAdmins
+export const listRoles    = impl.listRoles
+export const createAdmin  = impl.createAdmin
+export const updateAdmin  = impl.updateAdmin
+export const deleteAdmin  = impl.deleteAdmin
+
+export type { AdminAccount, AdminDraft, AdminPatch, AdminRole } from './client.api'
+
 /** 目前是不是接著真的 API（畫面上要顯示「示範資料」提示時用得到）。 */
 export const isLive = hasApi

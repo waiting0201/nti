@@ -329,3 +329,58 @@ export function categoryUsage(categoryId: string): number {
 export function resetStore() {
   /* no-op */
 }
+
+// ── 23 admin：管理員帳號與角色 ────────────────────────────────────────────
+/**
+ * 這個單元不走上面那組泛用的 list/create/save —— 它的形狀跟內容單元不一樣：
+ * 沒有 i18n、識別是帳號、新增時後端可能回一組初始密碼（沒填通知信箱時），
+ * 而角色清單是另一支端點。硬塞進泛用路徑只會讓 mapping.ts 多一堆特例。
+ */
+export type AdminAccount = {
+  id: string
+  username: string
+  email: string | null
+  displayName: string
+  roleId: number
+  roleCode: string
+  isActive: boolean
+  lastLoginAt: string | null
+  mustChangePassword: boolean
+}
+
+export type AdminRole = { id: number; code: string; name: string; isSystem: boolean; permissions: string[] }
+
+/** 新增：密碼由後端產生，不接受指定（docs/10 §7.4）。 */
+export type AdminDraft = { username: string; displayName: string; email?: string; roleId: number }
+
+/** 編輯：帳號建立後唯讀，只送有改的欄位。 */
+export type AdminPatch = { displayName?: string; email?: string | null; roleId?: number; isActive?: boolean }
+
+type ApiAdminAccount = Omit<AdminAccount, 'id'> & { id: number }
+
+export async function listAdmins(keyword = ''): Promise<AdminAccount[]> {
+  const qs = keyword.trim() ? `?keyword=${encodeURIComponent(keyword.trim())}` : ''
+  const rows = await api.get<ApiAdminAccount[]>(`/admin/admin${qs}`)
+  return rows.map((r) => ({ ...r, id: String(r.id), email: r.email ?? null, lastLoginAt: r.lastLoginAt ?? null }))
+}
+
+export function listRoles(): Promise<AdminRole[]> {
+  return api.get<AdminRole[]>('/admin/admin/roles')
+}
+
+/**
+ * 建立管理員。`initialPassword` 只在**沒填通知信箱**時才有值——
+ * 有信箱時初始密碼直接寄出、不離開伺服器，畫面上就不該顯示。
+ */
+export async function createAdmin(draft: AdminDraft): Promise<{ id: string; initialPassword: string | null }> {
+  const created = await api.post<{ id: number; initialPassword: string | null }>('/admin/admin', draft)
+  return { id: String(created.id), initialPassword: created.initialPassword ?? null }
+}
+
+export async function updateAdmin(id: string, patch: AdminPatch): Promise<void> {
+  await api.put(`/admin/admin/${id}`, patch)
+}
+
+export async function deleteAdmin(id: string): Promise<void> {
+  await api.delete(`/admin/admin/${id}`)
+}

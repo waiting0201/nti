@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import * as api from '@/api/client'
 import type { Row } from '@/api/types'
-import { SETTING_GROUPS, MANUAL_SEED, EMAIL_LOG } from '@/api/seed.manual'
+import { SETTING_GROUPS, EMAIL_LOG } from '@/api/seed.manual'
 import { LOCALE_LABEL, LOCALES, type Locale } from '@/lib/types'
 import { Badge, Hint, Modal, Notice, toast } from '@/components/ui'
 import { FieldInput } from '@/components/fields'
@@ -235,10 +235,80 @@ const MATRIX_ROWS: Array<{ label: string; codes: string[] }> = [
   { label: '24 信件紀錄', codes: ['audit.view'] },
 ]
 
+type Draft = { id: string | null; username: string; displayName: string; email: string; roleId: number; isActive: boolean }
+
+const NEW_DRAFT: Draft = { id: null, username: '', displayName: '', email: '', roleId: 2, isActive: true }
+
 export function AdminUsersPage() {
-  const { session } = useAuth()
-  const users = MANUAL_SEED.adminUser as unknown as Array<Row & { username: string; email?: string; displayName: string; role: RoleCode; isActive: boolean; lastLoginAt: string }>
+  const { can, session } = useAuth()
+  const canEdit = can('admin.edit')
+  const canDelete = can('admin.delete')
+
+  const [users, setUsers] = useState<api.AdminAccount[]>([])
+  const [roles, setRoles] = useState<api.AdminRole[]>([])
+  const [loading, setLoading] = useState(true)
+  const [draft, setDraft] = useState<Draft | null>(null)
+  const [confirm, setConfirm] = useState<api.AdminAccount | null>(null)
+  /** 沒填通知信箱時後端會把初始密碼回給建立者，只出現這一次，必須當場轉交。 */
+  const [issued, setIssued] = useState<{ username: string; password: string } | null>(null)
   const counts = useMemo(permissionRowCount, [])
+
+  const load = () => {
+    setLoading(true)
+    void Promise.all([api.listAdmins(), api.listRoles()])
+      .then(([u, r]) => {
+        setUsers(u)
+        setRoles(r)
+      })
+      .catch((e: Error) => toast(e.message))
+      .finally(() => setLoading(false))
+  }
+  useEffect(load, [])
+
+  const roleName = (code: string) => ROLE_LABEL[code as RoleCode] ?? code
+  const isSelf = (u: api.AdminAccount) => u.username === session?.username
+
+  /** 停用／刪除自己都會把自己鎖在外面，後端也會擋（回 409）；這裡先不給按。 */
+  const lastSuperAdmin = (u: api.AdminAccount) =>
+    u.roleCode === 'SuperAdmin' &&
+    users.filter((x) => x.roleCode === 'SuperAdmin' && x.isActive).length <= 1
+
+  async function submit() {
+    if (!draft) return
+    const username = draft.username.trim()
+    const displayName = draft.displayName.trim()
+
+    if (!displayName) return toast('顯示名稱為必填。')
+    if (!draft.id && username.length < 3) return toast('帳號至少 3 個字。')
+
+    try {
+      if (draft.id) {
+        await api.updateAdmin(draft.id, {
+          // 清空信箱要送空字串，不是 null——後端把 null 當成「這次沒改」，
+          // 送 null 會讓「把信箱刪掉」這個動作靜靜地沒有生效
+          displayName,
+          email: draft.email.trim(),
+          roleId: draft.roleId,
+          isActive: draft.isActive,
+        })
+        toast('已更新')
+      } else {
+        const created = await api.createAdmin({
+          username,
+          displayName,
+          email: draft.email.trim() || undefined,
+          roleId: draft.roleId,
+        })
+        // 有信箱就寄啟用信、初始密碼不離開伺服器；沒有才回傳，得由建立者轉交
+        if (created.initialPassword) setIssued({ username, password: created.initialPassword })
+        else toast('已建立，啟用信已寄出')
+      }
+      setDraft(null)
+      load()
+    } catch (e) {
+      toast((e as Error).message)
+    }
+  }
 
   return (
     <>
@@ -250,42 +320,75 @@ export function AdminUsersPage() {
       <div className="card">
         <div className="card-h">
           <h2>管理員</h2>
+          <span style={{ marginLeft: 'auto' }} />
+          {canEdit && (
+            <button className="btn btn-primary btn-sm" onClick={() => setDraft({ ...NEW_DRAFT })}>
+              ＋ 新增管理員
+            </button>
+          )}
         </div>
-        <table className="list">
-          <thead>
-            <tr>
-              <th style={{ width: 180 }}>帳號</th>
-              <th>通知信箱</th>
-              <th style={{ width: 160 }}>顯示名稱</th>
-              <th style={{ width: 130 }}>角色</th>
-              <th style={{ width: 90 }}>啟用</th>
-              <th style={{ width: 180 }}>最後登入</th>
-              <th style={{ width: 90 }} />
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => {
-              const isSelf = u.username === session?.username
-              return (
+        {loading ? (
+          <div className="empty">載入中…</div>
+        ) : (
+          <table className="list">
+            <thead>
+              <tr>
+                <th style={{ width: 180 }}>帳號</th>
+                <th>通知信箱</th>
+                <th style={{ width: 160 }}>顯示名稱</th>
+                <th style={{ width: 130 }}>角色</th>
+                <th style={{ width: 90 }}>啟用</th>
+                <th style={{ width: 180 }}>最後登入</th>
+                <th style={{ width: 150 }} />
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((u) => (
                 <tr key={u.id}>
                   <td className="row-title">{u.username}</td>
                   <td>{u.email ?? <span style={{ color: 'var(--grey-2)' }}>—</span>}</td>
                   <td>{u.displayName}</td>
-                  <td>{ROLE_LABEL[u.role]}</td>
+                  <td>{roleName(u.roleCode)}</td>
                   <td>
                     <Badge kind={u.isActive ? 'ok' : 'off'}>{u.isActive ? '啟用' : '停用'}</Badge>
                   </td>
-                  <td>{String(u.lastLoginAt).replace('T', ' ').replace('Z', '')}</td>
-                  <td>
-                    <button className="btn btn-sm" disabled={isSelf} title={isSelf ? '不可停用或降級自己' : ''}>
-                      停用
+                  <td>{u.lastLoginAt ? u.lastLoginAt.replace('T', ' ').replace('Z', '').slice(0, 16) : '—'}</td>
+                  <td className="btn-row">
+                    <button
+                      className="btn btn-sm"
+                      onClick={() =>
+                        setDraft({
+                          id: u.id,
+                          username: u.username,
+                          displayName: u.displayName,
+                          email: u.email ?? '',
+                          roleId: u.roleId,
+                          isActive: u.isActive,
+                        })
+                      }
+                    >
+                      {canEdit ? '編輯' : '檢視'}
+                    </button>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      disabled={!canDelete || isSelf(u) || lastSuperAdmin(u)}
+                      title={
+                        isSelf(u)
+                          ? '不能刪除自己的帳號'
+                          : lastSuperAdmin(u)
+                            ? '至少要保留一位可用的超級管理員'
+                            : ''
+                      }
+                      onClick={() => setConfirm(u)}
+                    >
+                      刪除
                     </button>
                   </td>
                 </tr>
-              )
-            })}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        )}
         <div className="card-b">
           <Notice kind="info">
             帳號不限定 email 格式；有填通知信箱才寄得出啟用信，沒填就由建立者當場轉交初始密碼。
@@ -332,6 +435,104 @@ export function AdminUsersPage() {
           <Hint text="權限碼格式 `{單元代號}.{view|edit|publish|delete|export}`。**這張表是權限的權威來源**，對應 db/seed/110_role_permission.sql。" />
         </div>
       </div>
+
+      {draft && (
+        <Modal
+          title={draft.id ? `編輯管理員 · ${draft.username}` : '新增管理員'}
+          confirmLabel={draft.id ? '儲存' : '建立'}
+          onCancel={() => setDraft(null)}
+          onConfirm={canEdit ? submit : undefined}
+        >
+          <fieldset disabled={!canEdit} style={{ border: 0, padding: 0 }}>
+            <div className="field">
+              <label>
+                帳號<span className="req">*</span>
+              </label>
+              {/* 帳號建立後唯讀：改帳號等於換一個人，稽核紀錄會對不上（後端也不收） */}
+              <input
+                value={draft.username}
+                disabled={draft.id !== null}
+                onChange={(e) => setDraft({ ...draft, username: e.target.value })}
+                placeholder="不限定 email 格式，3–80 字、不含空白"
+              />
+            </div>
+            <div className="field">
+              <label>
+                顯示名稱<span className="req">*</span>
+              </label>
+              <input value={draft.displayName} onChange={(e) => setDraft({ ...draft, displayName: e.target.value })} />
+            </div>
+            <div className="field">
+              <label>通知信箱（選填）</label>
+              <input
+                value={draft.email}
+                onChange={(e) => setDraft({ ...draft, email: e.target.value })}
+                placeholder="留空則不寄啟用信，改由建立者轉交初始密碼"
+              />
+            </div>
+            <div className="field">
+              <label>角色</label>
+              <select value={draft.roleId} onChange={(e) => setDraft({ ...draft, roleId: Number(e.target.value) })}>
+                {roles.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {roleName(r.code)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {draft.id && (
+              <div className="field">
+                <label>啟用</label>
+                {/* 停用自己等於把自己鎖在外面，後端也會回 409 */}
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    checked={draft.isActive}
+                    disabled={draft.username === session?.username}
+                    onChange={(e) => setDraft({ ...draft, isActive: e.target.checked })}
+                  />
+                  <span className="track" />
+                  <span style={{ fontSize: 12.5 }}>{draft.isActive ? '啟用' : '停用'}</span>
+                </label>
+              </div>
+            )}
+          </fieldset>
+          {!draft.id && <Hint text="密碼由系統產生，**不接受指定**；建立後強制首次登入改密碼。" />}
+        </Modal>
+      )}
+
+      {confirm && (
+        <Modal
+          title="刪除管理員"
+          confirmKind="btn-danger"
+          confirmLabel="確定刪除"
+          onCancel={() => setConfirm(null)}
+          onConfirm={async () => {
+            try {
+              await api.deleteAdmin(confirm.id)
+              toast('已刪除')
+            } catch (e) {
+              toast((e as Error).message)
+            }
+            setConfirm(null)
+            load()
+          }}
+        >
+          「{confirm.displayName}（{confirm.username}）」將無法再登入後台。已留下的操作紀錄不受影響。
+        </Modal>
+      )}
+
+      {issued && (
+        <Modal title="初始密碼" confirmLabel="我已抄下" onCancel={() => setIssued(null)} onConfirm={() => setIssued(null)}>
+          <p>
+            帳號 <b>{issued.username}</b> 沒有通知信箱，寄不出啟用信。
+            請當面轉交下列初始密碼——<b>關掉這個視窗後就不會再顯示</b>：
+          </p>
+          <p className="diff" style={{ fontSize: 15 }}>
+            <code>{issued.password}</code>
+          </p>
+        </Modal>
+      )}
     </>
   )
 }

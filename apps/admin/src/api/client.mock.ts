@@ -1,6 +1,8 @@
 import type { ListQuery, ListResult, Row } from './types'
 import { SEED } from './seed.generated'
 import { MANUAL_SEED, SETTING_VALUES } from './seed.manual'
+import { ROLE_LABEL, ROLE_PERMISSIONS, type RoleCode } from '@/lib/permissions'
+import type { AdminAccount, AdminDraft, AdminPatch, AdminRole } from './client.api'
 
 /**
  * 後台資料存取層。
@@ -193,4 +195,91 @@ export function categoryUsage(categoryId: string): number {
     for (const r of rows) if (!r.isDeleted && r.categoryId === categoryId) n++
   }
   return n
+}
+
+// ── 23 admin：管理員帳號與角色 ────────────────────────────────────────────
+/**
+ * 與 `client.api.ts` 同一組簽章。示範模式沒有真的寄信，也不該假裝有——
+ * 新增帳號一律把初始密碼回給建立者（真 API 只在沒填通知信箱時才回）。
+ */
+/** 角色 Id 與 db/seed/100_role.sql 的三列一致（1 超管／2 編輯／3 檢視）。 */
+const ROLE_IDS: RoleCode[] = ['SuperAdmin', 'Editor', 'Viewer']
+const roleIdOf = (code: string) => ROLE_IDS.indexOf(code as RoleCode) + 1
+const roleCodeOf = (id: number) => ROLE_IDS[id - 1] ?? 'Viewer'
+
+/** 種子裡的一列（`role` 是角色代號）→ 與真 API 一致的形狀。 */
+function toAccount(row: Row): AdminAccount {
+  return {
+    id: row.id,
+    username: String(row.username ?? ''),
+    email: (row.email as string | undefined) ?? null,
+    displayName: String(row.displayName ?? ''),
+    roleId: roleIdOf(String(row.role ?? 'Viewer')),
+    roleCode: String(row.role ?? 'Viewer'),
+    isActive: row.isActive !== false,
+    lastLoginAt: (row.lastLoginAt as string | undefined) ?? null,
+    mustChangePassword: row.mustChangePassword === true,
+  }
+}
+
+export async function listAdmins(keyword = ''): Promise<AdminAccount[]> {
+  await delay()
+  const k = keyword.trim().toLowerCase()
+  return table('adminUser')
+    .filter((r) => !r.isDeleted)
+    .filter((r) => !k || JSON.stringify(r).toLowerCase().includes(k))
+    .map(toAccount)
+}
+
+export async function listRoles(): Promise<AdminRole[]> {
+  await delay()
+  return ROLE_IDS.map((code, i) => ({
+    id: i + 1,
+    code,
+    name: ROLE_LABEL[code],
+    isSystem: true,
+    permissions: [...ROLE_PERMISSIONS[code]],
+  }))
+}
+
+export async function createAdmin(draft: AdminDraft): Promise<{ id: string; initialPassword: string | null }> {
+  await delay()
+  const rows = table('adminUser')
+
+  if (rows.some((r) => !r.isDeleted && r.username === draft.username))
+    throw new Error('此帳號已存在。')
+
+  rows.push({
+    id: String(Date.now()),
+    username: draft.username,
+    email: draft.email || undefined,
+    displayName: draft.displayName,
+    role: roleCodeOf(draft.roleId),
+    isActive: true,
+    lastLoginAt: null,
+    mustChangePassword: true,
+  })
+  persist()
+
+  return { id: rows[rows.length - 1].id, initialPassword: 'demo-初始密碼-1234' }
+}
+
+export async function updateAdmin(id: string, patch: AdminPatch): Promise<void> {
+  await delay()
+  const row = table('adminUser').find((r) => r.id === id)
+  if (!row) throw new Error('查無此帳號。')
+
+  if (patch.displayName !== undefined) row.displayName = patch.displayName
+  if (patch.email !== undefined) row.email = patch.email || undefined
+  if (patch.roleId !== undefined) row.role = roleCodeOf(patch.roleId)
+  if (patch.isActive !== undefined) row.isActive = patch.isActive
+  persist()
+}
+
+export async function deleteAdmin(id: string): Promise<void> {
+  await delay()
+  const row = table('adminUser').find((r) => r.id === id)
+  if (!row) throw new Error('查無此帳號。')
+  row.isDeleted = true
+  persist()
 }
