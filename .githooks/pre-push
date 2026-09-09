@@ -4,9 +4,16 @@
 # 兩道檢查：
 #   1. 路徑：reference/ planning/ mockup/ mockup2/ .wrangler/ db/local/
 #      （planning/ 是 reference/ 的前身，只存在於舊 commit —— 光看現在的樹會漏掉）
-#   2. 體積：全歷史可達物件 > 20MB 即拒絕。路徑清單可能漏，體積不會。
+#   2. 體積：兩層，各防各的失效模式。路徑清單可能漏，體積不會。
+#      MAX_BLOB_MB  單一檔案 —— 素材目錄的特徵就是「少數幾個巨大的二進位檔」
+#      MAX_PACK_MB  封包總量 —— 對應 GitHub 的 2GB 單次推送上限
+#      量的是封包後而非未壓縮總和（後者把每個檔案的每一版都算一次全文，差約 7 倍，
+#      會被原始碼的正常成長先撐爆）。與 tools/sync-public.sh 的上限保持一致。
 remote="$1"
 [ "$remote" = "Remote_GitHub" ] || exit 0
+
+MAX_PACK_MB=50    # 封包總量（2026-09-09 為 2.1MB）
+MAX_BLOB_MB=2     # 單一檔案（2026-09-09 最大 0.27MB）
 
 z40=0000000000000000000000000000000000000000
 while read -r local_ref local_sha remote_ref remote_sha; do
@@ -24,13 +31,29 @@ while read -r local_ref local_sha remote_ref remote_sha; do
         exit 1
     fi
 
-    mb=$(git rev-list --objects "$local_sha" | awk '{print $1}' \
-         | git cat-file --batch-check='%(objectsize)' 2>/dev/null \
-         | awk '{s+=$1} END {printf "%.0f", s/1048576}')
-    if [ "${mb:-0}" -gt 20 ]; then
+    big=$(git rev-list --objects "$local_sha" \
+          | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' 2>/dev/null \
+          | awk -v max="$((MAX_BLOB_MB * 1048576))" '$1=="blob" && $3+0>max {
+                p=""; for (i=4; i<=NF; i++) p = p (i>4 ? " " : "") $i
+                if (p == "") p = "(無路徑)"
+                printf "%8.2f MB  %s\n", $3/1048576, p
+            }' | sort -rn | head -5)
+    if [ -n "$big" ]; then
         echo "" >&2
-        echo "pre-push 拒絕：$local_ref 全歷史可達物件 ${mb} MB，超過 20MB 上限。" >&2
-        echo "  公開版應只有 docs/db/tools，約 1MB。請檢查 EXCLUDE 是否漏了歷史目錄。" >&2
+        echo "pre-push 拒絕：$local_ref 的歷史含超過 ${MAX_BLOB_MB} MB 的檔案。" >&2
+        echo "$big" >&2
+        echo "  請檢查 tools/sync-public.sh 的 EXCLUDE 是否漏了歷史目錄。" >&2
+        echo "" >&2
+        exit 1
+    fi
+
+    mb=$(git rev-list --objects "$local_sha" | awk '{print $1}' \
+         | git pack-objects --stdout 2>/dev/null | wc -c \
+         | awk '{printf "%.0f", $1/1048576}')
+    if [ "${mb:-0}" -gt "$MAX_PACK_MB" ]; then
+        echo "" >&2
+        echo "pre-push 拒絕：$local_ref 封包後 ${mb} MB，超過 ${MAX_PACK_MB} MB 上限。" >&2
+        echo "  單檔都在上限內卻總量過大，代表混進了大量檔案而不是單一大檔。" >&2
         echo "" >&2
         exit 1
     fi

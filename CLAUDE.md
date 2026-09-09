@@ -173,7 +173,7 @@ NTI/
   | 分支 | 內容 | 推向 | 體積 |
   |------|------|------|------|
   | `master` | 完整 | `Remote_NAS`（`/Volumes/public/Repo/NTI`） | 2,560 MB 全歷史 / 382 檔 |
-  | `public` | master 去掉下表排除項 | `Remote_GitHub`（`waiting0201/nti`，**public repo**） | 6.2 MB 全歷史 / 298 檔 |
+  | `public` | master 去掉下表排除項 | `Remote_GitHub`（`waiting0201/nti`，**public repo**） | 2.1 MB 封包 / 298 檔 |
 
   **`public` 分支的排除項**（`tools/sync-public.sh` 的 `EXCLUDE`）——
   ⚠️ 必須涵蓋**歷史上出現過的路徑**，不只是現在的路徑：
@@ -187,9 +187,21 @@ NTI/
   | `.wrangler/` | Cloudflare 部署快取 | — |
   | `db/local/` | 只在本機執行的建庫腳本，含 dev 管理員帳號雜湊 | — |
 
-  **真正的安全網是體積斷言，不是這張清單**：`sync-public.sh` 與 `.githooks/pre-push`
-  都會檢查全歷史可達物件 ≤ 20MB（2026-09-06 為 6.2MB）。路徑清單永遠可能漏掉某個只存在於
-  舊 commit 的目錄 —— 這正是 `planning/` 一開始被漏掉的原因。
+  **真正的安全網是體積斷言，不是這張清單**：路徑清單永遠可能漏掉某個只存在於舊 commit
+  的目錄 —— 這正是 `planning/` 一開始被漏掉的原因。`sync-public.sh` 與 `.githooks/pre-push`
+  各有**兩層**檢查，防的失效模式不同：
+
+  | 閘 | 上限 | 2026-09-09 現值 | 防什麼 |
+  |---|---|---|---|
+  | 單一檔案 | 2 MB | 最大 0.27 MB（`db/content/200_mockup_content.sql`） | 素材目錄的特徵就是少數幾個巨大的二進位檔，這條當場擋下並指出檔名 |
+  | 封包總量 | 50 MB | 2.1 MB | 對應 GitHub 的 2 GB 單次推送上限 |
+
+  ⚠️ 量的是**封包後**的位元組數，不是未壓縮總和。未壓縮總和把每個檔案的每一版都算一次全文，
+  純文字又壓得很兇，兩者差約 7 倍（2026-09-09：未壓縮 15.5 MB、封包 2.1 MB）。
+  早期的做法是「未壓縮總和 ≤ 20 MB」，那個數字不對應任何真實的東西，而且會被
+  **EF migration 的正常成長先撐爆**（每支 migration 固定多 ~440 KB：新的 `*.Designer.cs`
+  加上改寫一版的 `AppDbContextModelSnapshot.cs`），到時候擋下推送、訊息卻寫「EXCLUDE 漏了
+  大目錄」——一個會謊報的安全網比沒有更糟（2026-09-09 改）。
 
   > ⚠️ `waiting0201/nti` 是 **public repo**。新增檔案時先想清楚是否適合公開；
   > 客戶未上線的素材、任何憑證與個資一律放進排除項，或根本不要進版控。

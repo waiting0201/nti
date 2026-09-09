@@ -12,7 +12,17 @@
 #   .wrangler/   Cloudflare 部署快取
 #   db/local/    只在本機執行的建庫腳本，含 dev 管理員帳號雜湊
 #
-# 結尾的 MAX_MB 斷言才是真正的安全網：路徑清單永遠可能漏掉某個歷史目錄，體積檢查不會。
+# 結尾的體積斷言才是真正的安全網：路徑清單永遠可能漏掉某個歷史目錄，體積檢查不會。
+# 兩層，各防各的失效模式：
+#   MAX_BLOB_MB  單一檔案上限 —— reference/ 這類目錄的特徵就是「少數幾個巨大的二進位檔」，
+#                這條當場擋下，且不隨原始碼成長漂移（目前最大的 blob 是 0.27MB）
+#   MAX_PACK_MB  封包總量上限 —— 對應 GitHub 的 2GB 單次推送上限（目前 2.1MB）
+#
+# ⚠️ 量的是「封包後」而不是未壓縮總和。未壓縮總和把每個檔案的每一版都算一次全文，
+#    純文字又壓得很兇，兩者差約 7 倍：2026-09-09 未壓縮 15.5MB、實際封包 2.1MB。
+#    早期用未壓縮總和配 20MB 上限，會被 EF migration 的正常成長先撐爆
+#    （每支 migration 固定多 ~440KB：新的 *.Designer.cs 加上改寫一版的 ModelSnapshot），
+#    到時候擋下推送、訊息卻寫「EXCLUDE 漏了大目錄」—— 一個會謊報的安全網。
 #
 # 作法：用暫存 index 重建 tree，不動工作目錄。每個 public commit 保留來源的訊息、
 # 作者與日期，並加註 X-Source-Commit 供下次判斷進度。append-only，永不需要 force push。
@@ -22,7 +32,8 @@ cd "$(git rev-parse --show-toplevel)"
 SRC=master
 DST=public
 EXCLUDE="reference planning mockup mockup2 .wrangler db/local"
-MAX_MB=20
+MAX_PACK_MB=50    # 封包總量（2026-09-09 為 2.1MB）
+MAX_BLOB_MB=2     # 單一檔案（2026-09-09 最大 0.27MB）
 
 if git rev-parse --verify -q "refs/heads/$DST" >/dev/null; then
     parent=$(git rev-parse "$DST")
@@ -78,19 +89,38 @@ X-Source-Commit: $c"
         "$(git log -1 --format=%s "$c")"
 done
 
-total_mb=$(git rev-list --objects "$parent" | awk '{print $1}' \
-    | git cat-file --batch-check='%(objectsize)' 2>/dev/null \
-    | awk '{s+=$1} END {printf "%.1f", s/1048576}')
+# 第一層：單一檔案。漏網的素材目錄會在這裡當場現形，附上檔名。
+big=$(git rev-list --objects "$parent" \
+    | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' 2>/dev/null \
+    | awk -v max="$((MAX_BLOB_MB * 1048576))" '$1=="blob" && $3+0>max {
+          p=""; for (i=4; i<=NF; i++) p = p (i>4 ? " " : "") $i
+          if (p == "") p = "(無路徑)"
+          printf "%8.2f MB  %s\n", $3/1048576, p
+      }' | sort -rn | head -5)
 
-if [ "$(printf '%.0f' "$total_mb")" -gt "$MAX_MB" ]; then
+if [ -n "$big" ]; then
     echo "" >&2
-    echo "中止：$DST 全歷史可達物件 ${total_mb} MB，超過上限 ${MAX_MB} MB。" >&2
-    echo "  代表 EXCLUDE 漏掉了某個（可能只存在於舊 commit 的）大目錄。" >&2
+    echo "中止：$DST 的歷史含超過 ${MAX_BLOB_MB} MB 的檔案。" >&2
+    echo "$big" >&2
+    echo "  多半代表 EXCLUDE 漏掉了某個（可能只存在於舊 commit 的）素材目錄。" >&2
+    echo "  $DST 分支未更新。" >&2
+    exit 1
+fi
+
+# 第二層：封包總量，即實際推給 GitHub 的位元組數。
+pack_mb=$(git rev-list --objects "$parent" | awk '{print $1}' \
+    | git pack-objects --stdout 2>/dev/null | wc -c \
+    | awk '{printf "%.1f", $1/1048576}')
+
+if [ "$(printf '%.0f' "$pack_mb")" -gt "$MAX_PACK_MB" ]; then
+    echo "" >&2
+    echo "中止：$DST 封包後 ${pack_mb} MB，超過上限 ${MAX_PACK_MB} MB。" >&2
+    echo "  單檔都在上限內卻總量過大，代表混進了大量檔案而不是單一大檔。" >&2
     echo "  查法：git rev-list <sha> | while read c; do git ls-tree --name-only \$c; done | sort -u" >&2
     echo "  $DST 分支未更新。" >&2
     exit 1
 fi
 
 git update-ref "refs/heads/$DST" "$parent"
-echo "已同步 $n 個 commit 到 ${DST}（$(git rev-parse --short "$DST")），全歷史 ${total_mb} MB。"
+echo "已同步 $n 個 commit 到 ${DST}（$(git rev-parse --short "$DST")），封包後 ${pack_mb} MB。"
 echo "推送：git push Remote_GitHub"
