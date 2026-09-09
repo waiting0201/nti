@@ -40,6 +40,7 @@ export const listRoles    = impl.listRoles
 export const createAdmin  = impl.createAdmin
 export const updateAdmin  = impl.updateAdmin
 export const deleteAdmin  = impl.deleteAdmin
+export const setAdminPassword = impl.setAdminPassword
 
 export type { AdminAccount, AdminDraft, AdminPatch, AdminRole } from './client.api'
 

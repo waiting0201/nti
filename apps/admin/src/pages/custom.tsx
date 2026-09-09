@@ -235,9 +235,24 @@ const MATRIX_ROWS: Array<{ label: string; codes: string[] }> = [
   { label: '24 信件紀錄', codes: ['audit.view'] },
 ]
 
-type Draft = { id: string | null; username: string; displayName: string; email: string; roleId: number; isActive: boolean }
+type Draft = {
+  id: string | null
+  username: string
+  displayName: string
+  email: string
+  roleId: number
+  isActive: boolean
+  /** 新增時是必填的初始密碼；編輯時留空＝不改密碼。 */
+  password: string
+  password2: string
+}
 
-const NEW_DRAFT: Draft = { id: null, username: '', displayName: '', email: '', roleId: 2, isActive: true }
+const NEW_DRAFT: Draft = {
+  id: null, username: '', displayName: '', email: '', roleId: 2, isActive: true, password: '', password2: '',
+}
+
+/** 與後端 `AuthHandler.MinPasswordLength`、Login.tsx 的 `MIN_PASSWORD_LENGTH` 同一個值。 */
+const MIN_PASSWORD_LENGTH = 6
 
 export function AdminUsersPage() {
   const { can, session } = useAuth()
@@ -249,8 +264,6 @@ export function AdminUsersPage() {
   const [loading, setLoading] = useState(true)
   const [draft, setDraft] = useState<Draft | null>(null)
   const [confirm, setConfirm] = useState<api.AdminAccount | null>(null)
-  /** 沒填通知信箱時後端會把初始密碼回給建立者，只出現這一次，必須當場轉交。 */
-  const [issued, setIssued] = useState<{ username: string; password: string } | null>(null)
   const counts = useMemo(permissionRowCount, [])
 
   const load = () => {
@@ -281,6 +294,14 @@ export function AdminUsersPage() {
     if (!displayName) return toast('顯示名稱為必填。')
     if (!draft.id && username.length < 3) return toast('帳號至少 3 個字。')
 
+    // 新增一定要設密碼；編輯時留空代表這次不改密碼
+    const password = draft.password
+    if (!draft.id && !password) return toast('請設定密碼。')
+    if (password) {
+      if (password.length < MIN_PASSWORD_LENGTH) return toast(`密碼至少 ${MIN_PASSWORD_LENGTH} 碼。`)
+      if (password !== draft.password2) return toast('兩次輸入的密碼不一致。')
+    }
+
     try {
       if (draft.id) {
         await api.updateAdmin(draft.id, {
@@ -291,17 +312,18 @@ export function AdminUsersPage() {
           roleId: draft.roleId,
           isActive: draft.isActive,
         })
-        toast('已更新')
+        // 密碼走另一支端點，只有真的填了才送
+        if (password) await api.setAdminPassword(draft.id, password)
+        toast(password ? '已更新，密碼已重設' : '已更新')
       } else {
-        const created = await api.createAdmin({
+        await api.createAdmin({
           username,
           displayName,
           email: draft.email.trim() || undefined,
           roleId: draft.roleId,
+          password,
         })
-        // 有信箱就寄啟用信、初始密碼不離開伺服器；沒有才回傳，得由建立者轉交
-        if (created.initialPassword) setIssued({ username, password: created.initialPassword })
-        else toast('已建立，啟用信已寄出')
+        toast('已建立，請把帳號密碼轉交給對方')
       }
       setDraft(null)
       load()
@@ -364,6 +386,8 @@ export function AdminUsersPage() {
                           email: u.email ?? '',
                           roleId: u.roleId,
                           isActive: u.isActive,
+                          password: '',
+                          password2: '',
                         })
                       }
                     >
@@ -391,9 +415,9 @@ export function AdminUsersPage() {
         )}
         <div className="card-b">
           <Notice kind="info">
-            帳號不限定 email 格式；有填通知信箱才寄得出啟用信，沒填就由建立者當場轉交初始密碼。
-            一律強制首次登入改密碼。登入失敗不鎖定帳號（那會讓人被惡意鎖在外面），
-            暴力破解由登入頁的 reCAPTCHA 擋。
+            帳號不限定 email 格式；密碼由建立者當場設定並轉交，系統不寄啟用信或密碼重設信。
+            忘記密碼時，在編輯視窗直接重設一組新的。通知信箱只用來收系統通知，與登入無關。
+            登入失敗不鎖定帳號（那會讓人被惡意鎖在外面），暴力破解由登入頁的 reCAPTCHA 擋。
           </Notice>
         </div>
       </div>
@@ -467,7 +491,32 @@ export function AdminUsersPage() {
               <input
                 value={draft.email}
                 onChange={(e) => setDraft({ ...draft, email: e.target.value })}
-                placeholder="留空則不寄啟用信，改由建立者轉交初始密碼"
+                placeholder="只用來收系統通知，與登入無關"
+              />
+            </div>
+            <div className="field">
+              <label>
+                {draft.id ? '重設密碼（留空＝不改）' : '密碼'}
+                {!draft.id && <span className="req">*</span>}
+              </label>
+              <input
+                type="password"
+                autoComplete="new-password"
+                value={draft.password}
+                onChange={(e) => setDraft({ ...draft, password: e.target.value })}
+                placeholder={`至少 ${MIN_PASSWORD_LENGTH} 碼`}
+              />
+            </div>
+            <div className="field">
+              <label>
+                再輸入一次
+                {!draft.id && <span className="req">*</span>}
+              </label>
+              <input
+                type="password"
+                autoComplete="new-password"
+                value={draft.password2}
+                onChange={(e) => setDraft({ ...draft, password2: e.target.value })}
               />
             </div>
             <div className="field">
@@ -497,7 +546,13 @@ export function AdminUsersPage() {
               </div>
             )}
           </fieldset>
-          {!draft.id && <Hint text="密碼由系統產生，**不接受指定**；建立後強制首次登入改密碼。" />}
+          <Hint
+            text={
+              draft.id
+                ? '重設密碼會**立刻生效**，對方下次要用新密碼登入——請當面轉交，系統不會寄信通知。'
+                : '密碼由你設定，**不寄啟用信**；建立後請把帳號密碼當面轉交，對方可自行到後台改。'
+            }
+          />
         </Modal>
       )}
 
@@ -522,17 +577,6 @@ export function AdminUsersPage() {
         </Modal>
       )}
 
-      {issued && (
-        <Modal title="初始密碼" confirmLabel="我已抄下" onCancel={() => setIssued(null)} onConfirm={() => setIssued(null)}>
-          <p>
-            帳號 <b>{issued.username}</b> 沒有通知信箱，寄不出啟用信。
-            請當面轉交下列初始密碼——<b>關掉這個視窗後就不會再顯示</b>：
-          </p>
-          <p className="diff" style={{ fontSize: 15 }}>
-            <code>{issued.password}</code>
-          </p>
-        </Modal>
-      )}
     </>
   )
 }

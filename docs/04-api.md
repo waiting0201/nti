@@ -195,5 +195,6 @@
 | 2026-09-08 | Tim（Claude Code） | §3.4 補上清單的共同查詢參數 **`keyword`**（後台清單一律分頁，前端過濾只搜得到當頁 20 筆），比對主表與 i18n 側表所有有長度上限的字串欄、在 SQL 層過濾；openapi 新增共用參數 `Keyword`。`PATCH /admin/contact/{id}` 補列承辦人 |
 | 2026-09-08 | Tim（Claude Code） | 公開寫入端點的機器人防護由 **Turnstile 改為 Google reCAPTCHA v3**：§2 與 §3.3 更新，請求欄位 `turnstileToken` → `recaptchaToken`，另註明 v3 是分數制且後端會比對 `action`（`quote`／`contact`／`admin_login`） |
 | 2026-09-08 | Tim（Claude Code） | `POST /quotes` 新增三個選填的代號欄位 `solutionCode`／`industryCode`／`materialCode`（未給對應 Id 時由伺服器換算）。公開表單不該知道資料庫 Id，代號是 `db/seed` 裡穩定的公開識別；對不到只留 log 不擋單，因為那三欄本來就選填 |
+| 2026-09-09 | Tim（Claude Code） | **後台管理員密碼改為直接指定**：`POST /admin/admin` 新增必填 `password`（至少 6 碼），回應不再帶 `data.initialPassword`；新增 `PUT /admin/admin/{id}/password`（`admin.edit`）重設密碼。兩者都不寄信——啟用信與初始密碼轉交的那套流程整個移除。`Api/openapi.yaml` 已同步 |
 
-*最後更新：2026-09-08*
+*最後更新：2026-09-09*

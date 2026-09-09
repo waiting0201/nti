@@ -602,11 +602,11 @@ paths:
       tags: [後台其他單元]
       summary: 新增管理員（admin.edit）
       description: |
-        密碼由系統產生，**不接受請求指定密碼**；建立的帳號帶 `mustChangePassword`。
-        帳號（`username`）不限定 email 格式；`email` 為選填的通知信箱——有填就寄啟用信，
-        沒填則初始密碼隨回應回傳（`data.initialPassword`），由建立者當場轉交。
+        密碼**由建立者直接指定**（`password`，至少 6 碼）；系統不產生亂數密碼、也不寄啟用信，
+        帳密由建立者當場轉交，建立出來的帳號 `mustChangePassword = false`。
+        帳號（`username`）不限定 email 格式；`email` 為選填的通知信箱，與登入無關。
       security: [{ AdminAuth: [] }]
-      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [username, displayName, roleId], properties: { username: { type: string, maxLength: 80 }, email: { type: string, nullable: true }, displayName: { type: string }, roleId: { type: integer } } } } } }
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [username, displayName, roleId, password], properties: { username: { type: string, maxLength: 80 }, email: { type: string, nullable: true }, displayName: { type: string }, roleId: { type: integer }, password: { type: string, minLength: 6 } } } } } }
       responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } }
 
   /admin/admin/roles:
@@ -627,6 +627,18 @@ paths:
       description: 不能刪自己，也不能刪掉最後一位可用的超管。
       security: [{ AdminAuth: [] }]
       responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } }
+
+  /admin/admin/{id}/password:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    put:
+      tags: [後台其他單元]
+      summary: 重設管理員密碼（admin.edit）
+      description: |
+        直接指定新密碼（至少 6 碼），立即生效；不寄重設信，新密碼由操作者當面轉交。
+        一併把 `mustChangePassword` 清為 false。
+      security: [{ AdminAuth: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [password], properties: { password: { type: string, minLength: 6 } } } } } }
+      responses: { '200': { $ref: '#/components/responses/Ok' }, '404': { $ref: '#/components/responses/NotFound' } }
 
   /admin/audit/emails:
     get: { tags: [後台其他單元], summary: '寄信紀錄（audit.view）', security: [{ AdminAuth: [] }], parameters: [{ name: status, in: query, schema: { type: string, enum: [Sent, Failed] } }], responses: { '200': { $ref: '#/components/responses/Ok' } } }

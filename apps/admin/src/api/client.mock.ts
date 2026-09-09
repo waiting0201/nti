@@ -199,8 +199,8 @@ export function categoryUsage(categoryId: string): number {
 
 // ── 23 admin：管理員帳號與角色 ────────────────────────────────────────────
 /**
- * 與 `client.api.ts` 同一組簽章。示範模式沒有真的寄信，也不該假裝有——
- * 新增帳號一律把初始密碼回給建立者（真 API 只在沒填通知信箱時才回）。
+ * 與 `client.api.ts` 同一組簽章。示範模式不存密碼——
+ * 新增與重設密碼都只把帳號那一列改一改，密碼本身丟掉。
  */
 /** 角色 Id 與 db/seed/100_role.sql 的三列一致（1 超管／2 編輯／3 檢視）。 */
 const ROLE_IDS: RoleCode[] = ['SuperAdmin', 'Editor', 'Viewer']
@@ -242,7 +242,7 @@ export async function listRoles(): Promise<AdminRole[]> {
   }))
 }
 
-export async function createAdmin(draft: AdminDraft): Promise<{ id: string; initialPassword: string | null }> {
+export async function createAdmin(draft: AdminDraft): Promise<{ id: string }> {
   await delay()
   const rows = table('adminUser')
 
@@ -257,11 +257,19 @@ export async function createAdmin(draft: AdminDraft): Promise<{ id: string; init
     role: roleCodeOf(draft.roleId),
     isActive: true,
     lastLoginAt: null,
-    mustChangePassword: true,
+    mustChangePassword: false,
   })
   persist()
 
-  return { id: rows[rows.length - 1].id, initialPassword: 'demo-初始密碼-1234' }
+  return { id: rows[rows.length - 1].id }
+}
+
+export async function setAdminPassword(id: string, _password: string): Promise<void> {
+  await delay()
+  const row = table('adminUser').find((r) => r.id === id)
+  if (!row) throw new Error('查無此帳號。')
+  row.mustChangePassword = false
+  persist()
 }
 
 export async function updateAdmin(id: string, patch: AdminPatch): Promise<void> {

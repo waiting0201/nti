@@ -315,7 +315,8 @@ docs/09 §2.1 列出三個缺口「屬範圍變更、未確認前不納入本期
 
 - **sa 密碼絕不進版控**：只放 `db/.env.local`（已在 `.gitignore`），範本為 `.env.local.example`。
 - `local/910_seed_dev_admin.sql` 的固定密碼**僅供本機**；正式環境第一位超管由部署流程
-  建立（隨機密碼 + 寄啟用信 + `MustChangePassword=1`）。
+  建立（`BOOTSTRAP_SUPERADMIN_*` 帶入的密碼 + `MustChangePassword=1`）。
+  之後的管理員由超管在後台新增，密碼當場指定、不寄信。
 - `local/900_drop_database.sql` 硬編碼名稱守衛，只允許刪除 `NTI` ——
   本機容器內另有其他專案的資料庫。
 

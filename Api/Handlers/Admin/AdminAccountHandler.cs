@@ -9,7 +9,7 @@ using Nti.Api.Services;
 namespace Nti.Api.Handlers.Admin;
 
 /// <summary>23 admin — 管理員與角色（docs/09 §23）。</summary>
-public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher, IEmailService email)
+public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher)
 {
     private const int MinUsernameLength = 3;
     private const int MaxUsernameLength = 80;   // 與 AdminUserConfiguration 的欄位長度一致
@@ -50,11 +50,11 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher,
     }
 
     /// <summary>
-    /// 新增管理員。密碼由系統產生，<b>不接受請求指定密碼</b>——
-    /// 讓建立者知道別人的密碼是沒必要的風險（docs/10 §7.4）。首登強制改密碼。
+    /// 新增管理員。密碼<b>由建立者直接指定</b>（2026-09-09 客戶決定）——
+    /// 不再產生亂數密碼、也不寄啟用信，帳密由建立者當場轉交。
     /// <para>
-    /// 帳號（<c>username</c>）不限定 email 格式（2026-09-06），信箱改為選填：
-    /// 有填就寄啟用信、初始密碼不回傳；沒填就寄不出去，只好把初始密碼回給建立者當場轉交。
+    /// 帳號（<c>username</c>）不限定 email 格式（2026-09-06）；<c>email</c> 是選填的通知信箱，
+    /// 與登入無關，也不會拿來寄密碼。
     /// </para>
     /// </summary>
     public async Task<IActionResult> CreateAsync(HttpRequest req)
@@ -64,6 +64,11 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher,
 
         if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.DisplayName) || dto.RoleId is null)
             throw AppException.BadRequest(ErrorCodes.ValidationRequired, "username、displayName、roleId 為必填。");
+
+        if (string.IsNullOrWhiteSpace(dto.Password))
+            throw AppException.BadRequest(ErrorCodes.ValidationRequired, "password 為必填。");
+
+        ValidatePassword(dto.Password);
 
         var username = dto.Username.Trim();
         var mailbox  = NormalizeEmail(dto.Email);
@@ -82,34 +87,46 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher,
         if (!await db.Role.AnyAsync(r => r.Id == dto.RoleId))
             throw AppException.NotFound("Role");
 
-        var initialPassword = GeneratePassword();
-
         var user = new AdminUser
         {
             Username           = username,
             Email              = mailbox,
-            PasswordHash       = hasher.Hash(initialPassword),
+            PasswordHash       = hasher.Hash(dto.Password),
             DisplayName        = dto.DisplayName.Trim(),
             RoleId             = dto.RoleId.Value,
             IsActive           = true,
-            MustChangePassword = true,
+            // 密碼是建立者當面設定並轉交的，不再強迫首登改一次
+            MustChangePassword = false,
         };
 
         db.AdminUser.Add(user);
         await db.SaveChangesAsync();
 
-        if (mailbox is not null)
-            await email.SendAsync("AdminInvite", mailbox, "[NTI] 後台帳號已建立",
-                $"<p>帳號：{user.Username}</p><p>初始密碼：{initialPassword}</p><p>首次登入後請立即修改。</p>",
-                nameof(AdminUser), user.Id);
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok(new { id = user.Id }));
+    }
+
+    /// <summary>
+    /// 重設某個管理員的密碼（<c>PUT /admin/admin/{id}/password</c>，權限 <c>admin.edit</c>）。
+    /// 使用者忘記密碼時走這裡，不寄重設信；新密碼由操作者當面轉交。
+    /// </summary>
+    public async Task<IActionResult> SetPasswordAsync(HttpRequest req, string rawId)
+    {
+        var user = await FindAsync(rawId);
+        var dto  = await req.ReadFromJsonAsync<AdminPasswordDto>()
+            ?? throw AppException.BadRequest(ErrorCodes.ValidationRequired, "缺少內容。");
+
+        if (string.IsNullOrWhiteSpace(dto.Password))
+            throw AppException.BadRequest(ErrorCodes.ValidationRequired, "password 為必填。");
+
+        ValidatePassword(dto.Password);
+
+        user.PasswordHash       = hasher.Hash(dto.Password);
+        user.MustChangePassword = false;
+        await db.SaveChangesAsync();
 
         CacheControl.NoStore(req.HttpContext.Response);
-        return new OkObjectResult(ApiResponse.Ok(new
-        {
-            id = user.Id,
-            // 沒有信箱可寄時才回傳，否則初始密碼不離開伺服器
-            initialPassword = mailbox is null ? initialPassword : null,
-        }));
+        return new OkObjectResult(ApiResponse.Ok("密碼已更新。"));
     }
 
     public async Task<IActionResult> UpdateAsync(HttpRequest req, string rawId)
@@ -180,10 +197,13 @@ public sealed class AdminAccountHandler(AppDbContext db, IPasswordHasher hasher,
         return value;
     }
 
-    /// <summary>系統產生的初始密碼：16 碼 URL-safe 亂數，只出現在啟用信或建立回應裡。</summary>
-    private static string GeneratePassword() =>
-        Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(12))
-               .Replace('+', 'A').Replace('/', 'b').TrimEnd('=');
+    /// <summary>長度下限與自助改密碼同一個常數（docs/10 §7.4），兩條路徑不該有不同標準。</summary>
+    private static void ValidatePassword(string password)
+    {
+        if (password.Length < AuthHandler.MinPasswordLength)
+            throw AppException.BadRequest(ErrorCodes.ValidationRange,
+                $"密碼至少 {AuthHandler.MinPasswordLength} 碼。");
+    }
 
     private async Task<AdminUser> FindAsync(string rawId)
     {
@@ -205,6 +225,15 @@ public sealed class AdminUserUpsertDto
     public string? DisplayName { get; set; }
     public int?    RoleId      { get; set; }
     public bool?   IsActive    { get; set; }
+
+    /// <summary>新增時必填；編輯不吃這個欄位，改密碼走 <c>PUT /admin/admin/{id}/password</c>。</summary>
+    public string? Password    { get; set; }
+}
+
+/// <summary>重設密碼的請求本體。</summary>
+public sealed class AdminPasswordDto
+{
+    public string? Password { get; set; }
 }
 
 /// <summary>24 audit — 信件紀錄（docs/09 §24）。</summary>

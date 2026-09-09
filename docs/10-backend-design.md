@@ -373,6 +373,9 @@ public sealed class AppException(string code, string message, int statusCode = 4
   前端 `apps/admin/src/pages/Login.tsx` 的 `MIN_PASSWORD_LENGTH` 要跟著改
 - **登入識別是 `AdminUser.Username`，不限定 email 格式**（2026-09-06）。`Email` 是選填的
   通知信箱，token 的 `email` claim 因此可能不存在——身分一律看 `sub`，不要拿 email 當識別
+- **後台帳號的密碼由建立者直接指定**（2026-09-09）：`POST /admin/admin` 收 `password`，
+  忘記密碼走 `PUT /admin/admin/{id}/password`（權限 `admin.edit`）。兩者都不寄信、
+  也不回傳密碼，`MustChangePassword` 一律清為 false——密碼是人選的，沒有再逼改一次的理由
 - 正式環境第一位超管由部署流程建立：隨機密碼 + `MustChangePassword=1`
   （`BOOTSTRAP_SUPERADMIN_USERNAME` / `_EMAIL` / `_PASSWORD`，見 `SuperAdminBootstrapper`）
 - 登入失敗訊息不區分「帳號不存在」與「密碼錯誤」，一律 `AUTH_INVALID_CREDENTIALS`
@@ -743,5 +746,6 @@ traces | where timestamp > ago(30m)
 | 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：§9.3 改為移除說明；刪除 `AuditLog` 實體與表、`IAuditService`／`AuditService`、`AppRouter` 分派後的稽核寫入、`RetentionCleanupFunction` 與 `RetentionCleanupCron`，以及 Coding Checklist 的稽核那條。`IAuditable` 的稽核五欄不受影響。單元 24 只剩信件紀錄（§9.4），權限碼 `audit.*` 沿用 |
 | 2026-09-08 | Tim（Claude Code） | **報價附件不做病毒掃描**（09 §17）：錯誤碼表移除 `UPLOAD_UNSCANNED`，§9.5 上傳流程第 7 條與 Blob 代理段落改為「下載限 `quote.download`、一律 octet-stream」。`QuoteAttachment.ScanStatus` 欄位與 `CK_QuoteAtt_Scan` 由 migration `DropAttachmentScanStatus` 移除——該 migration 依 §11.1 用 `sys.default_constraints` 查名再砍，不寫死 `DF_QuoteAttachment_ScanStatus` |
 | 2026-09-08 | Tim（Claude Code） | **機器人防護由 Cloudflare Turnstile 改為 Google reCAPTCHA v3**：§9.6 改寫（v3 是分數制，需 `Recaptcha__MinScore` 門檻與 `action` 比對）、§4.2 註冊改為 `IBotCheckService`／`RecaptchaService`（介面刻意不帶供應商名稱）、錯誤碼 `BOT_CHECK_FAILED` 的說明與 §12 環境變數表同步。前端 DTO 欄位 `turnstileToken` → `recaptchaToken` |
+| 2026-09-09 | Tim（Claude Code） | §7.4 補一條：後台帳號的密碼由建立者直接指定（`POST /admin/admin` 的 `password`、`PUT /admin/admin/{id}/password`），不寄信、不回傳密碼、`MustChangePassword` 清為 false。`AdminAccountHandler` 因此不再相依 `IEmailService` |
 
-*最後更新：2026-09-08*
+*最後更新：2026-09-09*

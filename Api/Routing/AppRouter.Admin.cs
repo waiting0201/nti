@@ -82,7 +82,8 @@ public sealed partial class AppRouter
             ("DELETE",         ["admin", "category", _])  => PermissionCodes.CategoryDelete,
 
             // ── 23 admin（管理員與角色）──────────────────────────────────
-            ("GET",            ["admin", "admin", ..]) => PermissionCodes.AdminView,
+            ("GET",            ["admin", "admin", ..])            => PermissionCodes.AdminView,
+            ("PUT",            ["admin", "admin", _, "password"]) => PermissionCodes.AdminEdit,
             ("POST",           ["admin", "admin"])     => PermissionCodes.AdminEdit,
             ("PUT" or "PATCH", ["admin", "admin", _])  => PermissionCodes.AdminEdit,
             ("DELETE",         ["admin", "admin", _])  => PermissionCodes.AdminDelete,
@@ -192,6 +193,8 @@ public sealed partial class AppRouter
             ("GET",            ["admin", "admin", "roles"])   => await adminAccounts.GetRolesAsync(req),
             ("GET",            ["admin", "admin"])            => await adminAccounts.GetListAsync(req),
             ("POST",           ["admin", "admin"])            => await adminAccounts.CreateAsync(req),
+            ("PUT",            ["admin", "admin", var pwId, "password"])
+                                                              => await adminAccounts.SetPasswordAsync(req, pwId),
             ("PUT" or "PATCH", ["admin", "admin", var id])    => await adminAccounts.UpdateAsync(req, id),
             ("DELETE",         ["admin", "admin", var id])    => await adminAccounts.DeleteAsync(req, id),
 
