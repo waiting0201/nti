@@ -123,7 +123,6 @@ var host = new HostBuilder()
         services.AddScoped<FormHandler>();
 
         // 後台 22 個單元（04-api §3.4）
-        services.AddScoped<AdminDashboardHandler>();
         services.AddScoped<AdminHomeBannerHandler>();
         services.AddScoped<AdminSolutionHandler>();
         services.AddScoped<AdminSolutionItemHandler>();

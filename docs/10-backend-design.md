@@ -17,7 +17,7 @@
 |------|------|
 | [`04-api.md`](04-api.md) | API 契約：端點清單、權限碼對照、回應信封（本文件 §5 為其實作規格） |
 | [`08-database.md`](08-database.md) | 資料表 DDL、多語策略、索引、種子 —— 本文件 §8 定義如何以 EF Core 表達 |
-| [`09-cms-admin.md`](09-cms-admin.md) | 23 個後台單元、上傳尺寸規則、**權限矩陣（173 列，權威來源）** |
+| [`09-cms-admin.md`](09-cms-admin.md) | 23 個後台單元、上傳尺寸規則、**權限矩陣（170 列，權威來源）** |
 | [`03-backend.md`](03-backend.md) | 領域範圍與模組邊界 |
 | [`07-deployment.md`](07-deployment.md) | Azure 資源與部署地圖（本文件 §11 為其 CI/CD 落地） |
 | [`db/README.md`](../db/README.md) | **Azure SQL Basic 相容性 checklist**（§8.6 沿用該表） |
@@ -397,7 +397,7 @@ private static string? GetRequiredPermission(string method, string[] segments) =
 
 > Jabez 此處的預設是 `_ => null`（＝登入即可），其文件自承是已知風險。**NTI 改為預設拒絕**：新增 `/admin/*` 端點若忘了補權限表，會直接 403 而不是靜默放行。非 `/admin/*` 的公開路由走 `IsPublicRoute` 白名單，不經此表。
 
-`RequirePermission` 檢查 `permissions` claim；`is_superadmin=true` 自動通過。權限碼值域＝[`09-cms-admin.md` §6](09-cms-admin.md) 的 173 列，與 `db/seed/110_role_permission.sql` 逐字對應（§9.2）。
+`RequirePermission` 檢查 `permissions` claim；`is_superadmin=true` 自動通過。權限碼值域＝[`09-cms-admin.md` §6](09-cms-admin.md) 的 170 列，與 `db/seed/110_role_permission.sql` 逐字對應（§9.2）。
 
 ### 7.6 公開路由白名單
 
@@ -542,7 +542,7 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 
 | class | 內容 | 權威來源 |
 |---|---|---|
-| `PermissionCodes` | 173 列權限碼 | [`09-cms-admin.md` §6](09-cms-admin.md) ＝ `db/seed/110_role_permission.sql` |
+| `PermissionCodes` | 170 列權限碼 | [`09-cms-admin.md` §6](09-cms-admin.md) ＝ `db/seed/110_role_permission.sql` |
 | `RoleNames` | 超級管理員／內容編輯／檢視者 | 09 §6 |
 | `CategoryTypes` | 九種 `CategoryType` | [`08-database.md`](08-database.md) §4.1 |
 | `PageKeys` | 29 個固定頁 key | 08 §4／`db/seed/140_page.sql` |

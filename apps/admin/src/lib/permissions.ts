@@ -1,9 +1,9 @@
 /**
  * 權限矩陣 — 逐格對照 docs/09-cms-admin.md §6 與其展開檔
- * `db/seed/110_role_permission.sql`（173 列：SuperAdmin 82／Editor 69／Viewer 22）。
+ * `db/seed/110_role_permission.sql`（170 列：SuperAdmin 81／Editor 68／Viewer 21）。
  *
  * 下面的 GRANTS 與那份 SQL 是一對一的，`permissionRowCount()` 算出來的數字
- * 應該等於 173 —— 對不上就代表前後端對權限的認知已經岔開，要先修正再往下做。
+ * 應該等於 170 —— 對不上就代表前後端對權限的認知已經岔開，要先修正再往下做。
  *
  * 權限碼格式 `{單元代號}.{view|edit|publish|delete|export}`，另有三個特例碼
  * `quote.download`／`redirect.export`／`audit.resend`。SuperAdmin 逐列展開、
@@ -45,7 +45,6 @@ export const CONTENT_UNITS = [
  */
 const GRANTS: Record<RoleCode, string[]> = {
   SuperAdmin: [
-    'dashboard.view',
     // 15 page：29 筆固定頁不可增刪，故無 delete
     'page.view', 'page.edit',
     // 16 redirect
@@ -63,7 +62,6 @@ const GRANTS: Record<RoleCode, string[]> = {
     'audit.view', 'audit.resend',
   ],
   Editor: [
-    'dashboard.view',
     'page.view', 'page.edit',
     'redirect.view', 'redirect.edit', 'redirect.delete', 'redirect.export',
     'quote.view', 'quote.edit',
@@ -72,7 +70,6 @@ const GRANTS: Record<RoleCode, string[]> = {
     'tag.view', 'tag.edit',
   ],
   Viewer: [
-    'dashboard.view',
     'page.view',
     'redirect.view',
     'quote.view',
@@ -105,7 +102,7 @@ export function can(role: RoleCode, code: string): boolean {
   return ROLE_PERMISSIONS[role].has(code)
 }
 
-/** 展開後的列數，應與 db/seed/110_role_permission.sql 的 173 列一致 */
+/** 展開後的列數，應與 db/seed/110_role_permission.sql 的 170 列一致 */
 export function permissionRowCount() {
   const SuperAdmin = ROLE_PERMISSIONS.SuperAdmin.size
   const Editor = ROLE_PERMISSIONS.Editor.size

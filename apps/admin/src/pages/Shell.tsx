@@ -38,8 +38,7 @@ export function Shell() {
               .map((u) => (
                 <NavLink
                   key={u.code}
-                  to={u.code === 'dashboard' ? '/' : `/u/${u.code}`}
-                  end={u.code === 'dashboard'}
+                  to={`/u/${u.code}`}
                   className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
                 >
                   <span className="no">{u.no}</span>
@@ -59,12 +58,10 @@ export function Shell() {
       <div className="main">
         <header className="topbar">
           <div className="crumb">
-            {activeUnit ? (
+            {activeUnit && (
               <>
                 {activeUnit.group} <span style={{ opacity: 0.5 }}>›</span> <b>{activeUnit.title}</b>
               </>
-            ) : (
-              <b>待辦總覽</b>
             )}
           </div>
           <div className="spacer" />

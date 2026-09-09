@@ -275,30 +275,3 @@ public sealed class AdminAuditHandler(AppDbContext db, IEmailService email)
         return new OkObjectResult(ApiResponse.Ok(result ? "已重寄。" : "重寄失敗，詳見 EmailLog。"));
     }
 }
-
-/// <summary>00 dashboard — 待辦總覽（docs/09 §00）。唯讀聚合，三個角色都看得到。</summary>
-public sealed class AdminDashboardHandler(AppDbContext db)
-{
-    public async Task<IActionResult> GetAsync(HttpRequest req)
-    {
-        var now = Clock.UtcNow;
-
-        CacheControl.NoStore(req.HttpContext.Response);
-        return new OkObjectResult(ApiResponse.Ok(new
-        {
-            // 待辦：新進的表單就是後台每天要處理的東西
-            newQuotes    = await db.QuoteRequest.CountAsync(q => q.Status == QuoteStatuses.New && !q.IsDeleted),
-            newContacts  = await db.ContactMessage.CountAsync(c => c.Status == ContactStatuses.New && !c.IsDeleted),
-
-            // 內容量：上架中的筆數
-            publishedNews = await db.News.CountAsync(n => n.IsPublished && !n.IsDeleted),
-            publishedProjects = await db.Project.CountAsync(p => p.IsPublished && !p.IsDeleted),
-
-            // 排程中：PublishAt 還沒到的，提醒編輯這些還沒上線
-            scheduledNews = await db.News.CountAsync(n => !n.IsDeleted && n.PublishAt != null && n.PublishAt > now),
-
-            // 寄信失敗：需要人去重寄，不看就沒人知道
-            failedEmails = await db.EmailLog.CountAsync(e => e.Status == "Failed"),
-        }));
-    }
-}

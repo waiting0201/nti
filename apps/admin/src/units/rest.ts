@@ -284,15 +284,3 @@ export const audit: Unit = {
   fields: [],
   columns: [],
 }
-
-export const dashboard: Unit = {
-  code: 'dashboard',
-  no: '00',
-  title: '待辦總覽',
-  group: '儀表板',
-  phase: 'P4',
-  custom: true,
-  readOnly: 'full',
-  fields: [],
-  columns: [],
-}

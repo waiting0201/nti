@@ -33,9 +33,6 @@ public sealed partial class AppRouter
     private static string? GetRequiredPermission(string method, string[] segments) =>
         (method, segments) switch
         {
-            // ── 00 dashboard ─────────────────────────────────────────────
-            ("GET", ["admin", "dashboard"]) => PermissionCodes.DashboardView,
-
             // ── 01–14 內容單元（含 solution 的品項卡）────────────────────
             (_, ["admin", var unit, ..]) when ContentUnits.Contains(unit) =>
                 ContentPermission(method, unit, segments),
@@ -111,9 +108,6 @@ public sealed partial class AppRouter
     private async Task<IActionResult?> RouteAdminAsync(HttpRequest req, string method, string[] segments) =>
         (method, segments) switch
         {
-            // ── 00 dashboard ─────────────────────────────────────────────
-            ("GET", ["admin", "dashboard"]) => await dashboard.GetAsync(req),
-
             // ── 01 home-banner ───────────────────────────────────────────
             _ when segments is ["admin", "home-banner", ..] => await Content(adminBanners, req, method, segments),
             // ── 02 solution（固定 4 筆：不開放新增與刪除）────────────────

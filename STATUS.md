@@ -442,7 +442,7 @@ middleware 在 Edge runtime 查不到 CMS 的 slug，只能整個前綴放行。
 |---|---|---|
 | 3.1 前台內容（公開唯讀） | 20 | ✅ |
 | 3.2 表單（公開寫入） | 2 | ✅ 含 reCAPTCHA v3、rate limit、附件上傳與 magic bytes 驗證 |
-| 3.4 後台管理（RBAC） | 22 單元 + 動作端點 | ✅ 含 dashboard、上傳、匯出入、稽核 |
+| 3.4 後台管理（RBAC） | 22 單元 + 動作端點 | ✅ 含上傳、匯出入、稽核 |
 | 3.3 後台認證（契約原本沒有） | 2 | ✅ `/auth/admin/login`、`/auth/admin/change-password` |
 
 支援服務：`PasswordHasher`（BCrypt）、`BlobStorageService`、`EmailService`（+EmailLog）、

@@ -63,14 +63,15 @@ SELECT N'匿名（系統命名）約束數', N'0', CAST(SUM(c) AS NVARCHAR(20)) 
     UNION ALL SELECT COUNT(*) FROM sys.default_constraints WHERE is_system_named = 1
 ) x;
 
-/* CHECK 約束 33 = 16 個 *I18n 的 Lang 值域 + 17 個狀態／型別值域 */
+/* CHECK 約束 = 17 個 *I18n 的 Lang 值域 + 10 個狀態／型別值域 */
 INSERT @r (Item, Expected, Actual)
-SELECT N'CHECK 約束數', N'26', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.check_constraints;
+SELECT N'CHECK 約束數', N'27', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.check_constraints;
 
-/* 索引寧缺勿濫（Basic 5 DTU）：非 PK/UQ 的索引只有 docs/08 §5 明列的 16 條。
+/* 索引寧缺勿濫（Basic 5 DTU）：非 PK/UQ 的索引只有 docs/08 §5 明列的 19 條
+   （16 條 + 單元 25 消息標籤的 IX_Tag_List／UX_Tag_Slug／IX_NewsTag_Tag）。
    EF 會自動幫每條外鍵建索引，AppDbContext 已移除該慣例——這條斷言就是在守它。 */
 INSERT @r (Item, Expected, Actual)
-SELECT N'非 PK/UQ 索引數', N'16', CAST(COUNT(*) AS NVARCHAR(20))
+SELECT N'非 PK/UQ 索引數', N'19', CAST(COUNT(*) AS NVARCHAR(20))
 FROM sys.indexes i JOIN sys.tables t ON t.object_id = i.object_id
 WHERE i.is_primary_key = 0 AND i.is_unique_constraint = 0 AND i.type > 0;
 
@@ -115,10 +116,10 @@ WHERE t.name LIKE '%I18n'
 
 /* ---------- 種子（Api/Data/Seed/SeedData.cs 的 HasData）---------- */
 INSERT @r (Item, Expected, Actual) SELECT N'Role', N'3', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Role;
-INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'173', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
-INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'82', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
-INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'69', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
-INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'22', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
+INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'170', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
+INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'81', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
+INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'68', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
+INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'21', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
 INSERT @r (Item, Expected, Actual) SELECT N'Category',       N'44', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category;
 INSERT @r (Item, Expected, Actual) SELECT N'Tag',            N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Tag;
 INSERT @r (Item, Expected, Actual) SELECT N'TagI18n',        N'34', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.TagI18n;
@@ -137,7 +138,7 @@ INSERT @r (Item, Expected, Actual) SELECT N'Solution（固定 4 筆）', N'4', C
    green-csr 的 noindex 斷言把關（同一個機制，而 green-csr 是種子的一部分，
    不會被內容匯入改動）。 */
 INSERT @r (Item, Expected, Actual) SELECT N'SolutionI18n',   N'8',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SolutionI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'已套用的 Migration 數', N'6', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.__EFMigrationsHistory;
+INSERT @r (Item, Expected, Actual) SELECT N'已套用的 Migration 數', N'10', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.__EFMigrationsHistory;
 
 /* ---------- 輸出 ---------- */
 SELECT Item AS [檢查項], Expected AS [預期], Actual AS [實際],

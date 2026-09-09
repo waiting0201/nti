@@ -31,7 +31,7 @@ internal static class SeedData
     ];
 
     /// <summary>
-    /// 權限矩陣 173 列（docs/09 §6 ＝ db/seed/110_role_permission.sql
+    /// 權限矩陣 170 列（docs/09 §6 ＝ db/seed/110_role_permission.sql
     /// ＝ apps/admin/src/lib/permissions.ts）。
     /// <para>
     /// 用規則展開而非逐列硬寫：內容單元 01–14 的四個動作規則一致，逐列寫遲早會與
@@ -53,7 +53,7 @@ internal static class SeedData
     {
         [1] =   // SuperAdmin
         [
-            "dashboard.view", "page.view", "page.edit", "redirect.view", "redirect.edit", "redirect.delete",
+            "page.view", "page.edit", "redirect.view", "redirect.edit", "redirect.delete",
             "redirect.export", "quote.view", "quote.edit", "quote.download", "quote.export", "contact.view",
             "contact.edit", "setting.view",
             "setting.edit", "tag.view", "tag.edit", "tag.delete",
@@ -62,13 +62,13 @@ internal static class SeedData
         ],
         [2] =   // Editor
         [
-            "dashboard.view", "page.view", "page.edit", "redirect.view", "redirect.edit", "redirect.delete",
+            "page.view", "page.edit", "redirect.view", "redirect.edit", "redirect.delete",
             "redirect.export", "quote.view", "quote.edit", "contact.view", "contact.edit",
             "tag.view", "tag.edit",
         ],
         [3] =   // Viewer
         [
-            "dashboard.view", "page.view", "redirect.view", "quote.view", "contact.view", "setting.view",
+            "page.view", "redirect.view", "quote.view", "contact.view", "setting.view",
             "tag.view", "category.view",
         ],
     };
@@ -81,7 +81,7 @@ internal static class SeedData
         [3] = ["view"],
     };
 
-    private const int ExpectedRolePermissionRows = 173;   // db/verify/verify.sql 的斷言
+    private const int ExpectedRolePermissionRows = 170;   // db/verify/verify.sql 的斷言
 
     // ⚠ 這個宣告必須排在上面三個 static 欄位之後：static 欄位是照「文字順序」初始化的，
     //   放前面的話 BuildRolePermissions() 會拿到 null 的 ContentUnits／ExplicitGrants。
@@ -105,7 +105,7 @@ internal static class SeedData
                 $"權限矩陣展開為 {rows.Count} 列，應為 {ExpectedRolePermissionRows} 列。" +
                 "請對照 docs/09 §6、db/seed/110_role_permission.sql 與 apps/admin/src/lib/permissions.ts。");
 
-        // 值域自我檢查：所有展開的碼都必須在 PermissionCodes.All（82 個）之內
+        // 值域自我檢查：所有展開的碼都必須在 PermissionCodes.All（81 個）之內
         var unknown = rows.Select(r => r.PermissionCode).Distinct()
                           .Where(c => !Common.PermissionCodes.All.Contains(c)).ToArray();
         if (unknown.Length > 0)

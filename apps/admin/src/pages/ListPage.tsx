@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import * as api from '@/api/client'
 import type { Row } from '@/api/types'
 import { UNIT_BY_CODE } from '@/units'
-import { publishState, type Unit } from '@/lib/types'
+import { publishState, type Locale, type Unit } from '@/lib/types'
 import { useAuth } from '@/lib/auth'
 import { Badge, Modal, Notice, Pager, toast } from '@/components/ui'
 import { categoryName, useCategories } from '@/components/fields'
@@ -32,7 +32,14 @@ export function ListPage() {
   const keyword = sp.get('q') ?? ''
   const status = sp.get('status') ?? 'all'
   const categoryId = sp.get('category') ?? ''
+  const i18n = (sp.get('i18n') ?? '') as '' | Locale
   const page = Number(sp.get('page') ?? '1')
+
+  // 中英完成度只看得到手上這批資料，所以篩選開啟時一律走「取整份」那條，
+  // 否則只會在當頁 20 筆裡找，數字與清單都會是錯的。
+  const wholeList = Boolean(unit?.sortable) || i18n !== ''
+  // 清單被任何條件縮過之後就不是完整的順序了，這時拖曳會把沒顯示的列從排序中洗掉
+  const filtering = Boolean(keyword) || status !== 'all' || Boolean(categoryId) || i18n !== ''
 
   // 沒有分類欄位的單元（如 home-banner）不該出現分類篩選；
   // useCategories(undefined) 會回傳全部分類，所以要先看單元有沒有這個欄位
@@ -42,13 +49,14 @@ export function ListPage() {
   const load = useCallback(async () => {
     if (!unit) return
     setLoading(true)
-    if (unit.sortable) {
-      // 可拖曳排序的單元不分頁，否則跨頁拖曳沒有意義
+    if (wholeList) {
+      // 可拖曳排序的單元不分頁（否則跨頁拖曳沒有意義），中英篩選也走這條
       const all = await api.listAll(unit.code)
       const filtered = all.filter((r) => {
         if (categoryId && r.categoryId !== categoryId) return false
         if (status === 'published' && !r.isPublished) return false
         if (status === 'draft' && r.isPublished) return false
+        if (i18n && isComplete(unit, r, i18n)) return false
         // 這條路徑拿到的是整份資料（拖曳排序需要），在前端過濾不會漏掉別頁的資料；
         // 分頁的那條走後端的 keyword 參數（見 client.api.ts）
         if (keyword && !JSON.stringify(r).toLowerCase().includes(keyword.toLowerCase())) return false
@@ -63,13 +71,16 @@ export function ListPage() {
     }
     setSelected(new Set())
     setLoading(false)
-  }, [unit, keyword, status, categoryId, page])
+  }, [unit, keyword, status, categoryId, i18n, wholeList, page])
 
   useEffect(() => {
     void load()
   }, [load])
 
   if (!unit) return <Notice kind="danger">找不到這個單元。</Notice>
+
+  // 中/英徽章欄在哪些單元有，篩選就在哪些單元出現（宣告在 units/*.ts 的 columns）
+  const hasI18nColumn = unit.columns.some((c) => c.render === 'i18n')
 
   const canEdit = can(`${unit.code}.edit`)
   // 兩個單元有 CSV：報價（quote.export）與 301 轉址（redirect.export）。
@@ -193,6 +204,13 @@ export function ListPage() {
               <option value="draft">草稿／未上架</option>
             </select>
           )}
+          {hasI18nColumn && (
+            <select value={i18n} onChange={(e) => setParam('i18n', e.target.value)}>
+              <option value="">全部語系</option>
+              <option value="en">英文未填</option>
+              <option value="zh">中文未填</option>
+            </select>
+          )}
           {categoryType && categories.length > 0 && (
             <select value={categoryId} onChange={(e) => setParam('category', e.target.value)}>
               <option value="">全部分類</option>
@@ -282,7 +300,7 @@ export function ListPage() {
                 <tr
                   key={row.id}
                   className={`${dragId === row.id ? 'dragging' : ''} ${dropId === row.id ? 'drop-target' : ''}`}
-                  draggable={unit.sortable && canEdit}
+                  draggable={unit.sortable && canEdit && !filtering}
                   onDragStart={() => setDragId(row.id)}
                   onDragOver={(e) => {
                     e.preventDefault()
@@ -318,8 +336,16 @@ export function ListPage() {
           </table>
         )}
 
-        {!unit.sortable && <Pager page={page} pageSize={PAGE_SIZE} total={total} onPage={(p) => setParam('page', String(p))} />}
-        {unit.sortable && <div className="pager"><span>共 {total} 筆，可直接拖曳列首排序</span></div>}
+        {wholeList ? (
+          <div className="pager">
+            <span>
+              共 {total} 筆
+              {unit.sortable && (filtering ? '；清單已篩選，清掉篩選條件才能拖曳排序' : '，可直接拖曳列首排序')}
+            </span>
+          </div>
+        ) : (
+          <Pager page={page} pageSize={PAGE_SIZE} total={total} onPage={(p) => setParam('page', String(p))} />
+        )}
       </div>
 
       {confirmDelete && (

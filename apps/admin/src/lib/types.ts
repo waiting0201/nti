@@ -86,9 +86,9 @@ export type Unit = {
   hasSeo?: boolean
   /** 固定筆數，不可新增／刪除（solution 4 筆、page 29 筆） */
   fixedRows?: boolean
-  /** 唯讀資料，只能改狀態（quote／contact）或全唯讀（audit／dashboard） */
+  /** 唯讀資料，只能改狀態（quote／contact）或全唯讀（audit） */
   readOnly?: 'status-only' | 'full'
-  /** 自訂頁面（setting／category／admin／audit／dashboard 不走通用清單） */
+  /** 自訂頁面（setting／category／admin／audit 不走通用清單） */
   custom?: boolean
   /** 筆數建議提示，例如 banner 建議 3–5 張 */
   countHint?: { min?: number; max?: number; message: string }

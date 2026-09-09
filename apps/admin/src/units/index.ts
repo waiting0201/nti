@@ -23,7 +23,6 @@ export const SEO_FIELDS: Field[] = [
 
 /** 後台單元，順序即側邊選單順序（docs §2；19 會員／20 訂單已移出範圍）*/
 export const UNITS: Unit[] = [
-  rest.dashboard,
   content.homeBanner,
   content.solution,
   content.project,
@@ -65,13 +64,13 @@ export function unitFields(unit: Unit): Field[] {
 export function validateUnits(): string[] {
   const problems: string[] = []
 
-  // 權限矩陣展開後應與 db/seed/110_role_permission.sql 的 173 列一致；
+  // 權限矩陣展開後應與 db/seed/110_role_permission.sql 的 170 列一致；
   // 對不上代表前後端對權限的認知已岔開，要先修正再往下做。
   const perm = permissionRowCount()
-  if (perm.SuperAdmin !== 82 || perm.Editor !== 69 || perm.Viewer !== 22) {
+  if (perm.SuperAdmin !== 81 || perm.Editor !== 68 || perm.Viewer !== 21) {
     problems.push(
       `權限矩陣與 db/seed/110_role_permission.sql 不一致：` +
-        `SuperAdmin ${perm.SuperAdmin}（應 82）／Editor ${perm.Editor}（應 69）／Viewer ${perm.Viewer}（應 22）`,
+        `SuperAdmin ${perm.SuperAdmin}（應 81）／Editor ${perm.Editor}（應 68）／Viewer ${perm.Viewer}（應 21）`,
     )
   }
 

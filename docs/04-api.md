@@ -120,7 +120,6 @@
   | `/admin/quote`、`/admin/contact` | 17、18（檢視／改狀態／匯出） | `quote.*`、`contact.*` |
   | `/admin/setting`、`/admin/category` | 21、22 | `setting.*`、`category.*` |
   | `/admin/admin`、`/admin/audit/emails` | 23 管理員與角色、24 信件紀錄 | `admin.*`、`audit.*` |
-  | `/admin/dashboard` | 00 待辦總覽（唯讀聚合） | `dashboard.view` |
 
 - 非 CRUD 的動作端點與其權限碼：`GET /admin/quote/export`（`quote.export`，僅超管）、`GET /admin/quote/{id}/attachments/{attId}`（`quote.download`，僅超管；一律以 octet-stream 送出，不做病毒掃描）、`GET|POST /admin/redirect/export|import`（`redirect.export`）、`POST /admin/audit/emails/{id}/resend`（`audit.resend`）。
 - **清單的共同查詢參數**：`page`／`pageSize`／`status`／`categoryId`／**`keyword`**。

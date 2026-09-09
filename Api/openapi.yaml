@@ -34,7 +34,7 @@ tags:
   - name: 後台內容單元
     description: 01–14，CRUD 形狀一致
   - name: 後台其他單元
-    description: 15–18、21–24 與 dashboard
+    description: 15–18、21–24
 
 security: []   # 預設不需認證；需要的端點各自宣告
 
@@ -341,17 +341,6 @@ paths:
         '401': { $ref: '#/components/responses/Unauthorized' }
 
   # ══════════════════ 04-api §3.4 後台 ══════════════════
-  /admin/dashboard:
-    get:
-      tags: [後台其他單元]
-      summary: 待辦總覽
-      description: 權限碼 `dashboard.view`（三個角色都有）。
-      security: [{ AdminAuth: [] }]
-      responses:
-        '200': { $ref: '#/components/responses/Ok' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-
   /admin/{unit}:
     parameters: [{ $ref: '#/components/parameters/ContentUnit' }]
     get:

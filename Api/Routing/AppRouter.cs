@@ -43,8 +43,7 @@ public sealed partial class AppRouter(
     AuthHandler           auth,
     FormHandler           forms,
 
-    // ── 後台 24 個單元（04-api §3.4）──────────────────────────────────
-    AdminDashboardHandler        dashboard,
+    // ── 後台 23 個單元（04-api §3.4）──────────────────────────────────
     AdminHomeBannerHandler       adminBanners,
     AdminSolutionHandler         adminSolutions,
     AdminSolutionItemHandler     adminSolutionItems,

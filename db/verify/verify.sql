@@ -86,10 +86,10 @@ WHERE t.name LIKE '%I18n'
 
 /* ---------- 種子資料 ---------- */
 INSERT @r (Item, Expected, Actual) SELECT N'Role',           N'3',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Role;
-INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'173', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
-INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'82', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
-INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'69', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
-INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'22', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
+INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'170', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission;
+INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'81', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
+INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'68', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
+INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'21', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
 INSERT @r (Item, Expected, Actual) SELECT N'Category',       N'44', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category;
 INSERT @r (Item, Expected, Actual) SELECT N'Tag',            N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Tag;
 INSERT @r (Item, Expected, Actual) SELECT N'TagI18n',        N'34', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.TagI18n;

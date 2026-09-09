@@ -152,12 +152,27 @@ export async function list(unit: string, q: ListQuery = {}): Promise<ListResult>
   return { rows, total: data.total }
 }
 
-/** 不分頁的整份資料（拖曳排序與儀表板統計用）。 */
-export async function listAll(unit: string): Promise<Row[]> {
-  const data = unwrap(await api.get<PagedResponse | ApiRow[]>(`/admin/${pathOf(unit)}?page=1&pageSize=100`))
-  const rows = data.items.map((r) => toRow(unit, r))
+/**
+ * 不分頁的整份資料（拖曳排序、跨頁篩選用）。
+ *
+ * 後端一律分頁，所以這裡要自己把每一頁都取回來。原本寫死 `pageSize=100` 只取第一頁，
+ * 超過 100 筆的單元（news）會靜靜少掉後面的資料 —— 拖曳排序會漏列、
+ * 以整份資料為前提的篩選會算錯，而且畫面上看不出來。
+ */
+const PAGE = 100
 
-  if (unit === 'category') cacheCategoryUsage(data.items)
+export async function listAll(unit: string): Promise<Row[]> {
+  const items: ApiRow[] = []
+  for (let page = 1; ; page++) {
+    const data = unwrap(await api.get<PagedResponse | ApiRow[]>(`/admin/${pathOf(unit)}?page=${page}&pageSize=${PAGE}`))
+    items.push(...data.items)
+    // 不分頁的端點（category／setting／page／admin）一次就回完，data.items 也就是全部
+    if (data.items.length < PAGE || items.length >= data.total) break
+  }
+
+  const rows = items.map((r) => toRow(unit, r))
+
+  if (unit === 'category') cacheCategoryUsage(items)
 
   return rows.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 }
