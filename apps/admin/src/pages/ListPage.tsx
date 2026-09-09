@@ -336,17 +336,21 @@ export function ListPage() {
                       <Cell unit={unit} row={row} colKey={c.key} render={c.render} />
                     </td>
                   ))}
-                  <td style={{ display: 'flex', gap: 6 }}>
-                    <Link className="btn btn-sm" to={`/u/${unit.code}/${row.id}`}>
-                      {canEdit ? '編輯' : '檢視'}
-                    </Link>
-                    {/* 逐列的刪除鈕。只有工具列那顆的話，得先勾選才看得到刪除這件事存在——
-                        客戶回報「後台沒有刪除功能」正是因為它藏在勾選之後（2026-09-09） */}
-                    {canDelete && (
-                      <button className="btn btn-sm btn-danger" onClick={() => setConfirmDelete(row.id)}>
-                        刪除
-                      </button>
-                    )}
+                  <td>
+                    {/* 兩顆按鈕用 .btn-row 包起來，不要把 td 自己變成 flex 容器——
+                        那會讓這一格不再是 table-cell，整欄的高度與垂直置中都跟其他欄對不上 */}
+                    <div className="btn-row">
+                      <Link className="btn btn-sm" to={`/u/${unit.code}/${row.id}`}>
+                        {canEdit ? '編輯' : '檢視'}
+                      </Link>
+                      {/* 逐列的刪除鈕。只有工具列那顆的話，得先勾選才看得到刪除這件事存在——
+                          客戶回報「後台沒有刪除功能」正是因為它藏在勾選之後（2026-09-09） */}
+                      {canDelete && (
+                        <button className="btn btn-sm btn-danger" onClick={() => setConfirmDelete(row.id)}>
+                          刪除
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
