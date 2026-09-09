@@ -7,8 +7,9 @@ import { siteUrl, withLocale, type Locale } from '@/lib/i18n'
  * 客製化 404（客戶 2026-09-08 SEO 會議：「客製化 404 頁面（最推薦）」）。
  *
  * 這是一條**正常的路由**，不是 Next 的 `not-found.tsx` 邊界。派給它的是
- * `middleware.ts`：對不到 `ROUTES` 的網址在那裡被 rewrite 到這頁，**並且帶 404
- * 狀態碼**。網址列保持使用者原本打的那一個（rewrite 不是 redirect）。
+ * `middleware.ts`：對不到 `ROUTES` 的網址在那裡被
+ * `NextResponse.rewrite(url, { status: 404 })` 導到這頁——網址列保持使用者原本打的
+ * 那一個（rewrite 不是 redirect），狀態碼是真的 404。
  *
  * ⚠️ 為什麼不用 `not-found.tsx`：本專案的 root layout 是
  * `app/[locale]/layout.tsx`（`<html lang>` 要吃語系）。Next 在這種結構下，

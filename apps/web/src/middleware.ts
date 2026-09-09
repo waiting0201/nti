@@ -46,7 +46,7 @@ function resolveLocale(req: NextRequest): Locale {
  * 本專案的 root layout 是 `app/[locale]/layout.tsx`（`<html lang>` 要吃語系），
  * 這種結構下 `[locale]/not-found.tsx` 不會被編成 not-found 邊界，root 的
  * `app/not-found.tsx` 又在 `[locale]` 的 layout 樹之外——兩種放法實測都只得到
- * Next 內建的 `__next_error__` 空殼。詳見 `app/[locale]/404/page.tsx` 的註解。
+ * Next 內建的 `__next_error__` 空殼。詳見 `app/[locale]/page-not-found/page.tsx` 的註解。
  *
  * `ROUTES` 是 `scripts/build-pages.mjs` 從 mockup 產生的 44 條，與 sitemap 同一份來源。
  *
@@ -59,37 +59,7 @@ function isKnownRoute(path: string): boolean {
   return clean === '/' || ROUTES.includes(clean) || clean.startsWith('/news/')
 }
 
-/**
- * `notFoundResponse()` 內部那一次 fetch 的記號。
- *
- * `/{locale}/page-not-found` 本身也不在 `ROUTES` 裡，所以它一樣會被判成「對不到」——
- * 這是刻意的：直接打那個網址也應該拿到 404，否則站上就多了一個回 200 的 soft 404 網址。
- * 但取回頁面的那次 fetch 必須放行，不然會無限遞迴，靠這個標頭區分。
- */
-const INTERNAL_404_HEADER = 'x-nti-404-render'
-
-/**
- * 客製化 404：把 `/{locale}/page-not-found` 的 HTML 取回來，用 **404 狀態碼**回給瀏覽器。
- *
- * 為什麼要多這一次 fetch，而不是直接 `NextResponse.rewrite(url, { status: 404 })`：
- * 那個寫法實測會被 Next 攔掉——狀態碼是 404 沒錯，但回的是 Next 內建的
- * `__next_error__` 空殼，rewrite 的目標根本沒被 render。而不帶 status 的 rewrite
- * 又是 200，也就是 soft 404（客戶簡報列為「最不建議」的那一種）。
- *
- * 代價是每個 404 多一次站內請求。`/{locale}/page-not-found` 是預先產生的靜態頁，這次請求
- * 不會打到 API 或資料庫；而且 404 本來就不是熱路徑。
- */
-async function notFoundResponse(req: NextRequest, locale: Locale) {
-  const page = await fetch(new URL(`/${locale}/page-not-found`, req.url), {
-    headers: { [INTERNAL_404_HEADER]: '1' },
-  })
-  return new NextResponse(await page.text(), {
-    status: 404,
-    headers: { 'content-type': 'text/html; charset=utf-8' },
-  })
-}
-
-export async function middleware(req: NextRequest) {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   /*
@@ -140,13 +110,20 @@ export async function middleware(req: NextRequest) {
    */
   const current = locales.find((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
   if (current) {
-    // 對不到任何路由 → 客製化 404（rewrite，網址列保持使用者打的那一個）。
-    // 這一步刻意不寫語系 cookie：使用者沒有真的「造訪」某個語系的頁面。
-    if (
-      req.headers.get(INTERNAL_404_HEADER) !== '1' &&
-      !isKnownRoute(pathname.slice(1 + current.length) || '/')
-    ) {
-      return notFoundResponse(req, current)
+    /*
+     * 對不到任何路由 → 客製化 404。
+     *
+     * `rewrite` 讓網址列維持使用者打的那一個（不是轉址），`status: 404` 讓它是**真的**
+     * 404 而不是 soft 404。這一步刻意不寫語系 cookie：使用者沒有真的「造訪」某個語系的頁面。
+     *
+     * `/{locale}/page-not-found` 本身也不在 `ROUTES` 裡，所以直接打那個網址一樣拿到 404
+     * （rewrite 到它自己）——這是刻意的，否則站上就多了一個回 200 的 soft 404 網址。
+     * rewrite 不會重跑 middleware，不會遞迴。
+     */
+    if (!isKnownRoute(pathname.slice(1 + current.length) || '/')) {
+      const notFound = req.nextUrl.clone()
+      notFound.pathname = `/${current}/page-not-found`
+      return NextResponse.rewrite(notFound, { status: 404 })
     }
 
     const res = NextResponse.next()

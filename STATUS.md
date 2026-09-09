@@ -188,13 +188,20 @@ mockup 內容（現況部署），設了就改吃 CMS。
 | **客製化 404** | `app/[locale]/page-not-found/page.tsx`＋`middleware.ts` 的路由比對。**真的回 404 狀態碼**，不是 soft 404 | `/en/xxx`、`/zh/a/b/c`、`/{locale}/page-not-found` 皆 404，且有完整 header／footer／浮動鈕與正確 `<html lang>` |
 | **OG 預設圖與 Twitter Cards** | `lib/i18n.ts` 補 `DEFAULT_OG_IMAGE`（`assets/og-default.jpg`，1200×630）與 `twitter: summary_large_image`；消息詳細頁同步 | 88 個網址全部有 `og:image` 與 `twitter:card` |
 
-**404 的實作為什麼繞這麼遠**（三個註解裡都寫了，這裡只留結論）：
+**404 的實作為什麼繞這麼遠**（註解裡都寫了，這裡只留結論）：
 本專案的 root layout 是 `app/[locale]/layout.tsx`（`<html lang>` 要吃語系）。這種結構下
 Next 的 `not-found.tsx` **兩種放法都不會有站台版型**——放 `[locale]/` 底下不會被編成
 not-found 邊界，放 root 又在 `[locale]` 的 layout 樹之外，實測都只得到內建的
-`__next_error__` 空殼。`NextResponse.rewrite(url, { status: 404 })` 也會被 Next 攔掉
-（狀態碼對、但回的是同一個空殼）。最後的做法是 middleware 比對 `ROUTES`，
-對不到就把 `/{locale}/page-not-found` 的 HTML 取回來、用 404 狀態碼回傳。
+`__next_error__` 空殼。所以改成 middleware 比對 `ROUTES`，對不到就
+`NextResponse.rewrite('/{locale}/page-not-found', { status: 404 })`：網址列維持使用者
+打的那一個，狀態碼是真的 404，畫面吃得到 `[locale]` 的版型與 `<html lang>`。
+
+> ⚠ **這裡走過一段冤枉路，記下來免得重蹈**：一開始判定「`rewrite` 帶 `status` 會被
+> Next 攔掉」，因而改用 middleware 自我 `fetch` 取回 404 頁的 HTML。那個判定是**錯的**
+> —— 它是用 `pnpm --filter web start`（`next start`）測出來的，而 `next start` 對
+> `output: standalone` 會服務**過期的輸出**（它自己會印警告）。自我 fetch 的版本在本機
+> 會過，但部署到 SWA 之後**每個 404 都變成 500**。
+> **驗證這條路徑一定要用 `pnpm --filter web start:standalone`。**
 
 ### ✅ 標籤體系與 301 轉址單元（2026-09-09）
 
