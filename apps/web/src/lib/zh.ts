@@ -533,7 +533,7 @@ export const ZH: Record<string, string> = {
   "Integrated Low-Carbon Production": "整合式低碳生產",
   "2024 SME Benchmark Enterprise Award": "2024 中小企業標竿企業獎",
   "NTI Printing | Taiwan's Eco-Friendly Packaging & Printing Manufacturer": "NTI Printing | 台灣的環保包裝印刷製造商",
-  "NTI Printing — Taiwan's leading sustainable packaging manufacturer. FSC CoC certified, G7 Master Printer, ISO 9001/14001. Custom color boxes, UV printing & eco-friendly packaging solutions for global brands.": "NTI Printing —— 台灣領先的永續包裝製造商。具備 FSC CoC 認證、G7 Master Printer 與 ISO 9001／14001。為國際品牌提供客製彩盒、UV 印刷與環保包裝解決方案。",
+  "NTI Printing — Taiwan’s leading sustainable packaging manufacturer: FSC CoC, G7 Master Printer and ISO 9001/14001 certified color boxes and UV printing.": "NTI Printing —— 台灣領先的永續包裝製造商：具備 FSC CoC、G7 Master Printer 與 ISO 9001／14001 認證的客製彩盒與 UV 印刷。",
   "Featured highlights": "精選亮點",
   "The courage to print green? — NTI Printing": "勇於印綠？ —— NTI Printing",
   "NTI custom printed packaging solutions": "NTI 客製化包裝解決方案",
@@ -973,4 +973,16 @@ export const ZH: Record<string, string> = {
   "Supplier login will be required for controlled documents once the member system is live.": "受管制文件將於會員系統上線後，改為需要供應商登入才能取得。",
   "Jane Chen": "陳怡君",
   "Brand Co., Ltd.": "品牌股份有限公司",
+
+  // 客製化 404（`app/[locale]/404/page.tsx`）——這頁不在 mockup 的 44 頁裡，
+  // 所以 `extract-i18n.mjs --stale` 會把這幾筆列為「mockup 已無對應」，屬預期。
+  "This page has moved or no longer exists": "這個頁面已移動或不存在",
+  "The link may be out of date, or the page may have been renamed when we rebuilt the site. The sections below cover what the old address most likely pointed at.": "連結可能已經過期，或是這個頁面在改版時換了網址。以下區塊涵蓋了舊網址最可能指向的內容。",
+  "Back to Home": "回到首頁",
+  // 消息詳細頁的標籤列與標籤封存頁（單元 25）
+  "Tags": "標籤",
+  "Back to all news": "回到所有消息",
+  "story": "則消息",
+  "stories": "則消息",
+  "Or go straight to:": "或直接前往：",
 }

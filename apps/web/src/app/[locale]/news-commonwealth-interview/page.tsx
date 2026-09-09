@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-commonwealth-interview", {
     title: "NTI interviewed by CommonWealth Magazine — NTI Printing",
+    description: "CommonWealth Magazine interviews NTI on building environmental thinking into every production detail, from material selection to carbon reduction.",
   })
 }
 

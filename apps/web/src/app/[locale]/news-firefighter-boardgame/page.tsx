@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-firefighter-boardgame", {
     title: "NTI donates a paper-model board game promoting disaster-prevention education — NTI Printing",
+    description: "NTI donates a paper-model board game for disaster-prevention education, produced on FSC-certified paper with low-carbon printing for schools and families.",
   })
 }
 

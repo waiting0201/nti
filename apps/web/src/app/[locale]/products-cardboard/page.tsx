@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/products-cardboard", {
     title: "Packaging Paperboard — NTI Printing",
+    description: "Custom cardboard packaging and printed cardboard boxes for retail and industrial use, including paper hang tags, blister back cards and multi-panel tags.",
   })
 }
 

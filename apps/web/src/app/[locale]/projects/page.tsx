@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/projects", {
     title: "Projects — NTI Printing",
+    description: "Custom box portfolio and packaging case studies from NTI — food and beverage, electronics, beauty, medical, luxury gift and hardware packaging projects.",
   })
 }
 
@@ -67,7 +68,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pj-card reveal" data-tag="ESG">
-            <div className="pj-img"><img src={mediaUrl("/assets/diff-box.jpg")} alt="" /><span className="pj-tag">ESG</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
+            <div className="pj-img"><img src={mediaUrl("/assets/diff-box.webp")} alt="" /><span className="pj-tag">ESG</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
             <div className="pj-body">
               <h3>Mono-material redesign kept the shelf wow</h3>
               <p>Replaced plastic lamination with a recyclable coating — same gloss, single recycling stream.</p>
@@ -91,7 +92,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pj-card reveal" data-tag="ESG">
-            <div className="pj-img"><img src={mediaUrl("/assets/hp-casestudy.jpg")} alt="" /><span className="pj-tag">ESG</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
+            <div className="pj-img"><img src={mediaUrl("/assets/hp-casestudy.webp")} alt="" /><span className="pj-tag">ESG</span><span className="pj-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></div>
             <div className="pj-body">
               <h3>Soy-ink corrugated shipper for a D2C brand</h3>
               <p>One-pass flexo on recycled kraft, printed inside and out for an unboxing moment.</p>

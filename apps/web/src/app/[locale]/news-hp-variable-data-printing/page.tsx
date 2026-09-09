@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-hp-variable-data-printing", {
     title: "HP variable data printing: small runs that still stand out — NTI Printing",
+    description: "HP variable data printing: every piece can differ, no plate-making and no large minimum order — small runs with low inventory risk and fast delivery.",
   })
 }
 

@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-animals-of-tomorrow", {
     title: "Speaking up for the leopard cat: NTI joins the Animals of Tomorrow exhibition — NTI Printing",
+    description: "NTI and 72 Design created paper-model installations of the Formosan black bear and leopard cat for the Animals of Tomorrow endangered species exhibition.",
   })
 }
 

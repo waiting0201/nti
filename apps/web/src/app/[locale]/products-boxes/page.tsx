@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/products-boxes", {
     title: "Custom Color Box Packaging — NTI Printing",
+    description: "Custom color box packaging from NTI: tuck-top, reinforced-bottom, rigid and specialty structures, printed and finished to retail standard in Taiwan.",
   })
 }
 

@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-global-views-esg-award", {
     title: "NTI wins a 2026 Global Views ESG Award for low-carbon operations — NTI Printing",
+    description: "NTI takes an Outstanding Project award for Low-Carbon Operations at the 22nd Global Views ESG Corporate Sustainability Awards in Taipei.",
   })
 }
 

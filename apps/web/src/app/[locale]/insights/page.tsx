@@ -19,7 +19,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/green-tree.jpg")} alt="NTI Printing Insights — sustainable packaging knowledge hub" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/green-tree.webp")} alt="NTI Printing Insights — sustainable packaging knowledge hub" /></section>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Insights <span className="ti-slash">/</span> <span className="ti-alt">Knowledge hub</span></h1>
         <div className="sec-sub reveal">Company news, video stories, straight answers and the trends reshaping packaging &mdash; everything we learn about printing green, gathered in one place.</div>
@@ -33,11 +33,11 @@ export default async function Page({ params }: Props) {
             <span><span className="vl-ep">Green Vlog</span><h3>Watch how low-carbon packaging is actually made</h3></span>
           </A>{' '}
           <A className="vl-card reveal" href={l("/faq")}>
-            <span className="vl-thumb"><img src={mediaUrl("/assets/fac-pre-proof.jpg")} alt="" loading="lazy" /></span>{' '}
+            <span className="vl-thumb"><img src={mediaUrl("/assets/fac-pre-proof.webp")} alt="" loading="lazy" /></span>{' '}
             <span><span className="vl-ep">FAQ</span><h3>Minimums, lead times, certifications &mdash; answered</h3></span>
           </A>{' '}
           <A className="vl-card reveal" href={l("/industry-trends")}>
-            <span className="vl-thumb"><img src={mediaUrl("/assets/sol-patterns.jpg")} alt="" loading="lazy" /></span>{' '}
+            <span className="vl-thumb"><img src={mediaUrl("/assets/sol-patterns.webp")} alt="" loading="lazy" /></span>{' '}
             <span><span className="vl-ep">Industry Trends</span><h3>Where sustainable packaging is heading next</h3></span>
           </A>
         </div>

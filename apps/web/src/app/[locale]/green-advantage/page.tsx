@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/green-advantage", {
     title: "Eco-Friendly Printing in Taiwan | NTI Green Advantage",
+    description: "Eco-friendly printing in Taiwan: FSC CoC, G7 Master Printer and ISO 14001 certified green printing that gives your brand a verifiable sustainability story.",
   })
 }
 
@@ -18,7 +19,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-banner.png")} alt="The courage to print green — recovered print waste ready for recycling" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-banner.webp")} alt="The courage to print green — recovered print waste ready for recycling" /></section>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Eco-Friendly Printing in Taiwan</h1>
         <div className="ga-block reveal mt-m">
@@ -28,7 +29,7 @@ export default async function Page({ params }: Props) {
           <p className="mt-m"><A href={l("/green-our-advantage")} className="blink">More details &rsaquo;</A></p>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid2.png")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid2.webp")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" /></section>
       <section className="section"><div className="wrap">
         <div className="ga-block reveal">
           <h3 className="ga-h">Carbon Efficiency / Carbon Neutral Printing</h3>
@@ -36,7 +37,7 @@ export default async function Page({ params }: Props) {
           <p className="mt-m"><A href={l("/green-carbon")} className="blink">More details &rsaquo;</A></p>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid3.png")} alt="Recovered paper and print waste sorted for recycling" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid3.webp")} alt="Recovered paper and print waste sorted for recycling" /></section>
       <section className="section"><div className="wrap">
         <div className="ga-block reveal">
           <h3 className="ga-h">ECO Materials / Sustainable Printing Materials</h3>
@@ -44,7 +45,7 @@ export default async function Page({ params }: Props) {
           <p className="mt-m"><A href={l("/green-materials")} className="blink">More details &rsaquo;</A></p>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid1.png")} alt="Low-VOC eco-inks used on NTI's presses" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid1.webp")} alt="Low-VOC eco-inks used on NTI's presses" /></section>
       <section className="section"><div className="wrap">
         <div className="ga-block reveal">
           <h3 className="ga-h">ESG &amp; Future Goals / ESG Printing Commitment</h3>
@@ -53,7 +54,7 @@ export default async function Page({ params }: Props) {
           <p className="mt-m"><A href={l("/green-esg")} className="blink">More details &rsaquo;</A></p>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid4.png")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid4.webp")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
       <section className="section certs reveal"><div className="wrap certgrid">
         <img src={mediaUrl("/assets/cert-green.png")} alt="NTI Green Printing" />
         <img src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" className="big" />

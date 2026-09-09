@@ -1527,7 +1527,7 @@ export const SEED: Record<string, Row[]> = {
       "parentId": "3",
       "sortOrder": 20,
       "isPublished": true,
-      "image": "/assets/prod-uv-special.jpg",
+      "image": "/assets/prod-uv-special.webp",
       "i18n": {
         "zh": {
           "name": "Special Printing & Anti-Counterfeiting",
@@ -1565,7 +1565,7 @@ export const SEED: Record<string, Row[]> = {
       "parentId": "4",
       "sortOrder": 20,
       "isPublished": true,
-      "image": "/assets/prod-other-redenvelope.jpg",
+      "image": "/assets/prod-other-redenvelope.webp",
       "i18n": {
         "zh": {
           "name": "Red Envelopes",
@@ -1584,7 +1584,7 @@ export const SEED: Record<string, Row[]> = {
       "parentId": "4",
       "sortOrder": 30,
       "isPublished": true,
-      "image": "/assets/prod-other-calendar.jpg",
+      "image": "/assets/prod-other-calendar.webp",
       "i18n": {
         "zh": {
           "name": "Desk Calendars",
@@ -1603,7 +1603,7 @@ export const SEED: Record<string, Row[]> = {
       "parentId": "4",
       "sortOrder": 40,
       "isPublished": true,
-      "image": "/assets/prod-other-mousepad.jpg",
+      "image": "/assets/prod-other-mousepad.webp",
       "i18n": {
         "zh": {
           "name": "Mouse Pads",
@@ -1642,7 +1642,7 @@ export const SEED: Record<string, Row[]> = {
       "id": "10",
       "sortOrder": 10,
       "isPublished": true,
-      "imageDesktop": "/assets/ref-home-banner1.png",
+      "imageDesktop": "/assets/ref-home-banner1.webp",
       "imageMobile": "",
       "linkUrl": "/green-advantage",
       "newWindow": false,
@@ -1659,7 +1659,7 @@ export const SEED: Record<string, Row[]> = {
       "id": "20",
       "sortOrder": 20,
       "isPublished": true,
-      "imageDesktop": "/assets/ref-home-banner2.png",
+      "imageDesktop": "/assets/ref-home-banner2.webp",
       "imageMobile": "",
       "linkUrl": "/solutions",
       "newWindow": false,
@@ -1676,7 +1676,7 @@ export const SEED: Record<string, Row[]> = {
       "id": "30",
       "sortOrder": 30,
       "isPublished": true,
-      "imageDesktop": "/assets/ref-home-mid2.png",
+      "imageDesktop": "/assets/ref-home-mid2.webp",
       "imageMobile": "",
       "linkUrl": "/differences",
       "newWindow": false,
@@ -2092,7 +2092,7 @@ export const SEED: Record<string, Row[]> = {
       "sortOrder": 30,
       "isPublished": true,
       "categoryId": "Project:esg",
-      "image": "/assets/diff-box.jpg",
+      "image": "/assets/diff-box.webp",
       "videoUrl": "",
       "statValue": "100%",
       "i18n": {
@@ -2161,7 +2161,7 @@ export const SEED: Record<string, Row[]> = {
       "sortOrder": 60,
       "isPublished": true,
       "categoryId": "Project:esg",
-      "image": "/assets/hp-casestudy.jpg",
+      "image": "/assets/hp-casestudy.webp",
       "videoUrl": "",
       "statValue": "96%",
       "i18n": {
@@ -2837,7 +2837,7 @@ export const SEED: Record<string, Row[]> = {
       "sortOrder": 20,
       "isPublished": true,
       "categoryId": "Facility:pre-press",
-      "image": "/assets/fac-pre-proof.jpg",
+      "image": "/assets/fac-pre-proof.webp",
       "i18n": {
         "zh": {
           "name": "Prinect Color Proof Pro — digital proofing",
@@ -2894,7 +2894,7 @@ export const SEED: Record<string, Row[]> = {
       "sortOrder": 50,
       "isPublished": true,
       "categoryId": "Facility:eco-printing",
-      "image": "/assets/fac-eco-press.png",
+      "image": "/assets/fac-eco-press.webp",
       "i18n": {
         "zh": {
           "name": "Heidelberg Speedmaster CD-102 press line",
@@ -2932,7 +2932,7 @@ export const SEED: Record<string, Row[]> = {
       "sortOrder": 70,
       "isPublished": true,
       "categoryId": "Facility:eco-printing",
-      "image": "/assets/fac-eco-axis.jpg",
+      "image": "/assets/fac-eco-axis.webp",
       "i18n": {
         "zh": {
           "name": "Axis Control color measurement system",
@@ -3217,7 +3217,7 @@ export const SEED: Record<string, Row[]> = {
       "sortOrder": 220,
       "isPublished": true,
       "categoryId": "Facility:tour",
-      "image": "/assets/fac-tour1.jpg",
+      "image": "/assets/fac-tour1.webp",
       "i18n": {
         "zh": {
           "name": "Factory floor",
@@ -3236,7 +3236,7 @@ export const SEED: Record<string, Row[]> = {
       "sortOrder": 230,
       "isPublished": true,
       "categoryId": "Facility:tour",
-      "image": "/assets/fac-tour2.jpg",
+      "image": "/assets/fac-tour2.webp",
       "i18n": {
         "zh": {
           "name": "Production aisle",
@@ -3255,7 +3255,7 @@ export const SEED: Record<string, Row[]> = {
       "sortOrder": 240,
       "isPublished": true,
       "categoryId": "Facility:tour",
-      "image": "/assets/fac-tour-main.jpg",
+      "image": "/assets/fac-tour-main.webp",
       "i18n": {
         "zh": {
           "name": "Packaging stock & logistics",

@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/facility-quality", {
     title: "Quality Inspection — NTI Printing",
+    description: "Quality inspection at every stage, from material to finished carton, with X-Rite eXact and i1iO spectrophotometers keeping colour deviation under control.",
   })
 }
 
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/fac-banner.jpg")} alt="NTI press line — quality is measured at every stage" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/fac-banner.webp")} alt="NTI press line — quality is measured at every stage" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><A href={l("/facility")}>Facilities &amp; Equipment</A><span>&rsaquo;</span><b>Quality Inspection</b></div>
         <h1 className="sec-title reveal">Quality Inspection</h1>

@@ -24,12 +24,12 @@ export function ProductShowcase() {
       {src:'/assets/prod-card-blister.jpg',name:'Blister Cardboard',cap:'Two cardboards laminated with one blister — protective display packaging for retail products.'}]},
     uv:{apps:'PE / PVC / PP Films | Metal Foils | Glossy Cardboard',items:[
       {src:'/assets/prod-uv-print.jpg',name:'UV Printing',cap:'Litho printing on non-absorbent materials — instant ink curing means post-finishing can start immediately, with no backprint, shorter lead times, and lower cost.'},
-      {src:'/assets/prod-uv-special.jpg',name:'Special Printing & Anti-Counterfeiting',cap:'Foil embossing and logical-light embossment — custom-developed finishes that protect and elevate your brand.'}]},
+      {src:'/assets/prod-uv-special.webp',name:'Special Printing & Anti-Counterfeiting',cap:'Foil embossing and logical-light embossment — custom-developed finishes that protect and elevate your brand.'}]},
     other:{apps:'Corporate Gifts | Festival Promotion | Brand Merchandising',items:[
       {src:'/assets/prod-other-bag.jpg',name:'Hand Bags',cap:'Paper, plastic, or textile carrier bags that promote products and strengthen brand image.'},
-      {src:'/assets/prod-other-redenvelope.jpg',name:'Red Envelopes',cap:'Strong seasonal impact through graphic design and heat-emboss finishing.'},
-      {src:'/assets/prod-other-calendar.jpg',name:'Desk Calendars',cap:'A daily-use gift for festivals, corporate gifting, and advertising promotion.'},
-      {src:'/assets/prod-other-mousepad.jpg',name:'Mouse Pads',cap:'UV-printed for color saturation and long-lasting fade resistance.'},
+      {src:'/assets/prod-other-redenvelope.webp',name:'Red Envelopes',cap:'Strong seasonal impact through graphic design and heat-emboss finishing.'},
+      {src:'/assets/prod-other-calendar.webp',name:'Desk Calendars',cap:'A daily-use gift for festivals, corporate gifting, and advertising promotion.'},
+      {src:'/assets/prod-other-mousepad.webp',name:'Mouse Pads',cap:'UV-printed for color saturation and long-lasting fade resistance.'},
       {src:'/assets/prod-other-manual.png',name:'Instructions & Catalogs',cap:'Product manuals and catalogs — functions, usage, instructions, and precautions.'}]}
   };
 

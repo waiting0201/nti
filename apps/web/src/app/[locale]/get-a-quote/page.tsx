@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/get-a-quote", {
     title: "Get a Quote — NTI Printing",
+    description: "Tell us what your packaging must do. A packaging engineer, not a bot, replies within one business day with production routes and rough numbers.",
   })
 }
 

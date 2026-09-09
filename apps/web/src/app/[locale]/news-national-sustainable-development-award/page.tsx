@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-national-sustainable-development-award", {
     title: "NTI receives the National Sustainable Development Award — NTI Printing",
+    description: "NTI receives the National Sustainable Development Award for years of work on ESG, low-carbon process, energy-efficient buildings and equipment upgrades.",
   })
 }
 

@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-taicca-partnership", {
     title: "NTI signs an ESG for Culture letter of intent with TAICCA — NTI Printing",
+    description: "NTI signs an ESG for Culture letter of intent with TAICCA, pairing green printing technology and design thinking with Taiwan's cultural content sector.",
   })
 }
 

@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/facility-eco-printing", {
     title: "Environmentally Friendly Printing — NTI Printing",
+    description: "Environmentally friendly printing on Heidelberg Speedmaster presses with in-line varnishing — carbon-balanced coater printing with shorter lead times.",
   })
 }
 
@@ -47,7 +48,7 @@ export default async function Page({ params }: Props) {
         ) : (
         <div className="pr-grid">
           <article className="pr-card reveal">
-            <div className="pr-img"><img src={mediaUrl("/assets/fac-eco-press.png")} alt="Heidelberg Speedmaster CD-102" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-eco-press.webp")} alt="Heidelberg Speedmaster CD-102" loading="lazy" /></div>
             <div className="pr-body"><h3>Heidelberg Speedmaster CD-102</h3><p>The main press line, with in-line coater.</p></div>
           </article>
           <article className="pr-card reveal">
@@ -55,7 +56,7 @@ export default async function Page({ params }: Props) {
             <div className="pr-body"><h3>Press room</h3><p>Production control on the floor.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src={mediaUrl("/assets/fac-eco-axis.jpg")} alt="Axis Control" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-eco-axis.webp")} alt="Axis Control" loading="lazy" /></div>
             <div className="pr-body"><h3>Axis Control</h3><p>Faster colour measurement per cycle.</p></div>
           </article>
           <article className="pr-card reveal">

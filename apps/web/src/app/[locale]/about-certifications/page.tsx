@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/about-certifications", {
     title: "Our Certifications — Proof of Quality & Sustainability | NTI Printing",
+    description: "FSC CoC, G7 Master Printer, ISO 9001 and ISO 14001 — the certifications behind NTI's printing quality and every audit-ready packaging run.",
   })
 }
 
@@ -21,7 +22,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/ref-about-mid2.png")} alt="NTI Printing headquarters in Tainan, Taiwan" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/ref-about-mid2.webp")} alt="NTI Printing headquarters in Tainan, Taiwan" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><b>Our Certifications</b></div>
         <h1 className="sec-title reveal">Our Certifications &mdash; Proof of Quality &amp; Sustainability</h1>
@@ -52,7 +53,7 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Printing &amp; Colour Standards</div>
         <div className="flist mt-s"><p className="fi"><b>G7 Master Colorspace</b>Developed by Idealliance, a globally recognized colour calibration methodology based on ISO&nbsp;12647-2, ensuring consistent, accurate colour reproduction across every print run.</p><p className="fi"><b>ISO&nbsp;12647-2</b>The standard litho production procedure our colour management runs to, with spot colours matched to swatch under controlled viewing conditions.</p></div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-mid1.png")} alt="NTI leadership on the pressroom floor" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-mid1.webp")} alt="NTI leadership on the pressroom floor" /></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">GMI Professional Printing Certification</div>
         <p className="prose wide">NTI is GMI certified, ensuring consistent, colour-accurate packaging that meets the quality standards of leading global retailers, including Target, Walgreens, Lowe&rsquo;s, The Home Depot, Academy Sports&nbsp;+&nbsp;Outdoors, and CVS Pharmacy.</p>

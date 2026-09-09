@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/products-uv", {
     title: "UV Printing — NTI Printing",
+    description: "UV printing on plastics, metal foils and coated paperboards. Instant curing delivers vibrant, durable graphics on non-absorbent materials, faster.",
   })
 }
 
@@ -38,7 +39,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src={mediaUrl("/assets/prod-uv-special.jpg")} alt="Special Printing" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-uv-special.webp")} alt="Special Printing" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Special Printing</h3>
               <p>Foil embossing and logical-light embossment developed for anti-counterfeiting and standout product finishes.</p>

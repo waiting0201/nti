@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/contact", {
     title: "Contact Us — NTI Printing",
+    description: "Contact NTI Printing in Tainan, Taiwan. Phone +886 6 261 1358, service@nti-printing.com, Mon–Fri 08:30–17:30. Factory visits by appointment.",
   })
 }
 

@@ -164,5 +164,6 @@
 | 2026-09-07 | Tim（Claude Code） | **客戶決定**：舊站沒有專屬落點的 170 條網址一律 301 回首頁（產生檔 `legacy-archive.ts`），不讓使用者撞 404；同時記錄其 SEO 代價（soft 404、不傳權重）與內容遷移的優先順序 |
 | 2026-09-07 | Tim（Claude Code） | §2.3 結構化資料收斂為 `Organization`／`WebSite`／`BreadcrumbList`／`NewsArticle` 四種，並記錄不發 `FAQPage`／`Product`／`VideoObject` 的理由；§2.6 補 `sitemap.ts` 實作；§3 舊站 301 由「待辦」改為 59／229 已實作，附可重跑的覆蓋率檢查 |
 | 2026-09-02 | Tim（Claude Code） | §2.2 雙語 URL 由「子路徑**或** hreflang」二選一收斂為明確採用 `/zh`、`/en` 子路徑，並指向 `Page.RouteTemplate` 與 [`db/seed/140_page.sql`](../db/seed/140_page.sql) 的實際清單（路由細節仍待 02-frontend 定案） |
+| 2026-09-09 | Tim（Claude Code） | 依客戶 2026-09-08《網站建置 SEO 注意事項》逐條稽核，補上四項缺口：**40 頁的 meta description**（寫進 mockup，經產生器帶到 44 頁）、**36 張圖轉 WebP**（47MB→4.8MB）、**客製化 404**、**預設 og:image 與 Twitter Cards**。仍缺的項目見 STATUS §SEO |
 
-*最後更新：2026-09-07*
+*最後更新：2026-09-09*

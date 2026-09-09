@@ -11,6 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/solutions", {
     title: "Custom Packaging & Printing Solutions | NTI Printing Taiwan",
+    description: "Custom packaging boxes and printing solutions from NTI Taiwan: material selection, structural design, printing, finishing and technical support.",
   })
 }
 
@@ -19,7 +20,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/ref-sol-banner.png")} alt="NTI custom printed packaging solutions" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/ref-sol-banner.webp")} alt="NTI custom printed packaging solutions" /></section>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Custom Packaging &amp; Printing Solutions</h1>
         <h3 className="fac-sub reveal mt-s">Tailored Printing. Sustainable Design.</h3>
@@ -52,7 +53,7 @@ export default async function Page({ params }: Props) {
         <h2 className="sec-title reveal">Projects</h2>
         <h3 className="fac-sub reveal mt-s">Real Projects. Real Impact.</h3>
       </div>
-      <div className="fac-banner reveal mt-m"><img src={mediaUrl("/assets/ref-sol-mid3.png")} alt="Range of NTI sustainably printed product packaging" /></div>
+      <div className="fac-banner reveal mt-m"><img src={mediaUrl("/assets/ref-sol-mid3.webp")} alt="Range of NTI sustainably printed product packaging" /></div>
       <div className="wrap">
         <p className="prose wide reveal mt-m">From packaging to promotional materials, NTI collaborates with brands across industries to deliver sustainable, high-quality results &mdash; explore our custom box portfolio and packaging case study highlights below. Each project reflects our commitment to innovation, precision, and environmental responsibility.</p>
         <div className="dtitle reveal mt-m">Industries / Applications</div>
@@ -67,7 +68,7 @@ export default async function Page({ params }: Props) {
         <p className="prose wide reveal mt-s">NTI Printing integrates advanced pre-press, printing, and post-press systems inside our G7 certified printing plant &mdash; a printing factory in Taiwan designed for precision, efficiency and sustainability. We use Heidelberg and Man Roland presses with in-line varnishing and carbon-balanced systems, reducing energy use and emissions.</p>
         <div className="fe-grid four">
           <div className="fe-card reveal" data-d="1">
-            <div className="fe-img"><img src={mediaUrl("/assets/ref-sol-mid5.png")} alt="NTI technician handling freshly printed sheets" /></div>
+            <div className="fe-img"><img src={mediaUrl("/assets/ref-sol-mid5.webp")} alt="NTI technician handling freshly printed sheets" /></div>
             <div className="fe-body">
               <span className="fe-step"><b>01</b>Prepress Equipment <span className="zh">印前設備</span></span>
               <h3>Direct to plate, in house</h3>
@@ -80,7 +81,7 @@ export default async function Page({ params }: Props) {
             </div>
           </div>
           <div className="fe-card reveal" data-d="2">
-            <div className="fe-img"><img src={mediaUrl("/assets/ref-sol-mid4.png")} alt="Heidelberg offset press line" /></div>
+            <div className="fe-img"><img src={mediaUrl("/assets/ref-sol-mid4.webp")} alt="Heidelberg offset press line" /></div>
             <div className="fe-body">
               <span className="fe-step"><b>02</b>Environmentally Friendly Printing <span className="zh">環保印刷流程</span></span>
               <h3>German presses with in-line varnishing &mdash; including a carbon-balanced line</h3>

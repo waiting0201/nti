@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/facility-post-press", {
     title: "Post-Press Processing — NTI Printing",
+    description: "Post-press processing at NTI: automated die-cutting, gluing, window patching and solvent-free BOPP lamination meeting EU and US eco standards.",
   })
 }
 

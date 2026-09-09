@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/products-other", {
     title: "Other Printing Services — NTI Printing",
+    description: "Specialty printing and custom print finishing from NTI — foil stamping, embossing, holographic and anti-counterfeiting effects, plus calendars and bags.",
   })
 }
 
@@ -37,7 +38,7 @@ export default async function Page({ params }: Props) {
         ) : (
         <div className="pr-grid">
           <article className="pr-card reveal">
-            <div className="pr-img"><img src={mediaUrl("/assets/prod-other-calendar.jpg")} alt="Desk Calendar" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-other-calendar.webp")} alt="Desk Calendar" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Desk Calendar</h3>
               <p>A daily-use publication that keeps your brand on the desk all year &mdash; festival gifting, corporate gifts and promotions.</p>
@@ -45,7 +46,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src={mediaUrl("/assets/prod-other-redenvelope.jpg")} alt="Red Envelope" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-other-redenvelope.webp")} alt="Red Envelope" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Red Envelope</h3>
               <p>Great graphic design or hot-foil embossing turns a tradition into a brand moment.</p>
@@ -61,7 +62,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src={mediaUrl("/assets/prod-other-mousepad.jpg")} alt="Mouse Pad" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/prod-other-mousepad.webp")} alt="Mouse Pad" loading="lazy" /></div>
             <div className="pr-body">
               <h3>Mouse Pad</h3>
               <p>UV-printed for high colour saturation and long fade resistance.</p>

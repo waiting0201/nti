@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-sme-investment-benchmark", {
     title: "Named a benchmark enterprise in the SME Accelerated Investment Programme — NTI Printing",
+    description: "NTI named a benchmark enterprise in the SME Accelerated Investment Programme for eco-friendly packaging printing, automation and sustainable practice.",
   })
 }
 

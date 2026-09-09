@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/about-benefits", {
     title: "A Smarter Global Packaging Partner — NTI Printing",
+    description: "Sustainable packaging that protects product and brand. NTI delivers custom packaging boxes worldwide, with direct delivery and one point of contact.",
   })
 }
 
@@ -18,7 +19,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/ref-about-mid3.png")} alt="Range of NTI sustainably printed pattern packaging" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/ref-about-mid3.webp")} alt="Range of NTI sustainably printed pattern packaging" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><b>Benefits to Clients</b></div>
         <h1 className="sec-title reveal">A Smarter Global Packaging Partner</h1>
@@ -65,7 +66,7 @@ export default async function Page({ params }: Props) {
           </article>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-banner.png")} alt="Colorful NTI paper-craft animal packaging figures" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-banner.webp")} alt="Colorful NTI paper-craft animal packaging figures" /></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Already audited by the buyers you sell to</div>
         <p className="prose wide">NTI has passed GMI certification &mdash; the packaging-supplier audit programme commissioned by Target &mdash; for Target, Walgreens, Lowe&rsquo;s, The Home Depot, Academy Sports&nbsp;+&nbsp;Outdoors and CVS pharmacy. If you sell into those channels, the supplier check has already been done.</p>

@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/green-materials", {
     title: "ECO Materials — NTI Printing",
+    description: "ECO materials at NTI: FSC paper printing, eco-friendly ink under 1% VOC and RoHS-compliant materials, with solvent recovery and on-site sewage treatment.",
   })
 }
 
@@ -18,7 +19,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-mid1.png")} alt="Low-VOC eco-inks used on NTI's presses" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-mid1.webp")} alt="Low-VOC eco-inks used on NTI's presses" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/green-advantage")}>Sustainability</A><span>&rsaquo;</span><b>ECO Materials</b></div>
         <h1 className="sec-title reveal">ECO Materials</h1>
@@ -37,7 +38,7 @@ export default async function Page({ params }: Props) {
         </div>
         <div className="flist mt-s"><p className="fi"><b>RoHS-Compliant Throughout</b>Every material, ink and solvent used in production passes RoHS inspection standards.</p><p className="fi"><b>Eco-Friendly Ink</b>Ink systems formulated to under 1&#37; VOC, used with sewage treatment and solvent recovery on site.</p><p className="fi"><b>FSC&trade; Chain of Custody</b>Ink, varnish, lotions and solvents comply with RoHS and REACH; substrates carry FSC&trade; certified chain of custody from mill to finished carton.</p><p className="fi"><b>Solvent-Free Lamination</b>BOPP pre-coated film replaces traditional wet lamination &mdash; no solvent, no drying oven, no emissions.</p><p className="fi"><b>Waste Oil &amp; Water Recovery</b>Waste-oil recovery equipment and a wastewater recycling system, both meeting international environmental protection standards.</p></div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid2.png")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid2.webp")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" /></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Integrated Green Production</div>
         <p className="prose wide">Our integrated production process improves efficiency while reducing environmental impact. By utilizing Computer-to-Plate (CTP) technology, we eliminate traditional plate-making processes, reducing heavy metal contamination, wastewater, material waste, and overall carbon emissions.</p>

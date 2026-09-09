@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-low-carbon-production-film", {
     title: "Our integrated low-carbon production model — company film — NTI Printing",
+    description: "NTI's company film follows an integrated low-carbon production model from material selection and structural design through printing to finished packaging.",
   })
 }
 

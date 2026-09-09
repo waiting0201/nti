@@ -11,6 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/facility", {
     title: "Facilities & Equipment — NTI Printing",
+    description: "Pre-press, printing and post-press under one roof in NTI's G7 certified printing factory in Taiwan, built for precision, efficiency and sustainability.",
   })
 }
 
@@ -19,7 +20,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/fac-banner.jpg")} alt="NTI printing facility — Heidelberg press line" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/fac-banner.webp")} alt="NTI printing facility — Heidelberg press line" /></section>
       <section className="section">
         <div className="wrap">
           <h1 className="sec-title reveal">Facilities &amp; Equipment</h1>
@@ -111,7 +112,7 @@ export default async function Page({ params }: Props) {
           <p className="prose reveal mt-s">Visitors can explore our clean water treatment system, energy-efficient production lines, and green facilities designed for both people and the planet.</p>
           <p className="prose reveal mt-s">Book a guided tour and experience how we bring &lsquo;The Courage to Print Green&rsquo; to life.</p>
           <p className="mt-m reveal"><A href={l("/facility-tour")} className="blink">More details &rsaquo;</A></p></div>
-        <div className="fullbleed tour-photo reveal mt-m"><img src={mediaUrl("/assets/fac-tour-main.jpg")} alt="Inside the NTI factory floor — palletised packaging stock and clean production aisles" /></div>
+        <div className="fullbleed tour-photo reveal mt-m"><img src={mediaUrl("/assets/fac-tour-main.webp")} alt="Inside the NTI factory floor — palletised packaging stock and clean production aisles" /></div>
       </section>
       <FacilityExplorer />
     </T>

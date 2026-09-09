@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/faq", {
     title: "FAQ — NTI Printing",
+    description: "Minimum order quantities, food-contact and GMP compliance, dielines and artwork formats — answers to the questions brands ask before a first packaging run.",
   })
 }
 

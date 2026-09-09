@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/", {
     title: "NTI Printing | Taiwan's Eco-Friendly Packaging & Printing Manufacturer",
-    description: "NTI Printing — Taiwan's leading sustainable packaging manufacturer. FSC CoC certified, G7 Master Printer, ISO 9001/14001. Custom color boxes, UV printing & eco-friendly packaging solutions for global brands.",
+    description: "NTI Printing — Taiwan’s leading sustainable packaging manufacturer: FSC CoC, G7 Master Printer and ISO 9001/14001 certified color boxes and UV printing.",
   })
 }
 
@@ -31,9 +31,9 @@ export default async function Page({ params }: Props) {
           <HeroSlides items={home.banners} locale={locale} />
         ) : (
         <>
-        <A className="slide on" href={l("/green-advantage")}><img src={mediaUrl("/assets/ref-home-banner1.png")} alt="The courage to print green? — NTI Printing" /></A>{' '}
-        <A className="slide" href={l("/solutions")}><img src={mediaUrl("/assets/ref-home-banner2.png")} alt="NTI custom printed packaging solutions" /></A>{' '}
-        <A className="slide" href={l("/differences")}><img src={mediaUrl("/assets/ref-home-mid2.png")} alt="NTI printing facility — Heidelberg press line in Tainan" /></A>{' '}
+        <A className="slide on" href={l("/green-advantage")}><img src={mediaUrl("/assets/ref-home-banner1.webp")} alt="The courage to print green? — NTI Printing" /></A>{' '}
+        <A className="slide" href={l("/solutions")}><img src={mediaUrl("/assets/ref-home-banner2.webp")} alt="NTI custom printed packaging solutions" /></A>{' '}
+        <A className="slide" href={l("/differences")}><img src={mediaUrl("/assets/ref-home-mid2.webp")} alt="NTI printing facility — Heidelberg press line in Tainan" /></A>{' '}
         </>
         )}
         <button className="sbtn prev" aria-label="Previous slide"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M15 5l-7 7 7 7" /></svg></button>{' '}
@@ -92,21 +92,21 @@ export default async function Page({ params }: Props) {
               <A href={l("/products-boxes")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="2">
-              <div className="ph"><img src={mediaUrl("/assets/hp-prod-cardboard.png")} alt="Packaging paperboard printing" /></div>
+              <div className="ph"><img src={mediaUrl("/assets/hp-prod-cardboard.webp")} alt="Packaging paperboard printing" /></div>
               <h3>Packaging Paperboard</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Various packaging paperboards</div>
               <p>Hang tags, blister cards and backcards for retail walls.</p>
               <A href={l("/products-cardboard")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="3">
-              <div className="ph"><img src={mediaUrl("/assets/hp-prod-uv.png")} alt="UV printing" /></div>
+              <div className="ph"><img src={mediaUrl("/assets/hp-prod-uv.webp")} alt="UV printing" /></div>
               <h3>UV Printing</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Special printing</div>
               <p>Printing on special materials, special varnish, anti-counterfeiting and more.</p>
               <A href={l("/products-uv")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="3">
-              <div className="ph"><img src={mediaUrl("/assets/hp-prod-other.png")} alt="Other printing — hand bags, calendars, manuals" /></div>
+              <div className="ph"><img src={mediaUrl("/assets/hp-prod-other.webp")} alt="Other printing — hand bags, calendars, manuals" /></div>
               <h3>Other Printing</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Beyond the box</div>
               <p>Desk calendars, hand bags, red envelopes, mouse pads and manuals.</p>
@@ -118,7 +118,7 @@ export default async function Page({ params }: Props) {
 
       {/* ============ GALLERY ============ */}
       <section className="gallery reveal">
-        <img src={mediaUrl("/assets/ref-home-mid1.png")} alt="A showcase of NTI's printed packaging work" />
+        <img src={mediaUrl("/assets/ref-home-mid1.webp")} alt="A showcase of NTI's printed packaging work" />
       </section>
 
       {/* ============ WHY NTI ============ */}

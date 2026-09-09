@@ -22,7 +22,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/fac-tour-main.jpg")} alt="Working at NTI Printing in Tainan, Taiwan" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/fac-tour-main.webp")} alt="Working at NTI Printing in Tainan, Taiwan" /></section>
       <section className="section"><div className="wrap">
         <h1 className="sec-title reveal">Careers <span className="ti-slash">/</span> <span className="ti-alt">Join the green print team</span></h1>
         <div className="sec-sub reveal">We are building Taiwan&rsquo;s most sustainable packaging plant. That takes press operators, engineers, designers and people who ask better questions.</div>

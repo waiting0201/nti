@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/facility-pre-press", {
     title: "Prepress Equipment — NTI Printing",
+    description: "Prepress equipment at NTI: in-house CTP direct plate-making with daily dot calibration for faster turnaround and precise colour on every packaging run.",
   })
 }
 
@@ -50,7 +51,7 @@ export default async function Page({ params }: Props) {
             <div className="pr-body"><h3>Heidelberg Suprasetter 105 S CTP</h3><p>Direct plate-making, output in house.</p></div>
           </article>
           <article className="pr-card reveal">
-            <div className="pr-img"><img src={mediaUrl("/assets/fac-pre-proof.jpg")} alt="Prinect Color Proof Pro" loading="lazy" /></div>
+            <div className="pr-img"><img src={mediaUrl("/assets/fac-pre-proof.webp")} alt="Prinect Color Proof Pro" loading="lazy" /></div>
             <div className="pr-body"><h3>Prinect Color Proof Pro</h3><p>Digital contract proofing to signed-off colour.</p></div>
           </article>
           <article className="pr-card reveal">

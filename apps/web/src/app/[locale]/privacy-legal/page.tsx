@@ -8,6 +8,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/privacy-legal", {
     title: "Privacy & Legal — NTI Printing",
+    description: "Privacy policy and legal terms for nti-printing.com — what personal data NTI collects through quote requests and contact forms, and how it is used.",
   })
 }
 

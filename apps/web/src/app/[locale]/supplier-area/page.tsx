@@ -11,6 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/supplier-area", {
     title: "Supplier Area — NTI Printing",
+    description: "Supplier area for NTI Printing — paper grammage and moisture tolerances, FSC documentation, low-VOC and food-contact requirements, labeling and lead times.",
   })
 }
 

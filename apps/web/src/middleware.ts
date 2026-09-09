@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n'
 import { lookupLegacy } from '@/lib/legacy-redirects'
+import { ROUTES } from '@/lib/routes'
 
 /** 記住使用者選過的語系。名稱沿用 Next 的慣例，一年後過期 */
 const LOCALE_COOKIE = 'NEXT_LOCALE'
@@ -38,7 +39,57 @@ function resolveLocale(req: NextRequest): Locale {
   return defaultLocale
 }
 
-export function middleware(req: NextRequest) {
+/**
+ * 這條（去掉語系前綴的）路徑是不是站上真的有的頁面。
+ *
+ * 為什麼路由比對要在 middleware 做，而不是交給 Next 的 `not-found.tsx`：
+ * 本專案的 root layout 是 `app/[locale]/layout.tsx`（`<html lang>` 要吃語系），
+ * 這種結構下 `[locale]/not-found.tsx` 不會被編成 not-found 邊界，root 的
+ * `app/not-found.tsx` 又在 `[locale]` 的 layout 樹之外——兩種放法實測都只得到
+ * Next 內建的 `__next_error__` 空殼。詳見 `app/[locale]/404/page.tsx` 的註解。
+ *
+ * `ROUTES` 是 `scripts/build-pages.mjs` 從 mockup 產生的 44 條，與 sitemap 同一份來源。
+ *
+ * ⚠️ 消息詳細頁 `/news/{slug}` 的 slug 在 CMS 裡，middleware 查不到（Edge runtime，
+ * 不打 API），所以整個前綴一律放行，由 `news/[slug]/page.tsx` 自己 `notFound()`。
+ * 那條路徑的 404 畫面會是 Next 的空殼——狀態碼仍然正確，只是沒有站台版型。
+ */
+function isKnownRoute(path: string): boolean {
+  const clean = path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path
+  return clean === '/' || ROUTES.includes(clean) || clean.startsWith('/news/')
+}
+
+/**
+ * `notFoundResponse()` 內部那一次 fetch 的記號。
+ *
+ * `/{locale}/page-not-found` 本身也不在 `ROUTES` 裡，所以它一樣會被判成「對不到」——
+ * 這是刻意的：直接打那個網址也應該拿到 404，否則站上就多了一個回 200 的 soft 404 網址。
+ * 但取回頁面的那次 fetch 必須放行，不然會無限遞迴，靠這個標頭區分。
+ */
+const INTERNAL_404_HEADER = 'x-nti-404-render'
+
+/**
+ * 客製化 404：把 `/{locale}/page-not-found` 的 HTML 取回來，用 **404 狀態碼**回給瀏覽器。
+ *
+ * 為什麼要多這一次 fetch，而不是直接 `NextResponse.rewrite(url, { status: 404 })`：
+ * 那個寫法實測會被 Next 攔掉——狀態碼是 404 沒錯，但回的是 Next 內建的
+ * `__next_error__` 空殼，rewrite 的目標根本沒被 render。而不帶 status 的 rewrite
+ * 又是 200，也就是 soft 404（客戶簡報列為「最不建議」的那一種）。
+ *
+ * 代價是每個 404 多一次站內請求。`/{locale}/page-not-found` 是預先產生的靜態頁，這次請求
+ * 不會打到 API 或資料庫；而且 404 本來就不是熱路徑。
+ */
+async function notFoundResponse(req: NextRequest, locale: Locale) {
+  const page = await fetch(new URL(`/${locale}/page-not-found`, req.url), {
+    headers: { [INTERNAL_404_HEADER]: '1' },
+  })
+  return new NextResponse(await page.text(), {
+    status: 404,
+    headers: { 'content-type': 'text/html; charset=utf-8' },
+  })
+}
+
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   /*
@@ -89,6 +140,15 @@ export function middleware(req: NextRequest) {
    */
   const current = locales.find((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
   if (current) {
+    // 對不到任何路由 → 客製化 404（rewrite，網址列保持使用者打的那一個）。
+    // 這一步刻意不寫語系 cookie：使用者沒有真的「造訪」某個語系的頁面。
+    if (
+      req.headers.get(INTERNAL_404_HEADER) !== '1' &&
+      !isKnownRoute(pathname.slice(1 + current.length) || '/')
+    ) {
+      return notFoundResponse(req, current)
+    }
+
     const res = NextResponse.next()
     if (req.cookies.get(LOCALE_COOKIE)?.value !== current) {
       res.cookies.set(LOCALE_COOKIE, current, {

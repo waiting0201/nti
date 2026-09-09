@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-green-drive-seminar", {
     title: "Green Drive × Digital Innovation seminar wraps up — NTI Printing",
+    description: "The Green Drive × Digital Innovation seminar at NTI covered green supply chains, digital packaging processes and a live tour of the production equipment.",
   })
 }
 

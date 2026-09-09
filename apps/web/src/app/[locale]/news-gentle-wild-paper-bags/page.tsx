@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-gentle-wild-paper-bags", {
     title: "Gentle Wild paper bags: a different animal on every bag — NTI Printing",
+    description: "Gentle Wild paper bags: HP variable data printing gives every bag a different animal illustration, with no plate-making and eco specifications throughout.",
   })
 }
 

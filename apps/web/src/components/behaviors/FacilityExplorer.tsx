@@ -13,13 +13,13 @@ export function FacilityExplorer() {
   const SETS: Record<string, Item[]> = {
     pre:[
       {src:'/assets/fac-pre-ctp.jpg',cap:'Heidelberg Suprasetter 105 S CTP'},
-      {src:'/assets/fac-pre-proof.jpg',cap:'Prinect Color Proof Pro — digital proofing'},
+      {src:'/assets/fac-pre-proof.webp',cap:'Prinect Color Proof Pro — digital proofing'},
       {src:'/assets/fac-pre-jazzy.jpg',cap:'Jazzy Light color management system'},
       {src:'/assets/fac-pre-zund.jpg',cap:'ZÜND CCD high-speed cutter'}],
     eco:[
-      {src:'/assets/fac-eco-press.png',cap:'Heidelberg Speedmaster CD-102 press line',fit:'contain'},
+      {src:'/assets/fac-eco-press.webp',cap:'Heidelberg Speedmaster CD-102 press line',fit:'contain'},
       {src:'/assets/fac-eco-pressroom.jpg',cap:'Press room — production control'},
-      {src:'/assets/fac-eco-axis.jpg',cap:'Axis Control color measurement system'},
+      {src:'/assets/fac-eco-axis.webp',cap:'Axis Control color measurement system'},
       {src:'/assets/fac-eco-imagecontrol.jpg',cap:'Image Control spectral measurement'}],
     post:[
       {src:'/assets/fac-post-diecut.jpg',cap:'Heidelberg Varimatrix 105 die-cutter'},
@@ -37,9 +37,9 @@ export function FacilityExplorer() {
       {src:'/assets/fac-qc-gloss.png',cap:'Gloss meter — Elcometer 406',fit:'contain'},
       {src:'/assets/fac-qc-blister.png',cap:'Blister packing strength tester',fit:'contain'}],
     tour:[
-      {src:'/assets/fac-tour1.jpg',cap:'Factory floor'},
-      {src:'/assets/fac-tour2.jpg',cap:'Production aisle'},
-      {src:'/assets/fac-tour-main.jpg',cap:'Packaging stock & logistics'}]
+      {src:'/assets/fac-tour1.webp',cap:'Factory floor'},
+      {src:'/assets/fac-tour2.webp',cap:'Production aisle'},
+      {src:'/assets/fac-tour-main.webp',cap:'Packaging stock & logistics'}]
   };
 
     const facImg = document.getElementById('facImg') as HTMLImageElement | null

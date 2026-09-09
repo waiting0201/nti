@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/green-our-advantage", {
     title: "Our Green Advantage — NTI Printing",
+    description: "Our green advantage: RoHS-compliant materials plus waste-oil recovery and wastewater recycling built into the plant — sustainability proven in production.",
   })
 }
 
@@ -18,7 +19,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-mid2.png")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-mid2.webp")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/green-advantage")}>Sustainability</A><span>&rsaquo;</span><b>Our Green Advantages</b></div>
         <h1 className="sec-title reveal">Our Green Advantages</h1>
@@ -40,7 +41,7 @@ export default async function Page({ params }: Props) {
           <p className="prose">It is not a claim bolted onto the finished job. Every material, ink and solvent we run passes RoHS inspection standards, and the plant operates waste-oil recovery and wastewater recycling systems built to international environmental standards. The advantage shows up as fewer make-ready sheets on the floor, solvent-free lamination, an FSC&trade; claim you can print on the pack, and a supply chain your ESG team can actually evidence.</p>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid4.png")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid4.webp")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Company mission</div>
         <p className="prose wide">Keep promoting green packaging and build the full concept of green supply-chain management for our customers &mdash; becoming a printing firm with genuine environmental awareness and a high sense of social responsibility.</p>

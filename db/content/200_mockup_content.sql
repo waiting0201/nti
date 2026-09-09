@@ -21,44 +21,44 @@ GO
 BEGIN TRAN;
 
 /* ── home-banner → HomeBanner（3 筆）──────────────────────────── */
-IF NOT EXISTS (SELECT 1 FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.png')
-    INSERT dbo.HomeBanner (ImagePath, ImagePathMobile, MediaType, LinkUrl, OpenInNewTab, SortOrder, IsPublished) VALUES (N'assets/ref-home-banner1.png', NULL, 'image', N'/green-advantage', 0, 10, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.png') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.webp')
+    INSERT dbo.HomeBanner (ImagePath, ImagePathMobile, MediaType, LinkUrl, OpenInNewTab, SortOrder, IsPublished) VALUES (N'assets/ref-home-banner1.webp', NULL, 'image', N'/green-advantage', 0, 10, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.webp') AND Lang = 'zh')
     INSERT dbo.HomeBannerI18n (HomeBannerId, Lang, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.png'), 'zh', N'勇於印綠？—— NTI');
+    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.webp'), 'zh', N'勇於印綠？—— NTI');
 ELSE
-    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'勇於印綠？—— NTI' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.png') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.png') AND Lang = 'en')
+    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'勇於印綠？—— NTI' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.webp') AND Lang = 'en')
     INSERT dbo.HomeBannerI18n (HomeBannerId, Lang, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.png'), 'en', N'The courage to print green? — NTI Printing');
+    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.webp'), 'en', N'The courage to print green? — NTI Printing');
 ELSE
-    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'The courage to print green? — NTI Printing' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.png') AND Lang = 'en';
+    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'The courage to print green? — NTI Printing' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.webp') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.png')
-    INSERT dbo.HomeBanner (ImagePath, ImagePathMobile, MediaType, LinkUrl, OpenInNewTab, SortOrder, IsPublished) VALUES (N'assets/ref-home-banner2.png', NULL, 'image', N'/solutions', 0, 20, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.png') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.webp')
+    INSERT dbo.HomeBanner (ImagePath, ImagePathMobile, MediaType, LinkUrl, OpenInNewTab, SortOrder, IsPublished) VALUES (N'assets/ref-home-banner2.webp', NULL, 'image', N'/solutions', 0, 20, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.webp') AND Lang = 'zh')
     INSERT dbo.HomeBannerI18n (HomeBannerId, Lang, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.png'), 'zh', N'NTI 客製化包裝印刷');
+    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.webp'), 'zh', N'NTI 客製化包裝印刷');
 ELSE
-    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'NTI 客製化包裝印刷' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.png') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.png') AND Lang = 'en')
+    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'NTI 客製化包裝印刷' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.webp') AND Lang = 'en')
     INSERT dbo.HomeBannerI18n (HomeBannerId, Lang, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.png'), 'en', N'NTI custom printed packaging solutions');
+    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.webp'), 'en', N'NTI custom printed packaging solutions');
 ELSE
-    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'NTI custom printed packaging solutions' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.png') AND Lang = 'en';
+    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'NTI custom printed packaging solutions' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.webp') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.png')
-    INSERT dbo.HomeBanner (ImagePath, ImagePathMobile, MediaType, LinkUrl, OpenInNewTab, SortOrder, IsPublished) VALUES (N'assets/ref-home-mid2.png', NULL, 'image', N'/differences', 0, 30, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.png') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.webp')
+    INSERT dbo.HomeBanner (ImagePath, ImagePathMobile, MediaType, LinkUrl, OpenInNewTab, SortOrder, IsPublished) VALUES (N'assets/ref-home-mid2.webp', NULL, 'image', N'/differences', 0, 30, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.webp') AND Lang = 'zh')
     INSERT dbo.HomeBannerI18n (HomeBannerId, Lang, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.png'), 'zh', N'NTI 台南廠海德堡印刷產線');
+    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.webp'), 'zh', N'NTI 台南廠海德堡印刷產線');
 ELSE
-    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'NTI 台南廠海德堡印刷產線' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.png') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.png') AND Lang = 'en')
+    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'NTI 台南廠海德堡印刷產線' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.webp') AND Lang = 'en')
     INSERT dbo.HomeBannerI18n (HomeBannerId, Lang, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.png'), 'en', N'NTI printing facility — Heidelberg press line in Tainan');
+    VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.webp'), 'en', N'NTI printing facility — Heidelberg press line in Tainan');
 ELSE
-    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'NTI printing facility — Heidelberg press line in Tainan' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.png') AND Lang = 'en';
+    UPDATE dbo.HomeBannerI18n SET ImageAlt = N'NTI printing facility — Heidelberg press line in Tainan' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-mid2.webp') AND Lang = 'en';
 
 GO
 
@@ -207,18 +207,18 @@ IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT
 ELSE
     UPDATE dbo.SolutionItemI18n SET Name = N'UV Printing', Description = N'Litho printing on non-absorbent materials — instant ink curing means post-finishing can start immediately, with no backprint, shorter lead times, and lower cost.', ImageAlt = N'UV Printing' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-print.jpg') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.jpg')
-    INSERT dbo.SolutionItem (SolutionId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Solution WHERE Code = N'uv'), N'assets/prod-uv-special.jpg', 20, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.jpg') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.webp')
+    INSERT dbo.SolutionItem (SolutionId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Solution WHERE Code = N'uv'), N'assets/prod-uv-special.webp', 20, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.webp') AND Lang = 'zh')
     INSERT dbo.SolutionItemI18n (SolutionItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.jpg'), 'zh', N'特殊印刷與防偽', N'燙金壓凸與光柵壓紋 —— 客製開發的加工方式，保護並提升品牌價值。', N'特殊印刷與防偽');
+    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.webp'), 'zh', N'特殊印刷與防偽', N'燙金壓凸與光柵壓紋 —— 客製開發的加工方式，保護並提升品牌價值。', N'特殊印刷與防偽');
 ELSE
-    UPDATE dbo.SolutionItemI18n SET Name = N'特殊印刷與防偽', Description = N'燙金壓凸與光柵壓紋 —— 客製開發的加工方式，保護並提升品牌價值。', ImageAlt = N'特殊印刷與防偽' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.jpg') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.jpg') AND Lang = 'en')
+    UPDATE dbo.SolutionItemI18n SET Name = N'特殊印刷與防偽', Description = N'燙金壓凸與光柵壓紋 —— 客製開發的加工方式，保護並提升品牌價值。', ImageAlt = N'特殊印刷與防偽' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.webp') AND Lang = 'en')
     INSERT dbo.SolutionItemI18n (SolutionItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.jpg'), 'en', N'Special Printing & Anti-Counterfeiting', N'Foil embossing and logical-light embossment — custom-developed finishes that protect and elevate your brand.', N'Special Printing & Anti-Counterfeiting');
+    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.webp'), 'en', N'Special Printing & Anti-Counterfeiting', N'Foil embossing and logical-light embossment — custom-developed finishes that protect and elevate your brand.', N'Special Printing & Anti-Counterfeiting');
 ELSE
-    UPDATE dbo.SolutionItemI18n SET Name = N'Special Printing & Anti-Counterfeiting', Description = N'Foil embossing and logical-light embossment — custom-developed finishes that protect and elevate your brand.', ImageAlt = N'Special Printing & Anti-Counterfeiting' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.jpg') AND Lang = 'en';
+    UPDATE dbo.SolutionItemI18n SET Name = N'Special Printing & Anti-Counterfeiting', Description = N'Foil embossing and logical-light embossment — custom-developed finishes that protect and elevate your brand.', ImageAlt = N'Special Printing & Anti-Counterfeiting' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-uv-special.webp') AND Lang = 'en';
 
 IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-bag.jpg')
     INSERT dbo.SolutionItem (SolutionId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Solution WHERE Code = N'other'), N'assets/prod-other-bag.jpg', 10, 1);
@@ -233,44 +233,44 @@ IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT
 ELSE
     UPDATE dbo.SolutionItemI18n SET Name = N'Hand Bags', Description = N'Paper, plastic, or textile carrier bags that promote products and strengthen brand image.', ImageAlt = N'Hand Bags' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-bag.jpg') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.jpg')
-    INSERT dbo.SolutionItem (SolutionId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Solution WHERE Code = N'other'), N'assets/prod-other-redenvelope.jpg', 20, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.jpg') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.webp')
+    INSERT dbo.SolutionItem (SolutionId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Solution WHERE Code = N'other'), N'assets/prod-other-redenvelope.webp', 20, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.webp') AND Lang = 'zh')
     INSERT dbo.SolutionItemI18n (SolutionItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.jpg'), 'zh', N'紅包袋', N'透過平面設計與熱燙加工創造強烈的節慶感。', N'紅包袋');
+    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.webp'), 'zh', N'紅包袋', N'透過平面設計與熱燙加工創造強烈的節慶感。', N'紅包袋');
 ELSE
-    UPDATE dbo.SolutionItemI18n SET Name = N'紅包袋', Description = N'透過平面設計與熱燙加工創造強烈的節慶感。', ImageAlt = N'紅包袋' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.jpg') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.jpg') AND Lang = 'en')
+    UPDATE dbo.SolutionItemI18n SET Name = N'紅包袋', Description = N'透過平面設計與熱燙加工創造強烈的節慶感。', ImageAlt = N'紅包袋' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.webp') AND Lang = 'en')
     INSERT dbo.SolutionItemI18n (SolutionItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.jpg'), 'en', N'Red Envelopes', N'Strong seasonal impact through graphic design and heat-emboss finishing.', N'Red Envelopes');
+    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.webp'), 'en', N'Red Envelopes', N'Strong seasonal impact through graphic design and heat-emboss finishing.', N'Red Envelopes');
 ELSE
-    UPDATE dbo.SolutionItemI18n SET Name = N'Red Envelopes', Description = N'Strong seasonal impact through graphic design and heat-emboss finishing.', ImageAlt = N'Red Envelopes' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.jpg') AND Lang = 'en';
+    UPDATE dbo.SolutionItemI18n SET Name = N'Red Envelopes', Description = N'Strong seasonal impact through graphic design and heat-emboss finishing.', ImageAlt = N'Red Envelopes' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-redenvelope.webp') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.jpg')
-    INSERT dbo.SolutionItem (SolutionId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Solution WHERE Code = N'other'), N'assets/prod-other-calendar.jpg', 30, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.jpg') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.webp')
+    INSERT dbo.SolutionItem (SolutionId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Solution WHERE Code = N'other'), N'assets/prod-other-calendar.webp', 30, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.webp') AND Lang = 'zh')
     INSERT dbo.SolutionItemI18n (SolutionItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.jpg'), 'zh', N'桌曆', N'節慶、企業贈禮與廣告推廣皆適用的日常實用贈品。', N'桌曆');
+    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.webp'), 'zh', N'桌曆', N'節慶、企業贈禮與廣告推廣皆適用的日常實用贈品。', N'桌曆');
 ELSE
-    UPDATE dbo.SolutionItemI18n SET Name = N'桌曆', Description = N'節慶、企業贈禮與廣告推廣皆適用的日常實用贈品。', ImageAlt = N'桌曆' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.jpg') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.jpg') AND Lang = 'en')
+    UPDATE dbo.SolutionItemI18n SET Name = N'桌曆', Description = N'節慶、企業贈禮與廣告推廣皆適用的日常實用贈品。', ImageAlt = N'桌曆' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.webp') AND Lang = 'en')
     INSERT dbo.SolutionItemI18n (SolutionItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.jpg'), 'en', N'Desk Calendars', N'A daily-use gift for festivals, corporate gifting, and advertising promotion.', N'Desk Calendars');
+    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.webp'), 'en', N'Desk Calendars', N'A daily-use gift for festivals, corporate gifting, and advertising promotion.', N'Desk Calendars');
 ELSE
-    UPDATE dbo.SolutionItemI18n SET Name = N'Desk Calendars', Description = N'A daily-use gift for festivals, corporate gifting, and advertising promotion.', ImageAlt = N'Desk Calendars' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.jpg') AND Lang = 'en';
+    UPDATE dbo.SolutionItemI18n SET Name = N'Desk Calendars', Description = N'A daily-use gift for festivals, corporate gifting, and advertising promotion.', ImageAlt = N'Desk Calendars' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-calendar.webp') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.jpg')
-    INSERT dbo.SolutionItem (SolutionId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Solution WHERE Code = N'other'), N'assets/prod-other-mousepad.jpg', 40, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.jpg') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.webp')
+    INSERT dbo.SolutionItem (SolutionId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Solution WHERE Code = N'other'), N'assets/prod-other-mousepad.webp', 40, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.webp') AND Lang = 'zh')
     INSERT dbo.SolutionItemI18n (SolutionItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.jpg'), 'zh', N'滑鼠墊', N'UV 印刷，色彩飽和且長期抗褪色。', N'滑鼠墊');
+    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.webp'), 'zh', N'滑鼠墊', N'UV 印刷，色彩飽和且長期抗褪色。', N'滑鼠墊');
 ELSE
-    UPDATE dbo.SolutionItemI18n SET Name = N'滑鼠墊', Description = N'UV 印刷，色彩飽和且長期抗褪色。', ImageAlt = N'滑鼠墊' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.jpg') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.jpg') AND Lang = 'en')
+    UPDATE dbo.SolutionItemI18n SET Name = N'滑鼠墊', Description = N'UV 印刷，色彩飽和且長期抗褪色。', ImageAlt = N'滑鼠墊' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItemI18n WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.webp') AND Lang = 'en')
     INSERT dbo.SolutionItemI18n (SolutionItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.jpg'), 'en', N'Mouse Pads', N'UV-printed for color saturation and long-lasting fade resistance.', N'Mouse Pads');
+    VALUES ((SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.webp'), 'en', N'Mouse Pads', N'UV-printed for color saturation and long-lasting fade resistance.', N'Mouse Pads');
 ELSE
-    UPDATE dbo.SolutionItemI18n SET Name = N'Mouse Pads', Description = N'UV-printed for color saturation and long-lasting fade resistance.', ImageAlt = N'Mouse Pads' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.jpg') AND Lang = 'en';
+    UPDATE dbo.SolutionItemI18n SET Name = N'Mouse Pads', Description = N'UV-printed for color saturation and long-lasting fade resistance.', ImageAlt = N'Mouse Pads' WHERE SolutionItemId = (SELECT Id FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-mousepad.webp') AND Lang = 'en';
 
 IF NOT EXISTS (SELECT 1 FROM dbo.SolutionItem WHERE ImagePath = N'assets/prod-other-manual.png')
     INSERT dbo.SolutionItem (SolutionId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Solution WHERE Code = N'other'), N'assets/prod-other-manual.png', 50, 1);
@@ -314,18 +314,18 @@ IF NOT EXISTS (SELECT 1 FROM dbo.ProjectI18n WHERE ProjectId = (SELECT Id FROM d
 ELSE
     UPDATE dbo.ProjectI18n SET Title = N'Serialized pharma cartons, audit-ready', Summary = N'GMP-aligned inspection, batch traceability and tamper-evident structure for a regulated line.', StatLabel = N'audit findings', ImageAlt = N'Serialized pharma cartons, audit-ready' WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-prod1.jpg') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.Project WHERE ImagePath = N'assets/diff-box.jpg')
-    INSERT dbo.Project (CategoryId, ImagePath, VideoUrl, StatValue, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Project' AND Code = 'other'), N'assets/diff-box.jpg', NULL, N'100%', 30, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.ProjectI18n WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.jpg') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.Project WHERE ImagePath = N'assets/diff-box.webp')
+    INSERT dbo.Project (CategoryId, ImagePath, VideoUrl, StatValue, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Project' AND Code = 'other'), N'assets/diff-box.webp', NULL, N'100%', 30, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.ProjectI18n WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.webp') AND Lang = 'zh')
     INSERT dbo.ProjectI18n (ProjectId, Lang, Title, Summary, StatLabel, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.jpg'), 'zh', N'單一材質改版，貨架效果不打折', N'以可回收塗層取代塑膠淋膜 —— 同樣的亮度，單一回收流。', N'可回收', N'單一材質改版，貨架效果不打折');
+    VALUES ((SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.webp'), 'zh', N'單一材質改版，貨架效果不打折', N'以可回收塗層取代塑膠淋膜 —— 同樣的亮度，單一回收流。', N'可回收', N'單一材質改版，貨架效果不打折');
 ELSE
-    UPDATE dbo.ProjectI18n SET Title = N'單一材質改版，貨架效果不打折', Summary = N'以可回收塗層取代塑膠淋膜 —— 同樣的亮度，單一回收流。', StatLabel = N'可回收', ImageAlt = N'單一材質改版，貨架效果不打折' WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.jpg') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.ProjectI18n WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.jpg') AND Lang = 'en')
+    UPDATE dbo.ProjectI18n SET Title = N'單一材質改版，貨架效果不打折', Summary = N'以可回收塗層取代塑膠淋膜 —— 同樣的亮度，單一回收流。', StatLabel = N'可回收', ImageAlt = N'單一材質改版，貨架效果不打折' WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.ProjectI18n WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.webp') AND Lang = 'en')
     INSERT dbo.ProjectI18n (ProjectId, Lang, Title, Summary, StatLabel, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.jpg'), 'en', N'Mono-material redesign kept the shelf wow', N'Replaced plastic lamination with a recyclable coating — same gloss, single recycling stream.', N'recyclable', N'Mono-material redesign kept the shelf wow');
+    VALUES ((SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.webp'), 'en', N'Mono-material redesign kept the shelf wow', N'Replaced plastic lamination with a recyclable coating — same gloss, single recycling stream.', N'recyclable', N'Mono-material redesign kept the shelf wow');
 ELSE
-    UPDATE dbo.ProjectI18n SET Title = N'Mono-material redesign kept the shelf wow', Summary = N'Replaced plastic lamination with a recyclable coating — same gloss, single recycling stream.', StatLabel = N'recyclable', ImageAlt = N'Mono-material redesign kept the shelf wow' WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.jpg') AND Lang = 'en';
+    UPDATE dbo.ProjectI18n SET Title = N'Mono-material redesign kept the shelf wow', Summary = N'Replaced plastic lamination with a recyclable coating — same gloss, single recycling stream.', StatLabel = N'recyclable', ImageAlt = N'Mono-material redesign kept the shelf wow' WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/diff-box.webp') AND Lang = 'en';
 
 IF NOT EXISTS (SELECT 1 FROM dbo.Project WHERE ImagePath = N'assets/hp-prod2.jpg')
     INSERT dbo.Project (CategoryId, ImagePath, VideoUrl, StatValue, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Project' AND Code = 'gift'), N'assets/hp-prod2.jpg', NULL, N'ΔE≤2', 40, 1);
@@ -353,18 +353,18 @@ IF NOT EXISTS (SELECT 1 FROM dbo.ProjectI18n WHERE ProjectId = (SELECT Id FROM d
 ELSE
     UPDATE dbo.ProjectI18n SET Title = N'Frozen-food board that survives the cold chain', Summary = N'Moisture-resistant coating and flute selection validated with transit and freezer testing.', StatLabel = N'validated', ImageAlt = N'Frozen-food board that survives the cold chain' WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/ps-box1.jpg') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.jpg')
-    INSERT dbo.Project (CategoryId, ImagePath, VideoUrl, StatValue, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Project' AND Code = 'other'), N'assets/hp-casestudy.jpg', NULL, N'96%', 60, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.ProjectI18n WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.jpg') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.webp')
+    INSERT dbo.Project (CategoryId, ImagePath, VideoUrl, StatValue, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Project' AND Code = 'other'), N'assets/hp-casestudy.webp', NULL, N'96%', 60, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.ProjectI18n WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.webp') AND Lang = 'zh')
     INSERT dbo.ProjectI18n (ProjectId, Lang, Title, Summary, StatLabel, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.jpg'), 'zh', N'D2C 品牌的大豆油墨瓦楞出貨箱', N'再生牛皮紙一次過機柔版印刷，內外雙面印刷打造開箱體驗。', N'再生纖維', N'D2C 品牌的大豆油墨瓦楞出貨箱');
+    VALUES ((SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.webp'), 'zh', N'D2C 品牌的大豆油墨瓦楞出貨箱', N'再生牛皮紙一次過機柔版印刷，內外雙面印刷打造開箱體驗。', N'再生纖維', N'D2C 品牌的大豆油墨瓦楞出貨箱');
 ELSE
-    UPDATE dbo.ProjectI18n SET Title = N'D2C 品牌的大豆油墨瓦楞出貨箱', Summary = N'再生牛皮紙一次過機柔版印刷，內外雙面印刷打造開箱體驗。', StatLabel = N'再生纖維', ImageAlt = N'D2C 品牌的大豆油墨瓦楞出貨箱' WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.jpg') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.ProjectI18n WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.jpg') AND Lang = 'en')
+    UPDATE dbo.ProjectI18n SET Title = N'D2C 品牌的大豆油墨瓦楞出貨箱', Summary = N'再生牛皮紙一次過機柔版印刷，內外雙面印刷打造開箱體驗。', StatLabel = N'再生纖維', ImageAlt = N'D2C 品牌的大豆油墨瓦楞出貨箱' WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.ProjectI18n WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.webp') AND Lang = 'en')
     INSERT dbo.ProjectI18n (ProjectId, Lang, Title, Summary, StatLabel, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.jpg'), 'en', N'Soy-ink corrugated shipper for a D2C brand', N'One-pass flexo on recycled kraft, printed inside and out for an unboxing moment.', N'recycled fiber', N'Soy-ink corrugated shipper for a D2C brand');
+    VALUES ((SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.webp'), 'en', N'Soy-ink corrugated shipper for a D2C brand', N'One-pass flexo on recycled kraft, printed inside and out for an unboxing moment.', N'recycled fiber', N'Soy-ink corrugated shipper for a D2C brand');
 ELSE
-    UPDATE dbo.ProjectI18n SET Title = N'Soy-ink corrugated shipper for a D2C brand', Summary = N'One-pass flexo on recycled kraft, printed inside and out for an unboxing moment.', StatLabel = N'recycled fiber', ImageAlt = N'Soy-ink corrugated shipper for a D2C brand' WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.jpg') AND Lang = 'en';
+    UPDATE dbo.ProjectI18n SET Title = N'Soy-ink corrugated shipper for a D2C brand', Summary = N'One-pass flexo on recycled kraft, printed inside and out for an unboxing moment.', StatLabel = N'recycled fiber', ImageAlt = N'Soy-ink corrugated shipper for a D2C brand' WHERE ProjectId = (SELECT Id FROM dbo.Project WHERE ImagePath = N'assets/hp-casestudy.webp') AND Lang = 'en';
 
 GO
 
@@ -771,83 +771,83 @@ IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELE
 ELSE
     UPDATE dbo.CertificationI18n SET Name = N'G7 Master Qualified Facility', Description = NULL, LogoAlt = N'G7 Master Qualified Facility' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-g7.png') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png')
-    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-gmi.png', NULL, 1, 20, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png') AND Lang = 'zh')
-    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png'), 'zh', N'GMI 認證印刷廠', NULL, N'GMI 認證印刷廠');
-ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'GMI 認證印刷廠', Description = NULL, LogoAlt = N'GMI 認證印刷廠' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png') AND Lang = 'en')
-    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png'), 'en', N'GMI Certified Print Facility', NULL, N'GMI Certified Print Facility');
-ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'GMI Certified Print Facility', Description = NULL, LogoAlt = N'GMI Certified Print Facility' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png') AND Lang = 'en';
-
 IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso9001.png')
-    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-iso9001.png', NULL, 1, 30, 1);
+    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-iso9001.png', NULL, 1, 20, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso9001.png') AND Lang = 'zh')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso9001.png'), 'zh', N'ISO 9001 品質管理系統', NULL, N'ISO 9001 品質管理系統');
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso9001.png'), 'zh', N'GMI 認證印刷廠', NULL, N'GMI 認證印刷廠');
 ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'ISO 9001 品質管理系統', Description = NULL, LogoAlt = N'ISO 9001 品質管理系統' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso9001.png') AND Lang = 'zh';
+    UPDATE dbo.CertificationI18n SET Name = N'GMI 認證印刷廠', Description = NULL, LogoAlt = N'GMI 認證印刷廠' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso9001.png') AND Lang = 'zh';
 IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso9001.png') AND Lang = 'en')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
     VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso9001.png'), 'en', N'ISO 9001 Quality Assurance Management', NULL, N'ISO 9001 Quality Assurance Management');
 ELSE
     UPDATE dbo.CertificationI18n SET Name = N'ISO 9001 Quality Assurance Management', Description = NULL, LogoAlt = N'ISO 9001 Quality Assurance Management' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso9001.png') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png')
-    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-iso14001.png', NULL, 1, 40, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png')
+    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-gmi.png', NULL, 1, 30, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png') AND Lang = 'zh')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png'), 'zh', N'ISO 14001 環境管理系統', NULL, N'ISO 14001 環境管理系統');
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png'), 'zh', N'ISO 9001 品質管理系統', NULL, N'ISO 9001 品質管理系統');
 ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'ISO 14001 環境管理系統', Description = NULL, LogoAlt = N'ISO 14001 環境管理系統' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png') AND Lang = 'en')
+    UPDATE dbo.CertificationI18n SET Name = N'ISO 9001 品質管理系統', Description = NULL, LogoAlt = N'ISO 9001 品質管理系統' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png') AND Lang = 'en')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png'), 'en', N'ISO 14001 Environmental Management', NULL, N'ISO 14001 Environmental Management');
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png'), 'en', N'GMI Certified Print Facility', NULL, N'GMI Certified Print Facility');
 ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'ISO 14001 Environmental Management', Description = NULL, LogoAlt = N'ISO 14001 Environmental Management' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png') AND Lang = 'en';
-
-IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png')
-    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-iso45001.png', NULL, 1, 50, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png') AND Lang = 'zh')
-    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png'), 'zh', N'ISO 45001 職業安全衛生管理系統', NULL, N'ISO 45001 職業安全衛生管理系統');
-ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'ISO 45001 職業安全衛生管理系統', Description = NULL, LogoAlt = N'ISO 45001 職業安全衛生管理系統' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png') AND Lang = 'en')
-    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png'), 'en', N'ISO 45001 Occupational Health & Safety', NULL, N'ISO 45001 Occupational Health & Safety');
-ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'ISO 45001 Occupational Health & Safety', Description = NULL, LogoAlt = N'ISO 45001 Occupational Health & Safety' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png') AND Lang = 'en';
+    UPDATE dbo.CertificationI18n SET Name = N'GMI Certified Print Facility', Description = NULL, LogoAlt = N'GMI Certified Print Facility' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-gmi.png') AND Lang = 'en';
 
 IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-fsc.png')
-    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-fsc.png', NULL, 1, 60, 1);
+    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-fsc.png', NULL, 1, 40, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-fsc.png') AND Lang = 'zh')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-fsc.png'), 'zh', N'FSC™ 森林管理驗證', NULL, N'FSC™ 森林管理驗證');
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-fsc.png'), 'zh', N'ISO 14001 環境管理系統', NULL, N'ISO 14001 環境管理系統');
 ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'FSC™ 森林管理驗證', Description = NULL, LogoAlt = N'FSC™ 森林管理驗證' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-fsc.png') AND Lang = 'zh';
+    UPDATE dbo.CertificationI18n SET Name = N'ISO 14001 環境管理系統', Description = NULL, LogoAlt = N'ISO 14001 環境管理系統' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-fsc.png') AND Lang = 'zh';
 IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-fsc.png') AND Lang = 'en')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
     VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-fsc.png'), 'en', N'FSC certified', NULL, N'FSC certified');
 ELSE
     UPDATE dbo.CertificationI18n SET Name = N'FSC certified', Description = NULL, LogoAlt = N'FSC certified' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-fsc.png') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png')
-    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-leed-gold.png', NULL, 1, 70, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png')
+    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-iso14001.png', NULL, 1, 50, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png') AND Lang = 'zh')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png'), 'zh', N'LEED 黃金級 2023', NULL, N'LEED 黃金級 2023');
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png'), 'zh', N'ISO 45001 職業安全衛生管理系統', NULL, N'ISO 45001 職業安全衛生管理系統');
 ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'LEED 黃金級 2023', Description = NULL, LogoAlt = N'LEED 黃金級 2023' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png') AND Lang = 'en')
+    UPDATE dbo.CertificationI18n SET Name = N'ISO 45001 職業安全衛生管理系統', Description = NULL, LogoAlt = N'ISO 45001 職業安全衛生管理系統' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png') AND Lang = 'en')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png'), 'en', N'LEED Gold 2023', NULL, N'LEED Gold 2023');
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png'), 'en', N'ISO 14001 Environmental Management', NULL, N'ISO 14001 Environmental Management');
 ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'LEED Gold 2023', Description = NULL, LogoAlt = N'LEED Gold 2023' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png') AND Lang = 'en';
+    UPDATE dbo.CertificationI18n SET Name = N'ISO 14001 Environmental Management', Description = NULL, LogoAlt = N'ISO 14001 Environmental Management' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso14001.png') AND Lang = 'en';
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png')
+    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-co2neutral.png', NULL, 1, 60, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png') AND Lang = 'zh')
+    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png'), 'zh', N'FSC™ 森林管理驗證', NULL, N'FSC™ 森林管理驗證');
+ELSE
+    UPDATE dbo.CertificationI18n SET Name = N'FSC™ 森林管理驗證', Description = NULL, LogoAlt = N'FSC™ 森林管理驗證' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png') AND Lang = 'en')
+    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png'), 'en', N'CO2 Neutral', NULL, N'CO2 Neutral');
+ELSE
+    UPDATE dbo.CertificationI18n SET Name = N'CO2 Neutral', Description = NULL, LogoAlt = N'CO2 Neutral' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png') AND Lang = 'en';
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png')
+    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-green.png', NULL, 1, 70, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png') AND Lang = 'zh')
+    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png'), 'zh', N'LEED 黃金級 2023', NULL, N'LEED 黃金級 2023');
+ELSE
+    UPDATE dbo.CertificationI18n SET Name = N'LEED 黃金級 2023', Description = NULL, LogoAlt = N'LEED 黃金級 2023' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png') AND Lang = 'en')
+    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png'), 'en', N'Green Printing', NULL, N'Green Printing');
+ELSE
+    UPDATE dbo.CertificationI18n SET Name = N'Green Printing', Description = NULL, LogoAlt = N'Green Printing' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png') AND Lang = 'en';
 
 IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-greenbuilding.png')
     INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-greenbuilding.png', NULL, 1, 80, 1);
@@ -862,70 +862,70 @@ IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELE
 ELSE
     UPDATE dbo.CertificationI18n SET Name = N'Green Building Label — Diamond grade', Description = NULL, LogoAlt = N'Green Building Label — Diamond grade' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-greenbuilding.png') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png')
-    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-co2neutral.png', NULL, 1, 90, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png') AND Lang = 'zh')
-    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png'), 'zh', N'碳中和 CO2 Neutral', NULL, N'碳中和 CO2 Neutral');
-ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'碳中和 CO2 Neutral', Description = NULL, LogoAlt = N'碳中和 CO2 Neutral' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png') AND Lang = 'en')
-    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png'), 'en', N'CO2 Neutral', NULL, N'CO2 Neutral');
-ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'CO2 Neutral', Description = NULL, LogoAlt = N'CO2 Neutral' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-co2neutral.png') AND Lang = 'en';
-
-IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png')
-    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-green.png', NULL, 1, 100, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png') AND Lang = 'zh')
-    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png'), 'zh', N'綠色印刷標章', NULL, N'綠色印刷標章');
-ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'綠色印刷標章', Description = NULL, LogoAlt = N'綠色印刷標章' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png') AND Lang = 'en')
-    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png'), 'en', N'Green Printing', NULL, N'Green Printing');
-ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'Green Printing', Description = NULL, LogoAlt = N'Green Printing' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-green.png') AND Lang = 'en';
-
 IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-mof.png')
-    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-mof.png', NULL, 1, 110, 1);
+    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-mof.png', NULL, 1, 90, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-mof.png') AND Lang = 'zh')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-mof.png'), 'zh', N'無礦物油 Mineral Oil Free', NULL, N'無礦物油 Mineral Oil Free');
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-mof.png'), 'zh', N'碳中和 CO2 Neutral', NULL, N'碳中和 CO2 Neutral');
 ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'無礦物油 Mineral Oil Free', Description = NULL, LogoAlt = N'無礦物油 Mineral Oil Free' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-mof.png') AND Lang = 'zh';
+    UPDATE dbo.CertificationI18n SET Name = N'碳中和 CO2 Neutral', Description = NULL, LogoAlt = N'碳中和 CO2 Neutral' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-mof.png') AND Lang = 'zh';
 IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-mof.png') AND Lang = 'en')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
     VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-mof.png'), 'en', N'Mineral Oil Free', NULL, N'Mineral Oil Free');
 ELSE
     UPDATE dbo.CertificationI18n SET Name = N'Mineral Oil Free', Description = NULL, LogoAlt = N'Mineral Oil Free' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-mof.png') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png')
-    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-esg.png', NULL, 1, 120, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png')
+    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-iso45001.png', NULL, 1, 100, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png') AND Lang = 'zh')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png'), 'zh', N'ESG —— 環境、社會、公司治理', NULL, N'ESG —— 環境、社會、公司治理');
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png'), 'zh', N'綠色印刷標章', NULL, N'綠色印刷標章');
 ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'ESG —— 環境、社會、公司治理', Description = NULL, LogoAlt = N'ESG —— 環境、社會、公司治理' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png') AND Lang = 'en')
+    UPDATE dbo.CertificationI18n SET Name = N'綠色印刷標章', Description = NULL, LogoAlt = N'綠色印刷標章' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png') AND Lang = 'en')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png'), 'en', N'ESG — Environmental, Social, Governance', NULL, N'ESG — Environmental, Social, Governance');
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png'), 'en', N'ISO 45001 Occupational Health & Safety', NULL, N'ISO 45001 Occupational Health & Safety');
 ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'ESG — Environmental, Social, Governance', Description = NULL, LogoAlt = N'ESG — Environmental, Social, Governance' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png') AND Lang = 'en';
+    UPDATE dbo.CertificationI18n SET Name = N'ISO 45001 Occupational Health & Safety', Description = NULL, LogoAlt = N'ISO 45001 Occupational Health & Safety' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-iso45001.png') AND Lang = 'en';
 
 IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-sedex.png')
-    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-sedex.png', NULL, 1, 130, 1);
+    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-sedex.png', NULL, 1, 110, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-sedex.png') AND Lang = 'zh')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
-    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-sedex.png'), 'zh', N'Sedex 會員', NULL, N'Sedex 會員');
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-sedex.png'), 'zh', N'無礦物油 Mineral Oil Free', NULL, N'無礦物油 Mineral Oil Free');
 ELSE
-    UPDATE dbo.CertificationI18n SET Name = N'Sedex 會員', Description = NULL, LogoAlt = N'Sedex 會員' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-sedex.png') AND Lang = 'zh';
+    UPDATE dbo.CertificationI18n SET Name = N'無礦物油 Mineral Oil Free', Description = NULL, LogoAlt = N'無礦物油 Mineral Oil Free' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-sedex.png') AND Lang = 'zh';
 IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-sedex.png') AND Lang = 'en')
     INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
     VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-sedex.png'), 'en', N'Sedex Member', NULL, N'Sedex Member');
 ELSE
     UPDATE dbo.CertificationI18n SET Name = N'Sedex Member', Description = NULL, LogoAlt = N'Sedex Member' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-sedex.png') AND Lang = 'en';
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png')
+    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-leed-gold.png', NULL, 1, 120, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png') AND Lang = 'zh')
+    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png'), 'zh', N'ESG —— 環境、社會、公司治理', NULL, N'ESG —— 環境、社會、公司治理');
+ELSE
+    UPDATE dbo.CertificationI18n SET Name = N'ESG —— 環境、社會、公司治理', Description = NULL, LogoAlt = N'ESG —— 環境、社會、公司治理' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png') AND Lang = 'en')
+    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png'), 'en', N'LEED Gold 2023', NULL, N'LEED Gold 2023');
+ELSE
+    UPDATE dbo.CertificationI18n SET Name = N'LEED Gold 2023', Description = NULL, LogoAlt = N'LEED Gold 2023' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-leed-gold.png') AND Lang = 'en';
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png')
+    INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-esg.png', NULL, 1, 130, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png') AND Lang = 'zh')
+    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png'), 'zh', N'Sedex 會員', NULL, N'Sedex 會員');
+ELSE
+    UPDATE dbo.CertificationI18n SET Name = N'Sedex 會員', Description = NULL, LogoAlt = N'Sedex 會員' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.CertificationI18n WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png') AND Lang = 'en')
+    INSERT dbo.CertificationI18n (CertificationId, Lang, Name, Description, LogoAlt)
+    VALUES ((SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png'), 'en', N'ESG — Environmental, Social, Governance', NULL, N'ESG — Environmental, Social, Governance');
+ELSE
+    UPDATE dbo.CertificationI18n SET Name = N'ESG — Environmental, Social, Governance', Description = NULL, LogoAlt = N'ESG — Environmental, Social, Governance' WHERE CertificationId = (SELECT Id FROM dbo.Certification WHERE LogoPath = N'assets/cert-esg.png') AND Lang = 'en';
 
 IF NOT EXISTS (SELECT 1 FROM dbo.Certification WHERE LogoPath = N'assets/cert-esci.png')
     INSERT dbo.Certification (CategoryId, LogoPath, LinkUrl, ShowOnHome, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Certification' AND Code = 'certification'), N'assets/cert-esci.png', NULL, 1, 140, 1);
@@ -977,18 +977,18 @@ IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT
 ELSE
     UPDATE dbo.FacilityItemI18n SET Name = N'Heidelberg Suprasetter 105 S CTP', Description = NULL, ImageAlt = N'Heidelberg Suprasetter 105 S CTP' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-ctp.jpg') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.jpg')
-    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'pre-press'), N'assets/fac-pre-proof.jpg', 20, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.jpg') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.webp')
+    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'pre-press'), N'assets/fac-pre-proof.webp', 20, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.webp') AND Lang = 'zh')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.jpg'), 'zh', N'Prinect Color Proof Pro —— 數位打樣', NULL, N'Prinect Color Proof Pro 數位打樣');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.webp'), 'zh', N'Prinect Color Proof Pro —— 數位打樣', NULL, N'Prinect Color Proof Pro 數位打樣');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'Prinect Color Proof Pro —— 數位打樣', Description = NULL, ImageAlt = N'Prinect Color Proof Pro 數位打樣' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.jpg') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.jpg') AND Lang = 'en')
+    UPDATE dbo.FacilityItemI18n SET Name = N'Prinect Color Proof Pro —— 數位打樣', Description = NULL, ImageAlt = N'Prinect Color Proof Pro 數位打樣' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.webp') AND Lang = 'en')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.jpg'), 'en', N'Prinect Color Proof Pro — digital proofing', NULL, N'Prinect Color Proof Pro — digital proofing');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.webp'), 'en', N'Prinect Color Proof Pro — digital proofing', NULL, N'Prinect Color Proof Pro — digital proofing');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'Prinect Color Proof Pro — digital proofing', Description = NULL, ImageAlt = N'Prinect Color Proof Pro — digital proofing' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.jpg') AND Lang = 'en';
+    UPDATE dbo.FacilityItemI18n SET Name = N'Prinect Color Proof Pro — digital proofing', Description = NULL, ImageAlt = N'Prinect Color Proof Pro — digital proofing' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-proof.webp') AND Lang = 'en';
 
 IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-jazzy.jpg')
     INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'pre-press'), N'assets/fac-pre-jazzy.jpg', 30, 1);
@@ -1016,18 +1016,18 @@ IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT
 ELSE
     UPDATE dbo.FacilityItemI18n SET Name = N'ZÜND CCD high-speed cutter', Description = NULL, ImageAlt = N'ZÜND CCD high-speed cutter' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-zund.jpg') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.png')
-    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'eco-printing'), N'assets/fac-eco-press.png', 50, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.png') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.webp')
+    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'eco-printing'), N'assets/fac-eco-press.webp', 50, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.webp') AND Lang = 'zh')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.png'), 'zh', N'海德堡 Speedmaster CD-102 印刷產線', NULL, N'海德堡 Speedmaster CD-102 印刷產線');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.webp'), 'zh', N'海德堡 Speedmaster CD-102 印刷產線', NULL, N'海德堡 Speedmaster CD-102 印刷產線');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'海德堡 Speedmaster CD-102 印刷產線', Description = NULL, ImageAlt = N'海德堡 Speedmaster CD-102 印刷產線' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.png') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.png') AND Lang = 'en')
+    UPDATE dbo.FacilityItemI18n SET Name = N'海德堡 Speedmaster CD-102 印刷產線', Description = NULL, ImageAlt = N'海德堡 Speedmaster CD-102 印刷產線' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.webp') AND Lang = 'en')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.png'), 'en', N'Heidelberg Speedmaster CD-102 press line', NULL, N'Heidelberg Speedmaster CD-102 press line');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.webp'), 'en', N'Heidelberg Speedmaster CD-102 press line', NULL, N'Heidelberg Speedmaster CD-102 press line');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'Heidelberg Speedmaster CD-102 press line', Description = NULL, ImageAlt = N'Heidelberg Speedmaster CD-102 press line' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.png') AND Lang = 'en';
+    UPDATE dbo.FacilityItemI18n SET Name = N'Heidelberg Speedmaster CD-102 press line', Description = NULL, ImageAlt = N'Heidelberg Speedmaster CD-102 press line' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-press.webp') AND Lang = 'en';
 
 IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-pressroom.jpg')
     INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'eco-printing'), N'assets/fac-eco-pressroom.jpg', 60, 1);
@@ -1042,18 +1042,18 @@ IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT
 ELSE
     UPDATE dbo.FacilityItemI18n SET Name = N'Press room — production control', Description = NULL, ImageAlt = N'Press room — production control' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-pressroom.jpg') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.jpg')
-    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'eco-printing'), N'assets/fac-eco-axis.jpg', 70, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.jpg') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.webp')
+    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'eco-printing'), N'assets/fac-eco-axis.webp', 70, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.webp') AND Lang = 'zh')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.jpg'), 'zh', N'Axis Control 色彩量測系統', NULL, N'Axis Control 色彩量測系統');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.webp'), 'zh', N'Axis Control 色彩量測系統', NULL, N'Axis Control 色彩量測系統');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'Axis Control 色彩量測系統', Description = NULL, ImageAlt = N'Axis Control 色彩量測系統' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.jpg') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.jpg') AND Lang = 'en')
+    UPDATE dbo.FacilityItemI18n SET Name = N'Axis Control 色彩量測系統', Description = NULL, ImageAlt = N'Axis Control 色彩量測系統' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.webp') AND Lang = 'en')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.jpg'), 'en', N'Axis Control color measurement system', NULL, N'Axis Control color measurement system');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.webp'), 'en', N'Axis Control color measurement system', NULL, N'Axis Control color measurement system');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'Axis Control color measurement system', Description = NULL, ImageAlt = N'Axis Control color measurement system' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.jpg') AND Lang = 'en';
+    UPDATE dbo.FacilityItemI18n SET Name = N'Axis Control color measurement system', Description = NULL, ImageAlt = N'Axis Control color measurement system' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-axis.webp') AND Lang = 'en';
 
 IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-eco-imagecontrol.jpg')
     INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'eco-printing'), N'assets/fac-eco-imagecontrol.jpg', 80, 1);
@@ -1237,44 +1237,44 @@ IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT
 ELSE
     UPDATE dbo.FacilityItemI18n SET Name = N'Blister packing strength tester', Description = NULL, ImageAlt = N'Blister packing strength tester' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-qc-blister.png') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.jpg')
-    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'tour'), N'assets/fac-tour1.jpg', 220, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.jpg') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp')
+    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'tour'), N'assets/fac-tour1.webp', 220, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp') AND Lang = 'zh')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.jpg'), 'zh', N'廠區作業現場', NULL, N'NTI 廠區作業現場');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp'), 'zh', N'廠區作業現場', NULL, N'NTI 廠區作業現場');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'廠區作業現場', Description = NULL, ImageAlt = N'NTI 廠區作業現場' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.jpg') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.jpg') AND Lang = 'en')
+    UPDATE dbo.FacilityItemI18n SET Name = N'廠區作業現場', Description = NULL, ImageAlt = N'NTI 廠區作業現場' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp') AND Lang = 'en')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.jpg'), 'en', N'Factory floor', NULL, N'Factory floor');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp'), 'en', N'Factory floor', NULL, N'Factory floor');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'Factory floor', Description = NULL, ImageAlt = N'Factory floor' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.jpg') AND Lang = 'en';
+    UPDATE dbo.FacilityItemI18n SET Name = N'Factory floor', Description = NULL, ImageAlt = N'Factory floor' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.jpg')
-    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'tour'), N'assets/fac-tour2.jpg', 230, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.jpg') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp')
+    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'tour'), N'assets/fac-tour2.webp', 230, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp') AND Lang = 'zh')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.jpg'), 'zh', N'生產通道', NULL, N'NTI 生產通道');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp'), 'zh', N'生產通道', NULL, N'NTI 生產通道');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'生產通道', Description = NULL, ImageAlt = N'NTI 生產通道' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.jpg') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.jpg') AND Lang = 'en')
+    UPDATE dbo.FacilityItemI18n SET Name = N'生產通道', Description = NULL, ImageAlt = N'NTI 生產通道' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp') AND Lang = 'en')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.jpg'), 'en', N'Production aisle', NULL, N'Production aisle');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp'), 'en', N'Production aisle', NULL, N'Production aisle');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'Production aisle', Description = NULL, ImageAlt = N'Production aisle' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.jpg') AND Lang = 'en';
+    UPDATE dbo.FacilityItemI18n SET Name = N'Production aisle', Description = NULL, ImageAlt = N'Production aisle' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.jpg')
-    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'tour'), N'assets/fac-tour-main.jpg', 240, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.jpg') AND Lang = 'zh')
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp')
+    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'tour'), N'assets/fac-tour-main.webp', 240, 1);
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp') AND Lang = 'zh')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.jpg'), 'zh', N'包材倉儲與物流', NULL, N'NTI 包材倉儲與物流');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp'), 'zh', N'包材倉儲與物流', NULL, N'NTI 包材倉儲與物流');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'包材倉儲與物流', Description = NULL, ImageAlt = N'NTI 包材倉儲與物流' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.jpg') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.jpg') AND Lang = 'en')
+    UPDATE dbo.FacilityItemI18n SET Name = N'包材倉儲與物流', Description = NULL, ImageAlt = N'NTI 包材倉儲與物流' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp') AND Lang = 'zh';
+IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp') AND Lang = 'en')
     INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.jpg'), 'en', N'Packaging stock & logistics', NULL, N'Packaging stock & logistics');
+    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp'), 'en', N'Packaging stock & logistics', NULL, N'Packaging stock & logistics');
 ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'Packaging stock & logistics', Description = NULL, ImageAlt = N'Packaging stock & logistics' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.jpg') AND Lang = 'en';
+    UPDATE dbo.FacilityItemI18n SET Name = N'Packaging stock & logistics', Description = NULL, ImageAlt = N'Packaging stock & logistics' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp') AND Lang = 'en';
 
 GO
 
@@ -1468,6 +1468,94 @@ ELSE
     UPDATE dbo.SupplierSpecI18n SET Title = N'ESG Data Reporting', Description = N'Upstream carbon data format and submission schedule for supply partners.' WHERE SupplierSpecId = (SELECT Id FROM dbo.SupplierSpec WHERE SortOrder = 40) AND Lang = 'en';
 
 GO
+
+/* ── news × tag → NewsTag ──────────────────────────── */
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'awards' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'awards' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'awards' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'esg' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'esg' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'esg' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/global-views-esg-award.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'disaster-education' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'disaster-education' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'disaster-education' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'paper-craft' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'paper-craft' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'paper-craft' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'csr' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'csr' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'csr' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/firefighter-boardgame.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'awards' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'awards' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'awards' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'esg' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'esg' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'esg' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'green-building' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'green-building' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/national-sustainable-development-award.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'green-building' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'partnership' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'partnership' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'partnership' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'esg' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'esg' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'esg' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'csr' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'csr' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'csr' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'paper-craft' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'paper-craft' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/taicca-partnership.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'paper-craft' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-printing-digital-innovation.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-printing-digital-innovation.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-printing-digital-innovation.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-printing-digital-innovation.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-printing-digital-innovation.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-printing-digital-innovation.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-printing-digital-innovation.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-printing-digital-innovation.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-printing-digital-innovation.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-drive-seminar.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'green-supply-chain' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-drive-seminar.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'green-supply-chain' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-drive-seminar.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'green-supply-chain' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-drive-seminar.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-drive-seminar.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-drive-seminar.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-drive-seminar.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'partnership' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-drive-seminar.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'partnership' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/green-drive-seminar.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'partnership' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'conservation' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'conservation' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'conservation' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'paper-craft' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'paper-craft' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'paper-craft' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'csr' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'csr' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'csr' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'partnership' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'partnership' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/animals-of-tomorrow.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'partnership' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'variable-data-printing' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png'), (SELECT Id FROM dbo.Tag WHERE Slug = N'variable-data-printing' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'variable-data-printing' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'packaging-design' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png'), (SELECT Id FROM dbo.Tag WHERE Slug = N'packaging-design' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'packaging-design' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'sustainable-packaging' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png'), (SELECT Id FROM dbo.Tag WHERE Slug = N'sustainable-packaging' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'sustainable-packaging' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'conservation' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png'), (SELECT Id FROM dbo.Tag WHERE Slug = N'conservation' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/gentle-wild-paper-bags.png') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'conservation' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/hp-variable-data-printing.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'variable-data-printing' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/hp-variable-data-printing.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'variable-data-printing' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/hp-variable-data-printing.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'variable-data-printing' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/hp-variable-data-printing.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/hp-variable-data-printing.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/hp-variable-data-printing.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/hp-variable-data-printing.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'packaging-design' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/hp-variable-data-printing.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'packaging-design' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/hp-variable-data-printing.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'packaging-design' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/sme-investment-benchmark.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'awards' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/sme-investment-benchmark.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'awards' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/sme-investment-benchmark.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'awards' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/sme-investment-benchmark.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/sme-investment-benchmark.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/sme-investment-benchmark.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'digital-printing' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/sme-investment-benchmark.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'sustainable-packaging' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/sme-investment-benchmark.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'sustainable-packaging' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/sme-investment-benchmark.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'sustainable-packaging' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/commonwealth-interview.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'media-coverage' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/commonwealth-interview.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'media-coverage' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/commonwealth-interview.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'media-coverage' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/commonwealth-interview.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/commonwealth-interview.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/commonwealth-interview.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'green-printing' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/commonwealth-interview.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/commonwealth-interview.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/commonwealth-interview.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'low-carbon' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'green-building' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'green-building' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'green-building' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'carbon-footprint' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'carbon-footprint' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'carbon-footprint' AND IsDeleted = 0) IS NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsTag WHERE NewsId = (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg') AND TagId = (SELECT Id FROM dbo.Tag WHERE Slug = N'sustainable-packaging' AND IsDeleted = 0))
+    INSERT dbo.NewsTag (NewsId, TagId) SELECT (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg'), (SELECT Id FROM dbo.Tag WHERE Slug = N'sustainable-packaging' AND IsDeleted = 0) WHERE (SELECT Id FROM dbo.News WHERE CoverImagePath = N'assets/news/low-carbon-production-film.jpg') IS NOT NULL AND (SELECT Id FROM dbo.Tag WHERE Slug = N'sustainable-packaging' AND IsDeleted = 0) IS NOT NULL;
 
 COMMIT;
 PRINT N'mockup 內容已匯入。';

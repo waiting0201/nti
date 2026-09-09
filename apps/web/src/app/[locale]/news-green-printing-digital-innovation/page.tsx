@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/news-green-printing-digital-innovation", {
     title: "Green printing and digital innovation at NTI Tainan — NTI Printing",
+    description: "Green printing and digital innovation at NTI Tainan: FSC-certified stock, HP Indigo digital presses and AI energy monitoring cutting waste on every run.",
   })
 }
 

@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/green-esg", {
     title: "ESG & Future Goals — NTI Printing",
+    description: "NTI's ESG roadmap: a safe modern workplace, UN SDG alignment, Science-Based Targets under evaluation and corporate social responsibility in practice.",
   })
 }
 
@@ -18,7 +19,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-mid4.png")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-mid4.webp")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/green-advantage")}>Sustainability</A><span>&rsaquo;</span><b>ESG &amp; Future Goals</b></div>
         <h1 className="sec-title reveal">ESG &amp; Future Goals</h1>
@@ -46,7 +47,7 @@ export default async function Page({ params }: Props) {
         <p className="prose wide">Green printing is a direction the industry is moving in, so materials and equipment are purchased on the premise that they reduce pollution and energy consumption.</p>
         <div className="flist mt-s"><p className="fi"><b>Eco-Friendly Material</b>Main materials &mdash; ink, varnish, lotions and solvents &mdash; comply with RoHS and REACH, and hold FSC&trade; Chain of Custody certification.</p><p className="fi"><b>Waste Treatment</b>Internal sewage treatment and a waste-solvent recovery system separate impurities and recycle what can be reused. Treated wastewater leaves at pH&nbsp;7&ndash;7.8.</p><p className="fi"><b>Energy &amp; Emissions</b>Energy saving and carbon reduction are managed across the continuous production process rather than at a single stage.</p></div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid3.png")} alt="Recovered paper and print waste sorted for recycling" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid3.webp")} alt="Recovered paper and print waste sorted for recycling" /></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Employee Development</div>
         <p className="prose wide">To build both competitiveness and technical depth, NTI runs education and training for every department and supports staff attending outside lectures and exhibitions.</p>

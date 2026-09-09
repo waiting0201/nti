@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/green-carbon", {
     title: "Carbon Efficiency — NTI Printing",
+    description: "Carbon efficiency at NTI: design, plate-making, printing and finishing in house, cutting transport and measuring carbon footprint across every print cycle.",
   })
 }
 
@@ -18,7 +19,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-mid3.png")} alt="Recovered paper and print waste sorted for recycling" /></section>
+      <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-mid3.webp")} alt="Recovered paper and print waste sorted for recycling" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/green-advantage")}>Sustainability</A><span>&rsaquo;</span><b>Carbon Efficiency</b></div>
         <h1 className="sec-title reveal">Carbon Efficiency</h1>
@@ -36,7 +37,7 @@ export default async function Page({ params }: Props) {
           <p className="prose">NTI Printing is committed to measurable carbon neutral printing and low carbon packaging production in Taiwan. We track our carbon footprint across printing cycles, invest in energy-efficient machines and adopt digital workflows that cut waste. Through the 4&nbsp;Rs &mdash; Reduce, Reuse, Recover, Recycle &mdash; we lower raw-material use and emissions while maintaining premium print standards.</p>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid4.png")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
+      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid4.webp")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">One-stop process, lower carbon</div>
         <p className="prose wide">Design, pre-press, plate-making, printing, coating, die-cutting, folding/gluing and quality control all happen in house. That removes rounds of communication and, more to the point, removes transport between suppliers &mdash; the single largest avoidable emission in conventional packaging production.</p>
