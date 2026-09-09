@@ -537,6 +537,24 @@ git push Remote_GitHub    # ← 這一步才觸發部署
     暴力破解防護，不宜再拿掉。真的被 script 擋住時的救援途徑：暫時把 Function App 的
     `Recaptcha__SecretKey` 清成 `REPLACE_WITH_RECAPTCHA_SECRET`，驗證會整個略過。
 
+- 🔴 **踩到的坑：正式庫的預設值約束是自動命名的**（2026-09-09）。
+  `DropAdminLockout` 第一版讓 EF 產出
+  `ALTER TABLE [AdminUser] DROP CONSTRAINT [DF_AdminUser_FailedLoginCount]`，
+  但**正式庫裡那個約束叫 `DF__AdminUser__Faile__70DDC3D8`**——早期建庫沒有把
+  `DefaultConstraintName` 帶進去。實測 107 個預設值約束裡 **103 個是自動命名的**，
+  只有 4 個（新加的 Tag 那批）符合 `DF_<表>_<欄>` 慣例。
+  - 後果比想像嚴重：`Program.cs` 在啟動時跑 `MigrateAsync()`，**migration 一失敗
+    整個 Function App 就起不來**。health 連續回 404／502，而且
+    **App Insights 一筆紀錄都沒有**——程序還沒走到能送遙測的地方就死了，
+    Flex Consumption 又不留容器日誌。查不到錯誤時要直接連 DB 看
+    `__EFMigrationsHistory` 停在哪一支。
+  - 修法：拿掉 `DropColumn` 上的 `.Annotation("Relational:DefaultConstraintName", …)`，
+    EF 就會改用「先查 `sys.default_constraints` 拿實際名稱再卸」的寫法。
+  - ⚠ **這是全域性的**：往後任何 `DropColumn`／改欄位型別只要碰到有預設值的欄位，
+    都會踩同一個雷。產生 migration 之後**務必先跑
+    `dotnet ef migrations script <前一支> <這一支>` 看實際 SQL**，
+    出現寫死的 `DROP CONSTRAINT [DF_…]` 就要照上面處理。
+
 - ✅ **移除後台登入的帳號鎖定**（2026-09-09，客戶決定）：原本「連續 5 次失敗鎖 15 分鐘」
   已拿掉，`AdminUser.FailedLoginCount`／`LockoutEndAt` 兩個死欄位一併移除
   （EF Migration `DropAdminLockout`、`db/migrations/0008`）。
