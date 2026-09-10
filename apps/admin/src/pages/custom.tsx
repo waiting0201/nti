@@ -16,13 +16,32 @@ export function SettingPage() {
   const { can } = useAuth()
   const canEdit = can('setting.edit')
   const [values, setValues] = useState<Record<string, string | { zh: string; en: string }>>({})
+  const [loadError, setLoadError] = useState('')
+  const [loaded, setLoaded] = useState(false)
   const [locale, setLocale] = useState<Locale>('zh')
   const [dirty, setDirty] = useState(false)
   const [saving, setSaving] = useState(false)
 
+  /**
+   * 讀取失敗要說出來。
+   *
+   * 原本是 `void api.getSettings().then(setValues)`——讀取失敗時 `values` 就停在 `{}`，
+   * 十五個欄位一起空白，畫面上沒有任何異狀。於是「資料庫裡沒有值」與「根本沒讀到」
+   * 長得一模一樣，看畫面的人分不出來，回報只能說「網站設定是空的」。
+   */
   useEffect(() => {
-    void api.getSettings().then(setValues)
+    api
+      .getSettings()
+      .then(setValues)
+      .catch((err) => setLoadError(err instanceof Error ? err.message : '讀取失敗'))
+      .finally(() => setLoaded(true))
   }, [])
+
+  /** 讀到了、但十五個 key 都沒有值——資料庫還沒匯入，不是這一頁壞了 */
+  const allEmpty =
+    loaded &&
+    !loadError &&
+    Object.values(values).every((v) => (typeof v === 'string' ? !v : !v.zh && !v.en))
 
   const set = (key: string, v: string, i18n?: boolean) => {
     setValues((prev) => {
@@ -49,6 +68,18 @@ export function SettingPage() {
         <h1>21 · 網站設定</h1>
         <div className="sub">設定項目固定，不能自行新增。</div>
       </div>
+
+      {loadError && (
+        <Notice kind="danger">
+          讀不到設定。下面十五個欄位空白是因為沒讀到資料，不是因為還沒填：{loadError}
+        </Notice>
+      )}
+      {allEmpty && (
+        <Notice kind="info">
+          十五個設定在資料庫裡都還沒有值。值不是在這一頁編出來的——mockup 已經有的那些由
+          <code>db/content/220_site_setting.sql</code> 匯入，其餘等客戶提供後在這裡填。
+        </Notice>
+      )}
 
       <div className="locale-tabs">
         {LOCALES.map((l) => (
