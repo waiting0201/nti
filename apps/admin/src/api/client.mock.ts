@@ -15,17 +15,42 @@ import type { AdminAccount, AdminDraft, AdminPatch, AdminRole } from './client.a
  */
 
 const STORE_KEY = 'nti-admin-store-v1'
+const SEED_KEY = STORE_KEY + ':seed'
 
 type Store = Record<string, Row[]>
 
+/**
+ * 種子指紋。
+ *
+ * 整份資料存在 localStorage，於是**換了種子對已經開過後台的瀏覽器是看不見的**——
+ * 舊的那份會一直贏。實際踩到的例子：舊網址轉址從 7 筆示意資料換成舊站真正的 227 條，
+ * 但開過後台的人畫面上還是那 7 筆，看起來像匯入失敗。
+ *
+ * 指紋只在種子內容真的變了才會變，所以客戶在 demo 上的編輯不會每次進來就被洗掉；
+ * 種子一變則整份重來——這份資料是我們產的，以新的為準才對。
+ */
+const SEED_FINGERPRINT = (() => {
+  const src = JSON.stringify([SEED, MANUAL_SEED, SETTING_VALUES])
+  let h = 0x811c9dc5
+  for (let i = 0; i < src.length; i++) {
+    h ^= src.charCodeAt(i)
+    h = Math.imul(h, 0x01000193)
+  }
+  return (h >>> 0).toString(36)
+})()
+
+/** 這次載入是不是因為種子換了而重來（重來就要把新指紋寫回去，否則下次又洗一次） */
+let reseeded = false
+
 function seedStore(): Store {
+  reseeded = true
   return structuredClone({ ...SEED, ...MANUAL_SEED, __settings: [] }) as Store
 }
 
 function load(): Store {
   try {
     const raw = localStorage.getItem(STORE_KEY)
-    if (raw) return JSON.parse(raw) as Store
+    if (raw && localStorage.getItem(SEED_KEY) === SEED_FINGERPRINT) return JSON.parse(raw) as Store
   } catch {
     // localStorage 不可用（無痕視窗等）時退回記憶體
   }
@@ -34,11 +59,12 @@ function load(): Store {
 
 let store: Store = load()
 let settings: Record<string, string | { zh: string; en: string }> = loadSettings()
+if (reseeded) persist()
 
 function loadSettings() {
   try {
     const raw = localStorage.getItem(STORE_KEY + ':settings')
-    if (raw) return JSON.parse(raw)
+    if (raw && !reseeded) return JSON.parse(raw)
   } catch {
     /* 同上 */
   }
@@ -49,6 +75,7 @@ function persist() {
   try {
     localStorage.setItem(STORE_KEY, JSON.stringify(store))
     localStorage.setItem(STORE_KEY + ':settings', JSON.stringify(settings))
+    localStorage.setItem(SEED_KEY, SEED_FINGERPRINT)
   } catch {
     /* 存不進去就只留在記憶體，不影響操作 */
   }
