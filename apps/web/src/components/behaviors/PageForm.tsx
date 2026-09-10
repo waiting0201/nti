@@ -57,6 +57,8 @@ declare global {
       ready(cb: () => void): void
       execute(siteKey: string, opts: { action: string }): Promise<string>
     }
+    /** api.js 自己放的初始化旗標，卸載時得一起清掉才會重新畫出 badge。 */
+    ___grecaptcha_cfg?: unknown
   }
 }
 
@@ -69,6 +71,38 @@ function loadRecaptcha(): void {
   script.src = `https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`
   script.async = true
   document.head.appendChild(script)
+}
+
+/** 目前掛載中的表單頁數量；StrictMode 的重掛與下面的延遲清掃都靠它判斷「真的離開了」。 */
+let mountedForms = 0
+
+/**
+ * 把 reCAPTCHA 整包拆掉。
+ *
+ * 右下角那顆 badge 是 api.js 直接掛在 `<body>` 上的，不屬於 React 樹，所以換頁時
+ * 不會跟著這個元件消失——只要訪客進過一次聯絡／報價頁，badge 就會跟著他逛完整站。
+ * 只有這兩頁需要驗證，因此離開時連 script、badge、challenge 的 iframe 一起收掉。
+ */
+function sweepRecaptcha(): void {
+  if (mountedForms > 0) return                 // 又回到表單頁了，別把新的 badge 掃掉
+
+  document.querySelectorAll('script[src*="recaptcha"]').forEach((el) => el.remove())
+
+  // badge 與 challenge 的 iframe 各自被包在一層 body 直屬的 div 裡，連外層一起移除
+  document.querySelectorAll('.grecaptcha-badge, iframe[src*="recaptcha"]').forEach((el) => {
+    const wrapper = el.closest('body > div')
+    ;(wrapper ?? el).remove()
+  })
+
+  // 兩個 global 都要清，不然下次載入 api.js 會以為已經初始化過，badge 不會再出現
+  delete window.grecaptcha
+  delete window.___grecaptcha_cfg
+}
+
+/** 卸載時清一次，兩秒後再清一次——訪客一進來就馬上換頁時，badge 會在拆完之後才畫出來。 */
+function unloadRecaptcha(): void {
+  sweepRecaptcha()
+  setTimeout(sweepRecaptcha, 2000)
 }
 
 /** 取 token。沒設 site key 或載入失敗時回 null——後端沒設 secret 時本來就會放行。 */
@@ -107,6 +141,7 @@ export function PageForm() {
     const submit = form.querySelector('button[type="submit"]') as HTMLButtonElement | null
     const submitLabel = submit?.innerHTML ?? ''
 
+    mountedForms += 1
     loadRecaptcha()
 
     const say = (text: string) => {
@@ -177,6 +212,8 @@ export function PageForm() {
     return () => {
       form.removeEventListener('submit', onSubmit)
       reset?.removeEventListener('click', onReset)
+      mountedForms -= 1
+      unloadRecaptcha()
     }
   }, [locale])
 
