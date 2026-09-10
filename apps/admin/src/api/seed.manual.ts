@@ -168,7 +168,7 @@ export const SETTING_GROUPS: Array<{ title: string; fields: SettingField[] }> = 
       { key: 'company.phone', label: '電話', type: 'text' },
       { key: 'company.fax', label: '傳真', type: 'text' },
       { key: 'company.email', label: 'Email', type: 'text' },
-      { key: 'company.map', label: 'Google 地圖', type: 'embed', hint: '在 Google 地圖點「分享 → 嵌入地圖」，把複製到的內容貼進來' },
+      { key: 'company.map_embed', label: 'Google 地圖', type: 'embed', hint: '在 Google 地圖點「分享 → 嵌入地圖」，把複製到的內容貼進來' },
     ],
   },
   {
@@ -182,15 +182,15 @@ export const SETTING_GROUPS: Array<{ title: string; fields: SettingField[] }> = 
   {
     title: '首頁',
     fields: [
-      { key: 'home.gallery', label: '首頁形象圖帶', type: 'image', altKey: 'home.galleryAlt', hint: '建議 **2400×1000px**（12:5）｜JPG／WebP｜≤500KB' },
-      { key: 'home.galleryAlt', label: '形象圖帶替代文字', type: 'text', i18n: true },
+      { key: 'home.gallery_image', label: '首頁形象圖帶', type: 'image', altKey: 'home.gallery_alt', hint: '建議 **2400×1000px**（12:5）｜JPG／WebP｜≤500KB' },
+      { key: 'home.gallery_alt', label: '形象圖帶替代文字', type: 'text', i18n: true },
     ],
   },
   {
     title: '信件',
     fields: [
-      { key: 'mail.quoteTo', label: '報價通知收件者', type: 'email-list', hint: '多組請用逗號分隔' },
-      { key: 'mail.contactTo', label: '聯絡通知收件者', type: 'email-list', hint: '多組請用逗號分隔' },
+      { key: 'mail.quote_notify_to', label: '報價通知收件者', type: 'email-list', hint: '多組請用逗號分隔' },
+      { key: 'mail.contact_notify_to', label: '聯絡通知收件者', type: 'email-list', hint: '多組請用逗號分隔' },
       { key: 'mail.bcc', label: '密件副本', type: 'email-list', hint: '多組請用逗號分隔' },
     ],
   },
@@ -206,14 +206,14 @@ export const SETTING_VALUES: Record<string, string | { zh: string; en: string }>
   'company.phone': '+886 6 261 1358',
   'company.fax': '+886-6-000-0001',
   'company.email': 'service@nti-printing.com',
-  'company.map': '<iframe src="https://www.google.com/maps?q=…&output=embed"></iframe>',
+  'company.map_embed': '<iframe src="https://www.google.com/maps?q=…&output=embed"></iframe>',
   'social.facebook': '',
   'social.linkedin': '',
   'social.youtube': '',
-  'home.gallery': '/assets/ref-home-mid1.webp',
-  'home.galleryAlt': { zh: 'NTI 印刷廠區形象', en: 'NTI Printing plant' },
-  'mail.quoteTo': 'sales@nti-printing.com',
-  'mail.contactTo': 'service@nti-printing.com',
+  'home.gallery_image': '/assets/ref-home-mid1.webp',
+  'home.gallery_alt': { zh: 'NTI 印刷廠區形象', en: 'NTI Printing plant' },
+  'mail.quote_notify_to': 'sales@nti-printing.com',
+  'mail.contact_notify_to': 'service@nti-printing.com',
   'mail.bcc': '',
 }
 
