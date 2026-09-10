@@ -38,6 +38,31 @@ i18n 有則更新、無則新增。重跑不會產生重複。
 另更新四筆固定方案的封面與文案，並**將它們上架**——種子刻意設為未上架
 （「素材與文案到位後由後台上架」），這支腳本補的就是那兩樣。
 
+## 210_legacy_redirects.sql
+
+舊站 nti-printing.com 的 **227 條 301 對照**，匯入後台單元 16「舊網址轉址」。
+
+```bash
+node tools/build-redirect-sql.mjs       # 重新產生（請勿手改 .sql／.csv）
+sqlcmd -S <server> -d NTI -I -b -i db/content/210_legacy_redirects.sql
+```
+
+來源是 `apps/web/src/lib/legacy-redirects.ts`——**前台 middleware 正在用的同一份**，
+不是另抄一份。清單本身來自舊站自己的 sitemap（`tools/check-legacy-redirects.mjs` 抓）。
+227 條中 156 條有專屬落點，71 條導回該語系首頁（客戶 2026-09-07 決定：舊連結進來不要撞 404）。
+舊站 229 個網址扣掉 `/en` 與 `/en/contact` 兩條新舊相同、本來就免轉址的，就是這 227。
+
+⚠ 導回首頁的 71 條 Google 會判成 soft 404，**權重傳不過去**；內容遷移做完要逐條補上
+專屬落點（改 `legacy-redirects.ts` 的 `POSTS` 再重跑產生器）。
+
+**冪等，而且已存在的 `FromPath` 一律不動。** 這點與 200 那支不同：轉址表客戶會在後台
+編輯，「有就更新」等於重跑一次就把他調整過的落點默默改掉。要整批更新請走後台單元 16 的
+**⬆ 匯入 CSV**（吃同目錄的 `210_legacy_redirects.csv`）——那條路徑才是覆蓋，而且會留操作紀錄。
+
+> ⚠ 現階段前台的轉址是 middleware 讀編譯進去的對照表，**不讀這張表**。
+> 也就是說客戶現在在後台改這一頁不會影響正式站。等 middleware 改讀 API
+> （`RedirectConfiguration` 的覆蓋索引就是為此留的），DB 才成為權威。
+
 ## ⚠ 中文是初稿
 
 `tools/content-zh.mjs` 的繁體中文是**機器翻譯初稿，不是客戶核可的文案**。

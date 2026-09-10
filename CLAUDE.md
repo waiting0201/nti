@@ -130,6 +130,7 @@ NTI/
   (cd Api && dotnet ef database update)      # schema + 種子（權威來源）
   set -a; . ./db/.env.local; set +a
   db/tools/sqlcmd.sh NTI < db/content/200_mockup_content.sql   # 111 筆中英內容
+  db/tools/sqlcmd.sh NTI < db/content/210_legacy_redirects.sql # 227 條舊站 301 對照
   db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql             # 應輸出「全數 PASS」
   ```
 

@@ -270,6 +270,14 @@
 ### 16 `redirect` 舊網址轉址
 舊網址（唯一、小寫）／轉到新網址／轉址方式（永久 301／暫時 302／永久・表單頁專用 308）／啟用／已轉址次數（唯讀）。支援 **CSV 匯入匯出**（舊站 46 頁 + 80 篇文章的對照表）。儲存時檢查轉址鏈與迴圈並擋下。
 
+**出貨就帶著舊站的 227 條對照**（`db/content/210_legacy_redirects.sql`，由
+`tools/build-redirect-sql.mjs` 從前台 middleware 的同一份對照表產生），客戶不必自己貼。
+整批更新走本單元的 CSV 匯入（`db/content/210_legacy_redirects.csv`）。
+
+> ⚠ 兩件目前與規格不符的事：**轉址鏈與迴圈的檢查還沒實作**（`AdminRedirectHandler.Validate`
+> 只做必填、值域與正規化），而**前台還不讀這張表**——middleware 讀的是編譯進去的
+> `apps/web/src/lib/legacy-redirects.ts`，所以客戶現在改這一頁不會影響正式站。
+
 ### 17 `quote` 報價需求
 **前台來源**：`get-a-quote.html`。**唯讀資料 + 可改狀態**，不可編輯客戶填寫內容。
 
@@ -466,6 +474,7 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 | 2026-09-09 | Tim（Claude Code） | **移除單元 00 待辦總覽**：四張數字卡中「中英未對齊」與「7 天內即將下架」統計的是全站累加，點下去卻寫死跳最新消息，數字與落點對不上；且全站掃描在分頁 API 下（`pageSize=100`）超過 100 筆就會少算，是個會說謊的指標。§2 表刪一列、§4 刪 §00 節、§6 權限矩陣 173 → 170 列（刪 `dashboard.view`，SuperAdmin 82 → 81、Editor 69 → 68、Viewer 22 → 21）、`GET /admin/dashboard` 與 `AdminDashboardHandler` 一併移除（EF migration `DropDashboardPermission`）。**登入後改為導向側邊欄第一個有權限的單元**；中英完成度下放到各單元清單的「中英」篩選（§5.3），範圍限單一單元，數字就不會再失真 |
 
 | 2026-09-09 | Tim（Claude Code） | **各單元的刪除改為真刪，並讓它找得到**（§5.1／§5.7 改寫）。兩件事：(a) 原本一律軟刪，資料從清單消失、前台也查不到，卻仍佔著 slug 與分類代號，同名重建被擋成「已存在」——對操作者就是「刪了卻沒刪掉」；(b) 刪除鈕只長在「勾選之後」的工具列上，客戶回報「後台沒有刪除功能」，因此每一列都補一顆刪除鈕。同時新增 `page.delete`／`quote.delete`／`contact.delete`（僅超管），§6 矩陣 170 → 173 列 |
+| 2026-09-10 | Tim（Claude Code） | **單元 16 舊網址轉址填入實際資料**：`tools/build-redirect-sql.mjs` 從前台 middleware 的對照表產出 `db/content/210_legacy_redirects.{csv,sql}`（227 條＝舊站 sitemap 的 229 個網址扣掉兩條新舊相同的），後台 mock 的 7 筆示意資料改為這 227 條真資料。SQL 刻意「已存在的 FromPath 不覆蓋」——這張表客戶會編輯，重跑覆蓋等於默默改掉他調整過的落點 |
 | 2026-09-10 | Tim（Claude Code） | **後台介面文字去技術化**：後台是給客戶編輯內容的人用的，畫面上不應出現實作名詞。移除／改寫了 webhook・ISR・UTC・JSON-LD・noindex・`HasRichBody = 1`・`SiteSetting` 的 key 清單・`VITE_API_BASE`・權限碼與 `db/seed` 路徑等字樣；單元的「前台位置」由 `index.html #hero` 這類檔名改為使用者看得到的頁面名稱（首頁 主視覺輪播）；SEO 欄位改為「網址代稱 Slug／SEO 標題／搜尋摘要／指定標準網址／社群分享標題・描述・圖片」；單元 16 更名為**舊網址轉址**，欄位改為舊網址／轉到新網址／轉址方式／已轉址次數。清單的選項欄位改為顯示選項文字而非存進資料庫的代號（報價與聯絡訊息的狀態原本直接印出 `New`／`Replied`）|
 | 2026-09-10 | Tim（Claude Code） | **上傳改為按下儲存才送出**（§3 共通規則）。原本選好檔案當下就 POST 上去，於是「檔案已進 Blob」與「資料還沒存」被拆成兩個時間點：使用者選了圖卻沒存檔或直接關掉分頁，檔案就成了 DB 沒有任何引用的孤兒，要等 `OrphanMediaFunction` 過了寬限期才收。改成暫存於瀏覽器、儲存時才一併上傳，孤兒視窗從「使用者猶豫的幾分鐘」縮成「兩個請求之間的幾百毫秒」（Blob 與 DB 不同交易，孤兒清除仍要留著）。代價是格式／大小的錯誤會晚一步才發生，因此選檔當下就先在前端擋，白名單與後端 `UploadRules` 對齊。同時新增文件端點 `/admin/{unit}/upload-file`——原本唯一的 `/upload` 只收圖片，公告附件與供應商下載檔接上 API 後會一律被退 |
 

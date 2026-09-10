@@ -4,6 +4,7 @@
  * 兩個來源，都是專案裡既有的權威檔案，不憑空捏內容：
  *   db/seed/*.sql   分類、29 筆固定頁、4 筆方案 —— 與正式資料庫種子同一份
  *   mockup/*.html   新聞、案例、FAQ、認證、客戶、設備、職缺… —— 客戶定案的實際內容
+ *   db/content/210_legacy_redirects.csv  舊站 301 對照 —— 與前台 middleware 同一份
  *
  * 目的是讓後台一打開就是「這個站真正的內容」，客戶驗收時看得懂自己在改什麼。
  * 之後接上 /api/v1/admin/* 就不再需要這份種子。
@@ -16,6 +17,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const repo = path.resolve(root, '../..')
 const mockup = path.join(repo, 'mockup')
 const dbSeed = path.join(repo, 'db/seed')
+const dbContent = path.join(repo, 'db/content')
 
 const read = (p) => readFileSync(p, 'utf8')
 const readMockup = (f) => read(path.join(mockup, f))
@@ -445,6 +447,19 @@ const seed = {
   vlog: vlogs(),
   'supplier-notice': supplierNotices(),
   'supplier-spec': supplierSpecs(),
+  redirect: redirects(),
+}
+
+/* ── db/content：舊站 301 對照 ──────────────────────────────
+   來源是 tools/build-redirect-sql.mjs 由前台 middleware 的對照表產的 CSV。
+   後台這一頁客戶要做的事就是核對舊網址有沒有對到正確的新頁面，所以放真的資料；
+   已轉址次數一律 0——正式站還沒上線，編出來的數字會被當成真的看。 */
+function redirects() {
+  const csv = read(path.join(dbContent, '210_legacy_redirects.csv')).trim().split('\n')
+  return csv.slice(1).map((line, i) => {
+    const [fromPath, toPath, statusCode] = line.split(',')
+    return { id: String(i + 1), fromPath, toPath, statusCode, isEnabled: true, hitCount: 0 }
+  })
 }
 
 const counts = Object.entries(seed).map(([k, v]) => `${k}=${v.length}`).join('  ')

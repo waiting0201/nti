@@ -2,8 +2,11 @@ import type { Row } from './types'
 
 /**
  * mockup 與 db/seed 裡沒有對應內容的單元，用示意資料開場。
- * 供應商下載檔、301 轉址、報價／聯絡（前台表單尚未接 API）、
+ * 供應商下載檔、報價／聯絡（前台表單尚未接 API）、
  * 管理員、信件紀錄、網站設定。
+ *
+ * 301 轉址不在這裡：那份是真的對照表，由 build-seed.mjs 自
+ * db/content/210_legacy_redirects.csv 產生。
  */
 
 const bi = (zh: Record<string, string>, en: Record<string, string>) => ({ zh, en })
@@ -72,24 +75,6 @@ export const MANUAL_SEED: Record<string, Row[]> = {
       i18n: bi({ name: '媒體報導' }, { name: 'Media Coverage' }) },
     { id: '17', slug: 'partnership', sortOrder: 170, isActive: true, usageCount: 3,
       i18n: bi({ name: '產業合作' }, { name: 'Partnership' }) },
-  ],
-
-  /*
-   * 取自 `apps/web/src/lib/legacy-redirects.ts` 的實際對照（舊站 nti-printing.com
-   * 的中文在根目錄、英文在 /en/）。刻意用真的網址而不是編出來的 `/about.html`：
-   * 客戶在這一頁要核對的就是舊站網址有沒有對到正確的新頁面，假路徑核對不了。
-   *
-   * 這只是 mock 的開場資料。接上 API 之後，權威來源是 DB 的 Redirect 表，
-   * 由這個單元的 CSV 匯入把 `reference/舊站301對照表.md` 整批帶進去。
-   */
-  redirect: [
-    { id: '1', fromPath: '/home/vision', toPath: '/zh/about-difference', statusCode: '301', isEnabled: true, hitCount: 412 },
-    { id: '2', fromPath: '/en/home/vision', toPath: '/en/about-difference', statusCode: '301', isEnabled: true, hitCount: 168 },
-    { id: '3', fromPath: '/home/recognition', toPath: '/zh/about-certifications', statusCode: '301', isEnabled: true, hitCount: 233 },
-    { id: '4', fromPath: '/home/factory', toPath: '/zh/facility-tour', statusCode: '301', isEnabled: true, hitCount: 1268 },
-    { id: '5', fromPath: '/home/green-printing', toPath: '/zh/green-our-advantage', statusCode: '301', isEnabled: true, hitCount: 733 },
-    { id: '6', fromPath: '/home/csr', toPath: '/zh/green-esg', statusCode: '301', isEnabled: true, hitCount: 205 },
-    { id: '7', fromPath: '/old-quote', toPath: '/zh/get-a-quote', statusCode: '302', isEnabled: false, hitCount: 0 },
   ],
 
   quote: [
