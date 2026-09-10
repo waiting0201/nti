@@ -8,7 +8,7 @@ import { LOCALE_LABEL, LOCALES, publishState, type Field, type Locale, type Unit
 import { useAuth } from '@/lib/auth'
 import { Badge, Modal, Notice, toast, useUnsavedGuard } from '@/components/ui'
 import { FieldInput } from '@/components/fields'
-import { blockingReasons, isComplete, missingNeutral } from '@/lib/completeness'
+import { blockingReasons, isComplete, missingIn, missingNeutral } from '@/lib/completeness'
 import { RecordView } from './RecordView'
 import { assetUrl } from '@/lib/asset'
 import { countPending, resolvePendingUploads } from '@/lib/pending-uploads'
@@ -55,15 +55,21 @@ export function EditPage() {
   const canEdit = can(`${unit.code}.edit`)
   const canPublish = can(`${unit.code}.publish`)
 
+  /** 動過的欄位就把它的錯誤訊息收掉——留著會變成「我已經填了它還在紅」。 */
+  const clearError = (key: string) =>
+    setFieldErrors((prev) => (key in prev ? Object.fromEntries(Object.entries(prev).filter(([k]) => k !== key)) : prev))
+
   const setNeutral = (key: string, v: unknown) => {
     setRow({ ...row, [key]: v })
     setDirty(true)
+    clearError(key)
   }
   const setLocalised = (key: string, v: unknown) => {
     const i18n = { ...(row.i18n ?? { zh: {}, en: {} }) }
     i18n[locale] = { ...i18n[locale], [key]: String(v ?? '') }
     setRow({ ...row, i18n })
     setDirty(true)
+    clearError(key)
   }
 
   const pendingCount = countPending(row)
@@ -86,6 +92,20 @@ export function EditPage() {
       toast(`還沒填：${missing.map((f) => f.label).join('、')}`)
       return
     }
+
+    // 必填的文字欄位：§5.3 的草稿寬容是「可以先只填一種語系」，不是「兩種都空著」。
+    // 這條對**沒有上下架流程的單元**尤其要緊——15 頁面 SEO 與 25 標籤永遠不會經過
+    // 下面的 blockingReasons，沒有這關就等於整個單元的必填從來沒有人擋。
+    const missingZh = missingIn(unit, next, 'zh')
+    const missingEn = missingIn(unit, next, 'en')
+    if (missingZh.length && missingEn.length) {
+      // 標在使用者正在看的那個分頁上：兩邊都缺的時候，把他丟去另一個分頁看紅字沒有意義
+      const showing = locale === 'en' ? missingEn : missingZh
+      setFieldErrors(Object.fromEntries(showing.map((f) => [f.key, '必填，不能空著'])))
+      toast(`${LOCALE_LABEL[locale]}還沒填：${showing.map((f) => f.label).join('、')}（中英至少要完整填一種）`)
+      return
+    }
+
     setFieldErrors({})
 
     if (publish !== undefined) {
@@ -101,32 +121,32 @@ export function EditPage() {
 
     // 圖片／檔案是選檔當下暫存、這裡才真的送出（見 lib/pending-uploads）。
     // 上傳失敗就整筆中止：欄位還指著本機的 blob URL，存進 DB 會變成永遠讀不到的圖。
+    //
+    // 寫入這段也要接住錯誤：後端擋下來（必填、重複的 slug、權限）時如果讓它自己
+    // 往外炸，整個 app 沒有 ErrorBoundary 也沒有 unhandledrejection，畫面會是
+    // **按了完全沒反應**——看起來跟「驗證沒作用」一模一樣。
+    let phase: 'upload' | 'write' = 'upload'
+    setSaving(true)
     try {
-      setSaving(true)
       await resolvePendingUploads(unit.code, next)
+      phase = 'write'
+
+      if (isNew) {
+        const created = await api.create(unit.code, next)
+        setDirty(false)
+        toast('已新增')
+        nav(`/u/${unit.code}/${created.id}`, { replace: true })
+        return
+      }
+      await api.save(unit.code, next)
+      setRow(next)
+      setDirty(false)
+      toast(publish === true ? '已上架' : publish === false ? '已下架' : '已儲存')
     } catch (err) {
-      const code = err instanceof ApiError ? err.code : 'INTERNAL'
-      toast(
-        code === 'UPLOAD_TYPE' ? '檔案格式不符，尚未儲存。請確認副檔名與檔案實際內容一致。'
-        : code === 'UPLOAD_SIZE' ? '檔案太大，尚未儲存。'
-        : `檔案上傳失敗，尚未儲存：${(err as Error).message}`,
-      )
-      return
+      toast(phase === 'upload' ? uploadFailed(err) : writeFailed(err))
     } finally {
       setSaving(false)
     }
-
-    if (isNew) {
-      const created = await api.create(unit.code, next)
-      setDirty(false)
-      toast('已新增')
-      nav(`/u/${unit.code}/${created.id}`, { replace: true })
-      return
-    }
-    await api.save(unit.code, next)
-    setRow(next)
-    setDirty(false)
-    toast(publish === true ? '已上架' : publish === false ? '已下架' : '已儲存')
   }
 
   const copyToEnglish = () => {
@@ -222,6 +242,7 @@ export function EditPage() {
                     key={f.key}
                     field={f}
                     value={row.i18n?.[locale]?.[f.key] ?? ''}
+                    error={fieldErrors[f.key]}
                     onChange={(v) => setLocalised(f.key, v)}
                   />
                 ))}
@@ -246,7 +267,7 @@ export function EditPage() {
           )}
           {canEdit && (
             <button className="btn" disabled={saving} onClick={() => save()}>
-              {saving ? '上傳中…' : '儲存'}
+              {saving ? '儲存中…' : '儲存'}
             </button>
           )}
           {canPublish && unit.hasStatus && (
@@ -257,14 +278,14 @@ export function EditPage() {
                 </button>
               ) : (
                 <button className="btn btn-primary" disabled={saving} onClick={() => save(true)}>
-                  {saving ? '上傳中…' : '儲存並上架'}
+                  {saving ? '儲存中…' : '儲存並上架'}
                 </button>
               )}
             </>
           )}
           {canEdit && !unit.hasStatus && (
             <button className="btn btn-primary" disabled={saving} onClick={() => save()}>
-              {saving ? '上傳中…' : '儲存'}
+              {saving ? '儲存中…' : '儲存'}
             </button>
           )}
         </div>
@@ -285,6 +306,27 @@ export function EditPage() {
       )}
     </>
   )
+}
+
+/** 上傳失敗。附檔還在暫存區、什麼都沒進 DB，所以一定要講「尚未儲存」。 */
+function uploadFailed(err: unknown): string {
+  const code = err instanceof ApiError ? err.code : 'INTERNAL'
+  return code === 'UPLOAD_TYPE' ? '檔案格式不符，尚未儲存。請確認副檔名與檔案實際內容一致。'
+    : code === 'UPLOAD_SIZE' ? '檔案太大，尚未儲存。'
+    : `檔案上傳失敗，尚未儲存：${(err as Error).message}`
+}
+
+/**
+ * 寫入失敗。後端信封的 `message` 本來就是給人看的中文，直接轉述；
+ * 只有 401／403 要換句話說——「未授權」對操作者沒有任何可行動的資訊。
+ */
+function writeFailed(err: unknown): string {
+  if (err instanceof ApiError) {
+    if (err.status === 401) return '登入已逾期，尚未儲存。請重新登入後再存一次。'
+    if (err.status === 403) return '你的角色沒有這項權限，尚未儲存。'
+    return `${err.message}（尚未儲存）`
+  }
+  return `儲存失敗，尚未儲存：${(err as Error).message}`
 }
 
 /** docs §5.4：上架開關 + 上架時間 + 下架時間 */

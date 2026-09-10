@@ -73,8 +73,25 @@ export function ToastHost() {
       setMsg(m)
       window.setTimeout(() => setMsg(''), 2600)
     }
+
+    /**
+     * 安全網：沒有人接住的 API 錯誤至少要說一句話。
+     *
+     * 這種錯誤最常見的來源是後端擋下來的寫入（必填、重複、權限）。呼叫端自己
+     * try／catch 是正解，但漏接一處的後果太不對稱——畫面完全沒反應，操作者會
+     * 認定「存好了」或「這個按鈕壞了」，兩種都比看到一句話糟。
+     */
+    const onRejection = (e: PromiseRejectionEvent) => {
+      const reason = e.reason
+      const text = reason instanceof Error ? reason.message : String(reason ?? '')
+      setMsg(`操作失敗：${text || '未知的錯誤'}`)
+      window.setTimeout(() => setMsg(''), 2600)
+    }
+    window.addEventListener('unhandledrejection', onRejection)
+
     return () => {
       toastSetter = null
+      window.removeEventListener('unhandledrejection', onRejection)
     }
   }, [])
   if (!msg) return null

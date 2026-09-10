@@ -105,28 +105,31 @@ export function SettingPage() {
             onClick={async () => {
               // 圖片欄位是選檔當下暫存、按這裡才真的送出（見 lib/pending-uploads）
               const next = structuredClone(values)
+              // 寫入跟上傳一樣要接住錯誤：漏接的話後端擋下來時畫面毫無反應，
+              // 操作者會以為設定存好了（見 EditPage 的同一段）
+              let phase: 'upload' | 'write' = 'upload'
+              setSaving(true)
               try {
-                setSaving(true)
                 await resolvePendingUploads('setting', next)
+                phase = 'write'
+                await api.saveSettings(next)
+                setValues(next)
+                setDirty(false)
+                toast('設定已儲存')
               } catch (err) {
                 const code = err instanceof ApiError ? err.code : 'INTERNAL'
                 toast(
-                  code === 'UPLOAD_TYPE' ? '檔案格式不符，設定尚未儲存。'
+                  phase === 'write' ? `${(err as Error).message}（設定尚未儲存）`
+                  : code === 'UPLOAD_TYPE' ? '檔案格式不符，設定尚未儲存。'
                   : code === 'UPLOAD_SIZE' ? '檔案太大，設定尚未儲存。'
                   : `圖片上傳失敗，設定尚未儲存：${(err as Error).message}`,
                 )
-                return
               } finally {
                 setSaving(false)
               }
-
-              await api.saveSettings(next)
-              setValues(next)
-              setDirty(false)
-              toast('設定已儲存')
             }}
           >
-            {saving ? '上傳中…' : '儲存設定'}
+            {saving ? '儲存中…' : '儲存設定'}
           </button>
         </div>
       </div>

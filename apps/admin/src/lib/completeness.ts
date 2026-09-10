@@ -22,7 +22,11 @@ export function missingNeutral(unit: Unit, row: Row): Field[] {
   return unitFields(unit).filter((f) => !f.i18n && f.required && isBlank(row[f.key]))
 }
 
-export function missingFields(unit: Unit, row: Row, locale: Locale): string[] {
+/**
+ * 這個語系還缺的必填欄位（回傳欄位本身，呼叫端要拿 `key` 標在輸入框下方）。
+ * 語系中性的欄位只掛在中文那側算一次。
+ */
+export function missingIn(unit: Unit, row: Row, locale: Locale): Field[] {
   const fields = unitFields(unit)
   // 選填圖片（例如 OG 分享圖）沒上傳時，它配套的 Alt 就不該算缺漏 ——
   // docs §3 要求每張圖都有 Alt，但沒有圖的時候沒有東西要描述。
@@ -37,18 +41,23 @@ export function missingFields(unit: Unit, row: Row, locale: Locale): string[] {
       .map((f) => f.altKey as string),
   )
 
-  const out: string[] = []
+  const out: Field[] = []
   for (const f of fields) {
     if (!f.required) continue
     if (altOfEmptyImage.has(f.key) && !usedAlt.has(f.key)) continue
     if (f.i18n) {
-      if (isBlank(row.i18n?.[locale]?.[f.key])) out.push(f.label)
+      if (isBlank(row.i18n?.[locale]?.[f.key])) out.push(f)
     } else if (locale === 'zh') {
       // 語系中性的必填欄位只算一次，掛在中文那側檢查
-      if (isBlank(row[f.key])) out.push(f.label)
+      if (isBlank(row[f.key])) out.push(f)
     }
   }
   return out
+}
+
+/** 同上，但只要欄位名稱（給上架擋下時的說明用）。 */
+export function missingFields(unit: Unit, row: Row, locale: Locale): string[] {
+  return missingIn(unit, row, locale).map((f) => f.label)
 }
 
 export function isComplete(unit: Unit, row: Row, locale: Locale): boolean {
