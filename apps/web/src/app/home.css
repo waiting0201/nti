@@ -2,6 +2,8 @@
   --green:#6FA044;          /* PSD primary grass green (bar / footer / buttons) */
   --green-d:#5C8736;        /* hover */
   --green-title:#74A93E;    /* product titles */
+  --brand:#88B300;          /* NTI brand green (Brand Deck s3) — large icons & accents */
+  --brand-d:#6E8F00;        /* darker brand green — small icons / icons on tints */
   --leaf:#8FB954;           /* CIS lime */
   --teal:#357D54;           /* CIS mid green */
   --deep:#003F3A;           /* CIS deep teal */
@@ -171,7 +173,7 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 /* the six reasons under why-NTI aren't a sequence, so numerals said nothing.
    Line icons carry the meaning instead — same green, same 1.6 stroke weight as
    the proof-card marks, per the client's icons.png reference. */
-.why-item .ico{display:block;color:var(--green)}
+.why-item .ico{display:block;color:var(--brand)}
 .why-item .ico svg{display:block;width:clamp(38px,4.2vw,50px);height:auto}
 .wwd-item h3,.why-item h3{
   margin-top:.66em;font-weight:800;line-height:1.16;letter-spacing:-.015em;color:var(--deep);
@@ -211,9 +213,9 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 }
 .proof-card:hover{border-color:var(--leaf)}
 .proof-ic{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto}
-.proof-ic--quality{background:color-mix(in srgb,var(--green) 16%,#fff);color:var(--green-d)}
-.proof-ic--eco{background:color-mix(in srgb,var(--teal) 16%,#fff);color:var(--teal)}
-.proof-ic--safety{background:color-mix(in srgb,var(--orange) 18%,#fff);color:var(--orange)}
+.proof-ic--quality{background:color-mix(in srgb,var(--brand) 16%,#fff);color:var(--brand-d)}
+.proof-ic--eco{background:color-mix(in srgb,var(--brand) 16%,#fff);color:var(--brand-d)}
+.proof-ic--safety{background:color-mix(in srgb,var(--brand) 16%,#fff);color:var(--brand-d)}
 .proof-card h3{margin-top:18px;font-weight:800;font-size:clamp(1.14rem,1.5vw,1.3rem);letter-spacing:-.01em;color:var(--deep)}
 .proof-card>p{margin-top:8px;font-size:.92rem;font-weight:500;line-height:1.65;color:var(--grey-2)}
 .proof-logos{display:flex;flex-wrap:wrap;align-items:center;align-content:center;flex:1;gap:16px clamp(16px,2vw,26px);padding-top:clamp(18px,2.2vw,24px);border-top:1px solid var(--line)}
@@ -278,7 +280,7 @@ footer a:hover{color:var(--leaf)}
 .fbrand p{margin:0;font-size:13.5px;line-height:1.8;color:rgba(255,255,255,.62);max-width:34ch}
 .fsocial{display:flex;gap:14px;margin-top:4px}
 .fsocial a{display:grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,255,255,.25);color:#fff;transition:border-color .2s,color .2s}
-.fsocial a:hover{border-color:var(--leaf);color:var(--leaf)}
+.fsocial a:hover{border-color:var(--brand);color:var(--brand)}
 .fcol{display:flex;flex-direction:column;gap:12px}
 .ftitle{font-size:11px;font-weight:600;letter-spacing:.16em;color:var(--leaf);text-transform:uppercase;margin-bottom:6px}
 .fcol a{font-size:14px;color:rgba(255,255,255,.78);transition:color .2s}

@@ -6,6 +6,8 @@
   --green:#6FA044;        /* PSD primary grass green */
   --green-d:#5C8736;
   --green-title:#74A93E;  /* section / product titles */
+  --brand:#88B300;        /* NTI brand green (Brand Deck s3) — large icons & accents */
+  --brand-d:#6E8F00;      /* darker brand green — small icons / icons on tints */
   --leaf:#8FB954;         /* CIS lime */
   --teal:#357D54;         /* CIS mid green */
   --deep:#003F3A;         /* CIS deep teal */
@@ -150,8 +152,8 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .ex-media{position:relative;display:flex;align-items:center;gap:14px}
 .ex-frame{flex:1;border-radius:18px;overflow:hidden;background:var(--card);box-shadow:var(--shadow);aspect-ratio:16/11}
 .ex-frame img{width:100%;height:100%;object-fit:cover}
-.ex-arrow{width:46px;height:46px;flex:0 0 auto;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--grey-2);display:grid;place-items:center;cursor:pointer;transition:all .25s var(--ease)}
-.ex-arrow:hover{border-color:var(--green);color:var(--green);transform:scale(1.06)}
+.ex-arrow{width:46px;height:46px;flex:0 0 auto;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--brand-d);display:grid;place-items:center;cursor:pointer;transition:all .25s var(--ease)}
+.ex-arrow:hover{border-color:var(--brand-d);color:var(--brand-d);transform:scale(1.06)}
 
 /* detail bullets */
 .dtitle{font-weight:800;color:var(--grey);font-size:clamp(1.08rem,1.4vw,1.24rem);line-height:1.4;letter-spacing:-.012em;margin-bottom:14px;text-wrap:balance}
@@ -195,7 +197,7 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 /* the six reasons under why-NTI aren't a sequence, so numerals said nothing.
    Line icons carry the meaning instead — same green, same 1.6 stroke weight as
    the proof-card marks, per the client's icons.png reference. */
-.why-item .ico{display:block;color:var(--green)}
+.why-item .ico{display:block;color:var(--brand)}
 .why-item .ico svg{display:block;width:clamp(38px,4.2vw,50px);height:auto}
 .wwd-item h3,.why-item h3{
   margin-top:.66em;font-weight:800;line-height:1.16;letter-spacing:-.015em;color:var(--deep);
@@ -257,7 +259,7 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
    這裡用 --deep 而非 --green，對齊客戶提供的稿）。 */
 .indgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(24px,3vw,38px) clamp(14px,1.8vw,26px);margin-top:clamp(22px,2.6vw,32px)}
 .ind-item{min-width:0;text-align:center;color:var(--deep)}
-.ind-item svg{display:block;width:clamp(46px,5vw,62px);height:auto;margin:0 auto}
+.ind-item svg{display:block;width:clamp(46px,5vw,62px);height:auto;margin:0 auto;color:var(--brand)}
 .ind-item b{display:block;margin-top:12px;font-weight:700;font-size:clamp(.86rem,.95vw,.95rem);line-height:1.4;letter-spacing:-.005em;text-wrap:balance}
 .indgrid+.filter-row{margin-top:clamp(34px,4vw,52px)}
 
@@ -360,7 +362,7 @@ footer a:hover{color:var(--leaf)}
 .fbrand p{margin:0;font-size:13.5px;line-height:1.8;color:rgba(255,255,255,.62);max-width:34ch}
 .fsocial{display:flex;gap:14px;margin-top:4px}
 .fsocial a{display:grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,255,255,.25);color:#fff;transition:border-color .2s,color .2s}
-.fsocial a:hover{border-color:var(--leaf);color:var(--leaf)}
+.fsocial a:hover{border-color:var(--brand);color:var(--brand)}
 .fcol{display:flex;flex-direction:column;gap:12px}
 .ftitle{font-size:11px;font-weight:600;letter-spacing:.16em;color:var(--leaf);text-transform:uppercase;margin-bottom:6px}
 .fcol a{font-size:14px;color:rgba(255,255,255,.78);transition:color .2s}
@@ -400,7 +402,7 @@ footer a:hover{color:var(--leaf)}
 .pj-img{height:220px;position:relative;line-height:0;background:var(--card)}
 .pj-img img{width:100%;height:100%;object-fit:cover}
 .pj-tag{position:absolute;top:14px;left:14px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--deep);background:rgba(143,185,84,.85);padding:6px 13px;border-radius:6px;line-height:1.4}
-.pj-play{position:absolute;bottom:12px;right:12px;width:40px;height:40px;border-radius:50%;background:rgba(0,63,58,.85);display:grid;place-items:center;color:var(--leaf)}
+.pj-play{position:absolute;bottom:12px;right:12px;width:40px;height:40px;border-radius:50%;background:rgba(0,63,58,.85);display:grid;place-items:center;color:var(--brand)}
 .pj-body{padding:24px 26px 28px;display:flex;flex-direction:column;gap:10px;flex:1}
 .pj-body h3{font-size:1.05rem;font-weight:800;color:var(--grey);line-height:1.4}
 .pj-body p{font-size:.86rem;line-height:1.7;color:var(--grey-2);flex:1}
@@ -414,7 +416,7 @@ footer a:hover{color:var(--leaf)}
 .vl-thumb{position:relative;display:block;height:200px;overflow:hidden;border-radius:14px;background:var(--card);line-height:0}
 .vl-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
 .vl-card:hover .vl-thumb img{transform:scale(1.05)}
-.vl-play{position:absolute;left:14px;bottom:14px;width:42px;height:42px;border-radius:50%;background:rgba(0,63,58,.88);display:grid;place-items:center;color:var(--leaf)}
+.vl-play{position:absolute;left:14px;bottom:14px;width:42px;height:42px;border-radius:50%;background:rgba(0,63,58,.88);display:grid;place-items:center;color:var(--brand)}
 .vl-ep{font-size:11.5px;font-weight:800;letter-spacing:.12em;color:var(--teal);text-transform:uppercase}
 .vl-card h3{font-size:1rem;font-weight:800;color:var(--grey);line-height:1.45;margin-top:6px}
 
@@ -511,13 +513,13 @@ input::placeholder,textarea::placeholder{color:#b0b8b0}
 .ffoot{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:24px}
 .form-success{background:var(--card);border-radius:18px;padding:clamp(44px,5vw,68px);text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
 .form-success[hidden],form[hidden]{display:none}
-.form-success .ok{width:72px;height:72px;border-radius:50%;background:rgba(143,185,84,.25);color:var(--teal);display:grid;place-items:center}
+.form-success .ok{width:72px;height:72px;border-radius:50%;background:color-mix(in srgb,var(--brand) 16%,#fff);color:var(--brand-d);display:grid;place-items:center}
 .form-success h3{font-size:1.5rem;font-weight:800;color:var(--grey)}
 .form-success p{font-size:.92rem;line-height:1.75;color:var(--grey-2);max-width:44ch}
 .form-success button{font-family:inherit;font-weight:800;font-size:.88rem;color:var(--teal);background:none;border:none;cursor:pointer;margin-top:6px}
 .info-stack{display:flex;flex-direction:column;gap:14px}
 .info-card{background:var(--card);border-radius:16px;padding:26px 28px;display:flex;gap:18px;align-items:flex-start}
-.info-ic{flex:0 0 auto;width:44px;height:44px;border-radius:12px;background:rgba(143,185,84,.25);color:var(--teal);display:grid;place-items:center}
+.info-ic{flex:0 0 auto;width:44px;height:44px;border-radius:12px;background:color-mix(in srgb,var(--brand) 16%,#fff);color:var(--brand-d);display:grid;place-items:center}
 .info-card h3{font-size:1rem;font-weight:800;color:var(--grey)}
 .info-card p{margin-top:6px;font-size:.86rem;line-height:1.75;color:var(--grey-2)}
 .info-card a{color:var(--teal);font-weight:700}
