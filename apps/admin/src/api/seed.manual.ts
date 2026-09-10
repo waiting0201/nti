@@ -183,7 +183,7 @@ export const SETTING_GROUPS: Array<{ title: string; fields: SettingField[] }> = 
       { key: 'company.phone', label: '電話', type: 'text' },
       { key: 'company.fax', label: '傳真', type: 'text' },
       { key: 'company.email', label: 'Email', type: 'text' },
-      { key: 'company.map', label: 'Google Map 嵌入碼', type: 'embed', hint: '貼 Google 地圖的 iframe 內嵌碼' },
+      { key: 'company.map', label: 'Google 地圖', type: 'embed', hint: '在 Google 地圖點「分享 → 嵌入地圖」，把複製到的內容貼進來' },
     ],
   },
   {
@@ -198,7 +198,7 @@ export const SETTING_GROUPS: Array<{ title: string; fields: SettingField[] }> = 
     title: '首頁',
     fields: [
       { key: 'home.gallery', label: '首頁形象圖帶', type: 'image', altKey: 'home.galleryAlt', hint: '建議 **2400×1000px**（12:5）｜JPG／WebP｜≤500KB' },
-      { key: 'home.galleryAlt', label: '形象圖帶替代文字 Alt', type: 'text', i18n: true },
+      { key: 'home.galleryAlt', label: '形象圖帶替代文字', type: 'text', i18n: true },
     ],
   },
   {

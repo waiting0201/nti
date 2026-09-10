@@ -266,7 +266,7 @@ function StatusCard({ row, onChange, canEdit }: { row: Row; onChange: (k: string
           <div className="field">
             <label>上架時間</label>
             <input type="datetime-local" value={toLocal(row.publishAt)} onChange={(e) => onChange('publishAt', e.target.value)} />
-            <div className="hint">留空代表立即生效。時間以台北時間輸入，存進資料庫時轉為 UTC。</div>
+            <div className="hint">留空代表立即生效。時間請以台北時間填寫。</div>
           </div>
           <div className="field">
             <label>下架時間</label>
@@ -274,7 +274,7 @@ function StatusCard({ row, onChange, canEdit }: { row: Row; onChange: (k: string
             <div className="hint">留空代表不自動下架。</div>
           </div>
         </fieldset>
-        <div className="hint">內容變更後由 webhook 觸發前台 ISR 重新產生頁面。</div>
+        <div className="hint">儲存後前台會自動更新。</div>
       </div>
     </div>
   )

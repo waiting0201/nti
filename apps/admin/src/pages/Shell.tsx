@@ -52,7 +52,7 @@ export function Shell() {
           docs 路徑更只是內部的東西。只留示範模式的警語：那時畫面上的資料是假的，
           不講的話會被當成真的內容在改。
         */}
-        {!hasApi && <div className="sidebar-foot">資料為本機示範用，尚未串接 API</div>}
+        {!hasApi && <div className="sidebar-foot">展示模式：畫面上的資料為範例，儲存後不會保留</div>}
       </aside>
 
       <div className="main">

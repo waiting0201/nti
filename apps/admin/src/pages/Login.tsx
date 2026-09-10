@@ -149,7 +149,7 @@ function DemoLogin() {
           title="管理後台"
           sub={
             <>
-              目前為本機示範（未設定 <code>VITE_API_BASE</code>）—— 選一個角色即可進入，
+              目前為展示模式 —— 選一個角色即可進入，
               用來檢視各角色實際看得到什麼。
             </>
           }
@@ -177,9 +177,7 @@ function DemoLogin() {
           </button>
         </div>
 
-        <p className="login-foot">
-          設定 <code>VITE_API_BASE</code> 後這裡會變成帳號 + 密碼登入。
-        </p>
+        <p className="login-foot">正式上線後，這裡會改為帳號與密碼登入。</p>
       </form>
     </div>
   )

@@ -9,15 +9,15 @@ import * as rest from './rest'
  * Slug 由標題自動產生、可手改；已上架內容改 slug 時自動在 redirect 建立一筆 301。
  */
 export const SEO_FIELDS: Field[] = [
-  { key: 'slug', label: 'Slug', type: 'text', i18n: true, required: true, side: 'locale', hint: '小寫、連字號；中英可不同' },
-  { key: 'seoTitle', label: 'SEO Title', type: 'text', i18n: true, required: true, max: 70, side: 'locale' },
-  { key: 'metaDescription', label: 'Meta Description', type: 'textarea', i18n: true, required: true, max: 180, side: 'locale' },
-  { key: 'canonical', label: 'Canonical', type: 'url', i18n: true, side: 'locale', hint: '留空則自動' },
-  { key: 'ogTitle', label: 'OG 標題', type: 'text', i18n: true, side: 'locale', hint: '留空則沿用 SEO Title' },
-  { key: 'ogDescription', label: 'OG 描述', type: 'textarea', i18n: true, side: 'locale', hint: '留空則沿用 Meta Description' },
+  { key: 'slug', label: '網址代稱 Slug', type: 'text', i18n: true, required: true, side: 'locale', hint: '會出現在網址上；小寫、連字號，中英可不同' },
+  { key: 'seoTitle', label: 'SEO 標題', type: 'text', i18n: true, required: true, max: 70, side: 'locale' },
+  { key: 'metaDescription', label: '搜尋摘要 Meta Description', type: 'textarea', i18n: true, required: true, max: 180, side: 'locale' },
+  { key: 'canonical', label: '指定標準網址 Canonical', type: 'url', i18n: true, side: 'locale', hint: '留空則自動帶入本頁網址' },
+  { key: 'ogTitle', label: '社群分享標題', type: 'text', i18n: true, side: 'locale', hint: '分享到 Facebook／LINE 時顯示；留空則沿用 SEO 標題' },
+  { key: 'ogDescription', label: '社群分享描述', type: 'textarea', i18n: true, side: 'locale', hint: '留空則沿用搜尋摘要' },
   // OG 圖是 meta 標籤（og:image），不是頁面上的 <img>，沒有替代文字要顯示的位置。
   // 原本有一個 ogImageAlt 欄位，但 *I18n 側表從來就沒有對應的欄，填了也存不進去（2026-09-08 移除）。
-  { key: 'ogImage', label: 'OG 分享圖', type: 'image', side: 'neutral', hint: HINT.ogImage,
+  { key: 'ogImage', label: '社群分享圖', type: 'image', side: 'neutral', hint: HINT.ogImage,
     altExempt: 'OG 圖是 meta 標籤，不在頁面上呈現' },
 ]
 

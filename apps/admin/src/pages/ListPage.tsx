@@ -184,10 +184,7 @@ export function ListPage() {
         <h1>
           {unit.no} · {unit.title}
         </h1>
-        <div className="sub">
-          {unit.frontend && <>前台位置：{unit.frontend}　</>}
-          權限碼 <code>{unit.code}.*</code>
-        </div>
+        {unit.frontend && <div className="sub">前台位置：{unit.frontend}</div>}
       </div>
 
       {unit.note && <Notice kind="info">{unit.note}</Notice>}
@@ -417,7 +414,9 @@ function Cell({ unit, row, colKey, render }: { unit: Unit; row: Row; colKey: str
   if (render === 'category') return <span>{categoryName(raw)}</span>
   if (render === 'date') return <span>{String(raw).slice(0, 10) || '—'}</span>
 
-  const text = String(raw)
+  // 有選項的欄位（例：轉址方式）清單上要顯示選項文字，不是存進資料庫的代號
+  const options = unit.fields.find((f) => f.key === colKey)?.options
+  const text = options?.find((o) => o.value === String(raw))?.label ?? String(raw)
   const isTitle = unit.columns.findIndex((c) => !c.render) === unit.columns.findIndex((c) => c.key === colKey)
   return <span className={isTitle ? 'row-title' : undefined}>{text || '—'}</span>
 }

@@ -178,22 +178,22 @@ export async function saveSettings(next: typeof settings) {
 /** docs §5.7：刪除前顯示前台影響 —— 這裡算的是引用這個分類的內容筆數 */
 /** 下載報價附件——mock 沒有實際檔案，讓畫面走到同一條錯誤處理。 */
 export async function downloadQuoteAttachment(_quoteId: string, _attachmentId: string, name: string): Promise<void> {
-  throw new Error(`示範資料沒有 ${name} 這個檔案，接上 API 後才會真的下載。`)
+  throw new Error(`展示模式沒有「${name}」這個檔案，正式上線後才會真的下載。`)
 }
 
 /** 匯出報價 CSV——mock 不產檔，同樣走錯誤處理提示尚未接 API。 */
 export async function exportQuotesCsv(): Promise<void> {
-  throw new Error('匯出 CSV 需要連上 API，示範資料不產生檔案。')
+  throw new Error('展示模式不產生檔案，匯出功能要正式上線後才能使用。')
 }
 
 /** 匯出 301 對照 CSV——同上。 */
 export async function exportRedirectsCsv(): Promise<void> {
-  throw new Error('匯出 CSV 需要連上 API，示範資料不產生檔案。')
+  throw new Error('展示模式不產生檔案，匯出功能要正式上線後才能使用。')
 }
 
 /** 匯入 301 對照 CSV——mock 不寫入，避免讓人以為示範資料真的收下了那份檔案。 */
 export async function importRedirectsCsv(_file: File): Promise<{ created: number; updated: number; skipped: number }> {
-  throw new Error('匯入 CSV 需要連上 API，示範資料不會被寫入。')
+  throw new Error('展示模式不會寫入資料，匯入功能要正式上線後才能使用。')
 }
 
 export function categoryUsage(categoryId: string): number {

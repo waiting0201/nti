@@ -135,7 +135,7 @@ export function RecordView({
                   </>
                 ) : (
                   <Notice kind="info">
-                    附件共 {attachments.length} 個。附件下載限超級管理員（權限碼 <code>quote.download</code>）。
+                    附件共 {attachments.length} 個。附件下載限超級管理員。
                   </Notice>
                 )}
               </div>

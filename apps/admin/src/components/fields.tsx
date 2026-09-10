@@ -204,11 +204,11 @@ function Uploader({
         // 回的是 Blob 相對路徑（不是可直連的 URL）——容器是 private，DB 也只存相對路徑
         const { path } = await http.upload<{ path: string }>(`/admin/${unit}/upload`, form)
         onChange(path)
-        setWarn(`已上傳：${path}`)
+        setWarn(`已上傳：${file.name}`)
       } catch (err) {
         const code = err instanceof ApiError ? err.code : 'INTERNAL'
         setWarn(
-          code === 'UPLOAD_TYPE' ? '檔案格式不符（伺服器會檢查實際檔頭，不只看副檔名）。'
+          code === 'UPLOAD_TYPE' ? '檔案格式不符。請確認副檔名與檔案實際內容一致。'
           : code === 'UPLOAD_SIZE' ? '檔案太大。'
           : `上傳失敗：${(err as Error).message}`,
         )
@@ -240,7 +240,7 @@ function Uploader({
               </button>
             )}
           </div>
-          {isImage && value && <div className="meta" style={{ marginTop: 6 }}>{value}</div>}
+          {isImage && value && <div className="meta" style={{ marginTop: 6 }}>{value.split('/').pop()}</div>}
         </div>
       </div>
       {field.hint && <Hint text={field.hint} />}

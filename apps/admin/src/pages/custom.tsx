@@ -42,7 +42,7 @@ export function SettingPage() {
     <>
       <div className="page-h">
         <h1>21 · 網站設定</h1>
-        <div className="sub">依 SiteSetting 的固定 key 清單渲染，不能自行新增設定項。</div>
+        <div className="sub">設定項目固定，不能自行新增。</div>
       </div>
 
       <div className="locale-tabs">
@@ -84,7 +84,7 @@ export function SettingPage() {
       ))}
 
       <Notice kind="info">
-        contact 頁的地址與電話已是客戶提供的台南廠址（2026-09-06）；傳真與地圖嵌入碼仍待客戶提供。
+        聯絡我們頁的地址與電話已是客戶提供的台南廠址（2026-09-06）；傳真與地圖仍待客戶提供。
       </Notice>
 
       <div className="card">
@@ -440,7 +440,7 @@ export function AdminUsersPage() {
           <Notice kind="info">
             帳號不限定 email 格式；密碼由建立者當場設定並轉交，系統不寄啟用信或密碼重設信。
             忘記密碼時，在編輯視窗直接重設一組新的。通知信箱只用來收系統通知，與登入無關。
-            登入失敗不鎖定帳號（那會讓人被惡意鎖在外面），暴力破解由登入頁的 reCAPTCHA 擋。
+            登入失敗不鎖定帳號（那會讓人被惡意鎖在外面），連續嘗試登入由登入頁的機器人驗證擋下。
           </Notice>
         </div>
       </div>
@@ -479,7 +479,7 @@ export function AdminUsersPage() {
               ))}
             </tbody>
           </table>
-          <Hint text="權限碼格式 `{單元代號}.{view|edit|publish|delete|export}`。**這張表是權限的權威來源**，對應 db/seed/110_role_permission.sql。" />
+          <Hint text="**這張表是權限的依據**：✓ 代表整組動作都可以，「部分」代表只開放其中幾項。要調整請聯絡系統維護人員。" />
         </div>
       </div>
 
@@ -645,7 +645,7 @@ export function AuditPage() {
                       className="btn btn-sm"
                       disabled={!can('audit.resend')}
                       title={can('audit.resend') ? '' : '需要 audit.resend 權限'}
-                      onClick={() => toast('已重新寄送（示範）')}
+                      onClick={() => toast('已重新寄送')}
                     >
                       重寄
                     </button>

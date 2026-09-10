@@ -21,7 +21,7 @@ export const HINT = {
 } as const
 
 /** 每個圖片欄位必附的中英 Alt（docs §3 共通規則） */
-const alt = (key: string, label = '圖片替代文字 Alt') =>
+const alt = (key: string, label = '圖片替代文字') =>
   ({ key, label, type: 'text', i18n: true, required: true, side: 'locale' }) as const
 
 const statusColumns = [
@@ -35,7 +35,7 @@ export const homeBanner: Unit = {
   title: '首頁 Banner',
   group: '首頁',
   phase: 'P4',
-  frontend: 'index.html #hero 輪播',
+  frontend: '首頁 主視覺輪播',
   note: '新增／編輯／拖曳排序／上下架／刪除。建議 3–5 張。',
   sortable: true,
   hasStatus: true,
@@ -44,7 +44,7 @@ export const homeBanner: Unit = {
     { key: 'imageDesktop', label: '桌機圖', type: 'image', required: true, hint: HINT.bannerDesktop, altKey: 'alt', side: 'neutral' },
     { key: 'imageMobile', label: '手機圖', type: 'image', hint: HINT.bannerMobile, altKey: 'alt', side: 'neutral' },
     alt('alt'),
-    { key: 'linkUrl', label: '連結網址', type: 'url', side: 'neutral', placeholder: '/solutions 或 https://…', hint: '站內相對路徑或完整外部 URL' },
+    { key: 'linkUrl', label: '連結網址', type: 'url', side: 'neutral', placeholder: '/solutions 或 https://…', hint: '站內頁面路徑（/solutions）或完整的外部網址' },
     { key: 'newWindow', label: '另開視窗', type: 'switch', side: 'neutral' },
   ],
   columns: [
@@ -61,7 +61,7 @@ export const solution: Unit = {
   title: '解決方案 Solutions',
   group: '內容',
   phase: 'P4',
-  frontend: 'solutions.html 列表、四個方案頁、首頁 Printing Solutions 四張卡',
+  frontend: '解決方案列表、四個方案頁、首頁「印刷解決方案」四張卡',
   note: '固定 4 筆，不可新增（新增方案屬改版範圍）；刪除只給超管，且已有報價引用的方案刪不掉。品項卡為子清單，可自由增刪。',
 
   fixedRows: true,
@@ -71,7 +71,7 @@ export const solution: Unit = {
   fields: [
     { key: 'code', label: '代號 Code', type: 'readonly', side: 'neutral', hint: 'boxes／cardboard／uv／other' },
     { key: 'cover', label: '方案封面', type: 'image', required: true, hint: HINT.solutionCover, altKey: 'coverAlt', side: 'neutral' },
-    alt('coverAlt', '封面替代文字 Alt'),
+    alt('coverAlt', '封面替代文字'),
     { key: 'name', label: '方案名稱', type: 'text', i18n: true, required: true, side: 'locale', hint: '選單與卡片標題' },
     { key: 'h1', label: '頁面標題 H1', type: 'text', i18n: true, required: true, side: 'locale' },
     { key: 'summary', label: '短述', type: 'textarea', i18n: true, max: 300, side: 'locale', hint: '首頁／列表卡片用' },
@@ -105,7 +105,7 @@ export const project: Unit = {
   title: '案例實績 Projects',
   group: '內容',
   phase: 'P4',
-  frontend: 'projects.html #cases 卡片（可依分類篩選）',
+  frontend: '實績案例 案例卡（可依分類篩選）',
   sortable: true,
   hasStatus: true,
   fields: [
@@ -132,22 +132,22 @@ export const news: Unit = {
   title: '最新消息 News',
   group: '內容',
   phase: 'P4',
-  frontend: 'news.html 列表 + 詳細頁；insights.html 精選',
+  frontend: '最新消息 列表與詳細頁；洞察頁精選',
   hasStatus: true,
   hasSeo: true,
   fields: [
     { key: 'categoryId', label: '分類', type: 'select', required: true, categoryType: 'News', side: 'neutral' },
     { key: 'publishDate', label: '發佈日期', type: 'date', required: true, side: 'neutral', hint: '前台顯示用（2026.03.13）' },
     { key: 'cover', label: '封面圖', type: 'image', required: true, hint: HINT.newsCover, altKey: 'coverAlt', side: 'neutral' },
-    alt('coverAlt', '封面替代文字 Alt'),
-    { key: 'title', label: '標題', type: 'text', i18n: true, required: true, max: 250, side: 'locale', hint: '同時作為 H1' },
+    alt('coverAlt', '封面替代文字'),
+    { key: 'title', label: '標題', type: 'text', i18n: true, required: true, max: 250, side: 'locale', hint: '同時作為前台的頁面大標' },
     { key: 'summary', label: '摘要', type: 'textarea', i18n: true, required: true, max: 500, side: 'locale', hint: '列表卡片 + 詳細頁導言' },
     { key: 'body', label: '內文', type: 'richtext', i18n: true, required: true, side: 'locale', hint: `內文插圖${HINT.newsInline}` },
     { key: 'featured', label: '上首頁／精選', type: 'switch', side: 'neutral' },
     // 標籤不分語系（slug 共用、名稱才分中英），所以是 neutral 側的欄位。
     // 標籤本身在單元 25 維護，這裡只挑既有的。
     { key: 'tags', label: '標籤', type: 'tags', side: 'neutral',
-      hint: '決定這篇會出現在哪些 /news/tag/{slug} 封存頁；建議 2–4 個' },
+      hint: '決定這篇會出現在哪些標籤頁；建議 2–4 個' },
     // OG 分享圖由 SEO 欄位組提供（docs §5.6），不在此重複定義
   ],
   columns: [
@@ -165,11 +165,11 @@ export const vlog: Unit = {
   title: 'Green Vlog',
   group: '內容',
   phase: 'P4',
-  frontend: 'green-vlog.html',
+  frontend: '綠色 Vlog',
   sortable: true,
   hasStatus: true,
   fields: [
-    { key: 'youtubeId', label: 'YouTube 影片 ID／網址', type: 'youtube', required: true, side: 'neutral', hint: '貼完整網址系統自動抽出 ID，並即時顯示縮圖預覽' },
+    { key: 'youtubeId', label: 'YouTube 影片網址', type: 'youtube', required: true, side: 'neutral', hint: '貼上完整網址即可，系統會自動辨識並顯示縮圖預覽' },
     { key: 'categoryId', label: '分類', type: 'select', required: true, categoryType: 'Vlog', side: 'neutral' },
     // 縮圖在前台是裝飾性圖片（alt=""），緊鄰著影片標題；補 Alt 會讓螢幕閱讀器把標題唸兩遍。
     // VlogI18n 也沒有對應的欄，原本的 thumbAlt 欄位填了存不進去（2026-09-08 移除）。
@@ -193,8 +193,8 @@ export const faq: Unit = {
   title: 'FAQ',
   group: '內容',
   phase: 'P4',
-  frontend: 'faq.html（同時輸出 FAQPage JSON-LD）',
-  note: '答案富文本請避免使用表格 —— 前台需把問答解析成 FAQPage 結構化資料。',
+  frontend: '常見問題',
+  note: '答案請避免使用表格 —— 前台的問答是折疊式區塊，表格在手機上會排不下。',
   sortable: true,
   hasStatus: true,
   fields: [
@@ -215,7 +215,7 @@ export const trend: Unit = {
   title: '產業趨勢 Industry Trends',
   group: '內容',
   phase: 'P4',
-  frontend: 'industry-trends.html 的段落區塊',
+  frontend: '產業趨勢 的段落區塊',
   sortable: true,
   hasStatus: true,
   fields: [
@@ -231,7 +231,7 @@ export const certification: Unit = {
   title: '認證・夥伴・獎項',
   group: '內容',
   phase: 'P4',
-  frontend: '首頁 Proof 認證牆、about-certifications、differences、green-esg',
+  frontend: '首頁認證牆、我們的認證、我們的不同、綠色 ESG',
   note: '現有 logo 素材解析度偏低，上線前需向客戶索取向量原檔。',
   sortable: true,
   hasStatus: true,
@@ -239,7 +239,7 @@ export const certification: Unit = {
   fields: [
     { key: 'categoryId', label: '分組', type: 'select', required: true, categoryType: 'Certification', side: 'neutral' },
     { key: 'logo', label: 'Logo', type: 'image', required: true, hint: HINT.certLogo, altKey: 'alt', side: 'neutral' },
-    alt('alt', 'Logo 替代文字 Alt'),
+    alt('alt', 'Logo 替代文字'),
     { key: 'name', label: '名稱', type: 'text', i18n: true, required: true, side: 'locale' },
     { key: 'description', label: '說明', type: 'textarea', i18n: true, side: 'locale' },
     { key: 'linkUrl', label: '連結網址', type: 'url', side: 'neutral' },
@@ -260,13 +260,13 @@ export const client: Unit = {
   title: '客戶 Logo',
   group: '內容',
   phase: 'P4',
-  frontend: '首頁 Our Clients 輪播',
-  note: '名稱同時作為 alt（品牌名不翻譯）。前台為輪播，建議 ≥6 筆。',
+  frontend: '首頁「我們的客戶」輪播',
+  note: '名稱同時作為圖片的替代文字（品牌名不翻譯）。前台為輪播，建議 ≥6 筆。',
   sortable: true,
   hasStatus: true,
   countHint: { min: 6, message: '客戶輪播建議至少 6 筆，數量太少輪播會顯得空。' },
   fields: [
-    { key: 'name', label: '名稱', type: 'text', required: true, side: 'neutral', hint: '同時作為圖片 alt，品牌名不翻譯' },
+    { key: 'name', label: '名稱', type: 'text', required: true, side: 'neutral', hint: '同時作為圖片的替代文字，品牌名不翻譯' },
     { key: 'logo', label: 'Logo', type: 'image', required: true, hint: HINT.clientLogo, side: 'neutral',
       altExempt: '客戶 logo 以品牌名稱作為 alt（docs/09 單元 09）' },
     { key: 'linkUrl', label: '連結', type: 'url', side: 'neutral' },
@@ -284,14 +284,14 @@ export const facility: Unit = {
   title: '設備與廠房',
   group: '內容',
   phase: 'P4',
-  frontend: 'facility-pre-press／-eco-printing／-post-press／-quality／-tour 五個子頁的設備卡',
+  frontend: '設備與廠房 五個子頁（製版／環保印刷／後加工／品管／參觀）的設備卡',
   note: '五個子頁的導言與流程敘述文字為固定文案，後台只管設備卡。',
   sortable: true,
   hasStatus: true,
   fields: [
     { key: 'categoryId', label: '所屬子頁', type: 'select', required: true, categoryType: 'Facility', side: 'neutral' },
     { key: 'image', label: '設備照', type: 'image', required: true, hint: HINT.facilityPhoto, altKey: 'alt', side: 'neutral' },
-    alt('alt', '設備照替代文字 Alt'),
+    alt('alt', '設備照替代文字'),
     { key: 'name', label: '設備名稱', type: 'text', i18n: true, required: true, side: 'locale' },
     { key: 'description', label: '說明', type: 'textarea', i18n: true, max: 600, side: 'locale' },
   ],
@@ -309,8 +309,8 @@ export const job: Unit = {
   title: '職缺 Careers',
   group: '內容',
   phase: 'P4',
-  frontend: 'careers.html 職缺清單',
-  note: 'careers.html 的「Why NTI」六條福利為固定文案。',
+  frontend: '人才招募 職缺清單',
+  note: '人才招募頁的「Why NTI」六條福利為固定文案。',
   sortable: true,
   hasStatus: true,
   fields: [
