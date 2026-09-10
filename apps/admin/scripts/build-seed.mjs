@@ -462,6 +462,69 @@ function redirects() {
   })
 }
 
+/* ── mockup + zh.ts：21 網站設定的**值** ────────────────────
+   key 與型別的權威在 Api/Data/Seed/SeedData.cs（種子只建 key，值留 NULL）；
+   這裡產的是那 15 個 key 的值，來源一律是 mockup 與前台的中文字典，不在這支腳本裡編。
+
+   同一份輸出也是 db/content/220_site_setting.sql 的來源
+   （node tools/build-settings-sql.mjs），所以客戶在 demo 上看到的設定，
+   和匯進資料庫的設定是同一份——這正是 key 對不上那次的教訓：同一組事實只寫一遍。
+
+   抽不到就丟例外、不留空值：空值在後台長得像「客戶還沒填」，
+   會把「mockup 版面改了、規則要跟著改」偽裝成正常狀態。 */
+function settings() {
+  const contact = readMockup('contact.html')
+  const home = readMockup('index.html')
+
+  const pick = (re, src, what) => {
+    const m = re.exec(src)
+    if (!m) throw new Error(`抽不出網站設定的「${what}」——mockup 的版面改了，請改 settings() 的規則，不要手填值`)
+    return m
+  }
+
+  const name = text(pick(/<div class="fbot">\s*<span>\s*(?:&copy;|©)\s*\d{4}\s+([^<]+?)\s*<\/span>/, home, '公司名稱')[1])
+  const address = text(pick(/<h3>Tainan Plant[^<]*<\/h3>\s*<p>([\s\S]*?)<\/p>/, contact, '公司地址')[1])
+  // 營業時間只取第一行；<br /> 後面那句「Factory visits by appointment」是參觀規則，不是時間
+  const hours = text(pick(/<h3>Business Hours<\/h3>\s*<p>([\s\S]*?)<br/, contact, '營業時間')[1])
+  const phone = text(pick(/<a href="tel:[^"]*">([^<]+)<\/a>/, contact, '電話')[1])
+  const mail = pick(/<a href="mailto:([^"]+)"/, contact, 'Email')[1]
+  // 後台的「Google 地圖」欄位收的是嵌入碼本身（貼「分享 → 嵌入地圖」的內容），存整個 <iframe>
+  const map = pick(/<div class="map-frame">\s*(<iframe[\s\S]*?<\/iframe>)/, contact, 'Google 地圖嵌入碼')[1]
+  const gallery = pick(/<section class="gallery[^"]*">\s*<img src="([^"]+)" alt="([^"]*)"/, home, '首頁形象圖帶')
+
+  return {
+    'company.name': i18n(name),
+    'company.address': i18n(address),
+    'company.hours': i18n(hours),
+    'company.phone': phone,
+    // 傳真、三個社群網址、密件副本：mockup 沒有（footer 的社群是 href="#"），客戶也還沒給。
+    // 留空是有意義的狀態——後台的提示寫「留空則前台不顯示該圖示」，編一個假值反而會上線。
+    'company.fax': '',
+    'company.email': mail,
+    'company.map_embed': map,
+    'social.facebook': '',
+    'social.linkedin': '',
+    'social.youtube': '',
+    'home.gallery_image': asset(gallery[1]),
+    'home.gallery_alt': i18n(decode(gallery[2])),
+    // 表單通知信的收件者：reference/現有網站盤點與內容遷移.md D1 決議正式站寄
+    // service@nti-printing.com，與聯絡頁公布的信箱同一個。測試站要改寄別處是在後台改，
+    // 不是在這裡分環境——這張表本來就歸 CMS 管。
+    'mail.quote_notify_to': mail,
+    'mail.contact_notify_to': mail,
+    'mail.bcc': '',
+  }
+}
+
+/** 前台的中文字典（apps/web/src/lib/zh.ts）：查得到就用，查不到落回英文——與前台同一條規則。 */
+const ZH_DICT = (() => {
+  const src = read(path.join(repo, 'apps/web/src/lib/zh.ts'))
+  const obj = src.slice(src.indexOf('{', src.indexOf('export const ZH')), src.lastIndexOf('}') + 1)
+  return new Function('return ' + obj)()
+})()
+
+const i18n = (en) => ({ zh: ZH_DICT[en] ?? en, en })
+
 const counts = Object.entries(seed).map(([k, v]) => `${k}=${v.length}`).join('  ')
 mkdirSync(path.join(root, 'src/api'), { recursive: true })
 writeFileSync(
@@ -476,3 +539,24 @@ export const SEED: Record<string, Row[]> = ${JSON.stringify(seed, null, 2)} as u
 )
 console.log('已產生 src/api/seed.generated.ts')
 console.log(counts)
+
+/* 設定的值另存一支：seed.generated.ts 的型別是 Record<string, Row[]>，
+   而設定是 key-value；tools/build-content-sql.mjs 又是直接把那支當 JSON 解析的，
+   多塞一個 export 會讓它取到錯的結尾。 */
+const settingValues = settings()
+writeFileSync(
+  path.join(root, 'src/api/settings.generated.ts'),
+  `/* 由 scripts/build-seed.mjs 自 mockup/*.html 與 apps/web/src/lib/zh.ts 產生 —— 請勿手改。
+   重新產生：npm run seed
+
+   固定 15 個 key 的值。key 與多語旗標的權威在 Api/Data/Seed/SeedData.cs，
+   scripts/check-units.mjs 會比對兩邊；空字串代表「mockup 沒有、客戶還沒給」。
+
+   同一份值也是 db/content/220_site_setting.sql 的來源
+   （node tools/build-settings-sql.mjs），demo 看到的設定與匯進資料庫的是同一份。 */
+
+export const SETTING_VALUES: Record<string, string | { zh: string; en: string }> = ${JSON.stringify(settingValues, null, 2)}
+`,
+)
+const blank = Object.entries(settingValues).filter(([, v]) => v === '').map(([k]) => k)
+console.log(`已產生 src/api/settings.generated.ts（15 個 key，其中 ${blank.length} 個留空待客戶提供：${blank.join('、')}）`)

@@ -132,9 +132,7 @@ contact 頁、`zh.ts` 的三筆 key、Google Maps embed 的查詢字串與 ifram
 ⚠ 兩個需要確認的地方：英文地址的**郵遞區號 709** 與**省略「媽祖宮里」**都是依
 慣例補的（沿用原本「Taichung 406」帶郵遞區號的格式），客戶只給了中文地址。
 
-`SiteSetting` 的 `company.address`／`company.phone` 在資料庫裡仍是 NULL —— 依設計
-那是客戶在後台填的欄位，且目前沒有任何頁面讀它（固定頁的內容寫死在前端，
-docs/08 決議 3）。要的話可以另外灌進去。
+`SiteSetting` 的值當時在資料庫裡仍是 NULL，已於 2026-09-10 灌進去（見下一節）。
 
 ### ✅ 語系解析（2026-09-06）
 
@@ -361,6 +359,32 @@ middleware 在 Edge runtime 查不到 CMS 的 slug，只能整個前綴放行。
     `DROP CONSTRAINT DF_SupplierDownload_RequireLogin` 在正式庫找不到該名稱
     （SQL 3728），migration 整支回滾、worker 起不來。教訓寫在
     [`docs/10 §11.1`](docs/10-backend-design.md)：migration 不得依賴 DEFAULT 約束的名稱
+
+### ✅ 網站設定的值已匯入（2026-09-10）
+
+`SiteSetting` 那 15 個 key 從建庫以來一直是 NULL——種子（`HasData`／`db/seed/130`）
+只建 key，值「留給客戶在後台填」。同一時間**後台 demo 上的設定卻是滿的**：那份值是手寫在
+`apps/admin/src/api/seed.manual.ts` 的，還編了一組傳真號碼（`+886-6-000-0001`）、一個
+專案裡沒有出處的 `sales@` 收件者、和一段省略號的地圖嵌入碼。客戶照著 demo 驗收公司資訊，
+正式站一個字都不會出現，而兩邊都不對、方向還相反。
+
+值改成產生的，來源是 mockup 與前台的中文字典：
+
+```
+mockup/*.html + apps/web/src/lib/zh.ts
+  → apps/admin/src/api/settings.generated.ts   （pnpm --filter admin seed，後台 demo 讀這份）
+  → db/content/220_site_setting.sql            （node tools/build-settings-sql.mjs）
+```
+
+本機庫已匯入 10 個 key（公司名稱／地址／營業時間／電話／Email／地圖嵌入碼、首頁形象圖帶
+與 Alt、兩個表單通知收件者），`verify-ef.sql` 全數 PASS。抽不到值時產生器直接丟例外——
+空值在後台長得像「客戶還沒填」，會把「mockup 版面改了」偽裝成正常狀態。
+
+⚠ **Azure 的 `NTI` 庫還沒跑這支**，跟 111 筆內容匯入是同一類的一次性腳本。
+
+順帶修掉一個「填了也沒用」：報價通知信的收件者原本寫死在 `FormHandler.cs`
+（`quote@nti-printing.com`，專案裡沒有出處），後台的「報價通知收件者」怎麼填都不會被讀到，
+而且畫面上不會有任何異狀。現在兩種表單各讀各的 key，讀不到才退回聯絡頁公布的信箱。
 
 ### ⬜ 未做
 
@@ -637,7 +661,7 @@ gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌�
 |---|---|---|
 | **中文文案** | 客戶未提供正式文案 | 已用機器翻譯初稿填滿（111 筆內容，`/zh` 可以驗收了），但**上線前需客戶校閱**。公司中文名與董事長姓名沒有依據，刻意保留 `NTI`／「鄭董事長」 |
 | 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 80 篇文章與 100 個標籤還沒進 CMS，那 170 條舊網址只能先導回首頁（拿不回權重）；缺漏頁面內容同此。**建議向客戶要舊站 Search Console 存取權**，按點擊排序決定哪些文章必須遷移 |
-| 公司傳真、地圖嵌入碼 | 客戶未提供 | `SiteSetting` 的 `company.fax`／`company.map_embed` 仍為 NULL；地圖目前用地址字串查 Google Maps embed |
+| 公司傳真、社群網址 | 客戶未提供 | `SiteSetting` 的 `company.fax` 與三個 `social.*` 仍為 NULL（社群留空前台就不顯示圖示）。`company.map_embed` 已填 mockup 那段用**地址字串**查的 Google Maps embed，客戶自己的商家嵌入碼給了再換 |
 | SMTP 帳密 | 客戶未提供寄件帳號（`Smtp__Host`／`Port` 已填 Brevo） | 表單收得到資料，但通知信一律 `Failed` |
 | 正式網域 | 客戶端 DNS | 上線 checklist 卡住 |
 

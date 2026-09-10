@@ -63,6 +63,41 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/210_legacy_redirects.sql
 > 也就是說客戶現在在後台改這一頁不會影響正式站。等 middleware 改讀 API
 > （`RedirectConfiguration` 的覆蓋索引就是為此留的），DB 才成為權威。
 
+## 220_site_setting.sql
+
+**21 網站設定**的值（`SiteSetting`）。種子只建 15 個 key、值留 NULL，這支把 mockup
+已經有的 10 個補上去。
+
+```bash
+pnpm --filter admin seed                # 先重產 apps/admin/src/api/settings.generated.ts
+node tools/build-settings-sql.mjs       # 再產生 .sql（請勿手改）
+sqlcmd -S <server> -d NTI -I -b -i db/content/220_site_setting.sql
+```
+
+來源是 `apps/admin/src/api/settings.generated.ts`——由 `mockup/` 的 HTML 與
+`apps/web/src/lib/zh.ts` 抽出，也就是**後台 demo 正在顯示的那一份**。兩邊同一份是重點：
+先前 demo 上的設定是手寫的（還寫進了一組編出來的傳真號碼與一個沒人用過的 `sales@`
+收件者），資料庫那 15 個 key 卻全是 NULL——客戶在 demo 驗收過的公司資訊，正式站一個字
+都不會出現，而兩邊都不對、方向還相反。
+
+**冪等，且已經填過的 key 一律不動**（`WHERE ValueZh IS NULL AND ValueEn IS NULL`）：
+這張表客戶會在後台改，覆蓋等於把他填的值默默改掉。要重新匯入請先在後台清空該欄位。
+
+留 NULL 的 5 個是**客戶還沒提供**，不是漏掉：
+
+| key | 為什麼空著 |
+|---|---|
+| `company.fax` | 客戶未提供（[`STATUS.md`](../../STATUS.md) §八） |
+| `social.facebook`／`linkedin`／`youtube` | mockup 的 footer 是 `href="#"`；後台提示寫明「留空則前台不顯示該圖示」 |
+| `mail.bcc` | 沒有這個需求，客戶要再填 |
+
+寫成空字串會讓後台分不出「客戶清空了」與「從來沒填」，所以一個字都不寫。
+
+> ⚠ `company.map_embed` 存的是整段 `<iframe>`（後台那個欄位收的就是「分享 → 嵌入地圖」
+> 貼過來的內容），查詢字串是地址，不是客戶自己的 Google 商家嵌入碼——客戶給了再換。
+> 種子把這個 key 的 `ValueType` 標成 `url`，與實際存的內容不符，等前台真的要讀它時一併修
+> （改 `ValueType` 要產新的 EF Migration）。
+
 ## ⚠ 中文是初稿
 
 `tools/content-zh.mjs` 的繁體中文是**機器翻譯初稿，不是客戶核可的文案**。

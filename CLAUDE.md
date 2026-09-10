@@ -32,7 +32,7 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [08 資料庫設計](docs/08-database.md) | system-analyst + backend-engineer：45 張表 DDL、多語策略、索引、種子、遷移 |
 | [09 後台 CMS 功能](docs/09-cms-admin.md) | backend-engineer：23 個後台單元規格、上傳建議尺寸總表、權限矩陣 |
 | [10 後端技術規範](docs/10-backend-design.md) | backend-engineer：**P4 的施工標準**——分層鐵律、`ApiResponse` 信封、錯誤碼、JWT/RBAC、EF+Dapper 雙軌、Coding Checklist（範本：`Jabez/Api`） |
-| [內容匯入](db/content/README.md) | `db/content/`：把 mockup 的頁面內容匯入 CMS（111 筆，中英雙語）。**中文為初稿待客戶校閱** |
+| [內容匯入](db/content/README.md) | `db/content/`：把 mockup 的內容匯入 CMS——頁面 111 筆、舊站 301 對照 227 條、網站設定 10 個 key（中英雙語）。**中文為初稿待客戶校閱** |
 | [資料庫建置腳本](db/README.md) | `db/`：參考實作與交付腳本 migrations／seed／verify（資料庫名 NTI）。**schema 權威為 EF Migration**，見 10 §8 |
 | [網站建置時程（PDF）](reference/NTI_網站建置時程.pdf) | 建置時程 Gantt（2026/07–11，7 月啟動、11 月測試上線）、客戶確認控制點 |
 | [網站建置時程（HTML）](reference/網站建置時程.html) | 時程表原始檔（可編輯，產 PDF 用） |
@@ -131,6 +131,7 @@ NTI/
   set -a; . ./db/.env.local; set +a
   db/tools/sqlcmd.sh NTI < db/content/200_mockup_content.sql   # 111 筆中英內容
   db/tools/sqlcmd.sh NTI < db/content/210_legacy_redirects.sql # 227 條舊站 301 對照
+  db/tools/sqlcmd.sh NTI < db/content/220_site_setting.sql     # 網站設定的值（種子只建 key）
   db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql             # 應輸出「全數 PASS」
   ```
 

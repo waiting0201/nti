@@ -196,31 +196,20 @@ export const SETTING_GROUPS: Array<{ title: string; fields: SettingField[] }> = 
   },
 ]
 
-export const SETTING_VALUES: Record<string, string | { zh: string; en: string }> = {
-  'company.name': { zh: '南台灣印刷股份有限公司', en: 'NTI Printing Co., Ltd.' },
-  'company.address': {
-    zh: '709 臺南市安南區媽祖宮里工業六路29號',
-    en: 'No. 29, Gongye 6th Rd., Annan Dist., Tainan City 709, Taiwan',
-  },
-  'company.hours': { zh: '週一至週五 08:30–17:30', en: 'Mon–Fri 08:30–17:30' },
-  'company.phone': '+886 6 261 1358',
-  'company.fax': '+886-6-000-0001',
-  'company.email': 'service@nti-printing.com',
-  'company.map_embed': '<iframe src="https://www.google.com/maps?q=…&output=embed"></iframe>',
-  'social.facebook': '',
-  'social.linkedin': '',
-  'social.youtube': '',
-  'home.gallery_image': '/assets/ref-home-mid1.webp',
-  'home.gallery_alt': { zh: 'NTI 印刷廠區形象', en: 'NTI Printing plant' },
-  'mail.quote_notify_to': 'sales@nti-printing.com',
-  'mail.contact_notify_to': 'service@nti-printing.com',
-  'mail.bcc': '',
-}
+/**
+ * 設定的**值**改由 scripts/build-seed.mjs 自 mockup 與前台中文字典產生
+ * （`src/api/settings.generated.ts`），這裡只轉出去。
+ *
+ * 原本是手寫的，於是寫進了幾個沒有依據的值：公司中文名、一組 000-0001 的傳真、
+ * 一個沒人用過的 sales@ 收件者、省略號的地圖嵌入碼。它們在 demo 上看起來像真的，
+ * 客戶會照著驗收；而資料庫那 15 個 key 其實還是 NULL——兩邊都不對，方向還相反。
+ */
+export { SETTING_VALUES } from './settings.generated'
 
 export const EMAIL_LOG = [
-  { id: '6', at: '2026-09-01T14:20:41Z', to: 'sales@nti-printing.com', subject: '新的報價需求 Q-2026-0138', status: '成功', error: '' },
+  { id: '6', at: '2026-09-01T14:20:41Z', to: 'service@nti-printing.com', subject: '新的報價需求 Q-2026-0138', status: '成功', error: '' },
   { id: '5', at: '2026-09-01T14:20:39Z', to: 'yawen@chunho-culture.tw', subject: '我們已收到您的報價需求', status: '成功', error: '' },
-  { id: '4', at: '2026-09-01T09:12:22Z', to: 'sales@nti-printing.com', subject: '新的報價需求 Q-2026-0143', status: '成功', error: '' },
+  { id: '4', at: '2026-09-01T09:12:22Z', to: 'service@nti-printing.com', subject: '新的報價需求 Q-2026-0143', status: '成功', error: '' },
   { id: '3', at: '2026-08-30T08:02:11Z', to: 'service@nti-printing.com', subject: '新的聯絡訊息', status: '成功', error: '' },
   { id: '2', at: '2026-08-29T02:44:58Z', to: 'erin@northwind-cosmetics.com', subject: '我們已收到您的報價需求', status: '失敗', error: '550 5.1.1 recipient mailbox unavailable（對方信箱暫時無法收信）' },
   { id: '1', at: '2026-08-26T07:05:33Z', to: 'bhchen@yaosheng.com.tw', subject: '我們已收到您的報價需求', status: '成功', error: '' },

@@ -123,6 +123,12 @@ pnpm --filter admin typecheck
 所以後台一打開就是這個站真正的內容，客戶看得懂自己在改什麼。
 報價／聯絡與信件紀錄則是示意資料（前台表單尚未接 API）。
 
+**21 網站設定的值**同樣是產生的（`src/api/settings.generated.ts`，來源是 mockup 與
+`apps/web/src/lib/zh.ts`），而且**與匯進資料庫的是同一份**
+（[`db/content/220_site_setting.sql`](../../db/content/README.md)，
+`node tools/build-settings-sql.mjs`）。這裡曾經是手寫的，於是 demo 上填著幾個編出來的值、
+資料庫那 15 個 key 卻全是 NULL——客戶在 demo 驗收過的公司資訊，正式站一個字都不會出現。
+
 資料存在瀏覽器的 localStorage，**可以真的新增、編輯、排序、上下架**，重整不會消失。
 
 ## 接上後端要改哪裡
