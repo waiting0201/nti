@@ -16,8 +16,20 @@ export const apiBase = (process.env.NEXT_PUBLIC_API_BASE ?? '').replace(/\/$/, '
 export const hasApi = apiBase.length > 0
 
 /**
+ * 所有 CMS 資料共用的快取 tag。後台存檔後由 `/api/revalidate` 一次作廢。
+ *
+ * 不分單元下 tag，是因為那要維護一份「哪個單元影響哪幾頁」的對照表，
+ * 而它會跟著單元增減慢慢失真；漏掉一條的症狀是某一頁永遠不更新，很難查。
+ * 整批作廢的代價只是下一個訪客會重新取一次資料。
+ */
+export const CMS_TAG = 'cms'
+
+/**
  * ISR 重新驗證秒數。與 API 回應的 `s-maxage=300` 對齊——
  * 兩邊不一致的話，內容改了之後前台要等的時間會是兩者的最大值，很難解釋。
+ *
+ * 這是**上限**而不是實際延遲：後台存檔會打 `/api/revalidate` 立刻作廢快取，
+ * 這個秒數是通知沒送到時的保險。
  */
 const REVALIDATE = 300
 
@@ -36,7 +48,7 @@ async function fetchApi<T>(path: string, revalidate = REVALIDATE): Promise<T | n
   if (!hasApi) return null
 
   try {
-    const res = await fetch(`${apiBase}${path}`, { next: { revalidate } })
+    const res = await fetch(`${apiBase}${path}`, { next: { revalidate, tags: [CMS_TAG] } })
     if (!res.ok) {
       console.error(`[api] ${path} → HTTP ${res.status}`)
       return null

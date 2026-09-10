@@ -72,6 +72,9 @@ var host = new HostBuilder()
         // 顯式短 timeout：reCAPTCHA 正常 < 1s，異常時寧可快速失敗也不要讓表單卡住
         services.AddHttpClient<IBotCheckService, RecaptchaService>(c => c.Timeout = TimeSpan.FromSeconds(8));
 
+        // 逾時抓短：這支是存檔後的附帶通知，前台沒回應時要立刻放棄而不是拖著編輯者等
+        services.AddHttpClient<IFrontendRevalidator, FrontendRevalidator>(c => c.Timeout = TimeSpan.FromSeconds(5));
+
         // ── Scoped：碰 AppDbContext / IDbConnection 的一律 Scoped，沒有例外 ────
         //    誤設 Singleton 會捕獲已釋放的 DbContext，且只在高併發下才浮現（docs/10 §4.1）
         services.AddScoped<AppRouter>();

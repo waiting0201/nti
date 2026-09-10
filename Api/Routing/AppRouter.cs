@@ -67,7 +67,8 @@ public sealed partial class AppRouter(
     AdminCategoryHandler         adminCategories,
     AdminAccountHandler          adminAccounts,
     AdminAuditHandler            adminAudits,
-    AdminMediaHandler            adminMedia)
+    AdminMediaHandler            adminMedia,
+    IFrontendRevalidator         revalidator)
 {
     /// <summary>
     /// <see cref="GetRequiredPermission"/> 的預設回傳值：<b>未列在權限表的 /admin/* 一律拒絕</b>。
@@ -112,10 +113,40 @@ public sealed partial class AppRouter(
             return NotFound(method, route);
         }
 
-        return await RoutePublicAsync(req, method, segments)
-            ?? await RouteAdminAsync(req, method, segments)
-            ?? NotFound(method, route);
+        var publicResult = await RoutePublicAsync(req, method, segments);
+        if (publicResult is not null) return publicResult;
+
+        var adminResult = await RouteAdminAsync(req, method, segments);
+        if (adminResult is null) return NotFound(method, route);
+
+        // 後台改動了前台看得到的東西 → 立刻通知前台重生快取，不然要等 ISR 的 300 秒
+        if (AffectsPublicSite(method, segments) && IsSuccess(adminResult))
+            await revalidator.RevalidateAsync(req.HttpContext.RequestAborted);
+
+        return adminResult;
     }
+
+    /// <summary>
+    /// 這個後台請求會不會改到前台看得到的內容。
+    /// <para>
+    /// 寧可少通知也不要漏通知——漏了就是編輯者等 300 秒，多通知只是白打一次 HTTP。
+    /// 但報價、聯絡訊息、管理員、信件紀錄這四個單元的內容前台根本沒有，
+    /// 每改一次狀態就打一次前台是純粹的雜訊。
+    /// </para>
+    /// <para>
+    /// 上傳端點也排除：檔案進了 Blob 但還沒有任何一筆資料引用它，
+    /// 這時候重生快取不會讓任何一頁改變（真正的引用在後面那次存檔）。
+    /// </para>
+    /// </summary>
+    private static bool AffectsPublicSite(string method, string[] segments) =>
+        method is "POST" or "PUT" or "PATCH" or "DELETE"
+        && segments is ["admin", var unit, ..]
+        && unit is not ("quote" or "contact" or "admin" or "audit")
+        && segments is not [.., "upload" or "upload-file"];
+
+    /// <summary>Handler 回的是 2xx 才算成功；驗證失敗是用例外走的，這裡擋的是明確回錯的情況。</summary>
+    private static bool IsSuccess(IActionResult result) =>
+        result is not ObjectResult { StatusCode: >= 400 };
 
     /// <summary>檢查 JWT 的 permissions claim；<c>is_superadmin</c> 自動通過（docs/10 §7.5）。</summary>
     private static void RequirePermission(ClaimsPrincipal principal, string? permissionCode)

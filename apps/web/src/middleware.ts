@@ -63,6 +63,14 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   /*
+   * Route handler（目前只有 /api/revalidate）直接放行。
+   * 它沒有副檔名，matcher 擋不掉，落到下面就會被補上語系前綴變成
+   * /zh/api/revalidate —— 那不是任何路由，後端的重生通知會永遠拿到 404 或 307，
+   * 而症狀是「前台就是不更新」，完全不指向這裡。
+   */
+  if (pathname.startsWith('/api/')) return NextResponse.next()
+
+  /*
    * 後台是 public/admin/ 底下的 SPA（BrowserRouter，basename="/admin/"），
    * 它的深層網址在伺服器上沒有對應檔案 —— 直接放行的話會走到下面被補上語系前綴，
    * 變成 /en/admin/u/news 而 404（在後台按 F5 就會遇到）。

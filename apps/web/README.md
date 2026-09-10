@@ -213,7 +213,21 @@ NEXT_PUBLIC_MEDIA_BASE=https://stntiprod.blob.core.windows.net pnpm --filter web
   element tree 換掉文字節點與 `alt`／`title`／`placeholder`／`aria-label`。
   **`/en` 完全不經過替換**，所以 `verify:markup` 這道閘不受影響。
 - **CMS 內容**：接了 `NEXT_PUBLIC_API_BASE` 的 16 頁改吃資料庫的 `*I18n` 資料表，
-  兩個語系各自獨立（缺語系不 fallback）。
+  兩個語系各自獨立（缺語系不 fallback）。資料以 ISR 快取 300 秒，
+  後台存檔會打 `/api/revalidate` 立刻作廢（見下）。
+
+### 存檔後多久才更新
+
+`src/lib/api.ts` 的每支 fetch 都帶 `revalidate: 300` 與 `tags: ['cms']`，
+所以**沒有額外設定時，後台存的內容最多五分鐘後才出現在前台**——而且是
+stale-while-revalidate：踩到期限的那個請求拿到的仍是舊頁，下一個請求才看得到。
+
+設了 `REVALIDATE_SECRET`（**執行期**讀取，不是 `NEXT_PUBLIC_*`，改了不用重 build），
+`src/app/api/revalidate/route.ts` 就會啟用；後端每次改到前台看得到的內容會帶著
+同一個密鑰打它，把 `cms` tag 的快取作廢，下一個訪客就拿到新資料。未設時那支直接回 404。
+
+⚠️ `/api/` 在 `middleware.ts` 有一條明確放行——它沒有副檔名，matcher 擋不掉，
+落到語系判斷會被補成 `/zh/api/revalidate`，症狀是「前台就是不更新」而完全不指向 middleware。
 
 ### 字典怎麼維護
 

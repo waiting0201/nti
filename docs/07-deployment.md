@@ -264,6 +264,29 @@ repo:waiting0201@5709750/nti@1354276527:environment:production
   否則會建出一個空的站
 - 要退回寫死的內容：`gh variable delete API_BASE` 再重跑 workflow，約 3 分鐘
 
+#### 存檔後多久前台才更新
+
+前台每支資料端點都是 `fetch(..., { next: { revalidate: 300 } })`，所以**預設是最多五分鐘**，
+而且是 stale-while-revalidate：踩到期限的那個請求拿到的仍是舊頁，下一個請求才看得到新的。
+
+要讓它幾秒內就更新，設好這對共用密鑰（兩邊必須一致）：
+
+| 放哪 | 變數 | 值 |
+|---|---|---|
+| SWA 的 App settings | `REVALIDATE_SECRET` | 任意長亂數 |
+| Functions 的 App settings | `Revalidate__Secret` | 同上 |
+| Functions 的 App settings | `Revalidate__Url` | `https://<站台網域>/api/revalidate` |
+
+後台每次改到前台看得到的內容，`AppRouter` 就會打那支 route handler 作廢 `cms` tag 的快取。
+**沒設也不是故障**，只是退回等 300 秒；通知失敗一律只記 log，不會讓編輯者的存檔失敗。
+
+`REVALIDATE_SECRET` 是**執行期**讀取的（不是 `NEXT_PUBLIC_*`），改了不用重 build；
+未設時那支 route handler 直接回 404，等於沒啟用。
+
+> ⚠️ ISR 快取是**每個執行個體各自持有**的。SWA 若把站台擴出多個執行個體，
+> 這支只清得到接到請求的那一個，其餘仍等 300 秒。Free 方案目前是單一執行個體，
+> 之後若擴充，要改成共用的 cache handler。
+
 ---
 
 ### 7.1 SWA Free 的四條硬限制
@@ -306,6 +329,7 @@ repo:waiting0201@5709750/nti@1354276527:environment:production
 
 | 2026-09-06 | Tim（Claude Code） | 會員系統移出範圍：app settings 刪除 `Jwt__AudienceWeb`／`Jwt__ExpiryMinutesWeb` |
 | 2026-09-08 | Tim（Claude Code） | Function App 設定的機器人防護金鑰由 `Turnstile__SecretKey` 改為 `Recaptcha__SecretKey` + `Recaptcha__MinScore`（改用 Google reCAPTCHA v3，見 10 §9.6） |
+| 2026-09-10 | Tim（Claude Code） | 新增**存檔後即時重生**：前台加 `POST /api/revalidate`（bearer 共用密鑰，作廢 `cms` tag），後端在改動前台看得到的內容後呼叫它。設定為 SWA 的 `REVALIDATE_SECRET` 與 Functions 的 `Revalidate__Url`／`Revalidate__Secret`；沒設就退回等 ISR 的 300 秒。docs/02 §渲染早就寫了「背景/webhook 重生」，但一直沒有實作，唯一的機制是那個計時器 |
 
-*最後更新：2026-09-08*
+*最後更新：2026-09-10*
 

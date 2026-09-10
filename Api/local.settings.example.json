@@ -21,6 +21,9 @@
     "Smtp__From": "REPLACE_WITH_FROM_ADDRESS",
     "Recaptcha__SecretKey": "REPLACE_WITH_RECAPTCHA_SECRET",
     "Recaptcha__MinScore": "0.5",
+    "_comment_revalidate": "後台存檔後通知前台作廢 ISR 快取；沒設就退回等 300 秒，不是故障。Secret 要與前台的 REVALIDATE_SECRET 相同",
+    "Revalidate__Url": "https://REPLACE_WITH_SITE_HOST/api/revalidate",
+    "Revalidate__Secret": "REPLACE_WITH_SHARED_SECRET",
     "PublishScheduleCron": "0 */5 * * * *",
     "OrphanMediaCron": "0 0 4 * * 0"
   },
