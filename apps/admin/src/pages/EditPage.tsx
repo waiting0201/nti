@@ -227,7 +227,7 @@ export function EditPage() {
           )}
           {canEdit && (
             <button className="btn" disabled={saving} onClick={() => save()}>
-              {saving ? '上傳中…' : '儲存草稿'}
+              {saving ? '上傳中…' : '儲存'}
             </button>
           )}
           {canPublish && unit.hasStatus && (
