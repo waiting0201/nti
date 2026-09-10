@@ -8,7 +8,7 @@ import { LOCALE_LABEL, LOCALES, publishState, type Field, type Locale, type Unit
 import { useAuth } from '@/lib/auth'
 import { Badge, Modal, Notice, toast, useUnsavedGuard } from '@/components/ui'
 import { FieldInput } from '@/components/fields'
-import { blockingReasons, isComplete } from '@/lib/completeness'
+import { blockingReasons, isComplete, missingNeutral } from '@/lib/completeness'
 import { RecordView } from './RecordView'
 import { assetUrl } from '@/lib/asset'
 import { countPending, resolvePendingUploads } from '@/lib/pending-uploads'
@@ -23,6 +23,8 @@ export function EditPage() {
   const [dirty, setDirty] = useState(false)
   const [locale, setLocale] = useState<Locale>('zh')
   const [blocked, setBlocked] = useState<string[] | null>(null)
+  /** 存檔時擋下來的必填欄位：key → 顯示在該欄位下方的訊息 */
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [children, setChildren] = useState<Row[]>([])
   const [saving, setSaving] = useState(false)
 
@@ -75,6 +77,17 @@ export function EditPage() {
 
   const save = async (publish?: boolean) => {
     const next: Row = structuredClone(row)
+
+    // 必填的語系中性欄位（圖片、分類、日期）空著就不存。上架時的 blockingReasons
+    // 擋不住這種情況：已經上架的那一筆按的是「儲存」，根本不會經過上架檢查。
+    const missing = missingNeutral(unit, next)
+    if (missing.length) {
+      setFieldErrors(Object.fromEntries(missing.map((f) => [f.key, '必填，不能空著'])))
+      toast(`還沒填：${missing.map((f) => f.label).join('、')}`)
+      return
+    }
+    setFieldErrors({})
+
     if (publish !== undefined) {
       if (publish) {
         const reasons = blockingReasons(unit, next)
@@ -169,7 +182,13 @@ export function EditPage() {
               <div className="card-b">
                 <fieldset disabled={!canEdit} style={{ border: 0 }}>
                   {neutralFields.filter(showField).map((f) => (
-                    <FieldInput key={f.key} field={f} value={row[f.key]} onChange={(v) => setNeutral(f.key, v)} />
+                    <FieldInput
+                      key={f.key}
+                      field={f}
+                      value={row[f.key]}
+                      error={fieldErrors[f.key]}
+                      onChange={(v) => setNeutral(f.key, v)}
+                    />
                   ))}
                 </fieldset>
               </div>

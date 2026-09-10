@@ -232,6 +232,13 @@ function Uploader({
     input.click()
   }
 
+  /**
+   * 必填欄位不給清空，只能「更換」——標成必填卻按得下移除，等於畫面自己違背自己的規則，
+   * 而且存檔沒有任何一層會攔（存檔時的必填檢查是後來補的第二道，不是這裡的替代品）。
+   * 還沒送出的暫存檔例外：那是使用者剛選錯檔，放棄選擇不會讓任何已存在的內容變空。
+   */
+  const canRemove = !field.required || isPending(value)
+
   const remove = () => {
     // 已經存過的檔案，按下儲存就會從系統刪掉（留著的話它仍取得自原本的網址）——
     // 那是不可復原的，所以在這裡先講。還沒送出的暫存檔沒有這回事，安靜清掉就好。
@@ -260,7 +267,7 @@ function Uploader({
             <button type="button" className="btn btn-sm" onClick={pick}>
               {value ? '更換' : '上傳'}
             </button>
-            {value && (
+            {value && canRemove && (
               <button type="button" className="btn btn-sm btn-danger" onClick={remove}>
                 移除
               </button>
