@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import * as api from '@/api/client'
+import { ApiError } from '@/api/http'
 import type { Row } from '@/api/types'
 import { UNIT_BY_CODE, unitFields } from '@/units'
 import { LOCALE_LABEL, LOCALES, publishState, type Field, type Locale, type Unit } from '@/lib/types'
@@ -10,6 +11,7 @@ import { FieldInput } from '@/components/fields'
 import { blockingReasons, isComplete } from '@/lib/completeness'
 import { RecordView } from './RecordView'
 import { assetUrl } from '@/lib/asset'
+import { countPending, resolvePendingUploads } from '@/lib/pending-uploads'
 
 export function EditPage() {
   const { code = '', id = '' } = useParams()
@@ -22,6 +24,7 @@ export function EditPage() {
   const [locale, setLocale] = useState<Locale>('zh')
   const [blocked, setBlocked] = useState<string[] | null>(null)
   const [children, setChildren] = useState<Row[]>([])
+  const [saving, setSaving] = useState(false)
 
   const isNew = id === 'new'
 
@@ -61,6 +64,8 @@ export function EditPage() {
     setDirty(true)
   }
 
+  const pendingCount = countPending(row)
+
   const neutralFields = fields.filter((f) => f.side !== 'locale' && !f.i18n)
   const localeFields = fields.filter((f) => f.i18n)
 
@@ -69,7 +74,7 @@ export function EditPage() {
     !(unit.code === 'page' && f.key === 'body' && row.hasRichBody !== true)
 
   const save = async (publish?: boolean) => {
-    const next: Row = { ...row }
+    const next: Row = structuredClone(row)
     if (publish !== undefined) {
       if (publish) {
         const reasons = blockingReasons(unit, next)
@@ -80,6 +85,24 @@ export function EditPage() {
       }
       next.isPublished = publish
     }
+
+    // 圖片／檔案是選檔當下暫存、這裡才真的送出（見 lib/pending-uploads）。
+    // 上傳失敗就整筆中止：欄位還指著本機的 blob URL，存進 DB 會變成永遠讀不到的圖。
+    try {
+      setSaving(true)
+      await resolvePendingUploads(unit.code, next)
+    } catch (err) {
+      const code = err instanceof ApiError ? err.code : 'INTERNAL'
+      toast(
+        code === 'UPLOAD_TYPE' ? '檔案格式不符，尚未儲存。請確認副檔名與檔案實際內容一致。'
+        : code === 'UPLOAD_SIZE' ? '檔案太大，尚未儲存。'
+        : `檔案上傳失敗，尚未儲存：${(err as Error).message}`,
+      )
+      return
+    } finally {
+      setSaving(false)
+    }
+
     if (isNew) {
       const created = await api.create(unit.code, next)
       setDirty(false)
@@ -146,7 +169,7 @@ export function EditPage() {
               <div className="card-b">
                 <fieldset disabled={!canEdit} style={{ border: 0 }}>
                   {neutralFields.filter(showField).map((f) => (
-                    <FieldInput key={f.key} field={f} value={row[f.key]} onChange={(v) => setNeutral(f.key, v)} unit={unit.code} />
+                    <FieldInput key={f.key} field={f} value={row[f.key]} onChange={(v) => setNeutral(f.key, v)} />
                   ))}
                 </fieldset>
               </div>
@@ -181,7 +204,6 @@ export function EditPage() {
                     field={f}
                     value={row.i18n?.[locale]?.[f.key] ?? ''}
                     onChange={(v) => setLocalised(f.key, v)}
-                    unit={unit.code}
                   />
                 ))}
               </fieldset>
@@ -198,28 +220,32 @@ export function EditPage() {
             返回清單
           </button>
           <span style={{ marginLeft: 'auto' }} />
-          {dirty && <span style={{ fontSize: 12.5, color: 'var(--warn)' }}>有未儲存的變更</span>}
+          {dirty && (
+            <span style={{ fontSize: 12.5, color: 'var(--warn)' }}>
+              {pendingCount > 0 ? `有未儲存的變更，含 ${pendingCount} 個待上傳的檔案` : '有未儲存的變更'}
+            </span>
+          )}
           {canEdit && (
-            <button className="btn" onClick={() => save()}>
-              儲存草稿
+            <button className="btn" disabled={saving} onClick={() => save()}>
+              {saving ? '上傳中…' : '儲存草稿'}
             </button>
           )}
           {canPublish && unit.hasStatus && (
             <>
               {row.isPublished ? (
-                <button className="btn" onClick={() => save(false)}>
+                <button className="btn" disabled={saving} onClick={() => save(false)}>
                   下架
                 </button>
               ) : (
-                <button className="btn btn-primary" onClick={() => save(true)}>
-                  儲存並上架
+                <button className="btn btn-primary" disabled={saving} onClick={() => save(true)}>
+                  {saving ? '上傳中…' : '儲存並上架'}
                 </button>
               )}
             </>
           )}
           {canEdit && !unit.hasStatus && (
-            <button className="btn btn-primary" onClick={() => save()}>
-              儲存
+            <button className="btn btn-primary" disabled={saving} onClick={() => save()}>
+              {saving ? '上傳中…' : '儲存'}
             </button>
           )}
         </div>

@@ -3,8 +3,16 @@ import type { Field, Locale } from '@/lib/types'
 import { Hint } from './ui'
 import { assetUrl } from '@/lib/asset'
 import * as api from '@/api/client'
-import { ApiError, api as http, hasApi } from '@/api/http'
 import type { Row } from '@/api/types'
+import {
+  DOCUMENT_EXTENSIONS,
+  DOCUMENT_MAX_BYTES,
+  IMAGE_EXTENSIONS,
+  IMAGE_MAX_BYTES,
+  discardPending,
+  isPending,
+  stagePending,
+} from '@/lib/pending-uploads'
 
 /* ── 分類快取（給 select 型欄位用） ───────────────────── */
 let categoryCache: Row[] | null = null
@@ -160,61 +168,75 @@ function RichText({ value, onChange }: { value: string; onChange: (v: string) =>
 
 /* ── 上傳 ─────────────────────────────────────────────── */
 
+/**
+ * 圖片／檔案欄位。
+ *
+ * **選好檔案不會馬上送出**：只收進 `pending-uploads` 的暫存區、拿一個 `blob:` URL
+ * 當欄位值做本機預覽，真正的上傳在按下儲存時由 `resolvePendingUploads()` 一併處理
+ * （理由見該模組的註解）。所以這裡不碰網路，只做選檔與本機檢查。
+ */
 function Uploader({
   field,
   value,
   onChange,
-  unit,
 }: {
   field: Field
   value: string
   onChange: (v: string) => void
-  /** 上傳端點掛在單元底下（`POST /admin/{unit}/upload`），沿用該單元的 edit 權限 */
-  unit?: string
 }) {
   const isImage = field.type === 'image'
   const [warn, setWarn] = useState('')
+  /** 暫存檔的值是 `blob:…/{uuid}`，切不出原始檔名——選檔時記下來給下面顯示用。 */
+  const [pickedName, setPickedName] = useState('')
+
+  const fileName = isPending(value) ? pickedName : value.split('/').pop() ?? ''
+
+  // 兩種欄位的白名單與上限都不同，對應後端的兩個端點（upload／upload-file）
+  const extensions = isImage ? IMAGE_EXTENSIONS : DOCUMENT_EXTENSIONS
+  const maxBytes = isImage ? IMAGE_MAX_BYTES : DOCUMENT_MAX_BYTES
 
   const pick = () => {
     const input = document.createElement('input')
     input.type = 'file'
-    input.accept = isImage ? 'image/*' : '.pdf,.xlsx,.docx,.zip'
-    input.onchange = async () => {
+    input.accept = extensions.join(',')
+    input.onchange = () => {
       const file = input.files?.[0]
       if (!file) return
+
+      // 上傳延到儲存才發生，格式與大小就得在這裡先擋——
+      // 否則使用者填完整張表單、按了儲存才被退，前面的工都白做。
+      const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase()
+      if (!extensions.includes(ext)) {
+        return setWarn(`不支援的格式：${ext || file.name}。可接受 ${extensions.join('、')}。`)
+      }
+      if (file.size > maxBytes) {
+        return setWarn(
+          `檔案 ${(file.size / 1024 / 1024).toFixed(1)} MB，超過 ${maxBytes / 1024 / 1024}MB 上限。`,
+        )
+      }
+
+      discardPending(value) // 改選別的檔案時，把上一個沒送出的釋放掉
+      const preview = stagePending(file, isImage ? 'image' : 'file')
+      setPickedName(file.name)
+      onChange(preview)
 
       if (isImage) {
         // docs §3：超過建議尺寸不擋、只提醒
         const img = new Image()
-        const preview = URL.createObjectURL(file)
-        img.onload = () => setWarn(`已選擇 ${img.naturalWidth}×${img.naturalHeight}`)
+        img.onload = () => setWarn(`已選擇 ${img.naturalWidth}×${img.naturalHeight}，按下儲存後才會上傳`)
         img.src = preview
       } else {
-        setWarn(`已選擇 ${file.name}（${(file.size / 1024 / 1024).toFixed(1)} MB）`)
-      }
-
-      // 示範模式沒有後端可以收檔，用 object URL 做本機預覽
-      if (!hasApi || !unit) return onChange(URL.createObjectURL(file))
-
-      const form = new FormData()
-      form.append('file', file)
-
-      try {
-        setWarn('上傳中…')
-        // 回的是 Blob 相對路徑（不是可直連的 URL）——容器是 private，DB 也只存相對路徑
-        const { path } = await http.upload<{ path: string }>(`/admin/${unit}/upload`, form)
-        onChange(path)
-        setWarn(`已上傳：${file.name}`)
-      } catch (err) {
-        const code = err instanceof ApiError ? err.code : 'INTERNAL'
-        setWarn(
-          code === 'UPLOAD_TYPE' ? '檔案格式不符。請確認副檔名與檔案實際內容一致。'
-          : code === 'UPLOAD_SIZE' ? '檔案太大。'
-          : `上傳失敗：${(err as Error).message}`,
-        )
+        setWarn(`已選擇 ${file.name}（${(file.size / 1024 / 1024).toFixed(1)} MB），按下儲存後才會上傳`)
       }
     }
     input.click()
+  }
+
+  const remove = () => {
+    discardPending(value)
+    onChange('')
+    setPickedName('')
+    setWarn('')
   }
 
   return (
@@ -227,7 +249,7 @@ function Uploader({
             <div className="meta">尚未上傳</div>
           )
         ) : (
-          <div className="meta">{value ? value.split('/').pop() : '尚未上傳檔案'}</div>
+          <div className="meta">{value ? fileName : '尚未上傳檔案'}</div>
         )}
         <div style={{ minWidth: 0 }}>
           <div className="btn-row">
@@ -235,12 +257,12 @@ function Uploader({
               {value ? '更換' : '上傳'}
             </button>
             {value && (
-              <button type="button" className="btn btn-sm btn-danger" onClick={() => { onChange(''); setWarn('') }}>
+              <button type="button" className="btn btn-sm btn-danger" onClick={remove}>
                 移除
               </button>
             )}
           </div>
-          {isImage && value && <div className="meta" style={{ marginTop: 6 }}>{value.split('/').pop()}</div>}
+          {isImage && value && <div className="meta" style={{ marginTop: 6 }}>{fileName}</div>}
         </div>
       </div>
       {field.hint && <Hint text={field.hint} />}
@@ -256,14 +278,11 @@ export function FieldInput({
   value,
   onChange,
   error,
-  unit,
 }: {
   field: Field
   value: unknown
   onChange: (v: unknown) => void
   error?: string
-  /** 上傳欄位需要知道自己屬於哪個單元 */
-  unit?: string
 }) {
   const categories = useCategories(field.categoryType)
   const str = typeof value === 'string' ? value : value == null ? '' : String(value)
@@ -295,7 +314,7 @@ export function FieldInput({
         return <RichText value={str} onChange={onChange} />
       case 'image':
       case 'file':
-        return <Uploader field={field} value={str} onChange={onChange} unit={unit} />
+        return <Uploader field={field} value={str} onChange={onChange} />
       case 'switch':
         return (
           <label className="switch">

@@ -93,12 +93,28 @@ public sealed class AdminClientHandler(AppDbContext db)
 }
 
 /// <summary>
-/// 後台圖片上傳。掛在各單元底下（<c>POST /admin/{unit}/upload</c>）並沿用該單元的
-/// <c>{unit}.edit</c> 權限——另開一個 <c>media.*</c> 權限碼會讓 173 列的矩陣對不上。
+/// 後台上傳。掛在各單元底下（<c>POST /admin/{unit}/upload</c> 收圖片、
+/// <c>/upload-file</c> 收文件）並沿用該單元的 <c>{unit}.edit</c> 權限——
+/// 另開一個 <c>media.*</c> 權限碼會讓 173 列的矩陣對不上。
 /// </summary>
 public sealed class AdminMediaHandler(IBlobStorageService blobs)
 {
-    public async Task<IActionResult> UploadAsync(HttpRequest req)
+    /// <summary>圖片欄位（`POST /admin/{unit}/upload`）：jpg／png／webp／svg，≤10MB。</summary>
+    public Task<IActionResult> UploadAsync(HttpRequest req) =>
+        SaveAsync(req, UploadRules.ImageExtensions, UploadRules.ImageMaxBytes, "10MB");
+
+    /// <summary>
+    /// 文件欄位（`POST /admin/{unit}/upload-file`）：pdf／docx／xlsx／zip，≤20MB。
+    /// <para>
+    /// 與圖片分成兩個端點而不是共用一份放寬的白名單——圖片欄位收到 .zip 是錯的，
+    /// 文件欄位收到 .webp 也是錯的，合併只會讓兩邊都擋不住原本擋得住的東西。
+    /// </para>
+    /// </summary>
+    public Task<IActionResult> UploadFileAsync(HttpRequest req) =>
+        SaveAsync(req, UploadRules.DocumentExtensions, UploadRules.DocumentMaxBytes, "20MB");
+
+    private async Task<IActionResult> SaveAsync(
+        HttpRequest req, string[] allowed, long maxBytes, string maxLabel)
     {
         if (!req.HasFormContentType)
             throw AppException.BadRequest(ErrorCodes.UploadType, "請以 multipart/form-data 上傳。");
@@ -109,12 +125,12 @@ public sealed class AdminMediaHandler(IBlobStorageService blobs)
 
         var ext = Path.GetExtension(file.FileName);
 
-        if (!UploadRules.ImageExtensions.Contains(ext, StringComparer.OrdinalIgnoreCase))
+        if (!allowed.Contains(ext, StringComparer.OrdinalIgnoreCase))
             throw AppException.BadRequest(ErrorCodes.UploadType,
-                $"不支援的格式：{ext}。可接受 {string.Join("、", UploadRules.ImageExtensions)}。");
+                $"不支援的格式：{ext}。可接受 {string.Join("、", allowed)}。");
 
-        if (file.Length > UploadRules.ImageMaxBytes)
-            throw AppException.BadRequest(ErrorCodes.UploadSize, "檔案超過 10MB。");
+        if (file.Length > maxBytes)
+            throw AppException.BadRequest(ErrorCodes.UploadSize, $"檔案超過 {maxLabel}。");
 
         await using var stream = file.OpenReadStream();
 

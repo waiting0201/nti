@@ -448,6 +448,29 @@ paths:
         '200': { $ref: '#/components/responses/Ok' }
         '400': { $ref: '#/components/responses/BadRequest' }
 
+  /admin/{unit}/upload-file:
+    post:
+      tags: [後台內容單元]
+      summary: 文件上傳（權限 `{unit}.edit`）
+      description: |
+        公告附件與供應商下載檔用。與 `/upload` 分開是因為白名單互不通用——
+        圖片欄位收到 .zip 是錯的，文件欄位收到 .webp 也是錯的。
+        PDF/DOCX/XLSX/ZIP，≤20MB，驗 magic bytes（OOXML 與 zip 同檔頭）。
+        回傳的是 Blob **相對路徑**，直接存進對應的 `*Path` 欄位。
+
+        docs/09 §3 給 `supplier-notice` 的公告附件寫的是「PDF」，比這份窄；
+        那條較嚴的規則由後台介面的 accept 承擔，API 層不逐單元分岔。
+      security: [{ AdminAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ContentUnit' }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: { type: object, properties: { file: { type: string, format: binary } } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
   /admin/page:
     get: { tags: [後台其他單元], summary: '固定頁清單（page.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
 

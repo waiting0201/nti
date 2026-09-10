@@ -7,6 +7,8 @@ import { Badge, Hint, Modal, Notice, toast } from '@/components/ui'
 import { FieldInput } from '@/components/fields'
 import { useAuth, ROLE_LABEL, type RoleCode } from '@/lib/auth'
 import { ROLE_PERMISSIONS, permissionRowCount, CONTENT_UNITS } from '@/lib/permissions'
+import { countPending, resolvePendingUploads } from '@/lib/pending-uploads'
+import { ApiError } from '@/api/http'
 
 /* ── 21 網站設定 ───────────────────────────────────────── */
 
@@ -16,6 +18,7 @@ export function SettingPage() {
   const [values, setValues] = useState<Record<string, string | { zh: string; en: string }>>({})
   const [locale, setLocale] = useState<Locale>('zh')
   const [dirty, setDirty] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     void api.getSettings().then(setValues)
@@ -31,6 +34,8 @@ export function SettingPage() {
     })
     setDirty(true)
   }
+
+  const pendingCount = countPending(values)
 
   const read = (key: string, i18n?: boolean) => {
     const v = values[key]
@@ -75,7 +80,6 @@ export function SettingPage() {
                   }}
                   value={read(f.key, f.i18n)}
                   onChange={(v) => set(f.key, String(v ?? ''), f.i18n)}
-                  unit="setting"
                 />
               ))}
             </fieldset>
@@ -89,18 +93,40 @@ export function SettingPage() {
 
       <div className="card">
         <div className="card-b btn-row">
-          {dirty && <span style={{ fontSize: 12.5, color: 'var(--warn)' }}>有未儲存的變更</span>}
+          {dirty && (
+            <span style={{ fontSize: 12.5, color: 'var(--warn)' }}>
+              {pendingCount > 0 ? `有未儲存的變更，含 ${pendingCount} 個待上傳的檔案` : '有未儲存的變更'}
+            </span>
+          )}
           <span style={{ marginLeft: 'auto' }} />
           <button
             className="btn btn-primary"
-            disabled={!canEdit || !dirty}
+            disabled={!canEdit || !dirty || saving}
             onClick={async () => {
-              await api.saveSettings(values)
+              // 圖片欄位是選檔當下暫存、按這裡才真的送出（見 lib/pending-uploads）
+              const next = structuredClone(values)
+              try {
+                setSaving(true)
+                await resolvePendingUploads('setting', next)
+              } catch (err) {
+                const code = err instanceof ApiError ? err.code : 'INTERNAL'
+                toast(
+                  code === 'UPLOAD_TYPE' ? '檔案格式不符，設定尚未儲存。'
+                  : code === 'UPLOAD_SIZE' ? '檔案太大，設定尚未儲存。'
+                  : `圖片上傳失敗，設定尚未儲存：${(err as Error).message}`,
+                )
+                return
+              } finally {
+                setSaving(false)
+              }
+
+              await api.saveSettings(next)
+              setValues(next)
               setDirty(false)
               toast('設定已儲存')
             }}
           >
-            儲存設定
+            {saving ? '上傳中…' : '儲存設定'}
           </button>
         </div>
       </div>

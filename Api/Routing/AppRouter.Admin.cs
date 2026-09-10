@@ -220,6 +220,8 @@ public sealed partial class AppRouter
             ("GET",            [_, _])                      => await handler.GetListAsync(req),
             ("PUT",            [_, _, "sort"])              => await handler.SortAsync(req),
             ("POST",           [_, _, "upload"])            => await adminMedia.UploadAsync(req),
+            // 文件欄位（公告附件、供應商下載檔）另走一個端點：白名單與大小上限都跟圖片不同
+            ("POST",           [_, _, "upload-file"])       => await adminMedia.UploadFileAsync(req),
             ("PATCH",          [_, _, var id, "publish"])   => await handler.PublishAsync(req, id),
             ("GET",            [_, _, var id])              => await handler.GetByIdAsync(req, id),
             ("POST",           [_, _]) when allowCreate     => await handler.CreateAsync(req),

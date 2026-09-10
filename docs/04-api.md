@@ -121,6 +121,11 @@
   | `/admin/setting`、`/admin/category` | 21、22 | `setting.*`、`category.*` |
   | `/admin/admin`、`/admin/audit/emails` | 23 管理員與角色、24 信件紀錄 | `admin.*`、`audit.*` |
 
+- **上傳**：`POST /admin/{unit}/upload` 收圖片（JPG／PNG／WebP／SVG，≤10MB）、
+  `POST /admin/{unit}/upload-file` 收文件（PDF／DOCX／XLSX／ZIP，≤20MB）。
+  兩者都沿用 `{unit}.edit`，都驗 magic bytes，都只回 Blob **相對路徑**。
+  分成兩支是因為白名單互不通用——圖片欄位收到 .zip 是錯的，文件欄位收到 .webp 也是錯的，
+  併成一份只會讓兩邊都擋不住原本擋得住的東西。
 - 非 CRUD 的動作端點與其權限碼：`GET /admin/quote/export`（`quote.export`，僅超管）、`GET /admin/quote/{id}/attachments/{attId}`（`quote.download`，僅超管；一律以 octet-stream 送出，不做病毒掃描）、`GET|POST /admin/redirect/export|import`（`redirect.export`）、`POST /admin/audit/emails/{id}/resend`（`audit.resend`）。
 - **清單的共同查詢參數**：`page`／`pageSize`／`status`／`categoryId`／**`keyword`**。
   `keyword` 比對主表與 i18n 側表所有有長度上限的字串欄（`nvarchar(max)` 的內文不在範圍內），
@@ -195,5 +200,6 @@
 | 2026-09-08 | Tim（Claude Code） | 公開寫入端點的機器人防護由 **Turnstile 改為 Google reCAPTCHA v3**：§2 與 §3.3 更新，請求欄位 `turnstileToken` → `recaptchaToken`，另註明 v3 是分數制且後端會比對 `action`（`quote`／`contact`／`admin_login`） |
 | 2026-09-08 | Tim（Claude Code） | `POST /quotes` 新增三個選填的代號欄位 `solutionCode`／`industryCode`／`materialCode`（未給對應 Id 時由伺服器換算）。公開表單不該知道資料庫 Id，代號是 `db/seed` 裡穩定的公開識別；對不到只留 log 不擋單，因為那三欄本來就選填 |
 | 2026-09-09 | Tim（Claude Code） | **後台管理員密碼改為直接指定**：`POST /admin/admin` 新增必填 `password`（至少 6 碼），回應不再帶 `data.initialPassword`；新增 `PUT /admin/admin/{id}/password`（`admin.edit`）重設密碼。兩者都不寄信——啟用信與初始密碼轉交的那套流程整個移除。`Api/openapi.yaml` 已同步 |
+| 2026-09-10 | Tim（Claude Code） | 新增 **`POST /admin/{unit}/upload-file`**（文件：PDF／DOCX／XLSX／ZIP，≤20MB，權限同 `{unit}.edit`）。原本只有一支 `/upload` 且白名單寫死圖片，公告附件與供應商下載檔（docs/09 §3 就寫明收 PDF／XLSX／DOCX／ZIP）接上 API 後會一律被退成 `UPLOAD_TYPE`。不把 zip／docx 併進 `/upload` 的白名單，是因為那會讓圖片欄位也開始收壓縮檔。`Api/openapi.yaml` 已同步 |
 
-*最後更新：2026-09-09*
+*最後更新：2026-09-10*
