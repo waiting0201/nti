@@ -68,7 +68,8 @@ public sealed partial class AppRouter(
     AdminAccountHandler          adminAccounts,
     AdminAuditHandler            adminAudits,
     AdminMediaHandler            adminMedia,
-    IFrontendRevalidator         revalidator)
+    IFrontendRevalidator         revalidator,
+    IMediaCleaner                mediaCleaner)
 {
     /// <summary>
     /// <see cref="GetRequiredPermission"/> 的預設回傳值：<b>未列在權限表的 /admin/* 一律拒絕</b>。
@@ -119,12 +120,24 @@ public sealed partial class AppRouter(
         var adminResult = await RouteAdminAsync(req, method, segments);
         if (adminResult is null) return NotFound(method, route);
 
-        // 後台改動了前台看得到的東西 → 立刻通知前台重生快取，不然要等 ISR 的 300 秒
-        if (AffectsPublicSite(method, segments) && IsSuccess(adminResult))
-            await revalidator.RevalidateAsync(req.HttpContext.RequestAborted);
+        if (IsWrite(method) && IsSuccess(adminResult))
+        {
+            // 移除或換掉的檔案在這裡就從 Blob 刪掉。夜間的孤兒檔清除預設還關著、
+            // 而且有 7 天寬限期——期間那個檔案仍取得到，等於「移除了卻還在」。
+            // 沒動到檔案的存檔在這支裡是一個空集合檢查，不會多查資料庫。
+            await mediaCleaner.PurgeAsync(req.HttpContext.RequestAborted);
+
+            // 後台改動了前台看得到的東西 → 立刻通知前台重生快取，不然要等 ISR 的 300 秒
+            if (AffectsPublicSite(segments))
+                await revalidator.RevalidateAsync(req.HttpContext.RequestAborted);
+        }
 
         return adminResult;
     }
+
+    /// <summary>會改到資料的請求。GET 不會，其餘一律算。</summary>
+    private static bool IsWrite(string method) =>
+        method is "POST" or "PUT" or "PATCH" or "DELETE";
 
     /// <summary>
     /// 這個後台請求會不會改到前台看得到的內容。
@@ -138,9 +151,8 @@ public sealed partial class AppRouter(
     /// 這時候重生快取不會讓任何一頁改變（真正的引用在後面那次存檔）。
     /// </para>
     /// </summary>
-    private static bool AffectsPublicSite(string method, string[] segments) =>
-        method is "POST" or "PUT" or "PATCH" or "DELETE"
-        && segments is ["admin", var unit, ..]
+    private static bool AffectsPublicSite(string[] segments) =>
+        segments is ["admin", var unit, ..]
         && unit is not ("quote" or "contact" or "admin" or "audit")
         && segments is not [.., "upload" or "upload-file"];
 

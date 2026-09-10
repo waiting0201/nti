@@ -19,7 +19,14 @@ namespace Nti.Api.Handlers;
 /// </summary>
 public sealed class FileHandler(IBlobStorageService blobs)
 {
-    /// <summary>後台上傳的內容圖片。檔名含 GUID，內容不可變，可以長快取。</summary>
+    /// <summary>
+    /// 後台上傳的內容圖片。檔名含 GUID，內容不可變，可以長快取。
+    /// <para>
+    /// 檔案被移除時（<see cref="Services.IMediaCleaner"/> 當場刪 Blob）這裡就開始回 404，
+    /// 但<b>已經下載過的那份仍留在該瀏覽器的快取裡</b>，最久到這個秒數為止。
+    /// 移除擋得住的是之後的請求，不是已經送出去的副本。
+    /// </para>
+    /// </summary>
     private const int CacheSeconds = 31536000;   // 1 年
 
     public async Task<IActionResult> GetMediaAsync(HttpRequest req, string path)

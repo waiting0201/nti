@@ -13,7 +13,10 @@ namespace Nti.Api.Data;
 /// 不是 <c>db/</c>——後者為參考實作與交付腳本。
 /// <para>讀取一律走 <c>Services/Dapper/</c> 的 ReadService，不從這裡查。</para>
 /// </summary>
-public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContextAccessor = null)
+public class AppDbContext(
+    DbContextOptions<AppDbContext> options,
+    IHttpContextAccessor?          httpContextAccessor = null,
+    Services.DroppedMediaPaths?    droppedMedia        = null)
     : DbContext(options)
 {
     // ── 系統（docs/08 §4.14）────────────────────────────────────────────────
@@ -170,7 +173,62 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAc
             }
         }
 
+        CollectDroppedMediaPaths();
+
         return base.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// 記下這次存檔「被拿掉引用」的檔案路徑，交給 <see cref="Services.IMediaCleaner"/>
+    /// 在存檔成功後真的刪掉（換圖、按「移除」、整筆刪除都算）。
+    /// <para>
+    /// 判斷只看 <b>OriginalValue → CurrentValue</b>，所以 handler 必須是先讀出實體再改欄位
+    /// （本專案的寫法都是）；對 detached 實體用 <c>Update()</c> 的話 EF 沒有舊值可比，
+    /// 舊檔會漏掉，那時就退回夜間的孤兒檔清除。
+    /// </para>
+    /// <para>
+    /// 這裡只放進袋子、不刪檔：存檔失敗要回滾的是資料庫，檔案卻刪不回來。
+    /// </para>
+    /// <para>
+    /// ⚠ <b>刪一整筆時，子表（<c>*I18n</c>）是由 FK 的 CASCADE 帶走的，不會經過 ChangeTracker</b>，
+    /// 所以內文插圖看不到。那批仍由夜間掃描收（過了 7 天寬限期）。
+    /// </para>
+    /// </summary>
+    private void CollectDroppedMediaPaths()
+    {
+        if (droppedMedia is null) return;   // 設計期（dotnet ef）與測試不注入這個服務
+
+        foreach (var entry in ChangeTracker.Entries())
+        {
+            if (entry.State is not (EntityState.Modified or EntityState.Deleted)) continue;
+            if (MediaPaths.IsNonMediaEntity(entry.Metadata.ClrType)) continue;
+
+            var deleting = entry.State == EntityState.Deleted;
+
+            foreach (var property in entry.Properties)
+            {
+                if (property.Metadata.ClrType != typeof(string)) continue;
+                if (property.OriginalValue is not string before || string.IsNullOrWhiteSpace(before)) continue;
+
+                // 刪除時 CurrentValue 仍是實體上的舊值，但那筆馬上就不存在了 → 一律當成沒有新值
+                var after = deleting ? null : property.CurrentValue as string;
+                var name  = property.Metadata.Name;
+
+                if (MediaPaths.IsFilePathField(name))
+                {
+                    if (!string.Equals(before, after, StringComparison.OrdinalIgnoreCase))
+                        droppedMedia.Add(before);
+                }
+                else if (MediaPaths.IsRichTextField(name))
+                {
+                    var stillThere = MediaPaths.ExtractImagePaths(after);
+
+                    foreach (var path in MediaPaths.ExtractImagePaths(before))
+                        if (!stillThere.Contains(path))
+                            droppedMedia.Add(path);
+                }
+            }
+        }
     }
 
     /// <summary>目前登入的後台管理員 Id（來自 JWT 的 sub claim）；公開端點寫入時為 null。</summary>

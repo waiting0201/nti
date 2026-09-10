@@ -621,7 +621,14 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 | Function | 工作 |
 |---|---|
 | `PublishScheduleFunction` | `PublishAt`／`UnpublishAt` 到期生效 |
-| `OrphanMediaFunction` | 孤兒檔清除。**必須額外解析所有 `*Html` 欄位內的 `<img src>`**，否則會誤刪內文插圖（`db/README.md` 已知缺口 #2） |
+| `OrphanMediaFunction` | 孤兒檔清除的**安全網**。**必須額外解析所有 `*Html` 欄位內的 `<img src>`**，否則會誤刪內文插圖（`db/README.md` 已知缺口 #2） |
+
+編輯者移除或換掉的檔案不等排程：`AppRouter` 在後台寫入成功後呼叫 `IMediaCleaner`，把這次
+「被拿掉引用」的路徑重掃一次（`MediaReferenceScanner`，與排程同一份欄位清單），確認沒有別處
+引用就當場從 Blob 刪掉。不這樣做的話，前台頁面雖然立刻不再顯示那張圖，檔案本身仍取得自
+`/files/media/{path}`——對按了「移除」的人來說就是沒移除。哪些路徑算「被拿掉」由
+`AppDbContext.SaveChangesAsync` 從 ChangeTracker 的 OriginalValue → CurrentValue 判定，
+所以 handler 必須先讀出實體再改欄位（對 detached 實體 `Update()` 會沒有舊值可比）。
 
 ### 9.10 Logging
 
@@ -767,5 +774,6 @@ traces | where timestamp > ago(30m)
 
 | 2026-09-09 | Tim（Claude Code） | §8.4 的軟刪鐵律**整條翻面：刪除一律真刪**。`AdminUser` 的例外變成通則——軟刪列佔著唯一鍵，操作者看到的是「刪了卻沒刪掉、名字再也用不回來」。`SaveChangesAsync` 不再改寫 `Deleted`；子表 FK 改 `ON DELETE CASCADE`（共 20 條，`db/verify` 有斷言）；「被引用」的關聯維持 `Restrict`，並由 `ExceptionMiddleware` 把 DELETE 撞到的 SQL 547 翻成一句看得懂的 409。`IsDeleted` 欄位保留但不再寫入 |
 
-*最後更新：2026-09-09*
+| 2026-09-10 | Tim（Claude Code） | **§9.9 補即時媒體清除**：編輯者移除或換掉的檔案不再等夜間排程。`AppDbContext.SaveChangesAsync` 從 ChangeTracker 記下「被拿掉引用」的路徑（`*Path` 欄位比對舊值、`*Html` 比對內文的 `<img src>`），`AppRouter` 在後台寫入成功後交給 `IMediaCleaner` 重掃引用並刪檔。孤兒檔排程降為安全網。欄位清單抽成共用的 `MediaReferenceScanner`，兩條路徑各維護一份遲早會分岔。同時修掉 `Normalize` 的一個既有錯誤：內文若存的是代理路由的完整網址（`{apiBase}/api/v1/files/media/…`），原本只比對開頭的寫法剝不掉 `api/v1/`，正規化後與 DB 的相對路徑對不起來——排程開啟刪除後會把還掛在內文裡的圖判成孤兒 |
 
+*最後更新：2026-09-10*

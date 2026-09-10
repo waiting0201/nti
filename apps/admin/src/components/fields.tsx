@@ -233,10 +233,14 @@ function Uploader({
   }
 
   const remove = () => {
+    // 已經存過的檔案，按下儲存就會從系統刪掉（留著的話它仍取得自原本的網址）——
+    // 那是不可復原的，所以在這裡先講。還沒送出的暫存檔沒有這回事，安靜清掉就好。
+    const staged = isPending(value)
+
     discardPending(value)
     onChange('')
     setPickedName('')
-    setWarn('')
+    setWarn(staged ? '' : '按下儲存後，這個檔案會從系統刪除，無法復原')
   }
 
   return (

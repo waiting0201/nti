@@ -104,9 +104,16 @@ Api/
 改成 `*/10 * * * * *` 觀察，記得改回去。
 
 ⚠ **`OrphanMediaFunction` 預設只報告不刪除。** 要真的刪要設 `OrphanMediaDeleteEnabled=true`。
-它判斷「哪些算孤兒」靠的是 `CollectReferencedPathsAsync` 裡那份欄位清單——
+它判斷「哪些算孤兒」靠的是 `MediaReferenceScanner` 裡那份欄位清單——
 **新增任何 `*Path` 或 `*Html` 欄位時要一起補**，漏了就會把正在用的圖當成孤兒刪掉。
 另有 7 天寬限期，擋住「上傳了但還沒按儲存」的檔案。
+
+它是**安全網不是主要機制**：編輯者移除或換掉的檔案，由 `MediaCleaner` 在存檔成功後
+（`AppRouter` 呼叫）當場從 Blob 刪掉——不刪的話那個檔案仍取得自 `/files/media/{path}`，
+「移除了卻還抓得到」最久會持續到寬限期過後的那次掃描。這條即時路徑**不受
+`OrphanMediaDeleteEnabled` 管**：它只刪編輯者這次親手拿掉、且重掃後確認沒有別處引用的那幾個路徑。
+留給排程的是它看不到的殘餘——刪整筆時被 FK CASCADE 帶走的子表內文插圖、即時清除失敗的那幾個、
+以及上傳了卻從來沒存檔的孤兒。
 
 ## 第一次要能登入後台
 

@@ -83,6 +83,12 @@ var host = new HostBuilder()
         services.AddScoped<IRateLimitService, RateLimitService>();
         services.AddScoped<IQuoteNumberGenerator, QuoteNumberGenerator>();
 
+        // 媒體檔清除：DbContext 存檔時把「被拿掉引用」的路徑放進 DroppedMediaPaths，
+        // AppRouter 在存檔成功後交給 MediaCleaner 真的刪掉（夜間的 OrphanMediaFunction 只是安全網）
+        services.AddScoped<DroppedMediaPaths>();
+        services.AddScoped<MediaReferenceScanner>();
+        services.AddScoped<IMediaCleaner, MediaCleaner>();
+
         // ── Dapper 讀取服務（一單元一支，Scoped：依賴 IDbConnection）────────
         services.AddScoped<ICategoryReadService, CategoryReadService>();
         services.AddScoped<ISiteSettingReadService, SiteSettingReadService>();
