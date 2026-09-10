@@ -226,6 +226,23 @@ stale-while-revalidate：踩到期限的那個請求拿到的仍是舊頁，下�
 `src/app/api/revalidate/route.ts` 就會啟用；後端每次改到前台看得到的內容會帶著
 同一個密鑰打它，把 `cms` tag 的快取作廢，下一個訪客就拿到新資料。未設時那支直接回 404。
 
+**兩邊都要設，而且要一樣**，只設一邊等於沒設：
+
+| | 本機 | 正式環境 |
+|---|---|---|
+| 前台 `REVALIDATE_SECRET` | `apps/web/.env.local` | SWA `stapp-nti-prod` 的 App settings |
+| 後端 `Revalidate__Secret`／`Revalidate__Url` | `Api/local.settings.json` | Function `func-nti-prod` 的 App settings |
+
+自己驗一次（前台跑起來之後）：
+
+```bash
+curl -X POST -H "Authorization: Bearer $REVALIDATE_SECRET" http://localhost:3100/api/revalidate
+# 200 {"revalidated":true,...} → 通了；401 → 兩邊密鑰不一樣；404 → 前台這邊沒設
+```
+
+⚠️ 正式環境的 SWA app setting **大約一分鐘後**才會進到執行中的伺服器，
+剛設完馬上打會拿到 404，與「設錯」看起來一模一樣。
+
 ⚠️ `/api/` 在 `middleware.ts` 有一條明確放行——它沒有副檔名，matcher 擋不掉，
 落到語系判斷會被補成 `/zh/api/revalidate`，症狀是「前台就是不更新」而完全不指向 middleware。
 
