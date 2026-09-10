@@ -5,8 +5,9 @@
  * 因此這份字典可以逐步補齊，不會讓頁面開天窗。使用方式見 `lib/translate.tsx`。
  *
  * ⚠ **這是初稿，不是客戶核可的文案**（與 `tools/content-zh.mjs` 的 CMS 內容同一個狀態，
- * 見 STATUS §八）。上線前必須由客戶校閱。公司中文名保留 `NTI`、董事長稱「鄭董事長」，
- * 兩者都沒有客戶提供的依據，刻意不編。
+ * 見 STATUS §八）。上線前必須由客戶校閱。董事長稱「鄭董事長」——姓名沒有客戶提供的
+ * 依據，刻意不編。公司中文名不放這裡：它不是「某句英文的翻譯」，權威在
+ * `lib/jsonld.ts`（`legalName`／`alternateName`，出處寫在那支的註解）。
  *
  * 要重新盤點還沒翻的字串：`node scripts/extract-i18n.mjs`（`--stale` 列出 mockup 已無對應的 key）。
  */

@@ -488,21 +488,28 @@ function settings() {
   const hours = text(pick(/<h3>Business Hours<\/h3>\s*<p>([\s\S]*?)<br/, contact, '營業時間')[1])
   const phone = text(pick(/<a href="tel:[^"]*">([^<]+)<\/a>/, contact, '電話')[1])
   const mail = pick(/<a href="mailto:([^"]+)"/, contact, 'Email')[1]
-  // 後台的「Google 地圖」欄位收的是嵌入碼本身（貼「分享 → 嵌入地圖」的內容），存整個 <iframe>
-  const map = pick(/<div class="map-frame">\s*(<iframe[\s\S]*?<\/iframe>)/, contact, 'Google 地圖嵌入碼')[1]
+  // 只存地圖網址，不存整段 <iframe>：那段要進頁面就得走 dangerouslySetInnerHTML，
+  // 等於讓後台可以注入任意 HTML。前台自己組 iframe（title／loading 等屬性寫在程式裡）。
+  const map = pick(/<div class="map-frame">\s*<iframe src="([^"]+)"/, contact, 'Google 地圖網址')[1]
   const gallery = pick(/<section class="gallery[^"]*">\s*<img src="([^"]+)" alt="([^"]*)"/, home, '首頁形象圖帶')
+  // 結構化資料是公司身分的權威（出處寫在 lib/jsonld.ts 的註解）：中文法定名與粉專網址讀那份
+  const jsonld = read(path.join(repo, 'apps/web/src/lib/jsonld.ts'))
+  const facebook = pick(/sameAs:\s*\['([^']+)'/, jsonld, 'Facebook 粉專網址')[1]
+  const legalName = pick(/legalName:\s*'([^']+)'/, jsonld, '公司中文法定名')[1]
 
   return {
-    'company.name': i18n(name),
+    'company.name': { zh: legalName, en: name },
     'company.address': i18n(address),
     'company.hours': i18n(hours),
     'company.phone': phone,
-    // 傳真、三個社群網址、密件副本：mockup 沒有（footer 的社群是 href="#"），客戶也還沒給。
+    // 傳真、LinkedIn、YouTube、密件副本：mockup 沒有（footer 的社群是 href="#"），客戶也還沒給。
     // 留空是有意義的狀態——後台的提示寫「留空則前台不顯示該圖示」，編一個假值反而會上線。
     'company.fax': '',
     'company.email': mail,
     'company.map_embed': map,
-    'social.facebook': '',
+    // Facebook 例外：結構化資料的 sameAs 早就帶著這個網址（取自客戶現有官網）。
+    // 那份說「有粉專」、footer 卻一個圖示都不顯示，是同一組事實在兩處講反話。
+    'social.facebook': facebook,
     'social.linkedin': '',
     'social.youtube': '',
     'home.gallery_image': asset(gallery[1]),

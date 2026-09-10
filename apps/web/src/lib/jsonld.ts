@@ -23,7 +23,10 @@ const absolute = (url: string) => (url.startsWith('/') ? siteUrl + url : url)
 /**
  * 公司資訊。
  *
- * - 中文名 `南台彩藝` 取自客戶現有官網（nti-printing.com 的 `<title>`），不是我們編的
+ * - 中文名 `南台彩藝` 取自客戶現有官網（nti-printing.com 的 `<title>`），不是我們編的；
+ *   法定全名 `南台彩藝股份有限公司` 見客戶自己的建置時程表抬頭（`reference/網站建置時程.html`）。
+ *   **這裡是公司中文名的權威**——網站設定的 `company.name`（zh）由 `build-seed.mjs` 讀這一筆，
+ *   不另抄一份
  * - 地址與電話＝客戶 2026-09-06 提供的台南廠址，與 contact 頁一致
  * - 創立年份取自 mockup 的「Founded in 1968／Since 1968」（客戶已確認的版本）；
  *   舊站 `/home/vision/` 寫的是 1970，兩者不一致時以 mockup 為準
@@ -50,6 +53,7 @@ export function organization(locale: Locale) {
     '@type': 'Organization',
     '@id': ORG_ID,
     name: 'NTI Printing',
+    legalName: '南台彩藝股份有限公司',
     alternateName: '南台彩藝',
     url: `${siteUrl}/${locale}`,
     logo: absolute(mediaUrl('/assets/logo.svg')),

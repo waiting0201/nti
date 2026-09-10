@@ -9,7 +9,7 @@
 
 export const SETTING_VALUES: Record<string, string | { zh: string; en: string }> = {
   "company.name": {
-    "zh": "NTI Printing Co., Ltd.",
+    "zh": "南台彩藝股份有限公司",
     "en": "NTI Printing Co., Ltd."
   },
   "company.address": {
@@ -23,8 +23,8 @@ export const SETTING_VALUES: Record<string, string | { zh: string; en: string }>
   "company.phone": "+886 6 261 1358",
   "company.fax": "",
   "company.email": "service@nti-printing.com",
-  "company.map_embed": "<iframe src=\"https://www.google.com/maps?q=No.+29,+Gongye+6th+Rd.,+Annan+Dist.,+Tainan+City+709,+Taiwan&output=embed\" title=\"NTI Printing — Tainan plant location\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
-  "social.facebook": "",
+  "company.map_embed": "https://www.google.com/maps?q=No.+29,+Gongye+6th+Rd.,+Annan+Dist.,+Tainan+City+709,+Taiwan&output=embed",
+  "social.facebook": "https://www.facebook.com/printingfarm",
   "social.linkedin": "",
   "social.youtube": "",
   "home.gallery_image": "/assets/ref-home-mid1.webp",

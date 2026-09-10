@@ -168,7 +168,9 @@ export const SETTING_GROUPS: Array<{ title: string; fields: SettingField[] }> = 
       { key: 'company.phone', label: '電話', type: 'text' },
       { key: 'company.fax', label: '傳真', type: 'text' },
       { key: 'company.email', label: 'Email', type: 'text' },
-      { key: 'company.map_embed', label: 'Google 地圖', type: 'embed', hint: '在 Google 地圖點「分享 → 嵌入地圖」，把複製到的內容貼進來' },
+      // 存的是地圖網址（`ValueType='url'`），但貼整段 <iframe> 也可以——後端存檔時只留 src。
+      // 前台自己組 iframe，資料庫裡就不會有一段能塞任何 HTML 進頁面的值。
+      { key: 'company.map_embed', label: 'Google 地圖', type: 'embed', hint: '在 Google 地圖點「分享 → 嵌入地圖」，整段貼進來或只貼網址都可以' },
     ],
   },
   {

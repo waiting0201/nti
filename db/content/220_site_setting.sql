@@ -1,5 +1,5 @@
 /* =============================================================================
-   220_site_setting.sql  —  21 網站設定的值（10 個 key）
+   220_site_setting.sql  —  21 網站設定的值（11 個 key）
    =============================================================================
    由 tools/build-settings-sql.mjs 產生，**請勿手改**（重新產生：node tools/build-settings-sql.mjs）。
 
@@ -9,7 +9,7 @@
    db/seed/130_site_setting.sql（＝ EF 的 HasData）只建 key 與型別、值留 NULL；
    這支補上 mockup 已經有的那些值，客戶才不用把公司資訊重打一遍。
 
-   ⚠ 仍待客戶提供、刻意留 NULL 的 5 個：company.fax、social.facebook、social.linkedin、social.youtube、mail.bcc
+   ⚠ 仍待客戶提供、刻意留 NULL 的 4 個：company.fax、social.linkedin、social.youtube、mail.bcc
      （後台對社群網址的提示是「留空則前台不顯示該圖示」，所以留 NULL 是有意義的狀態，
       不是漏掉。）
    ⚠ 中文值是初稿：來源是 apps/web/src/lib/zh.ts，與 200_mockup_content.sql 同一個
@@ -36,6 +36,7 @@ DECLARE @missing NVARCHAR(MAX) = (
         (N'company.phone'),
         (N'company.email'),
         (N'company.map_embed'),
+        (N'social.facebook'),
         (N'home.gallery_image'),
         (N'home.gallery_alt'),
         (N'mail.quote_notify_to'),
@@ -49,7 +50,7 @@ GO
 
 BEGIN TRAN;
 
-UPDATE dbo.SiteSetting SET ValueZh = N'NTI Printing Co., Ltd.', ValueEn = N'NTI Printing Co., Ltd.', UpdatedAt = SYSUTCDATETIME()
+UPDATE dbo.SiteSetting SET ValueZh = N'南台彩藝股份有限公司', ValueEn = N'NTI Printing Co., Ltd.', UpdatedAt = SYSUTCDATETIME()
  WHERE SettingKey = N'company.name' AND ValueZh IS NULL AND ValueEn IS NULL;
 UPDATE dbo.SiteSetting SET ValueZh = N'709 臺南市安南區媽祖宮里工業六路29號', ValueEn = N'No. 29, Gongye 6th Rd., Annan Dist., Tainan City 709, Taiwan', UpdatedAt = SYSUTCDATETIME()
  WHERE SettingKey = N'company.address' AND ValueZh IS NULL AND ValueEn IS NULL;
@@ -59,8 +60,10 @@ UPDATE dbo.SiteSetting SET ValueZh = N'+886 6 261 1358', ValueEn = N'+886 6 261 
  WHERE SettingKey = N'company.phone' AND ValueZh IS NULL AND ValueEn IS NULL;
 UPDATE dbo.SiteSetting SET ValueZh = N'service@nti-printing.com', ValueEn = N'service@nti-printing.com', UpdatedAt = SYSUTCDATETIME()
  WHERE SettingKey = N'company.email' AND ValueZh IS NULL AND ValueEn IS NULL;
-UPDATE dbo.SiteSetting SET ValueZh = N'<iframe src="https://www.google.com/maps?q=No.+29,+Gongye+6th+Rd.,+Annan+Dist.,+Tainan+City+709,+Taiwan&output=embed" title="NTI Printing — Tainan plant location" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>', ValueEn = N'<iframe src="https://www.google.com/maps?q=No.+29,+Gongye+6th+Rd.,+Annan+Dist.,+Tainan+City+709,+Taiwan&output=embed" title="NTI Printing — Tainan plant location" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>', UpdatedAt = SYSUTCDATETIME()
+UPDATE dbo.SiteSetting SET ValueZh = N'https://www.google.com/maps?q=No.+29,+Gongye+6th+Rd.,+Annan+Dist.,+Tainan+City+709,+Taiwan&output=embed', ValueEn = N'https://www.google.com/maps?q=No.+29,+Gongye+6th+Rd.,+Annan+Dist.,+Tainan+City+709,+Taiwan&output=embed', UpdatedAt = SYSUTCDATETIME()
  WHERE SettingKey = N'company.map_embed' AND ValueZh IS NULL AND ValueEn IS NULL;
+UPDATE dbo.SiteSetting SET ValueZh = N'https://www.facebook.com/printingfarm', ValueEn = N'https://www.facebook.com/printingfarm', UpdatedAt = SYSUTCDATETIME()
+ WHERE SettingKey = N'social.facebook' AND ValueZh IS NULL AND ValueEn IS NULL;
 UPDATE dbo.SiteSetting SET ValueZh = N'assets/ref-home-mid1.webp', ValueEn = N'assets/ref-home-mid1.webp', UpdatedAt = SYSUTCDATETIME()
  WHERE SettingKey = N'home.gallery_image' AND ValueZh IS NULL AND ValueEn IS NULL;
 UPDATE dbo.SiteSetting SET ValueZh = N'NTI 包裝印刷作品集', ValueEn = N'A showcase of NTI''s printed packaging work', UpdatedAt = SYSUTCDATETIME()

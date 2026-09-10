@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { CertificationLogos, ClientLogos, HeroSlides } from '@/components/cms'
-import { getHome } from '@/lib/api'
+import { cmsMedia, getHome } from '@/lib/api'
+import { getSettingMap } from '@/lib/site-settings'
 import { mediaUrl } from '@/lib/media'
 import { HeroSlider } from '@/components/behaviors/HeroSlider'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -20,8 +21,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
-  const home = await getHome(locale)
+  // 兩支各自獨立，序列 await 等於白等一次 round trip
+  const [home, settings] = await Promise.all([getHome(locale), getSettingMap(locale)])
   const l = withLocale(locale)
+  const gallery = settings?.['home.gallery_image']
   return (
     <T locale={locale}>
 
@@ -118,7 +121,7 @@ export default async function Page({ params }: Props) {
 
       {/* ============ GALLERY ============ */}
       <section className="gallery reveal">
-        <img src={mediaUrl("/assets/ref-home-mid1.webp")} alt="A showcase of NTI's printed packaging work" />
+        <img src={gallery ? cmsMedia(gallery) : mediaUrl("/assets/ref-home-mid1.webp")} alt={settings?.['home.gallery_alt'] ?? "A showcase of NTI's printed packaging work"} />
       </section>
 
       {/* ============ WHY NTI ============ */}

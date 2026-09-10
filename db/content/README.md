@@ -65,8 +65,8 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/210_legacy_redirects.sql
 
 ## 220_site_setting.sql
 
-**21 網站設定**的值（`SiteSetting`）。種子只建 15 個 key、值留 NULL，這支把 mockup
-已經有的 10 個補上去。
+**21 網站設定**的值（`SiteSetting`）。種子只建 15 個 key、值留 NULL，這支把專案裡
+已經有依據的 11 個補上去。
 
 ```bash
 pnpm --filter admin seed                # 先重產 apps/admin/src/api/settings.generated.ts
@@ -83,20 +83,27 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/220_site_setting.sql
 **冪等，且已經填過的 key 一律不動**（`WHERE ValueZh IS NULL AND ValueEn IS NULL`）：
 這張表客戶會在後台改，覆蓋等於把他填的值默默改掉。要重新匯入請先在後台清空該欄位。
 
-留 NULL 的 5 個是**客戶還沒提供**，不是漏掉：
+留 NULL 的 4 個是**客戶還沒提供**，不是漏掉：
 
 | key | 為什麼空著 |
 |---|---|
 | `company.fax` | 客戶未提供（[`STATUS.md`](../../STATUS.md) §八） |
-| `social.facebook`／`linkedin`／`youtube` | mockup 的 footer 是 `href="#"`；後台提示寫明「留空則前台不顯示該圖示」 |
+| `social.linkedin`／`youtube` | mockup 的 footer 是 `href="#"`，也沒有其他出處 |
 | `mail.bcc` | 沒有這個需求，客戶要再填 |
 
 寫成空字串會讓後台分不出「客戶清空了」與「從來沒填」，所以一個字都不寫。
+前台對社群的規則是「填了才顯示」，所以留 NULL 的後果就是那兩個圖示不出現。
 
-> ⚠ `company.map_embed` 存的是整段 `<iframe>`（後台那個欄位收的就是「分享 → 嵌入地圖」
-> 貼過來的內容），查詢字串是地址，不是客戶自己的 Google 商家嵌入碼——客戶給了再換。
-> 種子把這個 key 的 `ValueType` 標成 `url`，與實際存的內容不符，等前台真的要讀它時一併修
-> （改 `ValueType` 要產新的 EF Migration）。
+`social.facebook` 不在留白之列：結構化資料的 `sameAs` 早就帶著粉專網址
+（`apps/web/src/lib/jsonld.ts`，取自客戶現有官網）。那份對 Google 說「有粉專」、
+footer 卻一個圖示都不顯示，是同一組事實在兩個地方講反話。公司中文法定名同理，
+權威也在那支（`legalName`）。
+
+> ⚠ `company.map_embed` 存的是**地圖網址**、不是整段 `<iframe>`（`ValueType='url'`）：
+> 那段標記要進頁面就得走 `dangerouslySetInnerHTML`，等於開一條從後台注入任意 HTML 到
+> 公開頁面的路。後台仍然可以整段貼上，`AdminSettingHandler` 存檔時只留 `src`，
+> 抽完不是 http(s) 就擋下來。查詢字串目前是地址，不是客戶自己的 Google 商家嵌入碼——
+> 客戶給了再換。
 
 ## ⚠ 中文是初稿
 

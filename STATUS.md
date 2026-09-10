@@ -134,6 +134,41 @@ contact 頁、`zh.ts` 的三筆 key、Google Maps embed 的查詢字串與 ifram
 
 `SiteSetting` 的值當時在資料庫裡仍是 NULL，已於 2026-09-10 灌進去（見下一節）。
 
+### ✅ 網站設定接上前台（2026-09-10）
+
+後台單元 21 的值以前只有後端寄信時會讀（`mail.*`），畫面上一個字都不吃——客戶在後台改
+公司資訊，前台不會有任何變化。`getSiteSettings()` 有定義、零個呼叫者。現在接的三處：
+
+| 位置 | 吃哪些 key |
+|---|---|
+| `/contact` 的資訊卡與地圖 | `company.address`／`phone`／`email`／`hours`／`map_embed` |
+| footer 的社群圖示 | `social.facebook`／`linkedin`／`youtube` |
+| 首頁形象圖帶 | `home.gallery_image`／`gallery_alt` |
+
+規則在 [`lib/site-settings.ts`](apps/web/src/lib/site-settings.ts)：讀不到（沒設 API base、
+端點掛了）回 `null`，呼叫端渲染寫死的 mockup 內容——所以**沒接 API 的預設建置下
+`verify:markup` 仍然 44 頁全過**，與 `components/cms.tsx` 同一條原則。
+
+社群圖示是唯一不落回 mockup 的：接上 CMS 之後只顯示填了網址的那幾個。mockup 那三個
+`href="#"` 是設計稿的佔位，照著退回去等於把死連結送上線。
+
+`/contact` 因此進了 `build-pages.mjs` 的 `HAND_MAINTAINED`（再跑那支會洗掉接線）。
+
+**兩個順帶修掉的資料錯誤**（都是「同一組事實在兩個地方講反話」）：
+
+- `social.facebook` 原本留白，但結構化資料的 `sameAs` 一直帶著粉專網址——那份對 Google
+  說有粉專、footer 卻一個圖示都不顯示。改成從 `lib/jsonld.ts` 取，兩邊同一個來源。
+- 公司中文名原本寫「沒有依據，刻意不編」，其實有：`南台彩藝` 在 `jsonld.ts` 的註解裡就
+  記著取自客戶現有官網的 `<title>`。法定全名補進 `jsonld.ts` 的 `legalName`（schema.org
+  的正式屬性），設定的 `company.name`（zh）讀那一筆。
+
+`company.map_embed` 改存**網址**而非整段 `<iframe>`：那段要進頁面得走
+`dangerouslySetInnerHTML`，等於開一條從後台注入任意 HTML 的路。後台仍可整段貼上，
+`AdminSettingHandler` 存檔時只留 `src`，抽完不是 http(s) 就擋。
+
+⚠ 仍是寫死的：`/contact` 的 `generateMetadata()`（SEO 摘要，屬單元 20）與
+`lib/jsonld.ts` 的結構化資料。客戶改電話，頁面會變、這兩處不會。
+
 ### ✅ 語系解析（2026-09-06）
 
 `src/middleware.ts` 從「一律導向 `/en`」改成：使用者選過的（`NEXT_LOCALE` cookie，
@@ -661,7 +696,7 @@ gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌�
 |---|---|---|
 | **中文文案** | 客戶未提供正式文案 | 已用機器翻譯初稿填滿（111 筆內容，`/zh` 可以驗收了），但**上線前需客戶校閱**。公司中文名與董事長姓名沒有依據，刻意保留 `NTI`／「鄭董事長」 |
 | 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 80 篇文章與 100 個標籤還沒進 CMS，那 170 條舊網址只能先導回首頁（拿不回權重）；缺漏頁面內容同此。**建議向客戶要舊站 Search Console 存取權**，按點擊排序決定哪些文章必須遷移 |
-| 公司傳真、社群網址 | 客戶未提供 | `SiteSetting` 的 `company.fax` 與三個 `social.*` 仍為 NULL（社群留空前台就不顯示圖示）。`company.map_embed` 已填 mockup 那段用**地址字串**查的 Google Maps embed，客戶自己的商家嵌入碼給了再換 |
+| 公司傳真、LinkedIn／YouTube | 客戶未提供 | `SiteSetting` 的 `company.fax`、`social.linkedin`、`social.youtube` 仍為 NULL——前台的規則是「填了才顯示」，所以 footer 目前只出現 Facebook 一個圖示。`company.map_embed` 是用**地址字串**查的 Google 地圖網址，客戶自己的商家嵌入碼給了再換 |
 | SMTP 帳密 | 客戶未提供寄件帳號（`Smtp__Host`／`Port` 已填 Brevo） | 表單收得到資料，但通知信一律 `Failed` |
 | 正式網域 | 客戶端 DNS | 上線 checklist 卡住 |
 

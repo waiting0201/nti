@@ -38,9 +38,20 @@ NEXT_PUBLIC_API_BASE=http://localhost:7071/api/v1 pnpm --filter web dev
 | `/projects`、`/faq`、`/green-vlog`、`/industry-trends`、`/careers` | 各自的內容單元 |
 | `/about-certifications`、`/supplier-area` | 認證牆／公告、規範、下載 |
 | `/facility-*`（4 頁）、`/products-*`（3 頁） | 設備卡、方案品項卡 |
+| `/contact`、footer、首頁形象圖帶 | **網站設定**（單元 21，`/site-settings`）——公司資訊、社群網址、圖帶 |
 
 其餘頁面的內容是**固定文案**（docs/08 決議 3：固定頁的內容寫死在前端，
 CMS 只管 SEO），所以它們只接 SEO。
+
+網站設定走 [`src/lib/site-settings.ts`](src/lib/site-settings.ts)：讀不到（沒設 API base、
+端點掛了）回 `null`，呼叫端就渲染寫死的 mockup 內容；讀到了但某個 key 是空的，
+同樣落回寫死的值。**社群圖示是唯一的例外**：接上 CMS 之後只顯示客戶填了網址的那幾個，
+一個都沒填就一個都不顯示——後台那三個欄位的提示就是這樣寫的（「留空則前台不顯示該圖示」），
+拿 mockup 那三個 `href="#"` 當退路等於把死連結送上線。
+
+> `/contact` 的 `generateMetadata()` 仍是寫死的電話與信箱：那段在頁面渲染前就要決定，
+> 而且屬於 SEO 文案（單元 20）。客戶改了電話，頁面會變、搜尋結果摘要不會——已知，不是漏接。
+> 同理 `lib/jsonld.ts` 的結構化資料也還是寫死的一份公司資訊。
 
 > `mockup/` 那 12 篇 `/news-*` 是設計稿附的示範文章，保留著——
 > CMS 沒有內容時列表會連到它們，有內容時列表改連 `/news/{slug}`。

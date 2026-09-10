@@ -6,6 +6,8 @@ using Nti.Api.Data;
 using Nti.Api.Models.Dtos;
 using Nti.Api.Models.Entities;
 using Nti.Api.Services;
+using System.Net;
+using System.Text.RegularExpressions;
 
 namespace Nti.Api.Handlers.Admin;
 
@@ -177,8 +179,8 @@ public sealed class AdminSettingHandler(AppDbContext db)
         foreach (var setting in settings)
         {
             var input = items.First(i => i.SettingKey == setting.SettingKey);
-            setting.ValueZh   = input.ValueZh;
-            setting.ValueEn   = input.ValueEn;
+            setting.ValueZh   = Normalize(setting.SettingKey, input.ValueZh);
+            setting.ValueEn   = Normalize(setting.SettingKey, input.ValueEn);
             setting.UpdatedAt = Clock.UtcNow;
             setting.UpdatedBy = RequestContext.UserId(req.HttpContext.User);
         }
@@ -187,6 +189,34 @@ public sealed class AdminSettingHandler(AppDbContext db)
 
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok($"已更新 {settings.Count} 筆設定。"));
+    }
+
+    /// <summary>
+    /// 地圖只存網址（<c>ValueType='url'</c>），貼整段 <c>&lt;iframe&gt;</c> 就抽出 <c>src</c>。
+    /// <para>
+    /// 客戶手上有的是 Google 地圖「分享 → 嵌入地圖」複製來的那整段標記，要他自己挑出網址
+    /// 是把介面的麻煩推給使用者；但把那段 HTML 原樣存進資料庫、前台再 render 出來，等於開了
+    /// 一條從後台注入任意 HTML 到公開頁面的路。抽 <c>src</c> 兩邊都成立：貼什麼都收，
+    /// 存進去的一定是一個網址，前台自己組 iframe。
+    /// </para>
+    /// <para>
+    /// 抽完仍不是 http(s) 就擋下來——<c>javascript:</c> 之類的值進了 iframe 的 src 是會執行的。
+    /// </para>
+    /// </summary>
+    private static string? Normalize(string key, string? value)
+    {
+        if (key != "company.map_embed" || string.IsNullOrWhiteSpace(value)) return value;
+
+        var text = value.Trim();
+        var src  = Regex.Match(text, @"src\s*=\s*[""']([^""']+)[""']", RegexOptions.IgnoreCase);
+        if (src.Success) text = WebUtility.HtmlDecode(src.Groups[1].Value).Trim();
+
+        if (!text.StartsWith("https://", StringComparison.OrdinalIgnoreCase) &&
+            !text.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+            throw AppException.BadRequest(ErrorCodes.ValidationFormat,
+                "Google 地圖請貼「分享 → 嵌入地圖」的內容，或以 https:// 開頭的地圖網址。");
+
+        return text;
     }
 }
 
