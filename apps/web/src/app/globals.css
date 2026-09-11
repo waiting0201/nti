@@ -659,3 +659,23 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
   .pr-grid,.pr-grid.two{grid-template-columns:1fr}
   .fbot{flex-wrap:wrap;gap:10px}
 }
+
+/* ============================================================
+   中文版標題排版（只吃 <html lang="zh-*">，英文版完全不受影響）
+
+   為什麼需要這一塊：拉丁字的 Mulish 有真正的 800，中文的 Noto Sans TC
+   沒有 —— CSS 的字重挑選規則在 >=600 時「先往上找」，所以每一處
+   font-weight:800 的中文都被撐成 Black。字型請求已經拿掉 900、補上
+   300/600（軸數不變、不多載檔案），800 現在落回 700。
+
+   但綠色標題光是落回 700 還是太壯：方塊字沒有拉丁字的字腔起伏，同樣的
+   字重看起來就是更重。所以這裡把它們再降一階到 500/600，並把為拉丁字
+   收的負字距放掉、行高放鬆 —— 負字距在中文只會讓字擠成一團。
+   ============================================================ */
+html[lang^="zh"] .sec-title{font-weight:500;letter-spacing:.01em;line-height:1.4}
+html[lang^="zh"] .sec-title .ti-alt{font-weight:500}
+html[lang^="zh"] .sec-title .ti-slash{font-weight:300}
+html[lang^="zh"] .shero h1{font-weight:500;letter-spacing:.02em;line-height:1.25}
+html[lang^="zh"] .pr-body h3{font-weight:600;letter-spacing:.01em}
+html[lang^="zh"] .tour-more{font-weight:600}
+html[lang^="zh"] .eyebrow{font-weight:600;letter-spacing:.2em}

@@ -329,3 +329,12 @@ footer a:hover{color:var(--leaf)}
   .wwd-item:first-child,.why-item:first-child{border-top:none;padding-top:0}
   .fbot{flex-wrap:wrap;gap:10px}
 }
+
+/* ============================================================
+   中文版標題排版（只吃 <html lang="zh-*">，英文版完全不受影響）
+   理由同 site.css 末段：Noto Sans TC 沒有 800，拉丁字的重量在方塊字上
+   會再放大一階，所以綠色標題降到 500/600，並放掉為拉丁字收的負字距。
+   ============================================================ */
+html[lang^="zh"] .intro h1{font-weight:500;letter-spacing:.01em;line-height:1.35}
+html[lang^="zh"] .sec-h{font-weight:500;letter-spacing:.01em;line-height:1.4}
+html[lang^="zh"] .pcard h3{font-weight:600;letter-spacing:.01em}
