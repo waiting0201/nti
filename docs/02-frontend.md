@@ -25,7 +25,7 @@
 
 | 項目 | 選定 | 備註 |
 |------|------|------|
-| 框架 | **Next.js（React）— SSR + ISR** | Azure SWA 一級支援；SSR/ISR 滿足 SEO/GEO |
+| 框架 | **Next.js（React）— SSR**（2026-09-11 拿掉 ISR） | Azure SWA 一級支援；伺服器產好完整 HTML，SEO/GEO 不受影響 |
 | 渲染 | **接 CMS 的頁一律 SSR（`no-store`，不快取）**、沒接 CMS 的頁 SSG、報價／聯絡表單 CSR | 2026-09-11 改：原為 SSG + ISR 300 秒 + webhook 重生，改成後台存檔後前台重整就是新的（見變更紀錄） |
 | i18n | 中／英雙語，`hreflang` 對應 | 路由 `/zh`、`/en` 或 domain 策略由 SEO 文件定 |
 | 樣式 | 對應 design tokens（CSS variables / Tailwind） | 與 01-design tokens 一致 |

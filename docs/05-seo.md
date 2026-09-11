@@ -8,7 +8,7 @@
 | **搭配 Skills** | `verify`（Lighthouse / 結構化資料測試） |
 | **對應階段** | P1（規範藍圖）→ P3–P8（落實）→ P9（稽核）→ 上線（301/sitemap/GSC） |
 | **核心定位** | 既有站改版重建（`nti-printing.com`，WordPress + All-in-One SEO，約 80 篇/46 頁），**SEO 權重不可流失**。 |
-| **適用範圍** | **僅公開網站（Next.js SSR/ISR）**。**CMS 後台為登入後台、不需 SEO**，且應以 `robots`/noindex 排除索引。 |
+| **適用範圍** | **僅公開網站（Next.js SSR）**。**CMS 後台為登入後台、不需 SEO**，且應以 `robots`/noindex 排除索引。 |
 
 ---
 

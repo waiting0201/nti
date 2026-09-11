@@ -23,7 +23,7 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [參考網站清單](reference/sbk/世界大廠網站.txt) | 5 個國際包裝印刷大廠官網 |
 | [Harness 總覽](docs/README.md) | 編排總則 + Claude Code 設定 + 技術選型 + 分項作業書索引（含變更紀錄規範） |
 | [01 設計（含競品分析）](docs/01-design.md) | visual-design-architect：設計系統/RWD/原型 + 競品設計分析 |
-| [02 前端](docs/02-frontend.md) | frontend-architect：Next.js SSR/ISR 公開站 |
+| [02 前端](docs/02-frontend.md) | frontend-architect：Next.js SSR 公開站 |
 | [03 後端／CMS](docs/03-backend.md) | backend-engineer：Azure Functions .NET10 + Dapper + CMS |
 | [04 API](docs/04-api.md) | system-analyst + backend-engineer：API 契約 |
 | [05 SEO](docs/05-seo.md) | system-analyst + qa：SEO 規範與稽核 |
@@ -107,7 +107,7 @@ NTI/
 
 | 項目 | 選定 |
 |------|------|
-| 公開網站（前端） | **Next.js（React）SSR + ISR** → Azure Static Web Apps |
+| 公開網站（前端） | **Next.js（React）SSR** → Azure Static Web Apps（2026-09-11 修訂，原為 SSR + ISR 300 秒；接 CMS 的頁改成不快取，後台存檔後重整就是新的） |
 | CMS 後台 | 自建管理後台，**純 SPA（靜態、不需 SEO）** |
 | API／後端 | **Azure Functions .NET 10**（isolated、ASP.NET Core Integration），單一 `RouterFunction` + 集中式 `AppRouter` |
 | 資料存取 | **EF Core（寫入 + Migration）+ Dapper（讀取）雙軌**（2026-09-02 修訂，原為 Dapper 單軌） |

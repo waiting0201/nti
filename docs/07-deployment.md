@@ -26,7 +26,7 @@
 |------|------|------|------|------|
 | **Mockup 預覽（現況）** | `mockup/` 靜態 mockup（完整站雛形）— **客戶採用版** | Cloudflare Pages 專案 `nti-mockup`（direct upload，**不連 git**） | 手動 `wrangler pages deploy` | 公開、免密碼，**設計定案後下線** |
 | ~~**Mockup2 預覽**~~（未採用） | `mockup2/` 靜態切版稿（`.dc.html` + `support.js`） | Cloudflare Pages 專案 `nti-mockup2`（direct upload，**不連 git**） | 已停止更新 | 公開、免密碼，**可即刻下線** |
-| **公開網站（前端）** | Next.js **SSR + ISR** | **Azure Static Web Apps** `stapp-nti-prod`（RG `NTIUS`／westus2／Free）<br>`gray-river-0a6ae341e.5.azurestaticapps.net` | push `main` → `.github/workflows/web.yml` | 公開可達，**上線前 robots 擋全站**（見 §7.3） |
+| **公開網站（前端）** | Next.js **SSR**（不快取） | **Azure Static Web Apps** `stapp-nti-prod`（RG `NTIUS`／westus2／Free）<br>`gray-river-0a6ae341e.5.azurestaticapps.net` | push `main` → `.github/workflows/web.yml` | 公開可達，**上線前 robots 擋全站**（見 §7.3） |
 | **CMS 後台（前端）** | 純 SPA（靜態） | **與公開站同一個 Static Web Apps**，掛在 `/admin/`（vite `build.outDir` 直接寫進 `apps/web/public/admin`） | CI 先 `pnpm --filter admin build` 再 `pnpm --filter web build` | 登入後台、**noindex**（`robots.txt` Disallow） |
 | **API** | Azure Functions **.NET 10**（isolated、Consumption） | Azure Functions | CI/CD | 公開讀免認證、後台需認證 |
 | **資料庫** | **Azure SQL Database — Basic** | Azure（PaaS） | — | 受 Functions 存取 |
@@ -51,7 +51,7 @@
 
 ## 3. 架構選型（已定案 2026-06-12）
 
-全棧定為 **Azure**：公開站 Next.js(SSR/ISR) → **Static Web Apps**；CMS 後台純 SPA → 靜態；API → **Azure Functions .NET 10**；DB → **Azure SQL Database Basic**；媒體 → **Blob Storage**。**AI 客服本期不納入**；**3D 客製（Pacdora）本期不納入**。
+全棧定為 **Azure**：公開站 Next.js(SSR) → **Static Web Apps**；CMS 後台純 SPA → 靜態；API → **Azure Functions .NET 10**；DB → **Azure SQL Database Basic**；媒體 → **Blob Storage**。**AI 客服本期不納入**；**3D 客製（Pacdora）本期不納入**。
 
 - 月費約 **$7–18（East Asia）**，成本地板為 SQL Basic（~$5）。
 - **唯一待驗證**：公開站 SSR 在 **SWA Free 額度**是否夠；不夠則退 **Azure Container Apps**（scale-to-zero）或 App Service B1。上線前以實際流量驗一次。

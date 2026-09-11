@@ -29,7 +29,7 @@
 
 | 層 | 選定 | 說明 |
 |----|------|------|
-| 公開網站（前端） | **Next.js（SSR + ISR）** | 需 SEO + GEO；內容頁 ISR、表單頁 SSR/CSR |
+| 公開網站（前端） | **Next.js（SSR）** | 需 SEO + GEO；接 CMS 的頁 `no-store` 每個請求重新渲染（2026-09-11 拿掉 ISR）、沒接 CMS 的頁 SSG、表單 CSR |
 | 公開站 host | **Azure Static Web Apps**（Free 起，必要時 Standard；SSR 撞限制則退 Container Apps） | Next.js SSR/ISR 一級支援 |
 | CMS 後台（後端管理介面） | **純 SPA**（靜態），**不需 SEO** | 登入後台用，host 同 SWA Free / Blob 靜態 |
 | API | **Azure Functions .NET 10**（isolated、ASP.NET Core Integration、Consumption） | 唯一資料存取層；單一 `RouterFunction` + 集中式 `AppRouter`，寫法見 [10-backend-design.md](10-backend-design.md) |
@@ -228,5 +228,6 @@ Agent 具備檔案式持久記憶，位於使用者層級：
 | 2026-06-16 | Tim（Claude Code） | Pacdora／3D 包裝客製本期不納入（廠商不提供技術崁入服務）；移除 P7 整合 track、G 關卡、相關研究/職責/成本/風險 |
 | 2026-09-02 | Tim（Claude Code） | 新增 `db/` 資料庫建置腳本（資料庫名 NTI，migrations／seed／verify／local），08 與 09 同步回寫；更新目錄結構（7 → 9 份分項作業書、加入 `db/`）與版控狀態（已進 git） |
 | 2026-09-02 | Tim（Claude Code） | 新增 [10-backend-design.md](10-backend-design.md)（以 `Jabez/Api` 為範本的後端技術規範，9 → 10 份分項作業書）；技術選型表修訂資料存取為 **EF Core 寫 + Dapper 讀雙軌**（推翻 2026-06-12 的 Dapper 單軌）並新增 schema 權威＝EF Migration；03／04 同步回寫 |
+| 2026-09-11 | Tim（Claude Code） | 技術選型表的渲染欄同步：公開站由 SSR + ISR 改為 SSR 不快取，理由與代價見 docs/02、docs/07 |
 
 *最後更新：2026-09-02｜對應時程：見 `reference/網站建置時程.html` 與 PDF。*
