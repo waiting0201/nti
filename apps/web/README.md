@@ -24,9 +24,11 @@ NEXT_PUBLIC_API_BASE=http://localhost:7071/api/v1 pnpm --filter web dev
 ```
 
 ⚠ `NEXT_PUBLIC_*` 是 **build 時內嵌**的，換 base 要重新 build。
-另外 Next 的 fetch 快取存在 `.next/cache`，**重啟服務不會清掉**——
-改了 CMS 內容卻看不到變化時，先確認是不是還在 300 秒的 ISR window 內，
-或直接 `rm -rf .next/cache`。
+本機的 func 要用 **7072**（7071 被別的專案佔著時），兩邊要一致。
+
+CMS 資料**完全不快取**（見〈存檔後多久才更新〉），所以改了後台重整就看得到；
+還是看不到的話先確認 `NEXT_PUBLIC_API_BASE` 真的有設——沒設時整層 API 停用，
+畫面上是寫死的 mockup 內容，改什麼都不會變。
 
 ### 哪些頁接了 CMS
 
@@ -224,38 +226,29 @@ NEXT_PUBLIC_MEDIA_BASE=https://stntiprod.blob.core.windows.net pnpm --filter web
   element tree 換掉文字節點與 `alt`／`title`／`placeholder`／`aria-label`。
   **`/en` 完全不經過替換**，所以 `verify:markup` 這道閘不受影響。
 - **CMS 內容**：接了 `NEXT_PUBLIC_API_BASE` 的 16 頁改吃資料庫的 `*I18n` 資料表，
-  兩個語系各自獨立（缺語系不 fallback）。資料以 ISR 快取 300 秒，
-  後台存檔會打 `/api/revalidate` 立刻作廢（見下）。
+  兩個語系各自獨立（缺語系不 fallback）。資料不快取，每個請求重新取（見下）。
 
 ### 存檔後多久才更新
 
-`src/lib/api.ts` 的每支 fetch 都帶 `revalidate: 300` 與 `tags: ['cms']`，
-所以**沒有額外設定時，後台存的內容最多五分鐘後才出現在前台**——而且是
-stale-while-revalidate：踩到期限的那個請求拿到的仍是舊頁，下一個請求才看得到。
+**立刻。CMS 資料這一層沒有任何快取**（2026-09-11 起）：`src/lib/api.ts` 的每支 fetch
+都帶 `cache: 'no-store'`，用到它的頁面在執行期就是每個請求重新渲染，
+後端的唯讀端點也一律回 `no-store`。編輯者存完檔，前台重整就是新的。
 
-設了 `REVALIDATE_SECRET`（**執行期**讀取，不是 `NEXT_PUBLIC_*`，改了不用重 build），
-`src/app/api/revalidate/route.ts` 就會啟用；後端每次改到前台看得到的內容會帶著
-同一個密鑰打它，把 `cms` tag 的快取作廢，下一個訪客就拿到新資料。未設時那支直接回 404。
+在此之前是 `revalidate: 300` + `tags: ['cms']` 的 ISR，靠後端存檔時打
+`POST /api/revalidate` 把 tag 作廢。那條路徑（前台的 route handler、後端的
+`FrontendRevalidator`、兩邊的 `REVALIDATE_SECRET`／`Revalidate__Url`）已經整批移除——
+它有一個補不起來的洞：ISR 快取是**每個執行個體各自持有**的，SWA 一旦擴出第二個
+執行個體，通知只清得到接到請求的那一台，其餘仍等 300 秒。
 
-**兩邊都要設，而且要一樣**，只設一邊等於沒設：
+⚠️ 正式環境的 SWA 與 Function 上如果還留著 `REVALIDATE_SECRET`／`Revalidate__Url`／
+`Revalidate__Secret` 三個 app setting，現在是無害的孤兒設定，可以刪（見 docs/07 §環境變數）。
 
-| | 本機 | 正式環境 |
-|---|---|---|
-| 前台 `REVALIDATE_SECRET` | `apps/web/.env.local` | SWA `stapp-nti-prod` 的 App settings |
-| 後端 `Revalidate__Secret`／`Revalidate__Url` | `Api/local.settings.json` | Function `func-nti-prod` 的 App settings |
+代價要知道：**每一個訪客的每一頁都會打 API、進一次 Azure SQL Basic**。
+流量長起來之後要加回快取的話，加在 `src/lib/api.ts`，並且要連同
+「多執行個體下怎麼作廢」一起解決，不是把舊的 webhook 接回來就好。
 
-自己驗一次（前台跑起來之後）：
-
-```bash
-curl -X POST -H "Authorization: Bearer $REVALIDATE_SECRET" http://localhost:3100/api/revalidate
-# 200 {"revalidated":true,...} → 通了；401 → 兩邊密鑰不一樣；404 → 前台這邊沒設
-```
-
-⚠️ 正式環境的 SWA app setting **大約一分鐘後**才會進到執行中的伺服器，
-剛設完馬上打會拿到 404，與「設錯」看起來一模一樣。
-
-⚠️ `/api/` 在 `middleware.ts` 有一條明確放行——它沒有副檔名，matcher 擋不掉，
-落到語系判斷會被補成 `/zh/api/revalidate`，症狀是「前台就是不更新」而完全不指向 middleware。
+例外是圖片：`/files/media/*` 仍然是一年的 `immutable` 快取。那裡回的是檔案位元組、
+檔名帶 GUID，後台換圖會產生新路徑，不會拿到舊的那張。
 
 ### 字典怎麼維護
 

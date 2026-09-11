@@ -491,7 +491,7 @@ mockup/*.html + apps/web/src/lib/zh.ts
 | hreflang | 由同一 Id 的兩筆 i18n 推導，回傳 `{en, zh}` slug 對照 |
 | 分頁雙模式 | 帶 `page`／`pageSize` 回 `PagedResult`，不帶回平面陣列 |
 | 值域驗證 | `?type=Bogus` 回 400 `VALIDATION_FORMAT`（不是靜默的空陣列） |
-| 快取標頭 | 內容 `s-maxage=300`、設定與分類 `3600`、寫入端點 `no-store` |
+| 快取標頭 | **一律 `no-store`**（2026-09-11 起；前台也改成不快取，後台存檔後重整就是新的）。例外：`/files/media/*` 一年 `immutable` |
 | 內部設定不外洩 | `/site-settings` 濾掉 `Mail` 群組（15 → 12 筆） |
 
 本機假內容 fixture：`db/local/920_dev_content.sql`（各單元一筆 + 兩個邊界案例）。

@@ -26,7 +26,7 @@
 | 項目 | 選定 | 備註 |
 |------|------|------|
 | 框架 | **Next.js（React）— SSR + ISR** | Azure SWA 一級支援；SSR/ISR 滿足 SEO/GEO |
-| 渲染 | **內容頁 SSG + ISR**（背景/webhook 重生）、**報價／聯絡表單頁 SSR 或 CSR** | 內容頁 HTML 由 CDN 出，訪客不觸發 Node 渲染、也不打醒 Functions 冷啟動 |
+| 渲染 | **接 CMS 的頁一律 SSR（`no-store`，不快取）**、沒接 CMS 的頁 SSG、報價／聯絡表單 CSR | 2026-09-11 改：原為 SSG + ISR 300 秒 + webhook 重生，改成後台存檔後前台重整就是新的（見變更紀錄） |
 | i18n | 中／英雙語，`hreflang` 對應 | 路由 `/zh`、`/en` 或 domain 策略由 SEO 文件定 |
 | 樣式 | 對應 design tokens（CSS variables / Tailwind） | 與 01-design tokens 一致 |
 | 資料來源 | **只呼叫 .NET API（[`04-api.md`](04-api.md)），前端不直連 DB** | 公開站只負責呈現 |
@@ -100,5 +100,6 @@
 
 | 2026-09-06 | Tim（Claude Code） | 會員系統移出專案範圍：§3 刪除 Member 功能頁與頁首會員入口、渲染策略的「會員/個人化頁」改為表單頁、工作分解第 4 項改為表單流程 |
 | 2026-09-08 | Tim（Claude Code） | 兩支公開表單接上後端（P6）：`PageForm` 改為真的 `POST /quotes`／`/contacts`，含 reCAPTCHA v3 取 token、附件上傳、依錯誤碼顯示中英訊息。mockup 的表單欄位補上 `name`、下拉選項補上 `db/seed` 的代號、`.fupload` 補上真的 `<input type="file">`（設計稿一直寫著可附檔卻沒有輸入欄位）。錯誤訊息節點在 client 端才插入，`verify:markup` 仍 44 頁全過 |
+| 2026-09-11 | Tim（Claude Code） | **拿掉 CMS 資料的快取**：`lib/api.ts` 的 fetch 由 `revalidate: 300` + `tags: ['cms']` 改為 `cache: 'no-store'`，接 CMS 的頁改為每個請求重新渲染；`/api/revalidate` 與後端的 `FrontendRevalidator` 一併移除。原本的 webhook 作廢有個補不起來的洞——ISR 快取每個執行個體各自持有，SWA 擴出第二台之後通知只清得到接到請求的那一台。代價是每個訪客的每一頁都會打 API 與 Azure SQL Basic |
 
-*最後更新：2026-09-08*
+*最後更新：2026-09-11*

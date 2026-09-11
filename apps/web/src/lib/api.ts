@@ -1,3 +1,5 @@
+import { unstable_rethrow } from 'next/navigation'
+
 import type { Locale } from './i18n'
 import { mediaUrl } from './media'
 
@@ -16,25 +18,18 @@ export const apiBase = (process.env.NEXT_PUBLIC_API_BASE ?? '').replace(/\/$/, '
 export const hasApi = apiBase.length > 0
 
 /**
- * 所有 CMS 資料共用的快取 tag。後台存檔後由 `/api/revalidate` 一次作廢。
+ * **這一層完全不快取**（2026-09-11）。
  *
- * 不分單元下 tag，是因為那要維護一份「哪個單元影響哪幾頁」的對照表，
- * 而它會跟著單元增減慢慢失真；漏掉一條的症狀是某一頁永遠不更新，很難查。
- * 整批作廢的代價只是下一個訪客會重新取一次資料。
- */
-export const CMS_TAG = 'cms'
-
-/**
- * ISR 重新驗證秒數。與 API 回應的 `s-maxage=300` 對齊——
- * 兩邊不一致的話，內容改了之後前台要等的時間會是兩者的最大值，很難解釋。
+ * 原本是 `next: { revalidate: 300, tags: ['cms'] }` 的 ISR，加上後台存檔時打
+ * `/api/revalidate` 立刻作廢那個 tag。決定拿掉是因為要的是「後台一存檔、前台重整就是新的」，
+ * 而 tag 作廢做不到那個保證的最後一哩：ISR 快取是**每個執行個體各自持有**的，
+ * SWA 一旦擴出第二個執行個體，通知只清得到接到請求的那一台，其餘仍等 300 秒——
+ * 症狀是「有時候更新有時候沒有」，比穩定慢 5 分鐘還難查。
  *
- * 這是**上限**而不是實際延遲：後台存檔會打 `/api/revalidate` 立刻作廢快取，
- * 這個秒數是通知沒送到時的保險。
+ * 代價是每一個訪客的每一頁都會打一次 API、進一次 Azure SQL Basic。
+ * 流量長起來之後要加快取的話，加在這裡（`next: { revalidate }`），
+ * 並且要連同「多執行個體下怎麼作廢」一起解決，不是把舊的 webhook 接回來就好。
  */
-const REVALIDATE = 300
-
-/** 低頻異動（設定、分類）。API 那邊也是 3600。 */
-const REVALIDATE_STATIC = 3600
 
 type Envelope<T> = { success: boolean; code: string | null; data: T; message: string }
 
@@ -43,12 +38,20 @@ type Envelope<T> = { success: boolean; code: string | null; data: T; message: st
  *
  * **失敗一律回 null，不拋例外**：API 掛掉時公開站應該退回寫死的內容繼續服務，
  * 而不是整頁 500。錯誤會記在伺服器日誌裡。
+ *
+ * `unstable_rethrow` 擋的是**誤判**：Next 用丟例外的方式表達控制流——
+ * 「這頁用了 no-store，不能預先產生成靜態」的 `DynamicServerError`、
+ * `notFound()`、`redirect()` 都會經過這個 catch。沒有它的話，build 期間每一支端點
+ * 都會記一行 `[api] ... 取用失敗 DynamicServerError`，而那看起來完全像 API 掛了。
+ *
+ * （頁面的新鮮度不靠它：2026-09-11 兩種寫法都實測過，no-store 的頁面在
+ * 執行期都是每個請求重新渲染。它修的是日誌，不是行為。）
  */
-async function fetchApi<T>(path: string, revalidate = REVALIDATE): Promise<T | null> {
+async function fetchApi<T>(path: string): Promise<T | null> {
   if (!hasApi) return null
 
   try {
-    const res = await fetch(`${apiBase}${path}`, { next: { revalidate, tags: [CMS_TAG] } })
+    const res = await fetch(`${apiBase}${path}`, { cache: 'no-store' })
     if (!res.ok) {
       console.error(`[api] ${path} → HTTP ${res.status}`)
       return null
@@ -57,6 +60,7 @@ async function fetchApi<T>(path: string, revalidate = REVALIDATE): Promise<T | n
     const envelope = (await res.json()) as Envelope<T>
     return envelope.success ? envelope.data : null
   } catch (error) {
+    unstable_rethrow(error)
     console.error(`[api] ${path} 取用失敗`, error)
     return null
   }
@@ -246,7 +250,7 @@ export const getSolution       = (l: Locale, slug: string) => fetchApi<SolutionD
  *
  * 前台的 `/products-{code}` 四頁是照代號來的，但 API 的詳細頁吃 slug——
  * slug 是可翻譯欄位（中英可不同），代號才是穩定的。先查清單再取詳細，
- * 兩支都有 ISR 快取，實際上不會多打一次網路。
+ * 所以這四頁每次渲染會打兩支端點——沒有快取之後那是兩趟真的網路往返。
  */
 export async function getSolutionByCode(locale: Locale, code: string) {
   const list = await getSolutions(locale)
@@ -278,10 +282,10 @@ export const getSupplierSpecs     = (l: Locale) => fetchApi<SupplierSpec[]>(`/su
 export const getSupplierDownloads = (l: Locale) => fetchApi<SupplierDownload[]>(`/supplier/downloads${q(l)}`)
 
 export const getCategories = (l: Locale, type: string) =>
-  fetchApi<Category[]>(`/categories${q(l, `&type=${type}`)}`, REVALIDATE_STATIC)
+  fetchApi<Category[]>(`/categories${q(l, `&type=${type}`)}`)
 
 export const getSiteSettings = (l: Locale) =>
-  fetchApi<SiteSetting[]>(`/site-settings${q(l)}`, REVALIDATE_STATIC)
+  fetchApi<SiteSetting[]>(`/site-settings${q(l)}`)
 
 /**
  * CMS 上傳的圖片存的是 Blob 相對路徑，而 media 容器是 private——

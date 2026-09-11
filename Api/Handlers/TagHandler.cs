@@ -19,7 +19,7 @@ public sealed class TagHandler(ITagReadService reads)
         var lang = LangResolver.Resolve(req);
         var data = await reads.GetAllAsync(lang);
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(data));
     }
 
@@ -29,7 +29,7 @@ public sealed class TagHandler(ITagReadService reads)
         // 沒有已上架消息的標籤一律當 404（見 TagReadService）——不做空的封存頁
         var dto  = await reads.GetBySlugAsync(lang, slug) ?? throw AppException.NotFound("Tag");
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(dto));
     }
 }

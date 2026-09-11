@@ -12,7 +12,7 @@ public sealed class VlogHandler(IVlogReadService reads)
     {
         var rows = await reads.GetPublishedAsync(LangResolver.Resolve(req), QueryValues.Int(req, "categoryId"));
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 }
@@ -24,7 +24,7 @@ public sealed class FaqHandler(IFaqReadService reads)
     {
         var rows = await reads.GetPublishedAsync(LangResolver.Resolve(req), QueryValues.Int(req, "categoryId"));
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 }
@@ -36,7 +36,7 @@ public sealed class TrendHandler(ITrendReadService reads)
     {
         var rows = await reads.GetPublishedAsync(LangResolver.Resolve(req));
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 }
@@ -48,7 +48,7 @@ public sealed class CertificationHandler(ICertificationReadService reads)
     {
         var rows = await reads.GetPublishedAsync(LangResolver.Resolve(req));
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 }
@@ -60,7 +60,7 @@ public sealed class ClientHandler(IClientReadService reads)
     {
         var rows = await reads.GetPublishedAsync();
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 }
@@ -72,7 +72,7 @@ public sealed class FacilityHandler(IFacilityReadService reads)
     {
         var rows = await reads.GetPublishedAsync(LangResolver.Resolve(req), QueryValues.Text(req, "group"));
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 }
@@ -84,7 +84,7 @@ public sealed class JobHandler(IJobReadService reads)
     {
         var rows = await reads.GetPublishedAsync(LangResolver.Resolve(req));
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 }

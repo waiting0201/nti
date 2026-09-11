@@ -12,7 +12,7 @@ public sealed class SettingHandler(ISiteSettingReadService reads)
     {
         var rows = await reads.GetPublicAsync(LangResolver.Resolve(req));
 
-        CacheControl.Public(req.HttpContext.Response, CacheControl.StaticSeconds);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 }

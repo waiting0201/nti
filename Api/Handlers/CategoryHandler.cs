@@ -20,7 +20,7 @@ public sealed class CategoryHandler(ICategoryReadService reads)
 
         var rows = await reads.GetByTypeAsync(LangResolver.Resolve(req), type);
 
-        CacheControl.Public(req.HttpContext.Response, CacheControl.StaticSeconds);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 }

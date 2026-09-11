@@ -63,10 +63,10 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   /*
-   * Route handler（目前只有 /api/revalidate）直接放行。
-   * 它沒有副檔名，matcher 擋不掉，落到下面就會被補上語系前綴變成
-   * /zh/api/revalidate —— 那不是任何路由，後端的重生通知會永遠拿到 404 或 307，
-   * 而症狀是「前台就是不更新」，完全不指向這裡。
+   * Route handler（`app/api/*`）直接放行。目前一支都沒有——`/api/revalidate`
+   * 隨著 ISR 一起拿掉了（見 lib/api.ts）——但這條留著：route handler 沒有副檔名，
+   * matcher 擋不掉，落到下面就會被補上語系前綴變成 /zh/api/xxx，
+   * 而那不是任何路由，呼叫端永遠拿到 404 或 307，症狀完全不指向這裡。
    */
   if (pathname.startsWith('/api/')) return NextResponse.next()
 

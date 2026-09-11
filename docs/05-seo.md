@@ -57,7 +57,7 @@
 `BreadcrumbList`——與可見內容不符是 Google 明列的違規項。
 
 ### 2.4 渲染與可檢索
-- 公開站內容頁採 **Next.js SSG + ISR**（CMS 更新以 webhook 觸發 revalidate）；關鍵內容**不依賴 JS**。
+- 公開站內容頁採 **Next.js SSR**（接 CMS 的頁 `no-store`，每個請求重新渲染；沒接 CMS 的頁仍是 SSG）；關鍵內容**不依賴 JS**。
 - CMS 後台 SPA 以 `X-Robots-Tag: noindex` / `robots.txt` 排除索引。
 - **避免文字圖片化**（標題/正文為可選取文字）。
 - 語意化標籤、單一 H1、合理 H2–H3 階層、麵包屑。
@@ -165,5 +165,6 @@
 | 2026-09-07 | Tim（Claude Code） | §2.3 結構化資料收斂為 `Organization`／`WebSite`／`BreadcrumbList`／`NewsArticle` 四種，並記錄不發 `FAQPage`／`Product`／`VideoObject` 的理由；§2.6 補 `sitemap.ts` 實作；§3 舊站 301 由「待辦」改為 59／229 已實作，附可重跑的覆蓋率檢查 |
 | 2026-09-02 | Tim（Claude Code） | §2.2 雙語 URL 由「子路徑**或** hreflang」二選一收斂為明確採用 `/zh`、`/en` 子路徑，並指向 `Page.RouteTemplate` 與 [`db/seed/140_page.sql`](../db/seed/140_page.sql) 的實際清單（路由細節仍待 02-frontend 定案） |
 | 2026-09-09 | Tim（Claude Code） | 依客戶 2026-09-08《網站建置 SEO 注意事項》逐條稽核，補上四項缺口：**40 頁的 meta description**（寫進 mockup，經產生器帶到 44 頁）、**36 張圖轉 WebP**（47MB→4.8MB）、**客製化 404**、**預設 og:image 與 Twitter Cards**。仍缺的項目見 STATUS §SEO |
+| 2026-09-11 | Tim（Claude Code） | 渲染策略同步 docs/02：內容頁由 SSG + ISR（webhook 重生）改為 SSR 不快取。對 SEO 的實質沒有差別——爬蟲拿到的仍是伺服器產好的完整 HTML |
 
-*最後更新：2026-09-09*
+*最後更新：2026-09-11*

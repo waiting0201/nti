@@ -22,7 +22,7 @@ public sealed class NewsHandler(INewsReadService reads)
             ? await reads.GetPagedAsync(lang, categoryId, paging, tagSlug)
             : await reads.GetAllAsync(lang, categoryId, tagSlug);
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(data));
     }
 
@@ -31,7 +31,7 @@ public sealed class NewsHandler(INewsReadService reads)
         var lang = LangResolver.Resolve(req);
         var dto  = await reads.GetBySlugAsync(lang, slug) ?? throw AppException.NotFound("News");
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(dto));
     }
 }

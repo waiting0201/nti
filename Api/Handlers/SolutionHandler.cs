@@ -13,7 +13,7 @@ public sealed class SolutionHandler(ISolutionReadService reads)
         var lang = LangResolver.Resolve(req);
         var rows = await reads.GetPublishedAsync(lang);
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 
@@ -25,7 +25,7 @@ public sealed class SolutionHandler(ISolutionReadService reads)
         var dto = await reads.GetBySlugAsync(lang, slug)
             ?? throw AppException.NotFound("Solution");
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(dto));
     }
 }

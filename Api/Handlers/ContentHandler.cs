@@ -37,7 +37,7 @@ public sealed class ContentHandler(
             FeaturedNews   = await news.GetFeaturedAsync(lang, FeaturedNewsCount),
         };
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(dto));
     }
 }

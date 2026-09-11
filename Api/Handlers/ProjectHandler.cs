@@ -18,7 +18,7 @@ public sealed class ProjectHandler(IProjectReadService reads)
             ? await reads.GetPagedAsync(lang, categoryId, paging)
             : await reads.GetAllAsync(lang, categoryId);
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(data));
     }
 }

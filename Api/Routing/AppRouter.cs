@@ -68,7 +68,6 @@ public sealed partial class AppRouter(
     AdminAccountHandler          adminAccounts,
     AdminAuditHandler            adminAudits,
     AdminMediaHandler            adminMedia,
-    IFrontendRevalidator         revalidator,
     IMediaCleaner                mediaCleaner)
 {
     /// <summary>
@@ -126,10 +125,6 @@ public sealed partial class AppRouter(
             // 而且有 7 天寬限期——期間那個檔案仍取得到，等於「移除了卻還在」。
             // 沒動到檔案的存檔在這支裡是一個空集合檢查，不會多查資料庫。
             await mediaCleaner.PurgeAsync(req.HttpContext.RequestAborted);
-
-            // 後台改動了前台看得到的東西 → 立刻通知前台重生快取，不然要等 ISR 的 300 秒
-            if (AffectsPublicSite(segments))
-                await revalidator.RevalidateAsync(req.HttpContext.RequestAborted);
         }
 
         return adminResult;
@@ -138,23 +133,6 @@ public sealed partial class AppRouter(
     /// <summary>會改到資料的請求。GET 不會，其餘一律算。</summary>
     private static bool IsWrite(string method) =>
         method is "POST" or "PUT" or "PATCH" or "DELETE";
-
-    /// <summary>
-    /// 這個後台請求會不會改到前台看得到的內容。
-    /// <para>
-    /// 寧可少通知也不要漏通知——漏了就是編輯者等 300 秒，多通知只是白打一次 HTTP。
-    /// 但報價、聯絡訊息、管理員、信件紀錄這四個單元的內容前台根本沒有，
-    /// 每改一次狀態就打一次前台是純粹的雜訊。
-    /// </para>
-    /// <para>
-    /// 上傳端點也排除：檔案進了 Blob 但還沒有任何一筆資料引用它，
-    /// 這時候重生快取不會讓任何一頁改變（真正的引用在後面那次存檔）。
-    /// </para>
-    /// </summary>
-    private static bool AffectsPublicSite(string[] segments) =>
-        segments is ["admin", var unit, ..]
-        && unit is not ("quote" or "contact" or "admin" or "audit")
-        && segments is not [.., "upload" or "upload-file"];
 
     /// <summary>Handler 回的是 2xx 才算成功；驗證失敗是用例外走的，這裡擋的是明確回錯的情況。</summary>
     private static bool IsSuccess(IActionResult result) =>

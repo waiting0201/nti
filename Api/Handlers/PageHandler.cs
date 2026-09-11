@@ -13,7 +13,7 @@ public sealed class PageHandler(IPageReadService reads)
         var dto = await reads.GetByKeyAsync(LangResolver.Resolve(req), pageKey)
             ?? throw AppException.NotFound("Page");
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(dto));
     }
 }

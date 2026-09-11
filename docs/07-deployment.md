@@ -196,9 +196,7 @@ az functionapp config appsettings set -g $RG -n $APP --settings \
   "Smtp__Password=<...>" "Smtp__From=<...>" \
   "Recaptcha__SecretKey=<...>" "Recaptcha__MinScore=0.5" \
   "PublishScheduleCron=0 */5 * * * *" \
-  "OrphanMediaCron=0 0 4 * * 0" \
-  "Revalidate__Url=https://gray-river-0a6ae341e.5.azurestaticapps.net/api/revalidate" \
-  "Revalidate__Secret=<與 SWA 的 REVALIDATE_SECRET 同一個亂數>"
+  "OrphanMediaCron=0 0 4 * * 0"
 
 # ── CORS：兩個 origin，禁用 *（後台端點帶憑證）──────────────────────
 az functionapp cors add -g $RG -n $APP \
@@ -268,52 +266,31 @@ repo:waiting0201@5709750/nti@1354276527:environment:production
 
 #### 存檔後多久前台才更新
 
-前台每支資料端點都是 `fetch(..., { next: { revalidate: 300 } })`，所以**預設是最多五分鐘**，
-而且是 stale-while-revalidate：踩到期限的那個請求拿到的仍是舊頁，下一個請求才看得到新的。
+**立刻。前台不快取 CMS 資料**（2026-09-11 起）：`apps/web/src/lib/api.ts` 的每支 fetch
+都是 `cache: 'no-store'`，接 CMS 的頁在執行期每個請求重新渲染，API 也一律回 `no-store`。
+編輯者存完檔，前台重整就是新的，不需要任何設定。
 
-要讓它幾秒內就更新，得設好這對共用密鑰（兩邊必須一致）。
-**2026-09-10 已在正式環境設好**——在那之前程式雖然都在，兩邊卻都沒有設定值，
-等於整套機制從未啟用，唯一生效的仍是那個 300 秒的計時器：
+在此之前是 ISR 300 秒 + 存檔時打 `POST /api/revalidate` 作廢 `cms` tag。那條路徑
+（前台的 route handler、後端的 `FrontendRevalidator`、`REVALIDATE_SECRET`／
+`Revalidate__Url`／`Revalidate__Secret`）已整批移除——ISR 快取是**每個執行個體各自
+持有**的，SWA 一旦擴出第二個執行個體，通知只清得到接到請求的那一台，其餘仍等 300 秒，
+症狀會是「有時候更新有時候沒有」，比穩定慢五分鐘還難查。
 
-| 放哪 | 變數 | 值 | 正式環境 |
-|---|---|---|---|
-| SWA 的 App settings | `REVALIDATE_SECRET` | 任意長亂數 | ✅ 2026-09-10 |
-| Functions 的 App settings | `Revalidate__Secret` | 同上 | ✅ 2026-09-10 |
-| Functions 的 App settings | `Revalidate__Url` | `https://<站台網域>/api/revalidate` | ✅ 2026-09-10 |
+**正式環境要收尾**：那三個 app setting 現在是孤兒，沒有任何程式讀它們。留著無害，
+但下次有人照著設定清單對照時會找不到對應的程式碼——建議刪掉：
 
 ```bash
-SECRET=$(openssl rand -hex 32)
-az staticwebapp appsettings set -n stapp-nti-prod --setting-names "REVALIDATE_SECRET=$SECRET"
-az functionapp config appsettings set -g NTIUS -n func-nti-prod --settings \
-  "Revalidate__Url=https://gray-river-0a6ae341e.5.azurestaticapps.net/api/revalidate" \
-  "Revalidate__Secret=$SECRET"
-
-# 驗收：錯的密鑰要 401、對的要 200，且下一次取首頁應是 MISS（重新產生過）
-curl -s -o /dev/null -w '%{http_code}\n' -X POST -H "Authorization: Bearer wrong" \
-  https://gray-river-0a6ae341e.5.azurestaticapps.net/api/revalidate    # 401
-curl -s -X POST -H "Authorization: Bearer $SECRET" \
-  https://gray-river-0a6ae341e.5.azurestaticapps.net/api/revalidate    # {"revalidated":true,...}
-curl -sI https://gray-river-0a6ae341e.5.azurestaticapps.net/en | grep -i x-nextjs-cache   # MISS
+az staticwebapp appsettings delete -n stapp-nti-prod --setting-names REVALIDATE_SECRET
+az functionapp config appsettings delete -g NTIUS -n func-nti-prod \
+  --setting-names Revalidate__Url Revalidate__Secret
 ```
 
-> ⚠️ **SWA 的 app setting 大約一分鐘後才會進到執行中的 Next 伺服器。**
-> 剛設完馬上打會拿到 404（就是「未設定」那條分支），看起來跟設錯一模一樣。
-> 等一分鐘再驗一次，不要急著改設定。
+⚠️ 代價會先在這一層浮現：**每個訪客的每一頁都會打一次 API、進一次 Azure SQL Basic
+（5 DTU）**，Functions 的冷啟動也不再有 ISR 擋在前面，直接影響首位訪客的首屏時間。
+要加回快取的話加在 `apps/web/src/lib/api.ts`，並且要連同「多執行個體下怎麼作廢」
+一起解決，不是把舊的 webhook 接回來就好。
 
-本機開發同樣要兩邊都設：`Api/local.settings.json` 的 `Revalidate__Url`／`Revalidate__Secret`
-對上 `apps/web/.env.local` 的 `REVALIDATE_SECRET`（兩個檔案都不進版控）。
-
-後台每次改到前台看得到的內容，`AppRouter` 就會打那支 route handler 作廢 `cms` tag 的快取。
-**沒設也不是故障**，只是退回等 300 秒；通知失敗一律只記 log，不會讓編輯者的存檔失敗。
-
-`REVALIDATE_SECRET` 是**執行期**讀取的（不是 `NEXT_PUBLIC_*`），改了不用重 build；
-未設時那支 route handler 直接回 404，等於沒啟用。
-
-> ⚠️ ISR 快取是**每個執行個體各自持有**的。SWA 若把站台擴出多個執行個體，
-> 這支只清得到接到請求的那一個，其餘仍等 300 秒。Free 方案目前是單一執行個體，
-> 之後若擴充，要改成共用的 cache handler。
-
----
+圖片不受影響：`/files/media/*` 仍是一年的 `immutable`（檔名帶 GUID，換圖是新路徑）。
 
 ### 7.1 SWA Free 的四條硬限制
 
@@ -357,6 +334,7 @@ curl -sI https://gray-river-0a6ae341e.5.azurestaticapps.net/en | grep -i x-nextj
 | 2026-09-08 | Tim（Claude Code） | Function App 設定的機器人防護金鑰由 `Turnstile__SecretKey` 改為 `Recaptcha__SecretKey` + `Recaptcha__MinScore`（改用 Google reCAPTCHA v3，見 10 §9.6） |
 | 2026-09-10 | Tim（Claude Code） | 新增**存檔後即時重生**：前台加 `POST /api/revalidate`（bearer 共用密鑰，作廢 `cms` tag），後端在改動前台看得到的內容後呼叫它。設定為 SWA 的 `REVALIDATE_SECRET` 與 Functions 的 `Revalidate__Url`／`Revalidate__Secret`；沒設就退回等 ISR 的 300 秒。docs/02 §渲染早就寫了「背景/webhook 重生」，但一直沒有實作，唯一的機制是那個計時器 |
 | 2026-09-10 | Tim（Claude Code） | **把存檔後即時重生真的打開**：正式環境補上 SWA 的 `REVALIDATE_SECRET` 與 Functions 的 `Revalidate__Url`／`Revalidate__Secret`。前一天加的機制兩邊都沒有設定值，`/api/revalidate` 一直回 404，前台只剩 300 秒的 ISR 計時器（而且是 stale-while-revalidate，到期後的第一個訪客拿到的仍是舊頁）——症狀就是「後台改了前台不會變」 |
+| 2026-09-11 | Tim（Claude Code） | **拿掉前台的 CMS 快取**：`lib/api.ts` 改 `cache: 'no-store'`、API 的 `Cache-Control` 一律 `no-store`，`/api/revalidate` 與 `FrontendRevalidator` 移除。目標是「後台存檔、前台重整就是新的」，而 webhook 作廢補不起最後一哩——ISR 快取每個執行個體各自持有，SWA 擴出第二台之後只清得到其中一台。正式環境的 `REVALIDATE_SECRET`／`Revalidate__Url`／`Revalidate__Secret` 成為孤兒設定，建議刪除。代價：每個訪客的每一頁都會進 API 與 Azure SQL Basic |
 
-*最後更新：2026-09-10*
+*最後更新：2026-09-11*
 

@@ -530,7 +530,7 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 
 - 索引寧缺勿濫（[`08-database.md`](08-database.md) §5）
 - 禁止 N+1：清單頁的關聯資料在同一支 SQL 用 JOIN 取回，或一次 `QueryMultiple`
-- 前台內容頁由 Next.js ISR 承接流量，API 不承擔每次請求（[`03-backend.md`](03-backend.md) §7）
+- ⚠️ 前台**每個請求**都會打唯讀端點（2026-09-11 拿掉 ISR 之後）——原本這裡寫的是「由 ISR 承接流量，API 不承擔每次請求」，已經不成立。Azure SQL Basic 的 5 DTU 是這條路徑上最先撐不住的一環
 - 後台清單一律分頁
 
 ---
@@ -612,7 +612,9 @@ Jabez 是內網 ERP，無此需求；NTI 的 `/quotes`、`/contacts`、`/auth/*`
 
 ### 9.8 快取標頭
 
-前台唯讀端點供 Next.js ISR 消費，回應帶 `Cache-Control: public, max-age=0, s-maxage=300, stale-while-revalidate=600`；`/site-settings`、`/categories` 這類低頻異動可拉長 `s-maxage`。後台端點一律 `Cache-Control: no-store`。
+**所有端點一律 `Cache-Control: no-store`**（`Common/CacheControl.cs` 只剩 `NoStore` 一支）。
+
+2026-09-11 之前前台唯讀端點帶 `public, max-age=0, s-maxage=300, stale-while-revalidate=600` 給 Next.js 的 ISR 消費；前台拿掉快取之後這個標頭沒有任何消費者，留著只會誤導。唯一的例外是 `Handlers/FileHandler.cs` 的媒體代理：回的是檔案位元組、檔名帶 GUID、內容不可變，仍為一年 `immutable`。
 
 ### 9.9 排程（Timer Trigger）
 
@@ -775,5 +777,6 @@ traces | where timestamp > ago(30m)
 | 2026-09-09 | Tim（Claude Code） | §8.4 的軟刪鐵律**整條翻面：刪除一律真刪**。`AdminUser` 的例外變成通則——軟刪列佔著唯一鍵，操作者看到的是「刪了卻沒刪掉、名字再也用不回來」。`SaveChangesAsync` 不再改寫 `Deleted`；子表 FK 改 `ON DELETE CASCADE`（共 20 條，`db/verify` 有斷言）；「被引用」的關聯維持 `Restrict`，並由 `ExceptionMiddleware` 把 DELETE 撞到的 SQL 547 翻成一句看得懂的 409。`IsDeleted` 欄位保留但不再寫入 |
 
 | 2026-09-10 | Tim（Claude Code） | **§9.9 補即時媒體清除**：編輯者移除或換掉的檔案不再等夜間排程。`AppDbContext.SaveChangesAsync` 從 ChangeTracker 記下「被拿掉引用」的路徑（`*Path` 欄位比對舊值、`*Html` 比對內文的 `<img src>`），`AppRouter` 在後台寫入成功後交給 `IMediaCleaner` 重掃引用並刪檔。孤兒檔排程降為安全網。欄位清單抽成共用的 `MediaReferenceScanner`，兩條路徑各維護一份遲早會分岔。同時修掉 `Normalize` 的一個既有錯誤：內文若存的是代理路由的完整網址（`{apiBase}/api/v1/files/media/…`），原本只比對開頭的寫法剝不掉 `api/v1/`，正規化後與 DB 的相對路徑對不起來——排程開啟刪除後會把還掛在內文裡的圖判成孤兒 |
+| 2026-09-11 | Tim（Claude Code） | **§9.8 快取標頭改為一律 `no-store`**，並移除 `FrontendRevalidator`（前台的 `/api/revalidate` 一起拿掉）。同時更正 §效能那條「API 不承擔每次請求」——前台不快取之後，每個訪客的每一頁都會進 API 與 DB |
 
-*最後更新：2026-09-10*
+*最後更新：2026-09-11*

@@ -60,7 +60,7 @@
 - **CORS**：allow-list 兩個 origin（公開站、CMS SPA），**不使用 `*`**。
 - **公開寫入端點防護**：`POST /quotes`、`POST /contacts`、`POST /auth/admin/login` 需通過 **Google reCAPTCHA v3** 驗證並受 rate limit（超限回 429 `RATE_LIMITED`）。
   v3 是分數制：後端另比對 `action`（`quote`／`contact`／`admin_login`）並套用分數門檻，未達回 400 `BOT_CHECK_FAILED`。
-- **快取**：前台唯讀端點帶 `s-maxage` + `stale-while-revalidate` 供 Next.js ISR 消費；後台端點一律 `no-store`。
+- **快取**：**所有端點一律 `Cache-Control: no-store`**（2026-09-11 改；原為前台唯讀端點帶 `s-maxage` + `stale-while-revalidate` 供 Next.js ISR 消費）。例外是 `/files/media/*`，回的是檔案位元組、檔名帶 GUID，仍為一年 `immutable`。
 - **文件化**：OpenAPI/Swagger 為單一事實來源，與本文件對齊（產生方式待定，見 [`10-backend-design.md` §13](10-backend-design.md)）。
 
 ---
@@ -201,5 +201,6 @@
 | 2026-09-08 | Tim（Claude Code） | `POST /quotes` 新增三個選填的代號欄位 `solutionCode`／`industryCode`／`materialCode`（未給對應 Id 時由伺服器換算）。公開表單不該知道資料庫 Id，代號是 `db/seed` 裡穩定的公開識別；對不到只留 log 不擋單，因為那三欄本來就選填 |
 | 2026-09-09 | Tim（Claude Code） | **後台管理員密碼改為直接指定**：`POST /admin/admin` 新增必填 `password`（至少 6 碼），回應不再帶 `data.initialPassword`；新增 `PUT /admin/admin/{id}/password`（`admin.edit`）重設密碼。兩者都不寄信——啟用信與初始密碼轉交的那套流程整個移除。`Api/openapi.yaml` 已同步 |
 | 2026-09-10 | Tim（Claude Code） | 新增 **`POST /admin/{unit}/upload-file`**（文件：PDF／DOCX／XLSX／ZIP，≤20MB，權限同 `{unit}.edit`）。原本只有一支 `/upload` 且白名單寫死圖片，公告附件與供應商下載檔（docs/09 §3 就寫明收 PDF／XLSX／DOCX／ZIP）接上 API 後會一律被退成 `UPLOAD_TYPE`。不把 zip／docx 併進 `/upload` 的白名單，是因為那會讓圖片欄位也開始收壓縮檔。`Api/openapi.yaml` 已同步 |
+| 2026-09-11 | Tim（Claude Code） | **快取標頭全面改 `no-store`**：前台跟著拿掉 ISR（見 docs/02），留著沒有人遵守的 `s-maxage=300` 只會在哪天中間冒出一層共用快取時，讓「後台改了前台沒變」以無法重現的方式回來 |
 
-*最後更新：2026-09-10*
+*最後更新：2026-09-11*

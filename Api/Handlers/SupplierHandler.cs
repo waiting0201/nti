@@ -18,7 +18,7 @@ public sealed class SupplierHandler(ISupplierReadService reads)
             ? await reads.GetNoticesPagedAsync(lang, categoryId, paging)
             : await reads.GetNoticesAsync(lang, categoryId);
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(data));
     }
 
@@ -26,7 +26,7 @@ public sealed class SupplierHandler(ISupplierReadService reads)
     {
         var rows = await reads.GetSpecsAsync(LangResolver.Resolve(req));
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 
@@ -34,7 +34,7 @@ public sealed class SupplierHandler(ISupplierReadService reads)
     {
         var rows = await reads.GetDownloadsAsync(LangResolver.Resolve(req));
 
-        CacheControl.Public(req.HttpContext.Response);
+        CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
 
