@@ -41,6 +41,7 @@ NTI Printing 官方網站建置案。NTI 為包裝印刷廠，品牌精神為
 | [品牌簡報：首頁版型](reference/NTI_Brand_Deck_首頁版型.pptx) | 客戶 2026-09-01 版首頁內容順序與 What We Do／Why NTI／Proof 三區塊的文案與配色稿 |
 | [現有網站盤點與內容遷移](reference/現有網站盤點與內容遷移.md) | 舊站 nti-printing.com 頁面/內容盤點、新舊頁面對應、缺漏頁面與待製內容、待決策點 |
 | [舊站 301 對照表](reference/舊站301對照表.md) | 舊站 229 條網址逐條的轉址落點與覆蓋率（由 `tools/check-legacy-redirects.mjs --write` 產生） |
+| [SEO 驗收對照表](reference/output/SEO驗收對照表.md) | 客戶《SEO 驗收檢核表》40 條逐條對照本專案現況：可驗收／有落差／待客戶提供，含行動清單（Excel 版與產生器同在 `reference/output/`） |
 | [**後端專案說明**](Api/README.md) | `Api/`：Azure Functions .NET 10 API——本機執行、結構、預設拒絕授權與雙 audience 的注意事項 |
 | [前端專案說明](apps/web/README.md) | `apps/web/`：Next.js 公開站——結構、素材同步、版面一致性怎麼保證、`verify:markup` 驗收閘 |
 | [後台專案說明](apps/admin/README.md) | `apps/admin/`：React + Vite 管理後台——23 個單元、權限矩陣、mock 資料來源、接 API 時要改哪裡 |
@@ -85,7 +86,8 @@ NTI/
 │       ├── src/api/       # client.ts＝唯一的資料存取層；種子自 db/seed 與 mockup 產生
 │       └── src/pages/     # 通用清單／編輯 + 儀表板、設定、分類、角色、操作紀錄
 ├── reference/         # 規劃案原始文件（規劃書、時程、IA、簡報）— 約 2.5GB，**只進 NAS**
-│   └── sbk/           # 客戶提供的原始素材（sitemap、CIS、需求書）
+│   ├── sbk/           # 客戶提供的原始素材（sitemap、CIS、需求書）
+│   └── output/        # 我方產出給客戶／對外的交付檔（Excel、對照表與其產生器）
 ├── tools/
 │   ├── sync-public.sh # master → public 同步（去除 reference/），推 GitHub 前執行
 │   ├── upload-assets.sh # mockup/assets → Azure Blob（stntiprod/assets）
