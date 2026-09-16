@@ -38,7 +38,19 @@
 ### 2.3 技術落實（backend / frontend）
 - `Organization` / `Product` / `FAQPage` / `Article` JSON-LD 完整（與 05-seo 共用，避免重工）。
 - 關鍵事實**伺服器端渲染**，不藏在 JS 互動後。
-- 評估 `robots.txt` 對 AI 爬蟲（GPTBot、ClaudeBot、PerplexityBot 等）的開放策略——**由客戶決策**是否允許被訓練/擷取，預設允許「擷取以供即時回答」、是否允許「訓練」另議。
+- `robots.txt` 對 AI 爬蟲的開放策略：**兩類分開處理**，實作在 `apps/web/src/app/robots.ts`。
+
+  | 類型 | UA | 現況 | 影響 |
+  |---|---|---|---|
+  | **擷取／即時回答** | `OAI-SearchBot`、`ChatGPT-User`、`Claude-SearchBot`、`Claude-User`、`PerplexityBot`、`Perplexity-User` | **一律放行**，不設旗標 | 這是 GEO 的曝光來源，擋掉＝放棄被 AI 回答引用 |
+  | **訓練語料** | `GPTBot`、`ClaudeBot`、`CCBot`、`Google-Extended`、`Applebot-Extended` | 預設放行，`NEXT_PUBLIC_ALLOW_AI_TRAINING=0` 可擋 | 不帶來引用曝光；擋掉**不影響搜尋排名** |
+
+  **仍待客戶書面決策的只剩訓練那一類**。`Google-Extended`／`Applebot-Extended` 是純粹的
+  訓練 opt-out token，不是搜尋索引開關——擋它們不會掉 Google 排名，這點最常被誤解。
+
+  > ⚠️ robots.txt 的比對規則是「爬蟲只讀最符合自己的那一組，讀到了就不看 `*`」。
+  > 所以**每個具名群組都要自己重寫一次 `Disallow: /admin/`**，否則一加具名群組，
+  > 該爬蟲就從 `*` 的保護裡掉出來、同域的後台變成可爬。
 
 > 站內 AI 客服（Claude API/AI Agent）**本期不納入**；GEO 本期聚焦「被外部生成式引擎正確擷取/引用」，不含站內對話機器人。
 
@@ -50,7 +62,7 @@
 - [ ] 核心事實（能力/方案/ESG 數據/認證）以清楚、可擷取句式呈現，數字有來源。
 - [ ] `Organization`/`Product`/`FAQPage`/`Article` JSON-LD 完整且通過驗證。
 - [ ] 全站實體資訊（名稱/地址/電話/標語）一致。
-- [ ] AI 爬蟲存取策略經**客戶書面決策**並落入 `robots.txt`。
+- [x] AI 爬蟲存取策略落入 `robots.txt`（擷取類全放行、訓練類旗標可控）；🟡 訓練類的取捨待**客戶書面決策**。
 
 ---
 
@@ -79,5 +91,6 @@
 |------|--------|------|
 | 2026-06-12 | Tim（Claude Code） | 初版：定義 GEO（生成式引擎優化）harness 作業書 |
 | 2026-06-12 | Tim（Claude Code） | 客戶定案採用 GEO ✅；移除站內 AI 客服（本期不做），GEO 聚焦外部引擎擷取/引用 |
+| 2026-09-16 | Tim（Claude Code） | **AI 爬蟲策略落地**：§2.3 由「待評估」改為實作——擷取類（OAI-SearchBot／ChatGPT-User／Claude-SearchBot／Claude-User／PerplexityBot／Perplexity-User）一律放行，訓練類（GPTBot／ClaudeBot／CCBot／Google-Extended／Applebot-Extended）預設放行、`ALLOW_AI_TRAINING=0` 可擋。待客戶決策的範圍縮小到訓練那一類 |
 
-*最後更新：2026-06-12*
+*最後更新：2026-09-16*

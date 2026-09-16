@@ -123,6 +123,12 @@ build 明確設 `NEXT_PUBLIC_ALLOW_INDEXING=1`。CI 從 repository variable
 然後重跑一次 workflow。**兩件都做完才算上線** —— 只開 indexing 而 SITE_URL 還指著
 azurestaticapps.net 的話，canonical 會把權重導到臨時網址。
 
+開放收錄之後，robots.txt 會分成 `*`／AI 擷取類／AI 訓練類三個群組。訓練那一類另有
+一個 variable `ALLOW_AI_TRAINING`：**沒設＝放行**，客戶若決定不給訓練就
+`gh variable set ALLOW_AI_TRAINING -R waiting0201/nti -b 0` 再重跑。擷取類
+（ChatGPT／Claude／Perplexity 的即時回答）不受它影響、永遠放行——那是 GEO 的曝光來源。
+策略與 UA 清單見 [`06-geo.md` §2.3](06-geo.md)。
+
 ### 7.2 素材與 Blob Storage
 
 mockup 的素材（126 檔、62MB）放在 `stntiprod` 的 `assets` 容器，公開讀取。
@@ -335,6 +341,7 @@ az functionapp config appsettings delete -g NTIUS -n func-nti-prod \
 | 2026-09-10 | Tim（Claude Code） | 新增**存檔後即時重生**：前台加 `POST /api/revalidate`（bearer 共用密鑰，作廢 `cms` tag），後端在改動前台看得到的內容後呼叫它。設定為 SWA 的 `REVALIDATE_SECRET` 與 Functions 的 `Revalidate__Url`／`Revalidate__Secret`；沒設就退回等 ISR 的 300 秒。docs/02 §渲染早就寫了「背景/webhook 重生」，但一直沒有實作，唯一的機制是那個計時器 |
 | 2026-09-10 | Tim（Claude Code） | **把存檔後即時重生真的打開**：正式環境補上 SWA 的 `REVALIDATE_SECRET` 與 Functions 的 `Revalidate__Url`／`Revalidate__Secret`。前一天加的機制兩邊都沒有設定值，`/api/revalidate` 一直回 404，前台只剩 300 秒的 ISR 計時器（而且是 stale-while-revalidate，到期後的第一個訪客拿到的仍是舊頁）——症狀就是「後台改了前台不會變」 |
 | 2026-09-11 | Tim（Claude Code） | **拿掉前台的 CMS 快取**：`lib/api.ts` 改 `cache: 'no-store'`、API 的 `Cache-Control` 一律 `no-store`，`/api/revalidate` 與 `FrontendRevalidator` 移除。目標是「後台存檔、前台重整就是新的」，而 webhook 作廢補不起最後一哩——ISR 快取每個執行個體各自持有，SWA 擴出第二台之後只清得到其中一台。正式環境的 `REVALIDATE_SECRET`／`Revalidate__Url`／`Revalidate__Secret` 成為孤兒設定，建議刪除。代價：每個訪客的每一頁都會進 API 與 Azure SQL Basic |
+| 2026-09-16 | Tim（Claude Code） | §7.3 補上 `ALLOW_AI_TRAINING`（沒設＝放行 AI 訓練爬蟲，設 0 則擋），並接進 `web.yml` 的 build env |
 
-*最後更新：2026-09-11*
+*最後更新：2026-09-16*
 

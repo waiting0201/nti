@@ -71,7 +71,8 @@
 - `sitemap.xml`（含雙語）、`robots.txt`、canonical 一致、404/410 正確。
 - 實作：`apps/web/src/app/sitemap.ts`（44 條靜態路由 × 2 語系＋CMS 消息，逐條帶
   `xhtml:link` hreflang，與各頁 `<head>` 同一組值）、`robots.ts`（預設 `Disallow: /`，
-  由 `ALLOW_INDEXING` 開放並附 sitemap 位址）。
+  由 `ALLOW_INDEXING` 開放並附 sitemap 位址；開放後分成 `*`／AI 擷取類／AI 訓練類
+  三個群組，策略見 [`06-geo.md` §2.3](06-geo.md)）。
 - 靜態路由清單由 `build-pages.mjs` 從 mockup 產生（`lib/routes.ts`），不是手寫——
   手寫清單遲早會跟 mockup 脫節。
 
@@ -166,5 +167,6 @@
 | 2026-09-02 | Tim（Claude Code） | §2.2 雙語 URL 由「子路徑**或** hreflang」二選一收斂為明確採用 `/zh`、`/en` 子路徑，並指向 `Page.RouteTemplate` 與 [`db/seed/140_page.sql`](../db/seed/140_page.sql) 的實際清單（路由細節仍待 02-frontend 定案） |
 | 2026-09-09 | Tim（Claude Code） | 依客戶 2026-09-08《網站建置 SEO 注意事項》逐條稽核，補上四項缺口：**40 頁的 meta description**（寫進 mockup，經產生器帶到 44 頁）、**36 張圖轉 WebP**（47MB→4.8MB）、**客製化 404**、**預設 og:image 與 Twitter Cards**。仍缺的項目見 STATUS §SEO |
 | 2026-09-11 | Tim（Claude Code） | 渲染策略同步 docs/02：內容頁由 SSG + ISR（webhook 重生）改為 SSR 不快取。對 SEO 的實質沒有差別——爬蟲拿到的仍是伺服器產好的完整 HTML |
+| 2026-09-16 | Tim（Claude Code） | §2.6 補上 robots.txt 開放後的三群組結構，策略本文改放 06-geo §2.3 |
 
-*最後更新：2026-09-11*
+*最後更新：2026-09-16*
