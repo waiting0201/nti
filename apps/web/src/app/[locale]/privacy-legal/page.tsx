@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { pageMetadata, type Locale } from '@/lib/i18n'
+import { A } from '@/components/A'
+import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
 
@@ -14,9 +15,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const l = withLocale(locale)
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap"><div className="legal-wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Privacy &amp; Legal</b></div>
         <h1 className="sec-title reveal">Privacy &amp; Legal</h1>
         <p className="legal-meta reveal mt-s">Last updated: July 2026 &middot; Placeholder copy &mdash; final terms to be supplied by legal counsel</p>
         <div className="legal reveal">

@@ -3,7 +3,7 @@ import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { VlogGrid } from '@/components/cms'
 import { getVlogs } from '@/lib/api'
-import { pageMetadata, type Locale } from '@/lib/i18n'
+import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
 
@@ -17,10 +17,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const l = withLocale(locale)
   const vlogs = await getVlogs(locale)
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/insights")}>Insights</A><span>&rsaquo;</span><b>Green Vlog</b></div>
         <h1 className="sec-title reveal">Green Vlog <span className="ti-slash">/</span> <span className="ti-alt">Green knowledge hub</span></h1>
         <div className="sec-sub reveal">Explore practical insights, industry trends, and sustainable packaging and eco friendly printing solutions that help brands build a greener future.</div>
         {vlogs?.length ? (

@@ -44,7 +44,7 @@
 |---|---|---|
 | `Organization` | 全站（layout） | mockup 與客戶提供的台南廠址；中文名 `南台彩藝` 取自舊站 `<title>` |
 | `WebSite` | 全站（layout） | 同上，`publisher` 指回 `Organization` |
-| `BreadcrumbList` | 25／44 頁 | mockup 的 `.crumb`，由 `build-pages.mjs` 產生 `lib/breadcrumbs.ts` |
+| `BreadcrumbList` | 43／44 頁（首頁除外） | mockup 的 `.crumb`，由 `build-pages.mjs` 產生 `lib/breadcrumbs.ts` |
 | `NewsArticle` | CMS 的 `/news/{slug}` | 消息詳細端點 |
 
 **刻意不發的三種**，理由記在此：
@@ -53,8 +53,9 @@
 - **`Product`／`Offer`**：方案頁沒有價格、庫存、評價，發了只會在 Search Console 累積必填欄位警告。
 - **`VideoObject`**：影片都是 YouTube 嵌入，`thumbnailUrl`／`uploadDate`／`duration` 目前拿不到。
 
-原則：**結構化資料只描述畫面上真的有、且我們有依據的事實**。沒有麵包屑的 19 頁就不發
-`BreadcrumbList`——與可見內容不符是 Google 明列的違規項。
+原則：**結構化資料只描述畫面上真的有、且我們有依據的事實**。`BreadcrumbList` 因此只發給
+畫面上真的有 `.crumb` 的頁（首頁以外 43／44 頁，2026-09-21 補齊；首頁是麵包屑的根，本來就
+不該有）——與可見內容不符是 Google 明列的違規項。
 
 ### 2.4 渲染與可檢索
 - 公開站內容頁採 **Next.js SSR**（接 CMS 的頁 `no-store`，每個請求重新渲染；沒接 CMS 的頁仍是 SSG）；關鍵內容**不依賴 JS**。

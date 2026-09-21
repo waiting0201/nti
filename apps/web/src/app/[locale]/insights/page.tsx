@@ -21,6 +21,7 @@ export default async function Page({ params }: Props) {
     <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/green-tree.webp")} alt="NTI Printing Insights — sustainable packaging knowledge hub" /></section>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Insights</b></div>
         <h1 className="sec-title reveal">Insights <span className="ti-slash">/</span> <span className="ti-alt">Knowledge hub</span></h1>
         <div className="sec-sub reveal">Company news, video stories, straight answers and the trends reshaping packaging &mdash; everything we learn about printing green, gathered in one place.</div>
         <div className="vl-grid mt-l">

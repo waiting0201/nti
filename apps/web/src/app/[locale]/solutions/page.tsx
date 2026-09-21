@@ -22,6 +22,7 @@ export default async function Page({ params }: Props) {
     <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/ref-sol-banner.webp")} alt="NTI custom printed packaging solutions" /></section>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Solutions</b></div>
         <h1 className="sec-title reveal">Custom Packaging &amp; Printing Solutions</h1>
         <h3 className="fac-sub reveal mt-s">Tailored Printing. Sustainable Design.</h3>
         <p className="prose wide reveal mt-s">NTI provides complete custom packaging boxes and packaging printing solutions, from material recommendation and selection to structural design, printing techniques, finishing, and technical support. We help brands create custom boxes and packaging that perform beautifully, strengthen their brand, and support a more sustainable future.</p>

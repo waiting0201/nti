@@ -21,6 +21,7 @@ export default async function Page({ params }: Props) {
     <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/ref-about-banner.webp")} alt="Colorful NTI paper-craft animal packaging figures" /></section>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>About Us</b></div>
         <h1 className="sec-title reveal">The NTI Difference &mdash; Where Sustainability Meets Uncompromising Quality</h1>
         <div className="sec-sub reveal">What makes NTI different is not the machines. It is how we take your constraint — food safety, pharma compliance, carbon targets — and hand back a working solution.</div>
         <div className="video-frame reveal mt-l">

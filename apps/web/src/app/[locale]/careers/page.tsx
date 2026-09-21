@@ -24,6 +24,7 @@ export default async function Page({ params }: Props) {
     <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/fac-tour-main.webp")} alt="Working at NTI Printing in Tainan, Taiwan" /></section>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Careers</b></div>
         <h1 className="sec-title reveal">Careers <span className="ti-slash">/</span> <span className="ti-alt">Join the green print team</span></h1>
         <div className="sec-sub reveal">We are building Taiwan&rsquo;s most sustainable packaging plant. That takes press operators, engineers, designers and people who ask better questions.</div>
         <p className="prose wide reveal mt-s">NTI Printing has been printing in Tainan for over three decades, and reinvesting in low-carbon production for the last ten. If you want your work to show up in a measurable carbon number as well as on a shelf, this is a good place to do it.</p>

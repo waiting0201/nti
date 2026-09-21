@@ -23,6 +23,7 @@ export default async function Page({ params }: Props) {
       <section className="fac-banner"><img src={mediaUrl("/assets/fac-banner.webp")} alt="NTI printing facility — Heidelberg press line" /></section>
       <section className="section">
         <div className="wrap">
+          <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><b>Facilities &amp; Equipment</b></div>
           <h1 className="sec-title reveal">Facilities &amp; Equipment</h1>
           <h3 className="fac-sub reveal mt-s">Where Technology Meets Sustainability</h3>
           <p className="prose reveal mt-s">NTI Printing integrates advanced pre-press, printing, and post-press systems inside our G7 certified printing plant &mdash; a printing factory in Taiwan designed for precision, efficiency and sustainability. We use Heidelberg and Man Roland presses with in-line varnishing and carbon-balanced systems, reducing energy use and emissions.</p>

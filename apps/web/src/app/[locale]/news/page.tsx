@@ -24,6 +24,7 @@ export default async function Page({ params }: Props) {
     <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/diff-grid.webp")} alt="NTI Printing news — sustainably printed packaging patterns" /></section>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/insights")}>Insights</A><span>&rsaquo;</span><b>Latest News</b></div>
         <h1 className="sec-title reveal">News <span className="ti-slash">/</span> <span className="ti-alt">Latest news &amp; insights</span></h1>
         <div className="sec-sub reveal">Stay connected with NTI Printing&rsquo;s latest green printing innovations, sustainable packaging initiatives, company news, and industry achievements.</div>
         {news?.length ? (

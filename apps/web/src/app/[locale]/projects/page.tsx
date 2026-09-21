@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
+import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { ProjectGrid } from '@/components/cms'
 import { getProjects } from '@/lib/api'
 import { ProjectFilter } from '@/components/behaviors/ProjectFilter'
-import { pageMetadata, type Locale } from '@/lib/i18n'
+import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
 
@@ -18,10 +19,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const l = withLocale(locale)
   const projects = await getProjects(locale)
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Projects</b></div>
         <h1 className="sec-title reveal">Projects</h1>
         <div className="sec-sub reveal">Real Projects. Real Impact.</div>
         <p className="prose wide reveal mt-s">From packaging to promotional materials, NTI collaborates with brands across industries to deliver sustainable, high-quality results &mdash; explore our custom box portfolio and packaging case study highlights below. Each project reflects our commitment to innovation, precision, and environmental responsibility.</p>

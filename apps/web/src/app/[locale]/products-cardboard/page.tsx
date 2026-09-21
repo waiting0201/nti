@@ -23,6 +23,7 @@ export default async function Page({ params }: Props) {
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/solutions")}>Solutions</A><span>&rsaquo;</span><b>Packaging Paperboard</b></div>
         <h1 className="sec-title reveal">Packaging Paperboard</h1>
         <div className="sec-sub reveal">Paper hang tags &amp; backcards for blister packages.</div>
         <p className="prose wide reveal mt-s">NTI Printing produces custom cardboard packaging and printed cardboard boxes for retail, industrial, and consumer applications, including:</p>

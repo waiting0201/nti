@@ -21,6 +21,7 @@ export default async function Page({ params }: Props) {
     <T locale={locale}>
       <section className="fac-banner"><img src={mediaUrl("/assets/ref-green-banner.webp")} alt="The courage to print green — recovered print waste ready for recycling" /></section>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Sustainability</b></div>
         <h1 className="sec-title reveal">Eco-Friendly Printing in Taiwan</h1>
         <div className="ga-block reveal mt-m">
           <h3 className="ga-h">Our Green Advantage</h3>

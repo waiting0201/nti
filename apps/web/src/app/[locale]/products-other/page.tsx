@@ -23,6 +23,7 @@ export default async function Page({ params }: Props) {
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/solutions")}>Solutions</A><span>&rsaquo;</span><b>Other Printing</b></div>
         <h1 className="sec-title reveal">Other Printing Services</h1>
         <div className="sec-sub reveal">Special Printing &amp; finishing</div>
         <p className="prose wide reveal mt-s">Enhance your packaging with premium finishes including foil stamping, embossing, holographic effects, and anti-counterfeiting features. Our specialty printing and custom print finishing solutions add visual impact, strengthen brand perception, and provide enhanced product security.</p>

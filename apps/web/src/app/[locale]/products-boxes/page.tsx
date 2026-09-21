@@ -23,6 +23,7 @@ export default async function Page({ params }: Props) {
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/solutions")}>Solutions</A><span>&rsaquo;</span><b>Color Box Packaging</b></div>
         <h1 className="sec-title reveal">Custom Color Box Packaging</h1>
         <div className="sec-sub reveal">Package material printing with structure design, inside and out.</div>
         <p className="prose wide reveal mt-s">Explore NTI&rsquo;s full range of custom color box packaging and color box printing options below:</p>

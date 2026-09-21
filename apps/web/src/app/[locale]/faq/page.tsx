@@ -33,6 +33,7 @@ export default async function Page({ params }: Props) {
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/insights")}>Insights</A><span>&rsaquo;</span><b>FAQ</b></div>
         <h1 className="sec-title reveal">FAQ <span className="ti-slash">/</span> <span className="ti-alt">Your questions answered</span></h1>
         <div className="sec-sub reveal">Find answers to common questions about green printing, packaging, certifications, sustainability, and working with NTI.</div>
         {faqs?.length ? (

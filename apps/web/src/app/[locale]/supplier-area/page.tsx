@@ -3,7 +3,7 @@ import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { SupplierDownloads, SupplierNotices, SupplierSpecs } from '@/components/cms'
 import { getSupplierDownloads, getSupplierNotices, getSupplierSpecs } from '@/lib/api'
-import { pageMetadata, type Locale } from '@/lib/i18n'
+import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
 
@@ -17,6 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const l = withLocale(locale)
   const [notices, specs, downloads] = await Promise.all([
     getSupplierNotices(locale),
     getSupplierSpecs(locale),
@@ -25,6 +26,7 @@ export default async function Page({ params }: Props) {
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Supplier Area</b></div>
         <h1 className="sec-title reveal">Supplier Area</h1>
         <div className="sec-sub reveal">Announcements, specifications and downloadable documents for NTI Printing&rsquo;s supply partners.</div>
         <div className="sa-grid">

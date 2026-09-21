@@ -41,6 +41,7 @@ export default async function Page({ params }: Props) {
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Contact Us</b></div>
         <h1 className="sec-title reveal">Contact Us</h1>
         <div className="form-grid mt-l">
           <div className="info-stack reveal">

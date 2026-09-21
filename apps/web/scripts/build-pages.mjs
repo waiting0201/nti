@@ -358,10 +358,19 @@ const hrefToRoute = (href) => {
   return name === 'index' ? '/' : '/' + name
 }
 
-/** 讀 zh.ts 的字典，麵包屑的中文標籤直接在產生時查好，執行期不必再翻譯 */
+/**
+ * 讀 zh.ts 的字典，麵包屑的中文標籤直接在產生時查好，執行期不必再翻譯。
+ *
+ * 字典裡有整行的 `//` 註解與空行（分段用），JSON 不吃，所以先剝掉再 parse。
+ * 只剝**整行就是註解**的那種：`//` 也會出現在值裡（網址），不能無差別砍。
+ */
 function loadZh() {
   const src = readFileSync(path.join(root, 'src/lib/zh.ts'), 'utf8')
-  const body = src.slice(src.indexOf('= {') + 2, src.lastIndexOf('}') + 1)
+  const body = src
+    .slice(src.indexOf('= {') + 2, src.lastIndexOf('}') + 1)
+    .split('\n')
+    .filter((line) => line.trim() && !line.trim().startsWith('//'))
+    .join('\n')
   try {
     return JSON.parse(body.replace(/,(\s*})$/, '$1'))
   } catch (e) {
