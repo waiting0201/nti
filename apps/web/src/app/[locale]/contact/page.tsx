@@ -3,7 +3,7 @@ import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { PageForm } from '@/components/behaviors/PageForm'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
-import { getSettingMap, telHref } from '@/lib/site-settings'
+import { getSettingMap, mapEmbedSrc, telHref } from '@/lib/site-settings'
 
 /**
  * 這一頁的公司資訊改吃網站設定（後台單元 21）。
@@ -35,7 +35,8 @@ export default async function Page({ params }: Props) {
   const phone = settings?.['company.phone']
   const email = settings?.['company.email']
   const hours = settings?.['company.hours']
-  const map = settings?.['company.map_embed']
+  // 後台可能貼整段 <iframe>（Google 的「嵌入地圖」就是給整段），認不出來就落回下面寫死的那張
+  const map = mapEmbedSrc(settings?.['company.map_embed'])
 
   return (
     <T locale={locale}>

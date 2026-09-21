@@ -36,3 +36,55 @@ export function telHref(phone: string): string {
   const digits = phone.replace(/[^\d+]/g, '')
   return `tel:${digits}`
 }
+
+/**
+ * `company.map_embed` → 真的能放進 `<iframe src>` 的網址。
+ *
+ * 後台那欄的提示是「點『分享 → 嵌入地圖』，**整段貼進來或只貼網址都可以**」，
+ * 所以這個值有三種長相，前台都得認得：
+ *
+ * 1. 純網址 —— 種子給的就是這種
+ * 2. Google 直接複製的整段 `<iframe src="…" …></iframe>` 片段
+ * 3. 分享面板的 `/maps/place/…` 連結 —— 那種網址本身擋 iframe，要補 `output=embed`
+ *
+ * 第 2 種若原樣塞進 `src`，瀏覽器會把整段 HTML 當成相對路徑去請求，聯絡頁左下角
+ * 就變成一個載入自家網域的空白框（線上就是這個症狀）。
+ *
+ * 認不出來（不是 https、不是 Google 地圖）一律回 `undefined`，讓呼叫端落回 mockup
+ * 寫死的那張圖——寧可顯示台南廠的預設地圖，也不要一個空白或被擋掉的框。
+ */
+export function mapEmbedSrc(value: string | undefined): string | undefined {
+  if (!value) return undefined
+
+  const snippet = value.match(/<iframe\b[^>]*?\ssrc\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i)
+  const candidate = unescapeHtml((snippet ? (snippet[1] ?? snippet[2] ?? snippet[3] ?? '') : value).trim())
+
+  let url: URL
+  try {
+    url = new URL(candidate)
+  } catch {
+    return undefined
+  }
+  if (url.protocol !== 'https:') return undefined
+  // google.com / www.google.com / maps.google.com.tw …；短網址（maps.app.goo.gl）嵌不進來，不收
+  if (!/^(?:www\.|maps\.)?google\.[a-z]{2,3}(?:\.[a-z]{2})?$/.test(url.hostname)) return undefined
+  if (!url.pathname.startsWith('/maps')) return undefined
+
+  if (!url.pathname.startsWith('/maps/embed') && !url.searchParams.has('output')) {
+    url.searchParams.set('output', 'embed')
+  }
+  return url.href
+}
+
+/**
+ * 只還原貼上片段會帶到的那幾個實體（`&amp;` 放最後，不然會把 `&amp;quot;` 解兩次）。
+ * 這裡的輸出只會進 `new URL()` 做驗證，不會變成 HTML，所以不需要完整的 decoder。
+ */
+function unescapeHtml(s: string): string {
+  return s
+    .replace(/&quot;/g, '"')
+    .replace(/&(?:apos|#0?39);/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+}
