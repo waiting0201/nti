@@ -16,7 +16,8 @@ export const SEO_FIELDS: Field[] = [
     pattern: SLUG_PATTERN },
   { key: 'seoTitle', label: 'SEO 標題', type: 'text', i18n: true, required: true, max: 70, side: 'locale' },
   { key: 'metaDescription', label: '搜尋摘要 Meta Description', type: 'textarea', i18n: true, required: true, max: 180, side: 'locale' },
-  { key: 'canonical', label: '指定標準網址 Canonical', type: 'url', i18n: true, side: 'locale', hint: '留空則自動帶入本頁網址' },
+  { key: 'canonical', label: '指定標準網址 Canonical', type: 'url', i18n: true, side: 'locale', 
+    hint: '告訴 Google「這一頁的正本在哪個網址」。**一般請留空**，系統會自動用本頁網址。只有兩篇內容幾乎一樣時才填，填「要保留的那一篇」的完整網址（含 https://）；**填錯可能讓本頁從搜尋結果消失**' },
   { key: 'ogTitle', label: '社群分享標題', type: 'text', i18n: true, side: 'locale', hint: '分享到 Facebook／LINE 時顯示；留空則沿用 SEO 標題' },
   { key: 'ogDescription', label: '社群分享描述', type: 'textarea', i18n: true, side: 'locale', hint: '留空則沿用搜尋摘要' },
   // OG 圖是 meta 標籤（og:image），不是頁面上的 <img>，沒有替代文字要顯示的位置。
