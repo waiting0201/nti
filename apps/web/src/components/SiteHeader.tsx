@@ -38,7 +38,8 @@ const FlagZH = () => (
 )
 
 type SubItem = { key: string; href: string; label: React.ReactNode }
-type MenuItem = { key: string; href: string; label: string; sub: SubItem[] }
+/** 沒有 sub 的項目不出箭頭也不出下拉（Projects 2026-09-24 起隱藏子選單） */
+type MenuItem = { key: string; href: string; label: string; sub?: SubItem[] }
 
 const MENU: MenuItem[] = [
   {
@@ -71,10 +72,6 @@ const MENU: MenuItem[] = [
     key: 'projects',
     href: '/projects',
     label: 'Projects',
-    sub: [
-      { key: 'projects#industries', href: '/projects#industries', label: 'Industries / Applications' },
-      { key: 'projects#cases', href: '/projects#cases', label: <>Case Studies &amp; Photos</> },
-    ],
   },
   {
     key: 'green-advantage',
@@ -122,8 +119,9 @@ export function SiteHeader() {
           {MENU.map((mi) => (
             <div className="mi" key={mi.key}>
               <A href={l(mi.href)} className={mi.key === activeTop ? 'active' : undefined}>
-                {mi.label} <Caret />
+                {mi.sub ? <>{mi.label} <Caret /></> : mi.label}
               </A>
+              {mi.sub && (
               <div className="sub-menu">
                 {/* mockup 的下拉項之間有換行空白，會渲染成一個空格 —— 原樣保留 */}
                 {mi.sub.map((s, i) => (
@@ -135,6 +133,7 @@ export function SiteHeader() {
                   </Fragment>
                 ))}
               </div>
+              )}
             </div>
           ))}
         </nav>
