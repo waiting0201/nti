@@ -210,3 +210,4 @@
 *最後更新：2026-09-11*
 
 | 2026-09-24 | Tim（Claude Code） | 頁面文字覆寫（09 §7.1）：`GET /pages/{pageKey}` 多回 `texts`（原文 → 該語系的字）；新增 `GET`／`PUT /admin/page/{pageKey}/texts`，PUT body 為 `{ items: [{ lang, sourceText, value }] }`，value 為空＝刪除該覆寫。沿用 `page.view`／`page.edit`，權限矩陣不變。首批開放 About Us 五頁 |
+| 2026-09-24 | Tim（Claude Code） | `GET /certifications`（與首頁 `certifications`）每筆多回 `certificateNo`、`certifiedDate`、`lastAuditDate`（皆可空）；頁面文字的開放範圍擴大到所有固定頁（`green-csr` 除外），端點不變 |

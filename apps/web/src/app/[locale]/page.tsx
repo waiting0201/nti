@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { CertificationLogos, ClientLogos, HeroSlides } from '@/components/cms'
-import { cmsMedia, getHome } from '@/lib/api'
+import { cmsMedia, getHome, getPage } from '@/lib/api'
 import { getSettingMap } from '@/lib/site-settings'
 import { mediaUrl } from '@/lib/media'
 import { HeroSlider } from '@/components/behaviors/HeroSlider'
@@ -21,14 +21,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
-  // 兩支各自獨立，序列 await 等於白等一次 round trip
-  const [home, settings] = await Promise.all([getHome(locale), getSettingMap(locale)])
+  // 三支各自獨立，序列 await 等於白等 round trip。
+  // page：後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
+  const [home, settings, page] = await Promise.all([getHome(locale), getSettingMap(locale), getPage(locale, 'home')])
   const l = withLocale(locale)
   const gallery = settings?.['home.gallery_image']
   // 「印刷解決方案」四張卡：標題與短述來自後台 02（name／summary），圖與副標照 mockup
   const sol = (code: string) => home?.solutions.find((s) => s.code === code)
   return (
-    <T locale={locale}>
+    <T locale={locale} overrides={page?.texts}>
 
       {/* ============ HERO ============ */}
       <section className="hero" id="hero" aria-label="Featured highlights">

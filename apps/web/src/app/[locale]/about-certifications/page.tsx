@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { CertificationWall } from '@/components/cms'
+import { JsonLd } from '@/components/JsonLd'
+import { organizationCredentials } from '@/lib/jsonld'
 import { getCertifications, getPage } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -22,6 +24,8 @@ export default async function Page({ params }: Props) {
   const page = await getPage(locale, 'about-certifications')
   const certs = await getCertifications(locale)
   const l = withLocale(locale)
+  // 沒有任何認證填了證號／日期就是 null，不輸出（沒接 API 時版面驗收閘比對的節點序列不受影響）
+  const credentials = certs?.length ? organizationCredentials(certs) : null
   return (
     <T locale={locale} overrides={page?.texts}>
       <section className="fac-banner"><img src={mediaUrl("/assets/ref-about-mid2.webp")} alt="NTI Printing headquarters in Tainan, Taiwan" /></section>
@@ -41,7 +45,10 @@ export default async function Page({ params }: Props) {
         <p className="prose wide">NTI has built its reputation on printing quality, and our clients hold us to it. We keep applying for further certification so that every customer gets the same assurance of product quality &mdash; audited by an outside body rather than asserted by us. Alongside the international standards below, we developed the NTI Green Printing Certificate, a mark our clients can display on their packaging as proof of an eco-conscious process.</p>
       </div></section>
       <section className="section certs reveal">{certs?.length ? (
-          <CertificationWall items={certs} />
+          <>
+          <CertificationWall items={certs} locale={locale} />
+          {credentials && <JsonLd data={credentials} />}
+          </>
         ) : (
         <div className="wrap certgrid">
         <img src={mediaUrl("/assets/cert-green.png")} alt="NTI Green Printing" />

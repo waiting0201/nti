@@ -42,7 +42,7 @@ CMS 資料**完全不快取**（見〈存檔後多久才更新〉），所以改
 | `/facility-*`（4 頁） | 設備卡 |
 | `/products-*`（4 頁） | 方案品項卡、H1、導言、SEO（單元 02；首頁方案卡的標題與短述也來自這裡） |
 | `/privacy-legal` | 後台「頁面內容」（`HasRichBody`）；沒填就是 mockup 的佔位稿 |
-| About Us 五頁（`/differences`、`/about-difference`、`/about-benefits`、`/about-certifications`、`/facility-tour`） | **頁面文字覆寫**（單元 15「頁面文字」，見下方〈頁面文字覆寫〉） |
+| 所有固定頁（28 頁；原本只有 About Us 五頁） | **頁面文字覆寫**（單元 15「頁面文字」，見下方〈頁面文字覆寫〉） |
 | `/contact`、footer、首頁形象圖帶 | **網站設定**（單元 21，`/site-settings`）——公司資訊、社群網址、圖帶 |
 
 其餘頁面的內容是**固定文案**（docs/08 決議 3：固定頁的內容寫死在前端，
@@ -256,7 +256,7 @@ NEXT_PUBLIC_MEDIA_BASE=https://stntiprod.blob.core.windows.net pnpm --filter web
 
 ### 頁面文字覆寫
 
-About Us 五頁的文字可在後台逐段改（docs/09 §7.1）。做法是在 `<T>` 上多一層查表：
+所有固定頁（2026-09-24 起，原本只有 About Us 五頁）的文字可在後台逐段改（docs/09 §7.1）。做法是在 `<T>` 上多一層查表：
 
 ```tsx
 const page = await getPage(locale, 'about-difference')   // cache()：與 generateMetadata 共用一次請求
@@ -272,9 +272,10 @@ return <T locale={locale} overrides={page?.texts}> … </T>
 node scripts/extract-page-texts.mjs   # → apps/admin/src/api/page-texts.generated.ts
 ```
 
-mockup 或 zh.ts 改了就重跑（後台顯示的「目前的中文」來自 zh.ts）。**要開放更多頁**：
-這支腳本的 `PAGES`、`Api/Common/Constants.cs` 的 `PageTextPages`、該頁的 `<T overrides>`
-三處一起改，並把該頁放進 `build-pages.mjs` 的 `HAND_MAINTAINED`。
+mockup 或 zh.ts 改了就重跑（後台顯示的「目前的中文」來自 zh.ts）。
+`build-pages.mjs` 產生的頁會自動帶上 `getPage` 與 `overrides`（依 `lib/pages.ts` 的 pageKey），
+`HAND_MAINTAINED` 的頁是手動接的。新增固定頁時：這支腳本的 `PAGES`、`Api/Common/Constants.cs`
+的 `PageKeys`、`lib/pages.ts` 三處一起補。
 
 ⚠ 鍵是英文原文：日後在 mockup 改了某段英文，該段的覆寫就對不上、不再顯示
 （後台會列為「原文已變更」）。這與 zh.ts 是同一個性質。

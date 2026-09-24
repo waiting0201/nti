@@ -170,6 +170,9 @@ public sealed class CertificationDto
     public string  Name         { get; set; } = null!;
     public string? Description  { get; set; }
     public string  LogoAlt      { get; set; } = null!;
+    public string? CertificateNo { get; set; }
+    public DateOnly? CertifiedDate { get; set; }
+    public DateOnly? LastAuditDate { get; set; }
 }
 
 /// <summary>客戶 logo（後台單元 09）。品牌名不翻譯，<see cref="Name"/> 同時作為 alt。</summary>

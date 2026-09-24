@@ -208,6 +208,10 @@ export type Certification = {
   name: string
   description: string | null
   logoAlt: string
+  /** 證號與日期（2026-09-24 起）；都可空，DATE 欄位回 `YYYY-MM-DD` */
+  certificateNo: string | null
+  certifiedDate: string | null
+  lastAuditDate: string | null
 }
 
 export type ClientLogo = { id: number; name: string; logoPath: string; linkUrl: string | null }

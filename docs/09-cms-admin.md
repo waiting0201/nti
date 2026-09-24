@@ -15,7 +15,8 @@
 1. **後台以單元功能為主** — 一個前台內容區塊 = 一個後台單元，各自獨立的清單／編輯畫面。不做通用 page-builder、不做區塊拖拉組版。
 2. **不做 Media Library** — 沒有「媒體管理」選單。圖片／檔案只能從**所屬欄位**上傳，隨該筆資料建立與刪除；**每個上傳欄位旁必須顯示建議尺寸提示**（§3 為權威文字）。
 3. **固定文字區不做後台** — 品牌敘述型的長篇文案寫死在前端（清單見 §7），後台只保留這些頁的 SEO 欄位。
-   **2026-09-24 修訂**：About Us 五頁改為可在後台逐段改字（單元 15 的「頁面文字」，見 §7.1）。
+   **2026-09-24 修訂**：About Us 五頁改為可在後台逐段改字（單元 15 的「頁面文字」，見 §7.1）；
+   同日稍晚擴大到**所有有前台路由的固定頁**（28 頁，`green-csr` 無路由除外）。
    仍不做 page-builder——版面、段落數、圖片照 mockup，只有「字」可以換。
 
 ---
@@ -217,6 +218,7 @@
 | Logo + Alt | 圖片上傳 | ✓ | Alt ✓ | 見 §3 |
 | 名稱／說明 | 單行／多行 | 名稱 ✓ | ✓ | |
 | 連結網址 | 單行 | | | |
+| 證號／取得日期／最近稽核日期 | 單行／日期／日期 | | | 2026-09-24 新增（GEO：AI 只引用具體數字）。有填就顯示在 `about-certifications` 認證牆該 logo 下方，並寫進 JSON-LD `hasCredential` |
 | 顯示於首頁 Proof 牆 | 開關 | | | 預設開；首頁建議 12–16 枚，超過時提示 |
 | 排序、上架 | — | | | |
 
@@ -457,10 +459,12 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 > 不改 schema、不動版面）。整頁改成自由排版的 rich text（`HasRichBody = 1` 並改讀 `PageI18n.BodyHtml`）
 > 只適合像隱私權聲明這種本來就是純文章的頁——套在有卡片、圖示格線的頁面上會失去版型。
 
-### 7.1 頁面文字覆寫（About Us 五頁，2026-09-24）
+### 7.1 頁面文字覆寫（2026-09-24：所有固定頁）
 
-客戶要求 About Us 的文字可自行修改。開放的頁面：`about-hub`（`/differences`）、`about-difference`、
-`about-benefits`、`about-certifications`、`facility-tour`。
+客戶要求 About Us 的文字可自行修改，首批開放 About Us 五頁；同日依客戶 2026-09-22 的 SEO/GEO 文案盤點
+（綠色優勢、設備、方案總覽、首頁 H1 等都改不到），擴大為**所有有前台路由的固定頁**（`PageKeys` 扣掉
+沒有路由的 `green-csr`，共 28 頁）。上方 §7 表格列的「寫死的段落」因此都能逐段改寫；§7 的定位
+（不做 page-builder、版面照 mockup）不變。
 
 **機制**：前台的 `<T>`（`apps/web/src/lib/translate.tsx`）本來就逐一走過頁面上的文字節點，拿英文原文
 查中文字典；現在多一層「後台覆寫」，查表順序是 **覆寫 → 字典（zh.ts）→ 原文**。所以任何一段文字都能換，
@@ -469,16 +473,20 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 **後台清單的來源**：`node apps/web/scripts/extract-page-texts.mjs` 從 mockup 抽出這幾頁的文字，產生
 `apps/admin/src/api/page-texts.generated.ts`。mockup 或 zh.ts 改了要重跑。
 
-**要開放更多頁**，三處要一致：`extract-page-texts.mjs` 的 `PAGES`、`Api/Common/Constants.cs` 的
-`PageTextPages`、以及前台那一頁改成 `<T locale={locale} overrides={page?.texts}>`（並列入
-`build-pages.mjs` 的 `HAND_MAINTAINED`）。
+**三處要一致**：`extract-page-texts.mjs` 的 `PAGES`、`Api/Common/Constants.cs` 的 `PageTextPages`
+（＝`PageKeys.All` 扣掉 `green-csr`）、以及前台各頁的 `<T locale={locale} overrides={page?.texts}>`。
+`build-pages.mjs` 產生的頁由產生器自動接線（依 `lib/pages.ts` 的 `PAGE_KEY_BY_PATH`），重跑不會洗掉；
+`HAND_MAINTAINED` 的頁是手動接的。新增固定頁時三處一起補。
 
 **限制**（已知、刻意接受）：
 
 - **原文改了，覆寫就對不上。** 鍵是英文原文；日後在 mockup 改了某段英文並重跑 codegen，那段的覆寫就不再顯示。
   後台會把這些列成「原文已變更」，讓人把內容搬到新段落再移除——與 `zh.ts` 同一個性質。
 - **同一段原文在同頁出現多次會一起改**（例如分頁標籤與區塊標題都是「The NTI Difference」），後台標示「×2」。
-- **CMS 區塊不在清單內**：`about-certifications` 的認證牆吃單元 08，改那裡。
+- **只能改寫、不能增刪**：段落數與條目數照 mockup。文件新增的一句話只能併進既有段落。
+- **CMS 區塊不在清單內**：有資料時整塊換成後台單元的內容（首頁輪播／認證牆／客戶輪播、設備格線、
+  案例、消息、FAQ、影片、趨勢、職缺、供應商三區、`about-certifications` 的認證牆），覆寫在那裡不會生效，
+  所以 `extract-page-texts.mjs` 的 `CMS_BLOCKS`／`CMS_TEXTS` 把它們排除，要改請到對應單元。
 - header／footer／浮動鈕不在此範圍（頁面的 `<T>` 包不到它們）。
 
 ---

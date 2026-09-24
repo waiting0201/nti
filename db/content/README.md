@@ -121,6 +121,25 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/230_solution_copy.sql
 每個欄位只在「還是空的」或「還是 200 寫進去的提案值」時才補——後台改過的不會被蓋掉，重跑無副作用。
 字典還沒翻的 meta description 不寫，前台照舊顯示英文。
 
+## 240_content_sep22.sql
+
+客戶 2026-09-22《English Website Content Map — SEO/GEO Optimised Rewrite》的英文改寫（**只寫 en**）。
+原始 docx 不進版控，對照後的文案在產生器裡。
+
+```bash
+node tools/build-content-sep22-sql.mjs   # 重新產生（請勿手改 .sql）
+sqlcmd -S <server> -d NTI -I -b -i db/content/240_content_sep22.sql
+```
+
+- **頁面文字覆寫 10 段**（`PageText`）：文件大半紅字 mockup 早已吸收，逐段比對後真正有差的只剩這些。
+  需要 0010 與「頁面文字擴大到所有固定頁」那一版前台。
+- **SEO 標題 13 頁**（9 個固定頁＋4 個方案頁；只補空的／預設值）。
+- **認證說明 7 筆**（只補空的）。
+- **FAQ 10 題，未上架草稿、只有英文**；成本、MOQ、交期三題的答案是空的，待客戶補。
+
+取捨（只收紅字、佔位符拿掉、不收的項目）見產生器檔頭與 [`STATUS.md`](../../STATUS.md)。
+產生器會檢查每段原文都在該頁的頁面文字清單裡——mockup 改過字就會直接報錯，不會產出永遠不生效的覆寫。
+
 ## ⚠ 中文是初稿
 
 `tools/content-zh.mjs` 的繁體中文是**機器翻譯初稿，不是客戶核可的文案**。

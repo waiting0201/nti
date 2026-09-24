@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
+import { getPage } from '@/lib/api'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { FacilityExplorer } from '@/components/behaviors/FacilityExplorer'
@@ -17,9 +18,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
+  const page = await getPage(locale, "facility")
   const l = withLocale(locale)
   return (
-    <T locale={locale}>
+    <T locale={locale} overrides={page?.texts}>
       <section className="fac-banner"><img src={mediaUrl("/assets/fac-banner.webp")} alt="NTI printing facility — Heidelberg press line" /></section>
       <section className="section">
         <div className="wrap">

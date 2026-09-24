@@ -275,6 +275,16 @@ const HAND_MAINTAINED = new Set([
   'differences', 'about-difference', 'about-benefits', 'facility-tour',   // 頁面文字覆寫（about-certifications 已在上面）
 ])
 
+/**
+ * 路徑 → pageKey（`lib/pages.ts` 的 PAGE_KEY_BY_PATH，直接從原始檔抽，免得兩份對照表漂移）。
+ * 有 pageKey 的頁一律接上後台「頁面文字」的覆寫：`getPage` 取 `texts` 傳進 `<T overrides>`。
+ * 接線寫在產生器裡，重跑本腳本不會把它洗掉。沒有 pageKey 的頁（12 篇示範消息）照舊。
+ */
+const PAGE_KEYS = Object.fromEntries(
+  [...readFileSync(path.join(root, 'src/lib/pages.ts'), 'utf8')
+    .matchAll(/^\s*'(\/[^']*)':\s*'([^']+)',/gm)].map((m) => [m[1], m[2]]),
+)
+
 const files = readdirSync(mockupDir).filter((f) => f.endsWith('.html')).sort()
 let count = 0
 let skipped = 0
@@ -290,6 +300,7 @@ for (const file of files) {
   const { title, desc, body } = extract(readFileSync(path.join(mockupDir, file), 'utf8'))
 
   const ctx = { usesA: false, usesLocale: false, usesMedia: false }
+  const pageKey = PAGE_KEYS[routePath]
   const jsx = htmlToJsx(body, ctx)
     .split('\n')
     .map((line) => (line.trim() ? '      ' + line : line))
@@ -299,6 +310,7 @@ for (const file of files) {
   const imports = [
     "import type { Metadata } from 'next'",
     "import { T } from '@/lib/t'",
+    ...(pageKey ? ["import { getPage } from '@/lib/api'"] : []),
     ...(ctx.usesA ? ["import { A } from '@/components/A'"] : []),
     ...(ctx.usesMedia ? ["import { mediaUrl } from '@/lib/media'"] : []),
     ...behaviors.map(([name, from]) => `import { ${name} } from '${from}'`),
@@ -313,6 +325,11 @@ for (const file of files) {
     ...(desc ? ['description: ' + JSON.stringify(desc)] : []),
   ].join(',\n    ')
 
+  const pageLine = pageKey
+    ? '  // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文\n'
+      + `  const page = await getPage(locale, ${JSON.stringify(pageKey)})\n`
+    : ''
+  const tOpen = pageKey ? '<T locale={locale} overrides={page?.texts}>' : '<T locale={locale}>'
   const localeLine = ctx.usesLocale ? '  const l = withLocale(locale)\n' : ''
   const behaviorTags = behaviors.length
     ? behaviors.map(([name]) => '      <' + name + ' />').join('\n') + '\n'
@@ -331,8 +348,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
-${localeLine}  return (
-    <T locale={locale}>
+${pageLine}${localeLine}  return (
+    ${tOpen}
 ${jsx}
 ${behaviorTags}    </T>
   )

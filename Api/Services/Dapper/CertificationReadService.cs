@@ -16,6 +16,7 @@ public sealed class CertificationReadService(IDbConnection db) : ICertificationR
     private static readonly string BaseSql = $"""
         SELECT t.Id, t.CategoryId, c.Code AS CategoryCode, ci.Name AS CategoryName,
                t.LogoPath, t.LinkUrl, t.ShowOnHome, t.SortOrder,
+               t.CertificateNo, t.CertifiedDate, t.LastAuditDate,
                i.Name, i.Description, i.LogoAlt
         FROM Certification t
         INNER JOIN CertificationI18n i ON i.CertificationId = t.Id AND i.Lang = @Lang

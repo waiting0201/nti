@@ -57,6 +57,7 @@ public sealed class CertificationConfiguration : IEntityTypeConfiguration<Certif
         b.ToTable("Certification");
         b.Property(x => x.LogoPath).HasMaxLength(260);
         b.Property(x => x.LinkUrl).HasMaxLength(300);
+        b.Property(x => x.CertificateNo).HasMaxLength(100);
         b.Property(x => x.ShowOnHome).HasDefaultValue(true);
         b.Property(x => x.SortOrder).HasDefaultValue(0);
         b.Property(x => x.IsPublished).HasDefaultValue(true);

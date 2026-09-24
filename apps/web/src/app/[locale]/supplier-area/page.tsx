@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { SupplierDownloads, SupplierNotices, SupplierSpecs } from '@/components/cms'
-import { getSupplierDownloads, getSupplierNotices, getSupplierSpecs } from '@/lib/api'
+import { getPage, getSupplierDownloads, getSupplierNotices, getSupplierSpecs } from '@/lib/api'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -17,6 +17,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
+  const page = await getPage(locale, 'supplier-area')
   const l = withLocale(locale)
   const [notices, specs, downloads] = await Promise.all([
     getSupplierNotices(locale),
@@ -24,7 +26,7 @@ export default async function Page({ params }: Props) {
     getSupplierDownloads(locale),
   ])
   return (
-    <T locale={locale}>
+    <T locale={locale} overrides={page?.texts}>
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Supplier Area</b></div>
         <h1 className="sec-title reveal">Supplier Area</h1>

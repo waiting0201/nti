@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { VlogGrid } from '@/components/cms'
-import { getVlogs } from '@/lib/api'
+import { getPage, getVlogs } from '@/lib/api'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -17,10 +17,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
+  const page = await getPage(locale, 'green-vlog')
   const l = withLocale(locale)
   const vlogs = await getVlogs(locale)
   return (
-    <T locale={locale}>
+    <T locale={locale} overrides={page?.texts}>
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/insights")}>Insights</A><span>&rsaquo;</span><b>Green Vlog</b></div>
         <h1 className="sec-title reveal">Green Vlog <span className="ti-slash">/</span> <span className="ti-alt">Green knowledge hub</span></h1>

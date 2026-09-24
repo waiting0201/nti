@@ -156,6 +156,17 @@ paths:
         '200': { $ref: '#/components/responses/Ok' }
         '404': { $ref: '#/components/responses/NotFound' }
 
+  /news/{slug}/moved:
+    get:
+      tags: [前台內容]
+      summary: 舊 slug 的新網址（已上架消息改 slug 時後台自動建的 301），回 { toPath }；沒搬過回 404
+      parameters:
+        - { $ref: '#/components/parameters/Lang' }
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
   /green-vlog:
     get:
       tags: [前台內容]

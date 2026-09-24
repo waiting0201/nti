@@ -135,6 +135,7 @@ NTI/
   db/tools/sqlcmd.sh NTI < db/content/210_legacy_redirects.sql # 227 條舊站 301 對照
   db/tools/sqlcmd.sh NTI < db/content/220_site_setting.sql     # 網站設定的值（種子只建 key）
   db/tools/sqlcmd.sh NTI < db/content/230_solution_copy.sql    # 四個方案的 H1／導言／SEO（與 mockup 一致）
+  db/tools/sqlcmd.sh NTI < db/content/240_content_sep22.sql    # 客戶 09-22 SEO/GEO 英文改寫（頁面文字／SEO 標題／認證說明／FAQ 草稿）
   db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql             # 應輸出「全數 PASS」
   ```
 

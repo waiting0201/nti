@@ -110,7 +110,7 @@ INSERT @r (Item, Expected, Actual) SELECT N'PageI18n',       N'58', CAST(COUNT(*
 INSERT @r (Item, Expected, Actual) SELECT N'  └ HasRichBody=1（privacy-legal、green-csr）', N'2', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Page WHERE HasRichBody = 1;
 INSERT @r (Item, Expected, Actual) SELECT N'Solution（固定 4 筆）', N'4', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Solution;
 INSERT @r (Item, Expected, Actual) SELECT N'SolutionI18n',   N'8',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SolutionI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'SchemaVersion（已套用 migration 數）', N'10', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SchemaVersion;
+INSERT @r (Item, Expected, Actual) SELECT N'SchemaVersion（已套用 migration 數）', N'11', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SchemaVersion;
 
 /* 後台登入識別＝Username（2026-09-06，見 db/migrations/0005）：唯一鍵搬家了 */
 INSERT @r (Item, Expected, Actual)

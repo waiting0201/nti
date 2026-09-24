@@ -82,6 +82,34 @@ export const siteGraph = (locale: Locale) => ({
   '@graph': [organization(locale), website(locale)],
 })
 
+type CredentialInput = {
+  name: string
+  description: string | null
+  certificateNo: string | null
+  certifiedDate: string | null
+}
+
+/**
+ * 認證頁的 `hasCredential`：以同一個 `@id` 補在全站的 Organization 節點上（Google 會合併同 id 的節點）。
+ * 只列有證號或取得日期的那幾項——畫面上也只有它們會出現說明文字，結構化資料不能多於畫面。
+ */
+export function organizationCredentials(items: CredentialInput[]) {
+  const withData = items.filter((c) => c.certificateNo || c.certifiedDate)
+  if (!withData.length) return null
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': ORG_ID,
+    hasCredential: withData.map((c) => ({
+      '@type': 'EducationalOccupationalCredential',
+      name: c.name,
+      ...(c.description ? { description: c.description } : {}),
+      ...(c.certificateNo ? { identifier: c.certificateNo } : {}),
+      ...(c.certifiedDate ? { dateCreated: c.certifiedDate } : {}),
+    })),
+  }
+}
+
 type CrumbInput = { name: string; path?: string }
 
 export function breadcrumbList(locale: Locale, trail: CrumbInput[]) {

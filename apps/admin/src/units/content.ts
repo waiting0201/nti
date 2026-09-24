@@ -243,6 +243,10 @@ export const certification: Unit = {
     { key: 'name', label: '名稱', type: 'text', i18n: true, required: true, side: 'locale' },
     { key: 'description', label: '說明', type: 'textarea', i18n: true, side: 'locale' },
     { key: 'linkUrl', label: '連結網址', type: 'url', side: 'neutral' },
+    { key: 'certificateNo', label: '證號', type: 'text', side: 'neutral', placeholder: 'FSC-C123456',
+      hint: '證號與日期有填就顯示在「我們的認證」頁的 logo 下方，並寫進結構化資料——AI 搜尋只引用有具體數字的文字' },
+    { key: 'certifiedDate', label: '取得日期', type: 'date', side: 'neutral' },
+    { key: 'lastAuditDate', label: '最近稽核日期', type: 'date', side: 'neutral' },
     { key: 'showOnHome', label: '顯示於首頁 Proof 牆', type: 'switch', side: 'neutral', hint: '預設開' },
   ],
   columns: [

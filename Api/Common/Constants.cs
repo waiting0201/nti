@@ -221,19 +221,18 @@ public static class PageKeys
 }
 
 /// <summary>
-/// 開放「頁面文字」覆寫的固定頁（2026-09-24 起：About Us 五頁）。
+/// 開放「頁面文字」覆寫的固定頁：2026-09-24 起為所有有前台路由的固定頁（原本只有 About Us 五頁）。
 /// <para>
-/// 前台要同時接線（該頁以 <c>&lt;T overrides&gt;</c> 包起來），後台才有意義，所以不是全開；
-/// 三邊要一致：這裡、<c>apps/web/scripts/extract-page-texts.mjs</c> 的 PAGES、以及前台那幾頁。
+/// 前台要同時接線（該頁以 <c>&lt;T overrides&gt;</c> 包起來），後台才有意義；
+/// 三邊要一致：這裡、<c>apps/web/scripts/extract-page-texts.mjs</c> 的 PAGES、以及前台那幾頁
+/// （由 build-pages.mjs 產生的頁自動接線，HAND_MAINTAINED 的頁手動接）。
+/// <c>green-csr</c> 沒有前台路由，不開放。
 /// </para>
 /// </summary>
 public static class PageTextPages
 {
-    public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
-    {
-        PageKeys.AboutHub, PageKeys.AboutDifference, PageKeys.AboutBenefits,
-        PageKeys.AboutCertifications, PageKeys.FacilityTour,
-    };
+    public static readonly IReadOnlySet<string> All = new HashSet<string>(
+        PageKeys.All.Where(k => k != PageKeys.GreenCsr), StringComparer.Ordinal);
 
     /// <summary>與前台 <c>translate.tsx</c> 的 <c>norm()</c> 相同：連續空白（含 NBSP）壓成一格、去頭尾。</summary>
     public static string Normalize(string s) =>

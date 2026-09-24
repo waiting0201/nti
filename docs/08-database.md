@@ -348,6 +348,9 @@ CREATE TABLE dbo.Certification (
   ShowOnHome BIT NOT NULL DEFAULT 1,       -- 是否列入首頁 Proof 牆
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1,
+  CertificateNo NVARCHAR(100) NULL,        -- 證號（2026-09-24，0011）：GEO 引用要具體數字
+  CertifiedDate DATE NULL,                 -- 取得日期
+  LastAuditDate DATE NULL,                 -- 最近一次第三方稽核日期
   /* audit */
 );
 

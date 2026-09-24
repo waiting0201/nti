@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { JobList } from '@/components/cms'
-import { getJobs } from '@/lib/api'
+import { getJobs, getPage } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -18,10 +18,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
+  const page = await getPage(locale, 'careers')
   const jobs = await getJobs(locale)
   const l = withLocale(locale)
   return (
-    <T locale={locale}>
+    <T locale={locale} overrides={page?.texts}>
       <section className="fac-banner"><img src={mediaUrl("/assets/fac-tour-main.webp")} alt="Working at NTI Printing in Tainan, Taiwan" /></section>
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Careers</b></div>

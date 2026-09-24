@@ -17,10 +17,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { locale } = await params
   // 全站唯一原生可在後台編輯全文的固定頁（HasRichBody）；後台還沒填就照 mockup 的佔位稿
-  const body = (await getPage(locale, 'privacy-legal'))?.bodyHtml?.trim()
+  // 也吃「頁面文字」的覆寫（標題、佔位稿逐段）；有填全文時內文整段換掉，覆寫只剩標題有作用
+  const page = await getPage(locale, 'privacy-legal')
+  const body = page?.bodyHtml?.trim()
   const l = withLocale(locale)
   return (
-    <T locale={locale}>
+    <T locale={locale} overrides={page?.texts}>
       <section className="section"><div className="wrap"><div className="legal-wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Privacy &amp; Legal</b></div>
         <h1 className="sec-title reveal">Privacy &amp; Legal</h1>

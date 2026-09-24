@@ -199,6 +199,34 @@ mockup 內容（現況部署），設了就改吃 CMS。
 ⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
 清單在該腳本的 `HAND_MAINTAINED`。
 
+### ✅ 所有固定頁的文字可從後台改＋認證證號＋客戶 09-22 英文文案匯入（2026-09-24）
+
+依客戶 `NTI_Website_Content_Sep22.docx`（SEO/GEO 改寫版英文文案）盤點「後台改不到的內容」後處理：
+
+| 項目 | 現在 |
+|---|---|
+| **頁面文字擴大到所有固定頁** | 原本只有 About Us 五頁，現在 28 頁、801 段（綠色優勢、設備、方案總覽、專案、首頁 H1…）。`build-pages.mjs` 產生的頁自動接線；已接 CMS 的區塊不列入。只能改寫、不能增刪條目（docs/09 §7.1） |
+| **認證證號／取得日期／最近稽核日期** | 單元 08 新欄位（EF migration `CertificationCredential`／`db/migrations/0011`）。有填就顯示在 `/about-certifications` 的 logo 下方，並寫進 JSON-LD `hasCredential` |
+| **客戶 09-22 文案匯入** | `db/content/240_content_sep22.sql`（**只寫英文**）：頁面文字 10 段、SEO 標題 13 頁、認證說明 7 筆、FAQ 10 題草稿（未上架）。文件大半紅字 mockup 早已吸收，逐段比對後真正有差的只剩這些 |
+| 後台清單分頁 | 頁面設定、分類、帳號這類不分頁的端點，原本每一頁都顯示整份清單；改成在後台切出當頁 |
+
+⚠ **待客戶補的資料**（文件的 `[Add: …]` 佔位符已拿掉後匯入，這些資訊目前在站上不存在）：
+
+- FSC CoC 證號（首頁、認證頁、綠色優勢的 GEO 引用句都要）；G7 取得年份；GMI 認證日期；ISO 9001／14001 證號與最近稽核日期
+  → 拿到後填在後台 08 認證的新欄位，不必改文案
+- 碳排數字：「NTI has reduced annual carbon emissions by X% since [year]…」（碳效率頁，整句都是佔位符，未匯入）
+- 年度 ESG 報告 PDF（ESG 頁；目前綠色優勢頁沒有檔案欄位）
+- FAQ：環保印刷是否較貴、MOQ、交期三題的答案（草稿已建、答案空白）；另七題需要中文才能上架
+- 認證名稱不一致：文件寫 **OHSAS 18001**，站上是 **ISO 45001**（前者的後繼標準）——待客戶確認
+
+⚠ **沒有匯入的**（站上沒有對應的位置，要先有設計）：首頁 Printing Solutions／Featured Projects 兩張 teaser 卡的文案、
+綠色優勢四頁共用的 SECTION INTRO、Contact 的「Ready to Print Smarter?」CTA、首頁 Meta Description
+（文件版 205 字，超過欄位上限 180；站上現行版是精簡過的同義句）、文件建議的新網址（`/color-box-packaging` 等，網址是固定路由）。
+
+⚠ **中文**：改過的 10 段只有英文，`/zh` 仍是舊譯文，兩邊內容已對不上，要再翻：首頁 intro、
+`/differences` 與 `/about-difference` 的品牌介紹、`/about-certifications` 開場段、`/facility` 與 `/solutions` 的設備導言、
+`/green-advantage` 與 `/green-our-advantage` 的 Partnering 段、`/green-advantage` 與 `/green-esg` 的 ESG 路線段。
+
 ### ✅ About Us 文字可從後台改＋四個「後台有、前台沒接」的欄位（2026-09-24）
 
 客戶問「網站很多區的文字能不能從後台改」。盤點結果：大部分不行（docs/09 決議 3），

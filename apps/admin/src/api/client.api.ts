@@ -129,7 +129,7 @@ type PagedResponse = { items: ApiRow[]; totalCount: number }
 
 /**
  * 有些單元的清單不分頁，直接回陣列（category／setting／page／admin——它們的筆數固定或很少）。
- * 兩種形狀都接，呼叫端不必知道差別。
+ * 兩種形狀都接；陣列的 total 是整份的筆數，切出當頁由 `list()` 負責。
  */
 function unwrap(data: PagedResponse | ApiRow[]): { items: ApiRow[]; total: number } {
   return Array.isArray(data)
@@ -146,10 +146,16 @@ export async function list(unit: string, q: ListQuery = {}): Promise<ListResult>
   // 搜尋交給後端（04-api §3.4 的 keyword）：清單是分頁的，在前端過濾只會搜到當頁那 20 筆
   if (q.keyword) params.set('keyword', q.keyword)
 
-  const data = unwrap(await api.get<PagedResponse | ApiRow[]>(`/admin/${pathOf(unit)}?${params}`))
-  const rows = data.items.map((r) => toRow(unit, r))
+  const raw = await api.get<PagedResponse | ApiRow[]>(`/admin/${pathOf(unit)}?${params}`)
+  const data = unwrap(raw)
 
-  return { rows, total: data.total }
+  // 不分頁的端點不理 page／pageSize，每次都回整份。總筆數照樣大於一頁時，
+  // UI 會顯示頁碼，但每一頁拿到的都是同一份清單——在這裡自己切出當頁那一段。
+  const page = q.page ?? 1
+  const size = q.pageSize ?? 20
+  const items = Array.isArray(raw) ? data.items.slice((page - 1) * size, page * size) : data.items
+
+  return { rows: items.map((r) => toRow(unit, r)), total: data.total }
 }
 
 /**

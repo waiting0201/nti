@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { A } from '@/components/A'
 import {
   cmsMedia,
@@ -284,18 +285,45 @@ export function TrendSections({ items }: { items: Trend[] }) {
 }
 
 // ── 08 certification ──────────────────────────────────────────────────────
-export function CertificationWall({ items }: { items: Certification[] }) {
+
+/**
+ * 證號／取得年份／最近稽核的一行字；三個都沒填回 null。
+ * 客戶 2026-09-22 的 SEO/GEO 文案要求每項認證附上具體數字——AI 引擎讀不到 logo 圖，只引用文字。
+ */
+export function credentialLine(c: Certification, locale: Locale): string | null {
+  const parts: string[] = []
+  if (c.certificateNo) parts.push(locale === 'zh' ? `證號 ${c.certificateNo}` : `No. ${c.certificateNo}`)
+  if (c.certifiedDate) parts.push(locale === 'zh' ? `${c.certifiedDate.slice(0, 4)} 年取得` : `Since ${c.certifiedDate.slice(0, 4)}`)
+  if (c.lastAuditDate) parts.push(locale === 'zh' ? `最近稽核 ${c.lastAuditDate.slice(0, 7)}` : `Last audited ${c.lastAuditDate.slice(0, 7)}`)
+  return parts.length ? parts.join(' · ') : null
+}
+
+export function CertificationWall({ items, locale }: { items: Certification[]; locale: Locale }) {
   return (
     <div className="wrap certgrid">
-      {items.map((c) =>
-        c.linkUrl ? (
-          <A key={c.id} href={c.linkUrl} target="_blank" rel="noopener">
+      {items.map((c) => {
+        const logo = c.linkUrl ? (
+          <A href={c.linkUrl} target="_blank" rel="noopener">
             <img src={cmsMedia(c.logoPath)} alt={c.logoAlt} />
           </A>
         ) : (
-          <img key={c.id} src={cmsMedia(c.logoPath)} alt={c.logoAlt} />
-        ),
-      )}
+          <img src={cmsMedia(c.logoPath)} alt={c.logoAlt} />
+        )
+        const line = credentialLine(c, locale)
+        // 沒有證號與日期就照原本只放 logo（與 mockup 相同）；有才包一層 figure 加說明。
+        // 樣式就地寫：site.css 是 mockup 的原檔，mockup 沒有這個元素
+        return line ? (
+          <figure key={c.id} style={{ margin: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            {logo}
+            <figcaption style={{ fontSize: 12, lineHeight: 1.4, opacity: 0.75, textAlign: 'center', maxWidth: 200 }}>
+              <b style={{ display: 'block' }}>{c.name}</b>
+              {line}
+            </figcaption>
+          </figure>
+        ) : (
+          <Fragment key={c.id}>{logo}</Fragment>
+        )
+      })}
     </div>
   )
 }

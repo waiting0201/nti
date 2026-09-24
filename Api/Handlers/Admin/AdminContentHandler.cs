@@ -217,6 +217,7 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
     public async Task<IActionResult> CreateAsync(HttpRequest req)
     {
         var (body, i18nNode) = await ReadBodyAsync(req);
+        BlankToNull(body);
 
         var entity = Deserialize<TEntity>(body) ?? throw AppException.BadRequest(
             ErrorCodes.ValidationRequired, "缺少內容。");
@@ -430,11 +431,33 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
     {
         converted = null;
 
-        if (value is null || value.GetValueKind() == System.Text.Json.JsonValueKind.Null)
+        if (value is null || value.GetValueKind() == System.Text.Json.JsonValueKind.Null || IsBlankForNonString(value, property.ClrType))
             return property.IsNullable;
 
         converted = value.Deserialize(property.ClrType, JsonOptions);
         return true;
+    }
+
+    /// <summary>
+    /// 後台的日期／數字欄位留空時送的是 <c>""</c>，不是 null；直接反序列化成 <c>DateOnly?</c> 會炸。
+    /// 非字串欄位收到空白字串一律當 null（字串欄位的 <c>""</c> 照原樣存）。
+    /// </summary>
+    private static bool IsBlankForNonString(JsonNode value, Type clrType) =>
+        clrType != typeof(string)
+        && value.GetValueKind() == System.Text.Json.JsonValueKind.String
+        && string.IsNullOrWhiteSpace(value.GetValue<string>());
+
+    /// <summary>新增走整筆 <c>Deserialize</c>，不經過 <see cref="TryConvertJson"/>，所以先把空白字串換成 null。</summary>
+    private void BlankToNull(JsonObject body)
+    {
+        var type = db.Model.FindEntityType(typeof(TEntity))!;
+        foreach (var (key, value) in body.ToList())
+        {
+            var property = type.GetProperties()
+                .FirstOrDefault(p => string.Equals(p.Name, key, StringComparison.OrdinalIgnoreCase));
+            if (property is not null && value is not null && IsBlankForNonString(value, property.ClrType))
+                body[key] = null;
+        }
     }
 
     private static bool IsAuditColumn(string name) => name is
