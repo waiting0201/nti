@@ -175,7 +175,7 @@ AZ_STORAGE_ACCOUNT=stntiprod tools/upload-assets.sh
 **下列為當初的建立指令，保留供重建或開 staging 用。**
 
 ```bash
-RG=NTIUS; LOC=westus2; APP=func-nti-prod; SQLSRV=sql-nti-prod
+RG=NTIUS; LOC=westus2; APP=func-nti-prod; SQLSRV=nti-sql-prod
 
 # ── Azure SQL：collation 必須與本機一致，之後才比對得了 schema ──────────
 az sql server create -g $RG -n $SQLSRV -l $LOC \
