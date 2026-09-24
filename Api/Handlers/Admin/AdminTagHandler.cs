@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +15,8 @@ namespace Nti.Api.Handlers.Admin;
 /// 編輯要先建標籤才能掛到消息上，前台則只列有內容的那些。
 /// </para>
 /// </summary>
-public sealed partial class AdminTagHandler(AppDbContext db)
+public sealed class AdminTagHandler(AppDbContext db)
 {
-    /// <summary>Slug 值域：ASCII 小寫、數字與連字號（客戶 2026-09-08 SEO 簡報的網址規則）。</summary>
-    [GeneratedRegex("^[a-z0-9]+(?:-[a-z0-9]+)*$")]
-    private static partial Regex SlugPattern { get; }
-
     public async Task<IActionResult> GetListAsync(HttpRequest req)
     {
         var keyword = QueryValues.Text(req, "keyword");
@@ -92,8 +87,8 @@ public sealed partial class AdminTagHandler(AppDbContext db)
         var dto = await req.ReadFromJsonAsync<TagUpsertDto>()
             ?? throw AppException.BadRequest(ErrorCodes.ValidationRequired, "缺少內容。");
 
-        var slug = Normalize(dto.Slug);
-        Validate(slug);
+        var slug = Slugs.Normalize(dto.Slug);
+        Slugs.Validate(slug);
 
         if (await db.Tag.AnyAsync(t => !t.IsDeleted && t.Slug == slug))
             throw AppException.Conflict(ErrorCodes.ConflictDuplicate, $"標籤 {slug} 已存在。");
@@ -128,8 +123,8 @@ public sealed partial class AdminTagHandler(AppDbContext db)
         var dto = await req.ReadFromJsonAsync<TagUpsertDto>()
             ?? throw AppException.BadRequest(ErrorCodes.ValidationRequired, "缺少內容。");
 
-        var slug = Normalize(dto.Slug);
-        Validate(slug);
+        var slug = Slugs.Normalize(dto.Slug);
+        Slugs.Validate(slug);
 
         // 改 slug 等於改前台網址（/{lang}/news/tag/{slug}）。舊網址不自動轉址——
         // 這裡沒辦法判斷舊的那個有沒有被外部連結引用，硬塞一筆 301 反而會在
@@ -203,20 +198,6 @@ public sealed partial class AdminTagHandler(AppDbContext db)
     }
 
     /// <summary>大小寫與前後空白一律正規化，避免同一個標籤靠大小寫混進兩筆。</summary>
-    private static string Normalize(string? slug) => (slug ?? string.Empty).Trim().ToLowerInvariant();
-
-    private static void Validate(string slug)
-    {
-        if (string.IsNullOrWhiteSpace(slug))
-            throw AppException.BadRequest(ErrorCodes.ValidationRequired, "slug 為必填。");
-
-        if (slug.Length > 160)
-            throw AppException.BadRequest(ErrorCodes.ValidationFormat, "slug 不可超過 160 字元。");
-
-        if (!SlugPattern.IsMatch(slug))
-            throw AppException.BadRequest(ErrorCodes.ValidationFormat,
-                "slug 僅能使用小寫英數與連字號（例：green-printing）。");
-    }
 
     private sealed class TagUpsertDto
     {

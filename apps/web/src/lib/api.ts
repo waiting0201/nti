@@ -269,6 +269,8 @@ export const getSolutionByCode = cache(async (locale: Locale, code: string) => {
 export const getProjects       = (l: Locale) => fetchApi<Project[]>(`/projects${q(l)}`)
 export const getNews           = (l: Locale) => fetchApi<NewsCard[]>(`/news${q(l)}`)
 export const getNewsItem       = (l: Locale, slug: string) => fetchApi<NewsDetail>(`/news/${slug}${q(l)}`)
+/** 已上架消息改過 slug 時，舊 slug 的新網址（後台自動建的 301）；沒搬過回 null */
+export const getNewsMoved      = (l: Locale, slug: string) => fetchApi<{ toPath: string }>(`/news/${slug}/moved${q(l)}`)
 
 // ── 標籤（單元 25）──────────────────────────────────────────────────────────
 // 後端只回「有已上架消息」的標籤，所以清單與封存頁都不會出現空標籤（見 TagReadService）

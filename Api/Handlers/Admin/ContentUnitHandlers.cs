@@ -55,6 +55,45 @@ public sealed class AdminNewsHandler(AppDbContext db) : AdminContentHandler<News
         await Db.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 已上架的消息改 slug：自動在 <c>Redirect</c> 補一筆舊網址 → 新網址的 301，
+    /// 前台的 <c>/news/{slug}</c> 找不到文章時會來查這張表（見 NewsHandler.GetMovedAsync）。
+    /// <para>
+    /// 草稿不建：沒上架過的網址不會有人連過來，建了只是在轉址表裡留垃圾。
+    /// </para>
+    /// </summary>
+    protected override async Task OnSlugChangedAsync(int id, string lang, string oldSlug, string newSlug)
+    {
+        var news = await Db.News.FindAsync(id);
+        if (news is not { IsPublished: true }) return;
+
+        var from = $"/{lang}/news/{oldSlug}";
+        var to   = $"/{lang}/news/{newSlug}";
+
+        // 改回以前用過的 slug：先前建的「這個網址 → 別處」會變成把現行網址轉走，停用它
+        foreach (var stale in await Db.Redirect.Where(r => r.FromPath == to).ToListAsync())
+            stale.IsActive = false;
+
+        // 改第二次以上：原本指向舊網址的轉址直接改指新網址，不要讓使用者多跳一次
+        // （上一步停用的那筆除外：它改指過去就成了自己轉自己）
+        foreach (var chained in await Db.Redirect.Where(r => r.ToPath == from && r.FromPath != to).ToListAsync())
+            chained.ToPath = to;
+
+        // FromPath 的唯一索引不分軟刪，所以查的時候也不能濾 IsDeleted
+        var existing = await Db.Redirect.FirstOrDefaultAsync(r => r.FromPath == from);
+        if (existing is null)
+        {
+            Db.Redirect.Add(new Redirect { FromPath = from, ToPath = to, StatusCode = 301 });
+        }
+        else
+        {
+            existing.ToPath     = to;
+            existing.StatusCode = 301;
+            existing.IsActive   = true;
+            existing.IsDeleted  = false;
+        }
+    }
+
     /// <summary>編輯畫面要知道這篇目前掛了哪些標籤，才能把晶片勾起來。</summary>
     protected override async Task DecorateAsync(int id, Dictionary<string, object?> row)
     {

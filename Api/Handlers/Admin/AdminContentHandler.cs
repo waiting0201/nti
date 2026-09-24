@@ -461,17 +461,18 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
                 : await db.Set<TI18n>().FirstOrDefaultAsync(
                     i => EF.Property<int>(i, fk) == ownerId && i.Lang == lang);
 
+            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TI18n> entry;
             if (existing is null)
             {
                 var created = langBody.Deserialize<TI18n>(JsonOptions) ?? new TI18n();
                 created.Lang = lang;
 
-                var entry = db.Set<TI18n>().Add(created);
+                entry = db.Set<TI18n>().Add(created);
                 entry.Property(fk).CurrentValue = ownerId;
             }
             else
             {
-                var entry = db.Entry(existing);
+                entry = db.Entry(existing);
                 foreach (var (key, value) in langBody)
                 {
                     var property = entry.Metadata.GetProperties()
@@ -480,11 +481,43 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
                     if (property is null || property.IsPrimaryKey()) continue;
 
                     if (TryConvertJson(value, property, out var converted))
-                entry.Property(property.Name).CurrentValue = converted;
+                        entry.Property(property.Name).CurrentValue = converted;
                 }
             }
+
+            await CheckSlugAsync(ownerId, lang, entry);
         }
 
         await db.SaveChangesAsync();
     }
+
+    /// <summary>
+    /// 有 <c>Slug</c> 欄位的 i18n（消息、方案）：新建或改了 slug 時統一正規化並檢查值域，
+    /// 改動時再交給 <see cref="OnSlugChangedAsync"/>。
+    /// <para>
+    /// 沒改 slug 的存檔不檢查，免得既有資料裡有一筆不合規的 slug 就讓整篇再也存不了。
+    /// </para>
+    /// </summary>
+    private async Task CheckSlugAsync(int ownerId, string lang, Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TI18n> entry)
+    {
+        if (entry.Metadata.FindProperty("Slug") is null) return;
+
+        var prop    = entry.Property("Slug");
+        var isNew   = entry.State == EntityState.Added;
+        var oldSlug = isNew ? null : prop.OriginalValue as string;
+        var slug    = Slugs.Normalize(prop.CurrentValue as string);
+
+        if (!isNew && slug == oldSlug) return;
+
+        Slugs.Validate(slug);
+        prop.CurrentValue = slug;
+
+        if (oldSlug is not null) await OnSlugChangedAsync(ownerId, lang, oldSlug, slug);
+    }
+
+    /// <summary>
+    /// 既有內容的 slug 改了（已正規化、已通過檢查）。在 i18n 存檔的同一個交易內呼叫。
+    /// 目前只有 04 news 用它建 301——只有消息的 slug 會出現在前台網址上。
+    /// </summary>
+    protected virtual Task OnSlugChangedAsync(int id, string lang, string oldSlug, string newSlug) => Task.CompletedTask;
 }

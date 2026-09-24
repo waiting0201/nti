@@ -11,6 +11,7 @@ public interface INewsReadService
     Task<PagedResult<NewsListDto>> GetPagedAsync(string lang, int? categoryId, Paging paging, string? tagSlug = null);
     Task<IEnumerable<NewsListDto>> GetFeaturedAsync(string lang, int take);
     Task<NewsDetailDto?> GetBySlugAsync(string lang, string slug);
+    Task<string?> GetMovedToAsync(string lang, string slug);
 }
 
 /// <summary>最新消息（後台單元 04）。</summary>
@@ -112,6 +113,16 @@ public sealed class NewsReadService(IDbConnection db) : INewsReadService
         var tags     = await grid.ReadAsync<TagDto>();
         return row.ToDto(hreflang, [.. tags]);
     }
+
+    /// <summary>
+    /// 舊 slug 的新網址。後台改了已上架消息的 slug 時會在 <c>Redirect</c> 建一筆
+    /// （AdminNewsHandler.OnSlugChangedAsync），這裡只查 <c>/{lang}/news/{slug}</c> 這一條。
+    /// </summary>
+    public async Task<string?> GetMovedToAsync(string lang, string slug) =>
+        await db.QuerySingleOrDefaultAsync<string>("""
+            SELECT ToPath FROM Redirect
+            WHERE FromPath = @From AND IsActive = 1 AND IsDeleted = 0;
+            """, new { From = $"/{lang}/news/{slug.ToLowerInvariant()}" });
 
     private sealed class NewsDetailRow
     {

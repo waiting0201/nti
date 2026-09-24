@@ -1,4 +1,5 @@
 import type { Unit } from '@/lib/types'
+import { SLUG_PATTERN } from '@/lib/slug'
 import { HINT } from './content'
 
 const statusColumns = [
@@ -250,7 +251,7 @@ export const tag: Unit = {
   sortable: true,
   fields: [
     { key: 'slug', label: '網址代稱 Slug', type: 'text', required: true, side: 'neutral',
-      placeholder: 'green-printing', hint: '小寫英數與連字號；中英共用同一個，改動等於改前台網址' },
+      placeholder: 'green-printing', hint: '小寫英數與連字號；中英共用同一個，改動等於改前台網址', pattern: SLUG_PATTERN },
     { key: 'name', label: '標籤名稱', type: 'text', i18n: true, required: true, max: 80, side: 'locale' },
     { key: 'isActive', label: '啟用', type: 'switch', side: 'neutral', hint: '關閉 → 前台的標籤頁與標籤列都不顯示' },
     { key: 'usageCount', label: '已掛消息數', type: 'readonly', side: 'neutral' },

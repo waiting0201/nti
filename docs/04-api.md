@@ -79,6 +79,9 @@
 - `GET /news`、`GET /news/{slug}`、`GET /green-vlog`
   - `GET /news` 另吃 `?tag={slug}`（標籤封存頁用；slug 不分語系，中英同一個值）
   - `GET /news/{slug}` 的回應含 `tags: TagDto[]`
+  - `GET /news/{slug}/moved` → `{ toPath }`：舊 slug 的新網址，沒搬過回 404。已上架消息在後台改 slug 時
+    自動寫一筆 `Redirect`（`/{lang}/news/{舊}` → `/{lang}/news/{新}`），前台詳細頁找不到文章時才查
+- 消息／方案／標籤的 slug 值域一律 `^[a-z0-9]+(?:-[a-z0-9]+)*$`（`Api/Common/Slugs.cs`），不合規回 `VALIDATION_FORMAT`
 - `GET /tags`、`GET /tags/{slug}` — 消息標籤（單元 25）。**只回有已上架消息的標籤**；
   `NewsCount = 0` 的標籤在 `/tags/{slug}` 回 404，避免產出空的封存頁
 - `GET /faq`、`GET /industry-trends`、`GET /careers`

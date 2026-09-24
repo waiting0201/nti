@@ -53,6 +53,8 @@ export type Field = {
   /** 放在編輯頁哪一側：語系中性欄位在左，文字欄位在右（docs §5.2） */
   side?: 'neutral' | 'locale'
   placeholder?: string
+  /** 格式檢查：值不符時在欄位下方即時提示（後端另有同一條檢查，這裡只是讓錯誤早點浮現） */
+  pattern?: { re: RegExp; message: string }
 }
 
 export type ListColumn = {

@@ -1,13 +1,37 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect, redirect } from 'next/navigation'
 import { A } from '@/components/A'
 import { JsonLd } from '@/components/JsonLd'
-import { cmsMedia, getNewsItem, hasApi } from '@/lib/api'
-import { siteUrl, withLocale, type Locale } from '@/lib/i18n'
+import { cmsMedia, getNewsItem, getNewsMoved, hasApi } from '@/lib/api'
+import { locales, siteUrl, withLocale, type Locale } from '@/lib/i18n'
 import { breadcrumbList, newsArticle } from '@/lib/jsonld'
 import { tr } from '@/lib/t'
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> }
+
+/**
+ * 這個語系找不到這個 slug 時，依序試兩種「其實有、只是不在這裡」：
+ *
+ * 1. **改過 slug**：後台改已上架消息的 slug 會自動建一筆 301，舊網址照樣連得到。
+ * 2. **從另一個語系切過來**：header 的語系切換只換網址前綴（它不知道這一頁是哪篇），
+ *    但中英 slug 可以不同（種子資料就是 `xxx-zh`／`xxx`）。用另一個語系查到同一篇，
+ *    就轉到它在這個語系的 slug；這篇沒有這個語系的話，退回這個語系的消息列表。
+ *
+ * 兩個都不是才 404。只有找不到文章時才會多打這幾支，正常瀏覽不受影響。
+ */
+async function resolveMissing(locale: Locale, slug: string): Promise<never> {
+  const moved = await getNewsMoved(locale, slug)
+  if (moved) permanentRedirect(moved.toPath)
+
+  for (const other of locales.filter((l) => l !== locale)) {
+    const item = await getNewsItem(other, slug)
+    if (!item) continue
+    const mine = item.seo.hreflang[locale]
+    redirect(mine ? `/${locale}/news/${mine}` : `/${locale}/news`)
+  }
+
+  notFound()
+}
 
 /**
  * CMS 的消息詳細頁。
@@ -64,8 +88,8 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
 
   // 缺語系不 fallback（docs/08 §2.5）：該語系沒有這篇就是 404，不會退回另一個語系
-  const item = hasApi ? await getNewsItem(locale, slug) : null
-  if (!item) notFound()
+  if (!hasApi) notFound()
+  const item = (await getNewsItem(locale, slug)) ?? (await resolveMissing(locale, slug))
 
   // 這條路由是 CMS 專用的（mockup 沒有這一頁），不受版面驗收閘的節點比對限制，
   // 所以結構化資料就近放在頁面裡，資料與畫面同一份來源。

@@ -34,4 +34,17 @@ public sealed class NewsHandler(INewsReadService reads)
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(dto));
     }
+
+    /// <summary>
+    /// <c>GET /news/{slug}/moved</c>：舊 slug 搬到哪裡去了。前台的消息詳細頁找不到文章時才打，
+    /// 有就 301 過去，沒有就 404——不是每個請求都查，所以不需要放進 middleware。
+    /// </summary>
+    public async Task<IActionResult> GetMovedAsync(HttpRequest req, string slug)
+    {
+        var lang = LangResolver.Resolve(req);
+        var to   = await reads.GetMovedToAsync(lang, slug) ?? throw AppException.NotFound("Redirect");
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok(new { toPath = to }));
+    }
 }

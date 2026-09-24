@@ -28,6 +28,7 @@ public sealed partial class AppRouter
             ("GET",  ["categories"]) or
             ("GET",  ["news"]) or
             ("GET",  ["news", _]) or
+            ("GET",  ["news", _, "moved"]) or
             ("GET",  ["tags"]) or
             ("GET",  ["tags", _]) or
             ("GET",  ["green-vlog"]) or
@@ -78,6 +79,7 @@ public sealed partial class AppRouter
             ("GET",  ["categories"])              => await categories.GetListAsync(req),
             ("GET",  ["news"])                    => await news.GetListAsync(req),
             ("GET",  ["news", var slug])          => await news.GetBySlugAsync(req, slug),
+            ("GET",  ["news", var slug, "moved"]) => await news.GetMovedAsync(req, slug),
             // 標籤封存頁：標籤本身走這裡，該標籤的消息走 /news?tag={slug}
             ("GET",  ["tags"])                    => await tags.GetListAsync(req),
             ("GET",  ["tags", var tagSlug])       => await tags.GetBySlugAsync(req, tagSlug),

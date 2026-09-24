@@ -378,6 +378,7 @@ export function FieldInput({
       {body()}
       {field.hint && field.type !== 'image' && field.type !== 'file' && <Hint text={field.hint} />}
       {over && <div className="err">超過建議長度 {field.max} 字，搜尋結果可能被截斷。</div>}
+      {field.pattern && str && !field.pattern.re.test(str) && <div className="err">{field.pattern.message}</div>}
       {error && <div className="err">{error}</div>}
     </div>
   )
