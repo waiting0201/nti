@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { unstable_rethrow } from 'next/navigation'
 
 import type { Locale } from './i18n'
@@ -85,10 +86,16 @@ export type PageSeo = {
   isIndexable: boolean
   bodyHtml: string | null
   seo: Seo
+  /** 頁面文字覆寫（後台單元 15「頁面文字」）：英文原文 → 該語系的字。只有開放的頁面會有內容 */
+  texts: Record<string, string>
 }
 
-export const getPage = (locale: Locale, pageKey: string) =>
-  fetchApi<PageSeo>(`/pages/${pageKey}${q(locale)}`)
+/**
+ * `cache()`：同一個請求裡 `generateMetadata`（SEO）與頁面本體（文字覆寫、內文）
+ * 都要這一頁的資料，包起來只打一次 API。它只在單一請求內有效，不是跨請求的快取。
+ */
+export const getPage = cache((locale: Locale, pageKey: string) =>
+  fetchApi<PageSeo>(`/pages/${pageKey}${q(locale)}`))
 
 // ── 內容 ──────────────────────────────────────────────────────────────────
 export type HomeContent = {
@@ -251,12 +258,14 @@ export const getSolution       = (l: Locale, slug: string) => fetchApi<SolutionD
  * 前台的 `/products-{code}` 四頁是照代號來的，但 API 的詳細頁吃 slug——
  * slug 是可翻譯欄位（中英可不同），代號才是穩定的。先查清單再取詳細，
  * 所以這四頁每次渲染會打兩支端點——沒有快取之後那是兩趟真的網路往返。
+ *
+ * `cache()`：`generateMetadata`（SEO）與頁面本體都要它，同一個請求內只打一輪。
  */
-export async function getSolutionByCode(locale: Locale, code: string) {
+export const getSolutionByCode = cache(async (locale: Locale, code: string) => {
   const list = await getSolutions(locale)
   const match = list?.find((s) => s.code === code)
   return match ? await getSolution(locale, match.slug) : null
-}
+})
 export const getProjects       = (l: Locale) => fetchApi<Project[]>(`/projects${q(l)}`)
 export const getNews           = (l: Locale) => fetchApi<NewsCard[]>(`/news${q(l)}`)
 export const getNewsItem       = (l: Locale, slug: string) => fetchApi<NewsDetail>(`/news/${slug}${q(l)}`)

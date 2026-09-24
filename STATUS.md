@@ -199,6 +199,25 @@ mockup 內容（現況部署），設了就改吃 CMS。
 ⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
 清單在該腳本的 `HAND_MAINTAINED`。
 
+### ✅ About Us 文字可從後台改＋四個「後台有、前台沒接」的欄位（2026-09-24）
+
+客戶問「網站很多區的文字能不能從後台改」。盤點結果：大部分不行（docs/09 決議 3），
+另有四處是後台能改、API 也回了，前台卻沒顯示。本次處理：
+
+| 項目 | 現在 |
+|---|---|
+| **About Us 五頁的文字**（`/differences`、`/about-difference`、`/about-benefits`、`/about-certifications`、`/facility-tour`） | 後台 15「頁面設定與 SEO」→ 該頁下方的「頁面文字」卡，逐段改中英文（177 段，含圖片 alt），空著＝沿用原文。新表 `PageText`（EF migration `PageText`／`db/migrations/0010`）。機制與限制見 docs/09 §7.1 |
+| `privacy-legal` 內文 | 後台「頁面內容」有填就顯示，沒填是 mockup 佔位稿 |
+| 方案 H1／導言／SEO | `/products-*` 四頁（含原本完全沒接的 `products-uv`，品項卡也一併接上）；首頁方案卡的標題與短述。新的 `db/content/230_solution_copy.sql` 補成與 mockup 逐字相同的值（只補空的／仍是提案值的欄位）。⚠ **正式庫要在部署新版前台之前跑一次**，否則四個方案頁的 H1 與 title 會變成早期的提案值 |
+| `/differences`、`/green-advantage` 的 SEO | 對應到 `about-hub`／`sustainability-hub`（docs/08 §6.4 早就這樣定，前台漏接） |
+| 首頁 `featuredNews` | **刻意不接**：mockup 首頁沒有消息區塊，要顯示得先有設計 |
+
+驗證：沒設 API 時 `verify:markup` 仍「全部 44 頁與 mockup 一致」；接上本機 API 後
+逐項改值確認 `/en`、`/zh` 都生效、清空後回到原文；非開放頁面 PUT 回 400、無 token 回 401。
+
+⚠ 其餘頁面（首頁 What We Do／Why NTI、green-*、facility 導言…）仍是寫死的。要開放，
+走同一套「頁面文字」即可，不必改 schema（三處要一起改，見 docs/09 §7.1）。
+
 ### ✅ SEO 基礎建設（2026-09-07）
 
 | 項目 | 做法 |

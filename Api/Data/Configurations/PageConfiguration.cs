@@ -43,6 +43,28 @@ public sealed class PageI18nConfiguration : IEntityTypeConfiguration<PageI18n>
     }
 }
 
+/// <summary>單元 15 page 的「頁面文字」覆寫（docs/08 §4.11）。</summary>
+public sealed class PageTextConfiguration : IEntityTypeConfiguration<PageText>
+{
+    public void Configure(EntityTypeBuilder<PageText> b)
+    {
+        b.ToTable("PageText", t => t.HasCheckConstraint("CK_PageText_Lang", "[Lang] IN ('zh','en')"));
+        b.Property(x => x.Lang).Ascii(5);
+        b.Property(x => x.SourceHash).IsUnicode(false).IsFixedLength().HasMaxLength(64);
+        b.Audit();
+
+        b.HasOne<Page>()
+            .WithMany()
+            .HasForeignKey(x => x.PageId)
+            .HasConstraintName("FK_PageText_Page")
+            .OnDelete(DeleteBehavior.Cascade);
+
+        b.HasIndex(x => new { x.PageId, x.Lang, x.SourceHash })
+            .IsUnique()
+            .HasDatabaseName("UX_PageText_Page_Lang_Hash");
+    }
+}
+
 /// <summary>單元 16 redirect（docs/08 §4.11）。</summary>
 public sealed class RedirectConfiguration : IEntityTypeConfiguration<Redirect>
 {

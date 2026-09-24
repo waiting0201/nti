@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
-import { SolutionItems } from '@/components/cms'
+import { SolutionIntro, SolutionItems } from '@/components/cms'
 import { getSolutionByCode } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -10,9 +10,11 @@ type Props = { params: Promise<{ locale: Locale }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
+  // SEO 來自方案本身（SolutionI18n，docs/08 §6.4），不是固定頁；後台沒填就用 mockup 的值
+  const seo = (await getSolutionByCode(locale, 'boxes'))?.seo
   return pageMetadata(locale, "/products-boxes", {
-    title: "Custom Color Box Packaging — NTI Printing",
-    description: "Custom color box packaging from NTI: tuck-top, reinforced-bottom, rigid and specialty structures, printed and finished to retail standard in Taiwan.",
+    title: seo?.seoTitle || "Custom Color Box Packaging — NTI Printing",
+    description: seo?.seoDescription || "Custom color box packaging from NTI: tuck-top, reinforced-bottom, rigid and specialty structures, printed and finished to retail standard in Taiwan.",
   })
 }
 
@@ -24,9 +26,11 @@ export default async function Page({ params }: Props) {
     <T locale={locale}>
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/solutions")}>Solutions</A><span>&rsaquo;</span><b>Color Box Packaging</b></div>
-        <h1 className="sec-title reveal">Custom Color Box Packaging</h1>
+        <h1 className="sec-title reveal">{solution?.h1 || "Custom Color Box Packaging"}</h1>
         <div className="sec-sub reveal">Package material printing with structure design, inside and out.</div>
+        {solution?.introHtml ? <SolutionIntro html={solution.introHtml} /> : (<>
         <p className="prose wide reveal mt-s">Explore NTI&rsquo;s full range of custom color box packaging and color box printing options below:</p>
+        </>)}
         <nav className="pr-tabs reveal" aria-label="Product categories">
           <A href={l("/products-boxes")} className="active">Color Box Packaging</A>{' '}
           <A href={l("/products-cardboard")}>Packaging Paperboard</A>{' '}

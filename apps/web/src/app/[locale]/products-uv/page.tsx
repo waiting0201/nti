@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
+import { SolutionIntro, SolutionItems } from '@/components/cms'
+import { getSolutionByCode } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -8,28 +10,36 @@ type Props = { params: Promise<{ locale: Locale }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
+  // SEO 來自方案本身（SolutionI18n，docs/08 §6.4），不是固定頁；後台沒填就用 mockup 的值
+  const seo = (await getSolutionByCode(locale, 'uv'))?.seo
   return pageMetadata(locale, "/products-uv", {
-    title: "UV Printing — NTI Printing",
-    description: "UV printing on plastics, metal foils and coated paperboards. Instant curing delivers vibrant, durable graphics on non-absorbent materials, faster.",
+    title: seo?.seoTitle || "UV Printing — NTI Printing",
+    description: seo?.seoDescription || "UV printing on plastics, metal foils and coated paperboards. Instant curing delivers vibrant, durable graphics on non-absorbent materials, faster.",
   })
 }
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
+  const solution = await getSolutionByCode(locale, 'uv')
   const l = withLocale(locale)
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/solutions")}>Solutions</A><span>&rsaquo;</span><b>UV Printing</b></div>
-        <h1 className="sec-title reveal">UV Printing</h1>
+        <h1 className="sec-title reveal">{solution?.h1 || "UV Printing"}</h1>
         <div className="sec-sub reveal">Print on the materials ordinary ink can&rsquo;t touch.</div>
+        {solution?.introHtml ? <SolutionIntro html={solution.introHtml} /> : (<>
         <p className="prose wide reveal mt-s">UV printing delivers vibrant, durable graphics on plastics, metal foils, coated paperboards, and other non-absorbent materials. Its instant curing process speeds up production, improves print quality, and supports premium finishes, specialty coatings, and anti-counterfeiting applications &mdash; one reason NTI Printing is a trusted source for UV coating printing in Taiwan.</p>
+        </>)}
         <nav className="pr-tabs reveal" aria-label="Product categories">
           <A href={l("/products-boxes")}>Color Box Packaging</A>{' '}
           <A href={l("/products-cardboard")}>Packaging Paperboard</A>{' '}
           <A href={l("/products-uv")} className="active">UV Printing</A>{' '}
           <A href={l("/products-other")}>Other Printing</A>
         </nav>
+        {solution?.items.length ? (
+          <SolutionItems items={solution.items} className="pr-grid two" />
+        ) : (
         <div className="pr-grid two">
           <article className="pr-card reveal">
             <div className="pr-img"><img src={mediaUrl("/assets/prod-uv-print.jpg")} alt="UV Printing" loading="lazy" /></div>
@@ -48,6 +58,7 @@ export default async function Page({ params }: Props) {
             </div>
           </article>
         </div>
+        )}
         <div className="faq-cta reveal mt-l">
           <div><h3>Have a spec in mind?</h3><p>Send the brief &mdash; a packaging engineer replies within one business day.</p></div>
           <A href={l("/get-a-quote")} className="btn btn-solid">Get a quote</A>

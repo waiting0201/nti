@@ -67,6 +67,7 @@ public class AppDbContext(
     // ── 頁面／SEO（§4.11）───────────────────────────────────────────────────
     public DbSet<Page>     Page     => Set<Page>();
     public DbSet<PageI18n> PageI18n => Set<PageI18n>();
+    public DbSet<PageText> PageText => Set<PageText>();
     public DbSet<Redirect> Redirect => Set<Redirect>();
 
     // ── 表單（§4.12）────────────────────────────────────────────────────────

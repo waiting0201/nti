@@ -10,6 +10,7 @@ import { Badge, Modal, Notice, toast, useUnsavedGuard } from '@/components/ui'
 import { FieldInput } from '@/components/fields'
 import { blockingReasons, isComplete, missingIn, missingNeutral } from '@/lib/completeness'
 import { RecordView } from './RecordView'
+import { hasPageTexts, PageTextsCard } from './PageTexts'
 import { assetUrl } from '@/lib/asset'
 import { countPending, resolvePendingUploads } from '@/lib/pending-uploads'
 
@@ -254,6 +255,11 @@ export function EditPage() {
 
       {unit.child && !isNew && <ChildList unit={unit} rows={children} />}
 
+      {/* 15 page：開放的頁面另有「頁面文字」（逐段改中英文，獨立存檔） */}
+      {unit.code === 'page' && !isNew && hasPageTexts(pageKeyOf(row)) && (
+        <PageTextsCard pageKey={pageKeyOf(row)} canEdit={canEdit} />
+      )}
+
       <div className="card">
         <div className="card-b btn-row">
           <button className="btn" onClick={() => nav(`/u/${unit.code}`)}>
@@ -307,6 +313,9 @@ export function EditPage() {
     </>
   )
 }
+
+/** page 單元的列：接 API 時 id 就是 pageKey，mock 的 id 是流水號、pageKey 另存 */
+const pageKeyOf = (row: Row) => String(row.pageKey ?? row.id)
 
 /** 上傳失敗。附檔還在暫存區、什麼都沒進 DB，所以一定要講「尚未儲存」。 */
 function uploadFailed(err: unknown): string {

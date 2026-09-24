@@ -35,3 +35,27 @@ public sealed class PageI18n : II18n
     public string? OgTitle        { get; set; }
     public string? OgDescription  { get; set; }
 }
+
+/// <summary>
+/// 固定頁的文字覆寫（後台單元 15 的「頁面文字」）。
+/// <para>
+/// 版面與英文原文的權威仍是 mockup：這張表只存「某頁某段原文 → 後台改過的字」，
+/// 以原文（空白正規化後）的 SHA-256 為鍵；沒有列就顯示原文（中文則是 zh.ts 的譯文）。
+/// 只開放 <see cref="Common.PageTextPages.All"/> 裡的頁面。
+/// </para>
+/// </summary>
+public sealed class PageText : IAuditable
+{
+    public int    Id         { get; set; }
+    public int    PageId     { get; set; }
+    public string Lang       { get; set; } = null!;
+    public string SourceHash { get; set; } = null!;  // SHA-256(norm(原文))，小寫 hex
+    public string SourceText { get; set; } = null!;  // 原文本身：給人看、也讓前台組 map
+    public string Value      { get; set; } = null!;
+
+    public DateTime  CreatedAt { get; set; }
+    public int?      CreatedBy { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public int?      UpdatedBy { get; set; }
+    public bool      IsDeleted { get; set; }
+}

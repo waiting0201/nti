@@ -270,7 +270,9 @@ const HAND_MAINTAINED = new Set([
   'contact',                // 公司資訊（網站設定 21，非內容單元）
   'supplier-area',          // 公告／規範／下載
   'facility-pre-press', 'facility-eco-printing', 'facility-post-press', 'facility-quality',
-  'products-boxes', 'products-cardboard', 'products-other',
+  'products-boxes', 'products-cardboard', 'products-uv', 'products-other',   // 品項卡＋h1／副標／介紹
+  'privacy-legal',          // 後台內文（HasRichBody）
+  'differences', 'about-difference', 'about-benefits', 'facility-tour',   // 頁面文字覆寫（about-certifications 已在上面）
 ])
 
 const files = readdirSync(mockupDir).filter((f) => f.endsWith('.html')).sort()

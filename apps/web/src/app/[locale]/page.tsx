@@ -25,6 +25,8 @@ export default async function Page({ params }: Props) {
   const [home, settings] = await Promise.all([getHome(locale), getSettingMap(locale)])
   const l = withLocale(locale)
   const gallery = settings?.['home.gallery_image']
+  // 「印刷解決方案」四張卡：標題與短述來自後台 02（name／summary），圖與副標照 mockup
+  const sol = (code: string) => home?.solutions.find((s) => s.code === code)
   return (
     <T locale={locale}>
 
@@ -89,30 +91,30 @@ export default async function Page({ params }: Props) {
           <div className="prod-grid">
             <article className="pcard reveal" data-d="1">
               <div className="ph"><img src={mediaUrl("/assets/hp-prod-boxes.png")} alt="Paper box printing" /></div>
-              <h3>Color Box Packaging</h3>
+              <h3>{sol('boxes')?.name || "Color Box Packaging"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Customize package</div>
-              <p>Multiple box-types: besides folding box, we also provide customize box structure design.</p>
+              <p>{sol('boxes')?.summary || "Multiple box-types: besides folding box, we also provide customize box structure design."}</p>
               <A href={l("/products-boxes")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="2">
               <div className="ph"><img src={mediaUrl("/assets/hp-prod-cardboard.webp")} alt="Packaging paperboard printing" /></div>
-              <h3>Packaging Paperboard</h3>
+              <h3>{sol('cardboard')?.name || "Packaging Paperboard"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Various packaging paperboards</div>
-              <p>Hang tags, blister cards and backcards for retail walls.</p>
+              <p>{sol('cardboard')?.summary || "Hang tags, blister cards and backcards for retail walls."}</p>
               <A href={l("/products-cardboard")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="3">
               <div className="ph"><img src={mediaUrl("/assets/hp-prod-uv.webp")} alt="UV printing" /></div>
-              <h3>UV Printing</h3>
+              <h3>{sol('uv')?.name || "UV Printing"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Special printing</div>
-              <p>Printing on special materials, special varnish, anti-counterfeiting and more.</p>
+              <p>{sol('uv')?.summary || "Printing on special materials, special varnish, anti-counterfeiting and more."}</p>
               <A href={l("/products-uv")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="3">
               <div className="ph"><img src={mediaUrl("/assets/hp-prod-other.webp")} alt="Other printing — hand bags, calendars, manuals" /></div>
-              <h3>Other Printing</h3>
+              <h3>{sol('other')?.name || "Other Printing"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Beyond the box</div>
-              <p>Desk calendars, hand bags, red envelopes, mouse pads and manuals.</p>
+              <p>{sol('other')?.summary || "Desk calendars, hand bags, red envelopes, mouse pads and manuals."}</p>
               <A href={l("/products-other")} className="btn btn-out">More details &raquo;</A>
             </article>
           </div>

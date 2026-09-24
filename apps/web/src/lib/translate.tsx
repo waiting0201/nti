@@ -5,8 +5,12 @@ import type { Locale } from './i18n'
  * 靜態文字中文化的共用機制（不含字典）。
  *
  * 版面與英文文案的權威來源仍是 `mockup/`（CLAUDE.md 的切版鐵律），所以這層
- * **不改頁面結構、也不改英文字面**：字典以英文原文為 key，查不到就原樣回傳，
- * `/en` 完全不經過替換。`verify:markup` 跑的是 `/en`，因此對驗收閘透明。
+ * **不改頁面結構**：字典以英文原文為 key，查不到就原樣回傳。
+ *
+ * 另有一層**後台的頁面文字覆寫**（`overrides`，2026-09-24）：開放的頁面把
+ * `GET /pages/{key}` 回的 `texts`（原文 → 該語系的字）傳進 `<T>`，查表順序是
+ * 「覆寫 → 字典 → 原文」，`/en` 也吃覆寫。沒有覆寫時 `/en` 完全不經過替換，
+ * `verify:markup` 跑的是 `/en` 而且沒有 API，因此對驗收閘透明。
  *
  * 字典分兩份是為了**不要把整本字典打進 client bundle**：
  *   - `lib/t`（伺服器）吃完整字典，給 44 頁與 footer／浮動鈕用
@@ -24,18 +28,22 @@ const SKIP_TAGS = new Set(['script', 'style', 'code', 'pre'])
 
 export type Dict = Record<string, string>
 
+/** 後台的頁面文字覆寫：正規化後的英文原文 → 該語系的字（見 `lib/api.ts` 的 `PageSeo.texts`） */
+export type Overrides = Record<string, string>
+
 export function createTranslator(dict: Dict) {
   /** 英文原文 → 該語系的字。前後空白是版面的一部分（行內標籤之間會渲染成空格），只換中間的字 */
-  function tr(locale: Locale, en: string): string {
-    if (locale !== 'zh') return en
-    const zh = dict[norm(en)]
-    if (!zh) return en
-    return /^\s*/.exec(en)![0] + zh + /\s*$/.exec(en)![0]
+  function tr(locale: Locale, en: string, overrides?: Overrides): string {
+    if (locale !== 'zh' && !overrides) return en
+    const key = norm(en)
+    const to = overrides?.[key] || (locale === 'zh' ? dict[key] : undefined)
+    if (!to) return en
+    return /^\s*/.exec(en)![0] + to + /\s*$/.exec(en)![0]
   }
 
-  function walk(node: ReactNode, locale: Locale): ReactNode {
-    if (typeof node === 'string') return tr(locale, node)
-    if (Array.isArray(node)) return Children.map(node, (n) => walk(n, locale))
+  function walk(node: ReactNode, locale: Locale, overrides?: Overrides): ReactNode {
+    if (typeof node === 'string') return tr(locale, node, overrides)
+    if (Array.isArray(node)) return Children.map(node, (n) => walk(n, locale, overrides))
     if (!isValidElement(node)) return node
 
     const el = node as React.ReactElement<Record<string, unknown>>
@@ -47,14 +55,14 @@ export function createTranslator(dict: Dict) {
     for (const a of ATTRS) {
       const v = props[a]
       if (typeof v === 'string') {
-        const t = tr(locale, v)
+        const t = tr(locale, v, overrides)
         if (t !== v) next[a] = t
       }
     }
 
     // CMS 的 rich text 已經是該語系的內容，不能再翻一次
     if (!props.dangerouslySetInnerHTML && props.children !== undefined) {
-      next.children = walk(props.children as ReactNode, locale)
+      next.children = walk(props.children as ReactNode, locale, overrides)
     }
 
     return Object.keys(next).length ? cloneElement(el, next) : el
@@ -66,9 +74,10 @@ export function createTranslator(dict: Dict) {
    * ⚠ 只看得到「已經展開的」element tree。子元件內部的 JSX（client component、
    * CMS 元件）它進不去，那些檔案要自己包一層 `<T>` 或改用 `tr()`。
    */
-  function T({ locale, children }: { locale: Locale; children: ReactNode }) {
-    if (locale !== 'zh') return <>{children}</>
-    return <>{walk(children, locale)}</>
+  function T({ locale, overrides, children }: { locale: Locale; overrides?: Overrides; children: ReactNode }) {
+    const o = overrides && Object.keys(overrides).length ? overrides : undefined
+    if (locale !== 'zh' && !o) return <>{children}</>
+    return <>{walk(children, locale, o)}</>
   }
 
   return { tr, T }

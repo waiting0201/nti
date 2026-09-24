@@ -15,6 +15,8 @@
 1. **後台以單元功能為主** — 一個前台內容區塊 = 一個後台單元，各自獨立的清單／編輯畫面。不做通用 page-builder、不做區塊拖拉組版。
 2. **不做 Media Library** — 沒有「媒體管理」選單。圖片／檔案只能從**所屬欄位**上傳，隨該筆資料建立與刪除；**每個上傳欄位旁必須顯示建議尺寸提示**（§3 為權威文字）。
 3. **固定文字區不做後台** — 品牌敘述型的長篇文案寫死在前端（清單見 §7），後台只保留這些頁的 SEO 欄位。
+   **2026-09-24 修訂**：About Us 五頁改為可在後台逐段改字（單元 15 的「頁面文字」，見 §7.1）。
+   仍不做 page-builder——版面、段落數、圖片照 mockup，只有「字」可以換。
 
 ---
 
@@ -267,6 +269,10 @@
 | 允許索引 | 開關 | | | 關閉 → `noindex` |
 | 頁面內容 | 富文本 | | ✓ | **僅 `HasRichBody = 1` 者顯示此欄位**：`privacy-legal`，以及預留的 `green-csr` |
 
+**頁面文字**（2026-09-24）：開放的頁面在編輯畫面下方多一張「頁面文字」卡，列出該頁每一段文字
+（標題、段落、清單項、按鈕字、圖片替代文字），依區塊分組，每段可分別填中文／English；**空著＝沿用目前前台的字**
+（提示文字就是現在顯示的內容）。與上方 SEO 表單分開存檔。細節與限制見 §7.1。
+
 ### 16 `redirect` 舊網址轉址
 舊網址（唯一、小寫）／轉到新網址／轉址方式（永久 301／暫時 302／永久・表單頁專用 308）／啟用／已轉址次數（唯讀）。支援 **CSV 匯入匯出**（舊站 46 頁 + 80 篇文章的對照表）。儲存時檢查轉址鏈與迴圈並擋下。
 
@@ -440,7 +446,6 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 |---|---|---|
 | 首頁 What We Do（4 格） | Structural Design／Pre-Press (CTP)／Printing／Finishing | 品牌簡報定案文案，屬品牌定位不隨檔期變動 |
 | 首頁 Why global brands choose NTI?（6 格） | Direct Delivery … One Trusted Partner | 同上 |
-| `about-difference` / `about-benefits` / `about-certifications` 敘述段落 | 品牌長文 | 品牌敘事，改動頻率以年計 |
 | `green-our-advantage` / `green-carbon` / `green-materials` / `green-esg` 敘述段落 | 綠色永續長文（含水處理數值等） | 同上；數據更動屬改版等級 |
 | `facility*` 五個子頁的導言與流程說明 | 製程敘述 | 同上（設備卡本身有後台，見單元 10） |
 | `solutions` / `projects` / `insights` hub 頁的導言與導覽卡 | 區塊標題與引導文 | 結構性文案，與版型綁定 |
@@ -448,7 +453,33 @@ Slug 由標題自動產生、可手改；重複時擋下。已上架內容改 sl
 | 各頁 banner 裝飾大圖 | 版型背景圖 | 屬視覺設計資產，非內容 |
 | 頁首選單、頁尾連結、浮動按鈕 | 站台結構 | 由 IA 決定，改動＝改架構 |
 
-> **擴充路徑**：若客戶日後要求自行維護上述任一段落，最小改動是在 `Page` 表把該頁 `HasRichBody` 設為 1，並將該區塊改讀 `PageI18n.BodyHtml` — 不需要改動 schema。
+> **擴充路徑**：若客戶日後要求自行維護上述任一段落，**首選是把該頁加進「頁面文字」**（§7.1，
+> 不改 schema、不動版面）。整頁改成自由排版的 rich text（`HasRichBody = 1` 並改讀 `PageI18n.BodyHtml`）
+> 只適合像隱私權聲明這種本來就是純文章的頁——套在有卡片、圖示格線的頁面上會失去版型。
+
+### 7.1 頁面文字覆寫（About Us 五頁，2026-09-24）
+
+客戶要求 About Us 的文字可自行修改。開放的頁面：`about-hub`（`/differences`）、`about-difference`、
+`about-benefits`、`about-certifications`、`facility-tour`。
+
+**機制**：前台的 `<T>`（`apps/web/src/lib/translate.tsx`）本來就逐一走過頁面上的文字節點，拿英文原文
+查中文字典；現在多一層「後台覆寫」，查表順序是 **覆寫 → 字典（zh.ts）→ 原文**。所以任何一段文字都能換，
+而頁面結構一個字元都不必改。覆寫存在 `PageText`（[08 §4.11](08-database.md)），以英文原文為鍵。
+
+**後台清單的來源**：`node apps/web/scripts/extract-page-texts.mjs` 從 mockup 抽出這幾頁的文字，產生
+`apps/admin/src/api/page-texts.generated.ts`。mockup 或 zh.ts 改了要重跑。
+
+**要開放更多頁**，三處要一致：`extract-page-texts.mjs` 的 `PAGES`、`Api/Common/Constants.cs` 的
+`PageTextPages`、以及前台那一頁改成 `<T locale={locale} overrides={page?.texts}>`（並列入
+`build-pages.mjs` 的 `HAND_MAINTAINED`）。
+
+**限制**（已知、刻意接受）：
+
+- **原文改了，覆寫就對不上。** 鍵是英文原文；日後在 mockup 改了某段英文並重跑 codegen，那段的覆寫就不再顯示。
+  後台會把這些列成「原文已變更」，讓人把內容搬到新段落再移除——與 `zh.ts` 同一個性質。
+- **同一段原文在同頁出現多次會一起改**（例如分頁標籤與區塊標題都是「The NTI Difference」），後台標示「×2」。
+- **CMS 區塊不在清單內**：`about-certifications` 的認證牆吃單元 08，改那裡。
+- header／footer／浮動鈕不在此範圍（頁面的 `<T>` 包不到它們）。
 
 ---
 

@@ -39,11 +39,15 @@ CMS 資料**完全不快取**（見〈存檔後多久才更新〉），所以改
 | `/news`、`/news/{slug}` | 消息列表與詳細頁（詳細頁是新增的動態路由） |
 | `/projects`、`/faq`、`/green-vlog`、`/industry-trends`、`/careers` | 各自的內容單元 |
 | `/about-certifications`、`/supplier-area` | 認證牆／公告、規範、下載 |
-| `/facility-*`（4 頁）、`/products-*`（3 頁） | 設備卡、方案品項卡 |
+| `/facility-*`（4 頁） | 設備卡 |
+| `/products-*`（4 頁） | 方案品項卡、H1、導言、SEO（單元 02；首頁方案卡的標題與短述也來自這裡） |
+| `/privacy-legal` | 後台「頁面內容」（`HasRichBody`）；沒填就是 mockup 的佔位稿 |
+| About Us 五頁（`/differences`、`/about-difference`、`/about-benefits`、`/about-certifications`、`/facility-tour`） | **頁面文字覆寫**（單元 15「頁面文字」，見下方〈頁面文字覆寫〉） |
 | `/contact`、footer、首頁形象圖帶 | **網站設定**（單元 21，`/site-settings`）——公司資訊、社群網址、圖帶 |
 
 其餘頁面的內容是**固定文案**（docs/08 決議 3：固定頁的內容寫死在前端，
-CMS 只管 SEO），所以它們只接 SEO。
+CMS 只管 SEO），所以它們只接 SEO。首頁 `featuredNews` API 有回但前台不顯示——mockup 首頁沒有消息區塊，
+要加得先有設計。
 
 網站設定走 [`src/lib/site-settings.ts`](src/lib/site-settings.ts)：讀不到（沒設 API base、
 端點掛了）回 `null`，呼叫端就渲染寫死的 mockup 內容；讀到了但某個 key 是空的，
@@ -224,7 +228,7 @@ NEXT_PUBLIC_MEDIA_BASE=https://stntiprod.blob.core.windows.net pnpm --filter web
 - **靜態文字**：`src/lib/zh.ts` 以**英文原文為 key**，查不到就落回英文。
   頁面把整棵 JSX 包在 `<T locale={locale}>` 裡，由 `src/lib/translate.tsx` 走訪
   element tree 換掉文字節點與 `alt`／`title`／`placeholder`／`aria-label`。
-  **`/en` 完全不經過替換**，所以 `verify:markup` 這道閘不受影響。
+  沒有後台覆寫時 **`/en` 完全不經過替換**，所以 `verify:markup` 這道閘不受影響。
 - **CMS 內容**：接了 `NEXT_PUBLIC_API_BASE` 的 16 頁改吃資料庫的 `*I18n` 資料表，
   兩個語系各自獨立（缺語系不 fallback）。資料不快取，每個請求重新取（見下）。
 
@@ -249,6 +253,31 @@ NEXT_PUBLIC_MEDIA_BASE=https://stntiprod.blob.core.windows.net pnpm --filter web
 
 例外是圖片：`/files/media/*` 仍然是一年的 `immutable` 快取。那裡回的是檔案位元組、
 檔名帶 GUID，後台換圖會產生新路徑，不會拿到舊的那張。
+
+### 頁面文字覆寫
+
+About Us 五頁的文字可在後台逐段改（docs/09 §7.1）。做法是在 `<T>` 上多一層查表：
+
+```tsx
+const page = await getPage(locale, 'about-difference')   // cache()：與 generateMetadata 共用一次請求
+return <T locale={locale} overrides={page?.texts}> … </T>
+```
+
+`texts` 是「英文原文 → 該語系的字」，查表順序 **覆寫 → zh.ts → 原文**，`/en` 也吃覆寫。
+版面、段落數、圖片不受影響——換的只有文字節點與 `alt`。
+
+後台的清單（每頁有哪些段落）由 mockup 產生：
+
+```bash
+node scripts/extract-page-texts.mjs   # → apps/admin/src/api/page-texts.generated.ts
+```
+
+mockup 或 zh.ts 改了就重跑（後台顯示的「目前的中文」來自 zh.ts）。**要開放更多頁**：
+這支腳本的 `PAGES`、`Api/Common/Constants.cs` 的 `PageTextPages`、該頁的 `<T overrides>`
+三處一起改，並把該頁放進 `build-pages.mjs` 的 `HAND_MAINTAINED`。
+
+⚠ 鍵是英文原文：日後在 mockup 改了某段英文，該段的覆寫就對不上、不再顯示
+（後台會列為「原文已變更」）。這與 zh.ts 是同一個性質。
 
 ### 字典怎麼維護
 

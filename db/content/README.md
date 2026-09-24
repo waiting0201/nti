@@ -105,6 +105,22 @@ footer 卻一個圖示都不顯示，是同一組事實在兩個地方講反話�
 > 抽完不是 http(s) 就擋下來。查詢字串目前是地址，不是客戶自己的 Google 商家嵌入碼——
 > 客戶給了再換。
 
+## 230_solution_copy.sql
+
+四個固定方案的 **H1、首頁卡片短述、方案頁導言、SEO 標題與描述**，與 mockup 逐字相同（中文取自 zh.ts）。
+
+```bash
+node tools/build-solution-copy-sql.mjs   # 重新產生（請勿手改 .sql）
+sqlcmd -S <server> -d NTI -I -b -i db/content/230_solution_copy.sql
+```
+
+2026-09-24 前台接上這幾個欄位（`/products-*` 四頁、首頁方案卡）之後，資料庫的值會直接出現在頁面上；
+而 200 當初寫進去的是提案值（H1 與 mockup 不一致、SEO 標題少了「— NTI Printing」、短述與導言是 NULL）。
+**正式庫在部署新版前台之前要先跑這支**，否則那四頁的標題會變。
+
+每個欄位只在「還是空的」或「還是 200 寫進去的提案值」時才補——後台改過的不會被蓋掉，重跑無副作用。
+字典還沒翻的 meta description 不寫，前台照舊顯示英文。
+
 ## ⚠ 中文是初稿
 
 `tools/content-zh.mjs` 的繁體中文是**機器翻譯初稿，不是客戶核可的文案**。

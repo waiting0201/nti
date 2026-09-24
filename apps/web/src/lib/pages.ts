@@ -7,16 +7,19 @@
  *
  * 對不上的兩邊都有，不是遺漏：
  *
- * - **路由有、pageKey 沒有**：`/differences`、`/green-advantage`（mockup 的兩個
- *   替代版頁面）、`/products-*`（SEO 來自 `SolutionI18n`）、`/news-*`（來自 `NewsI18n`）
- * - **pageKey 有、路由沒有**：`about-hub`、`sustainability-hub`（IA 有這兩層但
- *   mockup 沒有對應頁）、`green-csr`（預留，待客戶確認）
+ * - **路由有、pageKey 沒有**：`/products-*`（SEO 來自 `SolutionI18n`）、`/news-*`（來自 `NewsI18n`）
+ * - **pageKey 有、路由沒有**：`green-csr`（預留，待客戶確認）
+ *
+ * `about-hub`／`sustainability-hub` 就是 IA 的 About Us／Sustainability 頂層，
+ * mockup 的檔名是 `differences`／`green-advantage`（docs/08 §6.4 的括號註記）。
+ * 2026-09-24 以前這兩條沒接上，後台改它們的 SEO 前台不會生效。
  *
  * 沒有對應 pageKey 的頁面就用各頁寫死的 metadata，不會因此少掉 title。
  */
 export const PAGE_KEY_BY_PATH: Record<string, string> = {
   '/': 'home',
 
+  '/differences': 'about-hub',
   '/about-difference': 'about-difference',
   '/about-benefits': 'about-benefits',
   '/about-certifications': 'about-certifications',
@@ -31,6 +34,7 @@ export const PAGE_KEY_BY_PATH: Record<string, string> = {
   '/solutions': 'solutions',
   '/projects': 'projects',
 
+  '/green-advantage': 'sustainability-hub',
   '/green-our-advantage': 'green-our-advantage',
   '/green-carbon': 'green-carbon',
   '/green-materials': 'green-materials',

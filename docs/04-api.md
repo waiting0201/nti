@@ -84,7 +84,8 @@
 - `GET /faq`、`GET /industry-trends`、`GET /careers`
 - `GET /supplier/notices`、`/supplier/specs`、`/supplier/downloads`
 - `POST /supplier/downloads/{id}/hit`（累計 `SupplierDownload.DownloadCount`；全部項目一律公開下載）
-- `GET /pages/{pageKey}`（**29 個**固定頁的 SEO 欄位；`HasRichBody = 1` 者另含 `bodyHtml` —— `privacy-legal` 與預留的 `green-csr`）
+- `GET /pages/{pageKey}`（**29 個**固定頁的 SEO 欄位；`HasRichBody = 1` 者另含 `bodyHtml` —— `privacy-legal` 與預留的 `green-csr`；
+  另含 `texts`：頁面文字覆寫，英文原文 → 該語系的字，沒改過就是 `{}`，見 [09 §7.1](09-cms-admin.md)）
 - `GET /site-settings`（公司資訊與社群連結；信件收件者等內部設定不外露）
 - 每筆內容回傳 **SEO 欄位**：`title/metaDescription/h1/canonical/og/slug/imageAlt/hreflang`。
 
@@ -116,7 +117,7 @@
   |---|---|---|
   | `/admin/tag` | 25 標籤 | `tag.view`／`tag.edit`／`tag.delete`（`PUT /admin/tag/sort` 為 `tag.edit`）|
   | `/admin/home-banner`、`/admin/solution`、`/admin/project`、`/admin/news`、`/admin/vlog`、`/admin/faq`、`/admin/trend`、`/admin/certification`、`/admin/client`、`/admin/facility`、`/admin/job`、`/admin/supplier-notice`、`/admin/supplier-spec`、`/admin/supplier-download` | 01–14 內容 | 同路徑名 |
-  | `/admin/page`、`/admin/redirect` | 15、16 | `page.*`、`redirect.*` |
+  | `/admin/page`、`/admin/redirect` | 15、16 | `page.*`、`redirect.*`（`GET /admin/page/{pageKey}/texts` 為 `page.view`、`PUT` 為 `page.edit`；只接受開放的頁面，其餘 400） |
   | `/admin/quote`、`/admin/contact` | 17、18（檢視／改狀態／匯出） | `quote.*`、`contact.*` |
   | `/admin/setting`、`/admin/category` | 21、22 | `setting.*`、`category.*` |
   | `/admin/admin`、`/admin/audit/emails` | 23 管理員與角色、24 信件紀錄 | `admin.*`、`audit.*` |
@@ -204,3 +205,5 @@
 | 2026-09-11 | Tim（Claude Code） | **快取標頭全面改 `no-store`**：前台跟著拿掉 ISR（見 docs/02），留著沒有人遵守的 `s-maxage=300` 只會在哪天中間冒出一層共用快取時，讓「後台改了前台沒變」以無法重現的方式回來 |
 
 *最後更新：2026-09-11*
+
+| 2026-09-24 | Tim（Claude Code） | 頁面文字覆寫（09 §7.1）：`GET /pages/{pageKey}` 多回 `texts`（原文 → 該語系的字）；新增 `GET`／`PUT /admin/page/{pageKey}/texts`，PUT body 為 `{ items: [{ lang, sourceText, value }] }`，value 為空＝刪除該覆寫。沿用 `page.view`／`page.edit`，權限矩陣不變。首批開放 About Us 五頁 |

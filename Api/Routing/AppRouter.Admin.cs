@@ -41,6 +41,7 @@ public sealed partial class AppRouter
             ("POST",           ["admin", "page", "upload"]) => PermissionCodes.PageEdit,
             ("GET",            ["admin", "page", ..])       => PermissionCodes.PageView,
             ("PUT" or "PATCH", ["admin", "page", _])        => PermissionCodes.PageEdit,
+            ("PUT",            ["admin", "page", _, "texts"]) => PermissionCodes.PageEdit,
             ("DELETE",         ["admin", "page", _])        => PermissionCodes.PageDelete,
 
             // ── 16 redirect ──────────────────────────────────────────────
@@ -144,6 +145,8 @@ public sealed partial class AppRouter
             ("POST",           ["admin", "page", "upload"])  => await adminMedia.UploadAsync(req),
             ("GET",            ["admin", "page"])           => await adminPages.GetListAsync(req),
             ("GET",            ["admin", "page", var key])  => await adminPages.GetByKeyAsync(req, key),
+            ("GET",            ["admin", "page", var key, "texts"]) => await adminPages.GetTextsAsync(req, key),
+            ("PUT",            ["admin", "page", var key, "texts"]) => await adminPages.SaveTextsAsync(req, key),
             ("PUT" or "PATCH", ["admin", "page", var key])  => await adminPages.UpdateAsync(req, key),
             ("DELETE",         ["admin", "page", var key])  => await adminPages.DeleteAsync(req, key),
 

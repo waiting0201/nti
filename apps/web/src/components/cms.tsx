@@ -142,9 +142,9 @@ export function ProjectGrid({ items, locale }: { items: Project[]; locale: Local
 
 // ── 02 solution ───────────────────────────────────────────────────────────
 /** `/products-{code}` 四頁的品項卡。solutions 列表頁是 explorer 互動元件，不走這裡。 */
-export function SolutionItems({ items }: { items: SolutionDetail['items'] }) {
+export function SolutionItems({ items, className = 'pr-grid' }: { items: SolutionDetail['items']; className?: string }) {
   return (
-    <div className="pr-grid">
+    <div className={className}>
       {items.map((item) => (
         <article key={item.id} className="pr-card reveal">
           <div className="pr-img">
@@ -157,6 +157,29 @@ export function SolutionItems({ items }: { items: SolutionDetail['items'] }) {
         </article>
       ))}
     </div>
+  )
+}
+
+/**
+ * 方案頁開頭的導言（後台 02 的「方案導言」rich text）。
+ *
+ * mockup 在這裡是一到兩個 `<p className="prose wide reveal mt-s">`，CSS 靠 `.prose+.prose`
+ * 排段距，所以把 rich text 拆回同樣的段落，而不是包進一個新的容器（那會需要 mockup 沒有的樣式）。
+ * 內容不是單純的段落（清單、標題…）時才整塊放進一個 `.prose` 的 div。
+ */
+export function SolutionIntro({ html }: { html: string }) {
+  const trimmed = html.trim()
+  const paras = /^(<p>[\s\S]*?<\/p>\s*)+$/.test(trimmed)
+    ? trimmed.split(/<\/p>\s*/).filter(Boolean).map((p) => p.replace(/^<p>/, ''))
+    : null
+
+  if (!paras) return <div className="prose wide reveal mt-s" dangerouslySetInnerHTML={{ __html: trimmed }} />
+  return (
+    <>
+      {paras.map((p, i) => (
+        <p key={i} className="prose wide reveal mt-s" dangerouslySetInnerHTML={{ __html: p }} />
+      ))}
+    </>
   )
 }
 

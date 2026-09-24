@@ -17,6 +17,7 @@
 1. **單元式後台** → 一個後台單元 = 1 主表（＋1 張 `*I18n` 子表），無通用區塊表。
 2. **不做 Media Library** → 無 `Media` 資產表；檔案是所屬資料列上的 `*Path` 欄位，刪列即解除引用。
 3. **固定文字不進後台** → About／Sustainability／Facility 內頁長文寫死在前端，DB 只留其 SEO 欄位（`Page`／`PageI18n`）。唯一例外 `privacy-legal`（`HasRichBody = 1`）。
+   **2026-09-24 修訂**：About Us 五頁的文字可逐段覆寫，存 `PageText`（§4.11）——只存「原文 → 改過的字」，版面與原文仍在前端。
 
 ---
 
@@ -99,7 +100,7 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 | 首頁 | `HomeBanner`、`HomeBannerI18n` |
 | 內容 | `Solution`(+I18n)、`SolutionItem`(+I18n)、`Project`(+I18n)、`News`(+I18n)、`Vlog`(+I18n)、`Faq`(+I18n)、`IndustryTrend`(+I18n)、`Certification`(+I18n)、`ClientLogo`、`FacilityItem`(+I18n)、`JobPosting`(+I18n) |
 | 供應商 | `SupplierNotice`(+I18n)、`SupplierSpec`(+I18n)、`SupplierDownload`(+I18n) |
-| 頁面／SEO | `Page`、`PageI18n`、`Redirect` |
+| 頁面／SEO | `Page`、`PageI18n`、`PageText`（2026-09-24 新增，頁面文字覆寫）、`Redirect` |
 | 表單 | `QuoteRequest`、`QuoteAttachment`、`ContactMessage` |
 | 系統 | `AdminUser`、`Role`、`RolePermission`、`EmailLog`、`SchemaVersion` |
 | 預留（待客戶確認） | `NewsletterSubscriber` — 見 §4.15 |
@@ -485,6 +486,21 @@ CREATE TABLE dbo.PageI18n (
   Slug NVARCHAR(160) NOT NULL, SeoTitle NVARCHAR(70) NULL, SeoDescription NVARCHAR(180) NULL,
   CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCHAR(200) NULL,
   CONSTRAINT PK_PageI18n PRIMARY KEY (PageId, Lang)
+);
+
+-- 頁面文字覆寫（2026-09-24，單元 15「頁面文字」，見 09 §7.1）
+-- 固定頁上某段英文原文在某語系被改成的字；沒有列＝沿用原文（中文則是前端 zh.ts 的譯文）。
+-- 以原文的 SHA-256 為鍵：原文可能是一整段，NVARCHAR(MAX) 不能進索引。
+-- 不是 *I18n 子表（PK 不是 (PageId, Lang)，一頁一語系有很多列），但一樣 CASCADE 跟著 Page 走。
+CREATE TABLE dbo.PageText (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  PageId INT NOT NULL REFERENCES dbo.Page(Id) ON DELETE CASCADE,
+  Lang VARCHAR(5) NOT NULL,                -- CHECK IN ('zh','en')
+  SourceHash CHAR(64) NOT NULL,            -- SHA-256(空白正規化後的原文)，小寫 hex
+  SourceText NVARCHAR(MAX) NOT NULL,       -- 原文（mockup 的英文字面）
+  Value NVARCHAR(MAX) NOT NULL,            -- 改過的字；清空＝刪列
+  /* audit */
+  CONSTRAINT UX_PageText_Page_Lang_Hash UNIQUE (PageId, Lang, SourceHash)
 );
 
 -- 舊站 301 對照（05-seo 要求，內容遷移 P8 用）

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
-import { SolutionItems } from '@/components/cms'
+import { SolutionIntro, SolutionItems } from '@/components/cms'
 import { getSolutionByCode } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -10,9 +10,11 @@ type Props = { params: Promise<{ locale: Locale }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
+  // SEO 來自方案本身（SolutionI18n，docs/08 §6.4），不是固定頁；後台沒填就用 mockup 的值
+  const seo = (await getSolutionByCode(locale, 'other'))?.seo
   return pageMetadata(locale, "/products-other", {
-    title: "Other Printing Services — NTI Printing",
-    description: "Specialty printing and custom print finishing from NTI — foil stamping, embossing, holographic and anti-counterfeiting effects, plus calendars and bags.",
+    title: seo?.seoTitle || "Other Printing Services — NTI Printing",
+    description: seo?.seoDescription || "Specialty printing and custom print finishing from NTI — foil stamping, embossing, holographic and anti-counterfeiting effects, plus calendars and bags.",
   })
 }
 
@@ -24,10 +26,12 @@ export default async function Page({ params }: Props) {
     <T locale={locale}>
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/solutions")}>Solutions</A><span>&rsaquo;</span><b>Other Printing</b></div>
-        <h1 className="sec-title reveal">Other Printing Services</h1>
+        <h1 className="sec-title reveal">{solution?.h1 || "Other Printing Services"}</h1>
         <div className="sec-sub reveal">Special Printing &amp; finishing</div>
+        {solution?.introHtml ? <SolutionIntro html={solution.introHtml} /> : (<>
         <p className="prose wide reveal mt-s">Enhance your packaging with premium finishes including foil stamping, embossing, holographic effects, and anti-counterfeiting features. Our specialty printing and custom print finishing solutions add visual impact, strengthen brand perception, and provide enhanced product security.</p>
         <p className="prose wide reveal mt-s">Other products include, but are not limited to, calendars, envelopes, bags, mouse pads, manuals, etc.</p>
+        </>)}
         <nav className="pr-tabs reveal" aria-label="Product categories">
           <A href={l("/products-boxes")}>Color Box Packaging</A>{' '}
           <A href={l("/products-cardboard")}>Packaging Paperboard</A>{' '}

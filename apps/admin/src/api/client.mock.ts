@@ -1,4 +1,4 @@
-import type { ListQuery, ListResult, Row } from './types'
+import type { ListQuery, ListResult, PageTextRow, Row } from './types'
 import { SEED } from './seed.generated'
 import { MANUAL_SEED, SETTING_VALUES } from './seed.manual'
 import { ROLE_LABEL, ROLE_PERMISSIONS, type RoleCode } from '@/lib/permissions'
@@ -85,6 +85,8 @@ function persist() {
 export function resetStore() {
   store = seedStore()
   settings = structuredClone(SETTING_VALUES)
+  pageTexts = {}
+  try { localStorage.removeItem(PAGE_TEXTS_KEY) } catch { /* 同上 */ }
   persist()
 }
 
@@ -200,6 +202,38 @@ export async function saveSettings(next: typeof settings) {
   await delay()
   settings = next
   persist()
+}
+
+/**
+ * 15 page 的「頁面文字」。mock 另存一格 localStorage；和內容種子無關，所以換種子不必洗掉它
+ * （resetStore 才清）。
+ */
+const PAGE_TEXTS_KEY = STORE_KEY + ':pageTexts'
+let pageTexts: Record<string, PageTextRow[]> = (() => {
+  try {
+    return JSON.parse(localStorage.getItem(PAGE_TEXTS_KEY) ?? '{}') as Record<string, PageTextRow[]>
+  } catch {
+    return {}
+  }
+})()
+
+export async function getPageTexts(pageKey: string): Promise<PageTextRow[]> {
+  await delay()
+  return structuredClone(pageTexts[pageKey] ?? [])
+}
+
+export async function savePageTexts(pageKey: string, items: PageTextRow[]): Promise<void> {
+  await delay()
+  const rows = (pageTexts[pageKey] ?? []).filter(
+    (r) => !items.some((i) => i.lang === r.lang && i.sourceText === r.sourceText),
+  )
+  for (const i of items) if (i.value.trim()) rows.push({ ...i, value: i.value.trim() })
+  pageTexts = { ...pageTexts, [pageKey]: rows }
+  try {
+    localStorage.setItem(PAGE_TEXTS_KEY, JSON.stringify(pageTexts))
+  } catch {
+    /* 存不進去就只留在記憶體 */
+  }
 }
 
 /** docs §5.7：刪除前顯示前台影響 —— 這裡算的是引用這個分類的內容筆數 */

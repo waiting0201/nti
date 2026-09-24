@@ -1,4 +1,4 @@
-import type { ListQuery, ListResult, Row } from './types'
+import type { ListQuery, ListResult, PageTextRow, Row } from './types'
 import { api } from './http'
 import { apiToUiEntity, apiToUiI18n, isUnsupported, uiToApiEntity, uiToApiI18n } from './mapping'
 
@@ -321,6 +321,17 @@ export async function saveSettings(next: Record<string, string | { zh: string; e
   )
 
   await api.put('/admin/setting', payload)
+}
+
+// ── 15 page：頁面文字 ─────────────────────────────────────────────────────
+/** 這一頁目前存過的覆寫（清單上有、這裡沒有的就是沿用原文） */
+export async function getPageTexts(pageKey: string): Promise<PageTextRow[]> {
+  return api.get<PageTextRow[]>(`/admin/page/${encodeURIComponent(pageKey)}/texts`)
+}
+
+/** 只送有變動的列；value 為空字串＝刪掉覆寫、回到原文 */
+export async function savePageTexts(pageKey: string, items: PageTextRow[]): Promise<void> {
+  await api.put(`/admin/page/${encodeURIComponent(pageKey)}/texts`, { items })
 }
 
 // ── 22 category ───────────────────────────────────────────────────────────

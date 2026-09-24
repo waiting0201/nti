@@ -220,6 +220,30 @@ public static class PageKeys
     };
 }
 
+/// <summary>
+/// 開放「頁面文字」覆寫的固定頁（2026-09-24 起：About Us 五頁）。
+/// <para>
+/// 前台要同時接線（該頁以 <c>&lt;T overrides&gt;</c> 包起來），後台才有意義，所以不是全開；
+/// 三邊要一致：這裡、<c>apps/web/scripts/extract-page-texts.mjs</c> 的 PAGES、以及前台那幾頁。
+/// </para>
+/// </summary>
+public static class PageTextPages
+{
+    public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
+    {
+        PageKeys.AboutHub, PageKeys.AboutDifference, PageKeys.AboutBenefits,
+        PageKeys.AboutCertifications, PageKeys.FacilityTour,
+    };
+
+    /// <summary>與前台 <c>translate.tsx</c> 的 <c>norm()</c> 相同：連續空白（含 NBSP）壓成一格、去頭尾。</summary>
+    public static string Normalize(string s) =>
+        System.Text.RegularExpressions.Regex.Replace(s, @"\s+", " ").Trim();
+
+    public static string Hash(string normalized) =>
+        Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes(normalized)));
+}
+
 /// <summary>報價單狀態（docs/03 §3）。</summary>
 public static class QuoteStatuses
 {

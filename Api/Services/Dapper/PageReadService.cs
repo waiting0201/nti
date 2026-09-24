@@ -24,6 +24,11 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
         FROM PageI18n h
         INNER JOIN Page pp ON pp.Id = h.PageId
         WHERE pp.PageKey = @PageKey;
+
+        SELECT t.SourceText, t.Value
+        FROM PageText t
+        INNER JOIN Page tp ON tp.Id = t.PageId
+        WHERE tp.PageKey = @PageKey AND t.Lang = @Lang;
         """;
 
     public async Task<PageDto?> GetByKeyAsync(string lang, string pageKey)
@@ -34,7 +39,12 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
         if (row is null) return null;
 
         var hreflang = await grid.ReadAsync<(string Lang, string Slug)>();
-        return row.ToDto(hreflang);
+        var dto = row.ToDto(hreflang);
+
+        // 頁面文字覆寫：原文 → 該語系的字（前台 <T overrides> 以原文查表）
+        dto.Texts = (await grid.ReadAsync<(string SourceText, string Value)>())
+            .ToDictionary(x => x.SourceText, x => x.Value, StringComparer.Ordinal);
+        return dto;
     }
 
     private sealed class PageRow

@@ -235,7 +235,9 @@ paths:
     get:
       tags: [前台內容]
       summary: 固定頁的 SEO 欄位
-      description: 29 個固定頁。`hasRichBody = true` 的兩頁（privacy-legal、green-csr）另含 bodyHtml。
+      description: |
+        29 個固定頁。`hasRichBody = true` 的兩頁（privacy-legal、green-csr）另含 bodyHtml。
+        `texts`：頁面文字覆寫（英文原文 → 該語系的字），沒改過就是 `{}`（docs/09 §7.1）。
       parameters:
         - { $ref: '#/components/parameters/Lang' }
         - { name: pageKey, in: path, required: true, schema: { type: string } }
@@ -501,6 +503,44 @@ paths:
         '403': { $ref: '#/components/responses/Forbidden' }
         '404': { $ref: '#/components/responses/NotFound' }
 
+
+  /admin/page/{pageKey}/texts:
+    parameters: [{ name: pageKey, in: path, required: true, schema: { type: string } }]
+    get:
+      tags: [後台其他單元]
+      summary: 頁面文字覆寫清單（page.view）
+      description: 只回存過的列 `[{ lang, sourceText, value, updatedAt }]`；沒有的就是沿用原文。只接受開放的頁面（About Us 五頁），其餘 400。
+      security: [{ AdminAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+    put:
+      tags: [後台其他單元]
+      summary: 存頁面文字覆寫（page.edit）
+      description: |
+        只送有變動的列。value 非空 → 新增或更新；value 為空 → 刪除該覆寫（回到原文）。
+        sourceText 伺服器端會再做一次空白正規化，並以其 SHA-256 為鍵。單段上限 4000 字。
+      security: [{ AdminAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [lang, sourceText]
+                    properties:
+                      lang: { type: string, enum: [zh, en] }
+                      sourceText: { type: string }
+                      value: { type: string }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+        '400': { $ref: '#/components/responses/BadRequest' }
   /admin/redirect:
     get:  { tags: [後台其他單元], summary: '轉址清單（redirect.view）', security: [{ AdminAuth: [] }], responses: { '200': { $ref: '#/components/responses/Ok' } } }
     post: { tags: [後台其他單元], summary: '新增轉址（redirect.edit）', security: [{ AdminAuth: [] }], requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Redirect' } } } }, responses: { '200': { $ref: '#/components/responses/Ok' }, '409': { $ref: '#/components/responses/Conflict' } } }

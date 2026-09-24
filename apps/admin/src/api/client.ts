@@ -34,6 +34,8 @@ export const downloadQuoteAttachment = impl.downloadQuoteAttachment
 export const exportQuotesCsv         = impl.exportQuotesCsv
 export const exportRedirectsCsv      = impl.exportRedirectsCsv
 export const importRedirectsCsv      = impl.importRedirectsCsv
+export const getPageTexts   = impl.getPageTexts
+export const savePageTexts  = impl.savePageTexts
 
 // 23 admin：帳號與角色不走泛用的 list/create/save（形狀不同，見 client.api.ts）
 export const listAdmins   = impl.listAdmins

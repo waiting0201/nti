@@ -22,3 +22,6 @@ export type ListQuery = {
 }
 
 export type ListResult = { rows: Row[]; total: number }
+
+/** 15 page 的「頁面文字」覆寫：某段英文原文在某語系被改成的字。沒有列＝沿用原文 */
+export type PageTextRow = { lang: Locale; sourceText: string; value: string }

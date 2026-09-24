@@ -110,6 +110,87 @@ public sealed class AdminPageHandler(AppDbContext db)
     }
 
     /// <summary>
+    /// 「頁面文字」：這一頁目前所有的覆寫。要改哪些字由後台的清單（前台 mockup 抽出來的）決定，
+    /// 這裡只回存過的列；清單上有、這裡沒有的就是「沿用原文」。
+    /// </summary>
+    public async Task<IActionResult> GetTextsAsync(HttpRequest req, string pageKey)
+    {
+        var page = await FindTextPageAsync(pageKey);
+
+        var rows = await db.PageText.AsNoTracking()
+            .Where(t => t.PageId == page.Id)
+            .OrderBy(t => t.Id)
+            .Select(t => new { t.Lang, t.SourceText, t.Value, t.UpdatedAt })
+            .ToListAsync();
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok(rows));
+    }
+
+    /// <summary>
+    /// 存「頁面文字」。只送有變動的列即可：值非空 → 新增或更新；值為空 → 刪掉那一列（回到原文）。
+    /// </summary>
+    public async Task<IActionResult> SaveTextsAsync(HttpRequest req, string pageKey)
+    {
+        var page = await FindTextPageAsync(pageKey);
+
+        var dto = await req.ReadFromJsonAsync<PageTextSaveDto>()
+            ?? throw AppException.BadRequest(ErrorCodes.ValidationRequired, "缺少內容。");
+
+        var existing = await db.PageText.Where(t => t.PageId == page.Id).ToListAsync();
+        var (saved, removed) = (0, 0);
+
+        foreach (var item in dto.Items)
+        {
+            if (!Langs.All.Contains(item.Lang))
+                throw AppException.BadRequest(ErrorCodes.ValidationFormat, $"不支援的語系：{item.Lang}");
+
+            var source = PageTextPages.Normalize(item.SourceText ?? "");
+            if (source.Length == 0)
+                throw AppException.BadRequest(ErrorCodes.ValidationRequired, "sourceText 為必填。");
+
+            var value = item.Value?.Trim() ?? "";
+            if (value.Length > MaxTextLength)
+                throw AppException.BadRequest(ErrorCodes.ValidationRange, $"單段文字不可超過 {MaxTextLength} 字。");
+
+            var hash = PageTextPages.Hash(source);
+            var row  = existing.FirstOrDefault(t => t.Lang == item.Lang && t.SourceHash == hash);
+
+            if (value.Length == 0)
+            {
+                if (row is not null) { db.PageText.Remove(row); existing.Remove(row); removed++; }
+                continue;
+            }
+
+            if (row is null)
+            {
+                row = new PageText { PageId = page.Id, Lang = item.Lang, SourceHash = hash, SourceText = source };
+                db.PageText.Add(row);
+                existing.Add(row);
+            }
+            row.Value = value;
+            saved++;
+        }
+
+        await db.SaveChangesAsync();
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok(new { saved, removed }));
+    }
+
+    private const int MaxTextLength = 4000;
+
+    /// <summary>只有 <see cref="PageTextPages.All"/> 的頁面前台有接線；其他頁存了也不會出現，直接擋。</summary>
+    private async Task<Models.Entities.Page> FindTextPageAsync(string pageKey)
+    {
+        if (!PageTextPages.All.Contains(pageKey))
+            throw AppException.BadRequest(ErrorCodes.ValidationFormat, $"{pageKey} 沒有開放頁面文字編輯。");
+
+        return await db.Page.AsNoTracking().FirstOrDefaultAsync(p => p.PageKey == pageKey && !p.IsDeleted)
+            ?? throw AppException.NotFound("Page");
+    }
+
+    /// <summary>
     /// 刪除一筆固定頁（真刪，docs/10 §8.4）。<c>PageI18n</c> 由 FK 的 CASCADE 一起帶走。
     /// </summary>
     public async Task<IActionResult> DeleteAsync(HttpRequest req, string pageKey)
@@ -141,6 +222,18 @@ public sealed class PageUpdateDto
     public string? OgImagePath { get; set; }
     public bool    IsIndexable { get; set; } = true;
     public Dictionary<string, PageI18nDto> I18n { get; set; } = [];
+}
+
+public sealed class PageTextSaveDto
+{
+    public List<PageTextItemDto> Items { get; set; } = [];
+}
+
+public sealed class PageTextItemDto
+{
+    public string  Lang       { get; set; } = null!;
+    public string? SourceText { get; set; }
+    public string? Value      { get; set; }
 }
 
 public sealed class PageI18nDto

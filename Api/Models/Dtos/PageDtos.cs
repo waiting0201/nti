@@ -14,6 +14,9 @@ public sealed class PageDto
     public string? BodyHtml      { get; set; }
 
     public SeoDto  Seo           { get; set; } = null!;
+
+    /// <summary>「頁面文字」覆寫：原文 → 該語系的字。沒有覆寫就是空物件，前台照原文顯示。</summary>
+    public Dictionary<string, string> Texts { get; set; } = [];
 }
 
 /// <summary>

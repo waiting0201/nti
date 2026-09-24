@@ -129,6 +129,11 @@ pnpm --filter admin typecheck
 `node tools/build-settings-sql.mjs`）。這裡曾經是手寫的，於是 demo 上填著幾個編出來的值、
 資料庫那 15 個 key 卻全是 NULL——客戶在 demo 驗收過的公司資訊，正式站一個字都不會出現。
 
+**15 頁面的「頁面文字」清單**（About Us 五頁每一段可改的文字）是
+`src/api/page-texts.generated.ts`，由 `node apps/web/scripts/extract-page-texts.mjs`
+從 mockup 與 zh.ts 產生（見 docs/09 §7.1）。清單只決定「有哪些段落可改」；改過的值存在
+`PageText`（mock 模式存在 localStorage 另一格，「重設示範資料」會一併清掉）。
+
 資料存在瀏覽器的 localStorage，**可以真的新增、編輯、排序、上下架**，重整不會消失。
 
 ## 接上後端要改哪裡
