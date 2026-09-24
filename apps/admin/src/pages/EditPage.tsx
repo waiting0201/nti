@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import * as api from '@/api/client'
 import { ApiError } from '@/api/http'
@@ -10,7 +10,7 @@ import { Badge, Modal, Notice, toast, useUnsavedGuard } from '@/components/ui'
 import { FieldInput } from '@/components/fields'
 import { blockingReasons, isComplete, missingIn, missingNeutral } from '@/lib/completeness'
 import { RecordView } from './RecordView'
-import { hasPageTexts, PageTextsCard } from './PageTexts'
+import { hasPageTexts, PageTextsCard, type PageTextsHandle } from './PageTexts'
 import { assetUrl } from '@/lib/asset'
 import { countPending, resolvePendingUploads } from '@/lib/pending-uploads'
 
@@ -28,6 +28,9 @@ export function EditPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [children, setChildren] = useState<Row[]>([])
   const [saving, setSaving] = useState(false)
+  /** 15 page 的「頁面文字」：獨立的 API，但跟著同一顆「儲存」送出 */
+  const pageTexts = useRef<PageTextsHandle>(null)
+  const [pageTextChanges, setPageTextChanges] = useState(0)
 
   const isNew = id === 'new'
 
@@ -46,7 +49,8 @@ export function EditPage() {
     void load()
   }, [load])
 
-  useUnsavedGuard(dirty)
+  const unsaved = dirty || pageTextChanges > 0
+  useUnsavedGuard(unsaved)
 
   const fields = useMemo(() => (unit ? unitFields(unit) : []), [unit])
 
@@ -142,6 +146,7 @@ export function EditPage() {
       await api.save(unit.code, next)
       setRow(next)
       setDirty(false)
+      await pageTexts.current?.save()
       toast(publish === true ? '已上架' : publish === false ? '已下架' : '已儲存')
     } catch (err) {
       toast(phase === 'upload' ? uploadFailed(err) : writeFailed(err))
@@ -257,7 +262,7 @@ export function EditPage() {
 
       {/* 15 page：開放的頁面另有「頁面文字」（逐段改中英文，獨立存檔） */}
       {unit.code === 'page' && !isNew && hasPageTexts(pageKeyOf(row)) && (
-        <PageTextsCard pageKey={pageKeyOf(row)} canEdit={canEdit} />
+        <PageTextsCard pageKey={pageKeyOf(row)} canEdit={canEdit} handle={pageTexts} onChangesCount={setPageTextChanges} />
       )}
 
       <div className="card">
@@ -266,12 +271,14 @@ export function EditPage() {
             返回清單
           </button>
           <span style={{ marginLeft: 'auto' }} />
-          {dirty && (
+          {unsaved && (
             <span style={{ fontSize: 12.5, color: 'var(--warn)' }}>
-              {pendingCount > 0 ? `有未儲存的變更，含 ${pendingCount} 個待上傳的檔案` : '有未儲存的變更'}
+              有未儲存的變更
+              {pendingCount > 0 && `，含 ${pendingCount} 個待上傳的檔案`}
+              {pageTextChanges > 0 && `，含頁面文字 ${pageTextChanges} 處`}
             </span>
           )}
-          {canEdit && (
+          {canEdit && unit.hasStatus && (
             <button className="btn" disabled={saving} onClick={() => save()}>
               {saving ? '儲存中…' : '儲存'}
             </button>

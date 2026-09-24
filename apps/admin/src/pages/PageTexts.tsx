@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useImperativeHandle, useMemo, useState, type Ref } from 'react'
 import * as api from '@/api/client'
-import { ApiError } from '@/api/http'
 import { PAGE_TEXTS, type PageTextItem } from '@/api/page-texts.generated'
 import type { PageTextRow } from '@/api/types'
 import type { Locale } from '@/lib/types'
-import { Badge, Notice, toast, useUnsavedGuard } from '@/components/ui'
+import { Badge, Notice, toast } from '@/components/ui'
 
 /** 開放「頁面文字」的頁面（清單由 apps/web/scripts/extract-page-texts.mjs 從 mockup 產生） */
 export const hasPageTexts = (pageKey: string) => pageKey in PAGE_TEXTS
@@ -13,18 +12,31 @@ type Values = Record<string, { zh: string; en: string }>
 
 const empty = () => ({ zh: '', en: '' })
 
+/** 交給 EditPage 的把手：頁面底部那顆「儲存」會一起把頁面文字送出 */
+export type PageTextsHandle = { save: () => Promise<void> }
+
 /**
  * 15 page 的「頁面文字」：固定頁上每一段文字都可改中英文，空著＝沿用原文。
  *
  * 版面、段落數、圖片不在這裡——那些仍以 mockup 為準；這裡只換字。
- * 和上方的 SEO 表單分開存：兩邊是不同的 API，也常常只改其中一邊。
+ * 和上方的 SEO 表單是不同的 API，但畫面上只有一顆「儲存」：EditPage 存完主表後
+ * 透過 handle 呼叫這裡的 save()；未儲存的段數以 onChangesCount 回報給底部的提示。
  */
-export function PageTextsCard({ pageKey, canEdit }: { pageKey: string; canEdit: boolean }) {
+export function PageTextsCard({
+  pageKey,
+  canEdit,
+  handle,
+  onChangesCount,
+}: {
+  pageKey: string
+  canEdit: boolean
+  handle: Ref<PageTextsHandle>
+  onChangesCount: (n: number) => void
+}) {
   const manifest = PAGE_TEXTS[pageKey]
   const [saved, setSaved] = useState<Values>({})
   const [draft, setDraft] = useState<Values>({})
   const [loaded, setLoaded] = useState(false)
-  const [saving, setSaving] = useState(false)
   const [onlyEdited, setOnlyEdited] = useState(false)
 
   useEffect(() => {
@@ -48,7 +60,7 @@ export function PageTextsCard({ pageKey, canEdit }: { pageKey: string; canEdit: 
   }, [pageKey])
 
   const changes = useMemo(() => diff(saved, draft), [saved, draft])
-  useUnsavedGuard(changes.length > 0)
+  useEffect(() => onChangesCount(changes.length), [changes.length, onChangesCount])
 
   /** 存過、但 mockup 已經沒有那段原文的覆寫：前台不會再顯示，列出來讓人搬到新的那段 */
   const orphans = useMemo(() => {
@@ -74,24 +86,19 @@ export function PageTextsCard({ pageKey, canEdit }: { pageKey: string; canEdit: 
   const set = (en: string, lang: Locale, value: string) =>
     setDraft((prev) => ({ ...prev, [en]: { ...(prev[en] ?? empty()), [lang]: value } }))
 
+  /** 失敗就往外丟，由 EditPage 統一顯示錯誤訊息 */
   const save = async () => {
-    setSaving(true)
-    try {
-      await api.savePageTexts(pageKey, changes)
-      const next = structuredClone(draft)
-      for (const k of Object.keys(next)) {
-        next[k] = { zh: next[k].zh.trim(), en: next[k].en.trim() }
-        if (!hasValue(next[k])) delete next[k]
-      }
-      setSaved(next)
-      setDraft(structuredClone(next))
-      toast('頁面文字已儲存，前台重新整理即可看到')
-    } catch (err) {
-      toast(err instanceof ApiError && err.status === 403 ? '你的角色沒有這項權限，尚未儲存。' : `${(err as Error).message}（尚未儲存）`)
-    } finally {
-      setSaving(false)
+    if (changes.length === 0) return
+    await api.savePageTexts(pageKey, changes)
+    const next = structuredClone(draft)
+    for (const k of Object.keys(next)) {
+      next[k] = { zh: next[k].zh.trim(), en: next[k].en.trim() }
+      if (!hasValue(next[k])) delete next[k]
     }
+    setSaved(next)
+    setDraft(structuredClone(next))
   }
+  useImperativeHandle(handle, () => ({ save }))
 
   const removeOrphan = async (en: string) => {
     const items: PageTextRow[] = (['zh', 'en'] as const).map((lang) => ({ lang, sourceText: en, value: '' }))
@@ -117,7 +124,7 @@ export function PageTextsCard({ pageKey, canEdit }: { pageKey: string; canEdit: 
           <label className="switch">
             <input type="checkbox" checked={onlyEdited} onChange={(e) => setOnlyEdited(e.target.checked)} />
             <span className="track" />
-            <span style={{ fontSize: 12.5 }}>只看已改的</span>
+            <span style={{ fontSize: 12.5 }}>只顯示改過的段落</span>
           </label>
         </span>
       </div>
@@ -199,17 +206,6 @@ export function PageTextsCard({ pageKey, canEdit }: { pageKey: string; canEdit: 
           </Notice>
         )}
       </div>
-      {canEdit && (
-        <div className="card-b btn-row" style={{ borderTop: '1px solid var(--line-2)' }}>
-          <span style={{ marginLeft: 'auto' }} />
-          {changes.length > 0 && (
-            <span style={{ fontSize: 12.5, color: 'var(--warn)' }}>頁面文字有 {changes.length} 處未儲存</span>
-          )}
-          <button className="btn btn-primary" disabled={saving || changes.length === 0} onClick={() => void save()}>
-            {saving ? '儲存中…' : '儲存頁面文字'}
-          </button>
-        </div>
-      )}
     </div>
   )
 }
