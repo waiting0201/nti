@@ -74,21 +74,6 @@ export function RecordView({
       <div>
         <div className="card">
           <div className="card-h">
-            <h2>可異動的欄位</h2>
-          </div>
-          <div className="card-b">
-            <fieldset disabled={!canEdit} style={{ border: 0 }}>
-              {unit.fields.map((f) => (
-                <FieldInput key={f.key} field={f} value={row[f.key]} onChange={(v) => onChange(f.key, v)} />
-              ))}
-            </fieldset>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div className="card">
-          <div className="card-h">
             <h2>{unit.code === 'quote' ? '客戶填寫內容' : '資料內容'}</h2>
             <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--grey-2)' }}>唯讀</span>
           </div>
@@ -140,6 +125,21 @@ export function RecordView({
                 )}
               </div>
             )}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div className="card">
+          <div className="card-h">
+            <h2>可異動的欄位</h2>
+          </div>
+          <div className="card-b">
+            <fieldset disabled={!canEdit} style={{ border: 0 }}>
+              {unit.fields.map((f) => (
+                <FieldInput key={f.key} field={f} value={row[f.key]} onChange={(v) => onChange(f.key, v)} />
+              ))}
+            </fieldset>
           </div>
         </div>
       </div>

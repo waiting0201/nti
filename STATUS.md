@@ -234,7 +234,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 | 項目 | 現在 |
 |---|---|
-| **About Us 五頁的文字**（`/differences`、`/about-difference`、`/about-benefits`、`/about-certifications`、`/facility-tour`） | 後台 15「頁面設定與 SEO」→ 該頁下方的「頁面文字」卡，逐段改中英文（177 段，含圖片 alt），空著＝沿用原文。新表 `PageText`（EF migration `PageText`／`db/migrations/0010`）。機制與限制見 docs/09 §7.1 |
+| **About Us 五頁的文字**（`/differences`、`/about-difference`、`/about-benefits`、`/about-certifications`、`/facility-tour`） | 後台 15「頁面設定與 SEO」→ 中英分頁裡的「頁面文字」，欄位就是前台目前的字，逐段直接改（177 段，含圖片 alt）；清空＝回到原文。新表 `PageText`（EF migration `PageText`／`db/migrations/0010`）。機制與限制見 docs/09 §7.1 |
 | `privacy-legal` 內文 | 後台「頁面內容」有填就顯示，沒填是 mockup 佔位稿 |
 | 方案 H1／導言／SEO | `/products-*` 四頁（含原本完全沒接的 `products-uv`，品項卡也一併接上）；首頁方案卡的標題與短述。新的 `db/content/230_solution_copy.sql` 補成與 mockup 逐字相同的值（只補空的／仍是提案值的欄位）。⚠ **正式庫要在部署新版前台之前跑一次**，否則四個方案頁的 H1 與 title 會變成早期的提案值 |
 | `/differences`、`/green-advantage` 的 SEO | 對應到 `about-hub`／`sustainability-hub`（docs/08 §6.4 早就這樣定，前台漏接） |

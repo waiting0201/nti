@@ -3,14 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom'
 import * as api from '@/api/client'
 import { ApiError } from '@/api/http'
 import type { Row } from '@/api/types'
-import { UNIT_BY_CODE, unitFields } from '@/units'
+import { SEO_FIELDS, UNIT_BY_CODE, unitFields } from '@/units'
 import { LOCALE_LABEL, LOCALES, publishState, type Field, type Locale, type Unit } from '@/lib/types'
 import { useAuth } from '@/lib/auth'
 import { Badge, Modal, Notice, toast, useUnsavedGuard } from '@/components/ui'
 import { FieldInput } from '@/components/fields'
 import { blockingReasons, isComplete, missingIn, missingNeutral } from '@/lib/completeness'
 import { RecordView } from './RecordView'
-import { hasPageTexts, PageTextsCard, type PageTextsHandle } from './PageTexts'
+import { hasPageTexts, PageTextFields, type PageTextsHandle } from './PageTexts'
 import { assetUrl } from '@/lib/asset'
 import { countPending, resolvePendingUploads } from '@/lib/pending-uploads'
 
@@ -81,6 +81,10 @@ export function EditPage() {
 
   const neutralFields = fields.filter((f) => f.side !== 'locale' && !f.i18n)
   const localeFields = fields.filter((f) => f.i18n)
+  // 分頁內的順序：內容欄位 → 頁面文字 → SEO
+  const seoFields = localeFields.filter((f) => SEO_KEYS.has(f.key))
+  const contentFields = localeFields.filter((f) => !SEO_KEYS.has(f.key))
+  const showPageTexts = unit.code === 'page' && !isNew && hasPageTexts(pageKeyOf(row))
 
   // page 單元：只有 HasRichBody = 1 的頁面才顯示「頁面內容」欄位（docs §15）
   const showField = (f: Field) =>
@@ -155,6 +159,16 @@ export function EditPage() {
     }
   }
 
+  const renderLocaleField = (f: Field) => (
+    <FieldInput
+      key={f.key}
+      field={f}
+      value={row.i18n?.[locale]?.[f.key] ?? ''}
+      error={fieldErrors[f.key]}
+      onChange={(v) => setLocalised(f.key, v)}
+    />
+  )
+
   const copyToEnglish = () => {
     const i18n = { ...(row.i18n ?? { zh: {}, en: {} }) }
     i18n.en = { ...i18n.en }
@@ -199,7 +213,50 @@ export function EditPage() {
         <RecordView unit={unit} row={row} onChange={setNeutral} canEdit={canEdit} />
       ) : (
         <div className="edit-grid">
-          {/* 左：語系中性欄位（圖片、日期、分類、狀態） */}
+          {/* 左：中文／English 分頁的文字欄位 */}
+          <div className="card">
+            <div className="card-b">
+              <div className="locale-tabs">
+                {LOCALES.map((l) => (
+                  <button key={l} className={locale === l ? 'active' : ''} onClick={() => setLocale(l)}>
+                    {LOCALE_LABEL[l]}
+                    {'　'}
+                    <Badge kind={isComplete(unit, row, l) ? 'ok' : 'warn'}>{isComplete(unit, row, l) ? '完整' : '待補'}</Badge>
+                  </button>
+                ))}
+                <span className="fill">
+                  {canEdit && locale === 'en' && (
+                    <button type="button" className="btn btn-sm" onClick={copyToEnglish}>
+                      複製中文到英文
+                    </button>
+                  )}
+                </span>
+              </div>
+              <fieldset disabled={!canEdit} style={{ border: 0 }}>
+                {contentFields.filter(showField).map(renderLocaleField)}
+              </fieldset>
+
+              {/* 15 page：開放的頁面另有「頁面文字」（逐段改字，獨立的 API、同一顆儲存） */}
+              {showPageTexts && (
+                <PageTextFields
+                  pageKey={pageKeyOf(row)}
+                  locale={locale}
+                  canEdit={canEdit}
+                  handle={pageTexts}
+                  onChangesCount={setPageTextChanges}
+                />
+              )}
+
+              {seoFields.length > 0 && (
+                <fieldset disabled={!canEdit} style={{ border: 0 }}>
+                  {showPageTexts && <div className="ptext-section-h" style={{ marginTop: 22 }}>SEO 設定</div>}
+                  {seoFields.filter(showField).map(renderLocaleField)}
+                </fieldset>
+              )}
+            </div>
+          </div>
+
+          {/* 右：語系中性欄位（圖片、日期、分類、狀態） */}
           <div>
             <div className="card">
               <div className="card-h">
@@ -222,48 +279,10 @@ export function EditPage() {
 
             {unit.hasStatus && <StatusCard row={row} onChange={setNeutral} canEdit={canPublish} />}
           </div>
-
-          {/* 右：中文／English 分頁的文字欄位 */}
-          <div className="card">
-            <div className="card-b">
-              <div className="locale-tabs">
-                {LOCALES.map((l) => (
-                  <button key={l} className={locale === l ? 'active' : ''} onClick={() => setLocale(l)}>
-                    {LOCALE_LABEL[l]}
-                    {'　'}
-                    <Badge kind={isComplete(unit, row, l) ? 'ok' : 'warn'}>{isComplete(unit, row, l) ? '完整' : '待補'}</Badge>
-                  </button>
-                ))}
-                <span className="fill">
-                  {canEdit && locale === 'en' && (
-                    <button type="button" className="btn btn-sm" onClick={copyToEnglish}>
-                      複製中文到英文
-                    </button>
-                  )}
-                </span>
-              </div>
-              <fieldset disabled={!canEdit} style={{ border: 0 }}>
-                {localeFields.filter(showField).map((f) => (
-                  <FieldInput
-                    key={f.key}
-                    field={f}
-                    value={row.i18n?.[locale]?.[f.key] ?? ''}
-                    error={fieldErrors[f.key]}
-                    onChange={(v) => setLocalised(f.key, v)}
-                  />
-                ))}
-              </fieldset>
-            </div>
-          </div>
         </div>
       )}
 
       {unit.child && !isNew && <ChildList unit={unit} rows={children} />}
-
-      {/* 15 page：開放的頁面另有「頁面文字」（逐段改中英文，獨立存檔） */}
-      {unit.code === 'page' && !isNew && hasPageTexts(pageKeyOf(row)) && (
-        <PageTextsCard pageKey={pageKeyOf(row)} canEdit={canEdit} handle={pageTexts} onChangesCount={setPageTextChanges} />
-      )}
 
       <div className="card">
         <div className="card-b btn-row">
@@ -320,6 +339,8 @@ export function EditPage() {
     </>
   )
 }
+
+const SEO_KEYS = new Set(SEO_FIELDS.map((f) => f.key))
 
 /** page 單元的列：接 API 時 id 就是 pageKey，mock 的 id 是流水號、pageKey 另存 */
 const pageKeyOf = (row: Row) => String(row.pageKey ?? row.id)
