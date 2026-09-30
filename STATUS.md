@@ -199,6 +199,24 @@ mockup 內容（現況部署），設了就改吃 CMS。
 ⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
 清單在該腳本的 `HAND_MAINTAINED`。
 
+### ✅ 客戶 09-30 中文文案匯入（2026-09-30）
+
+依客戶 `NTI_Website_Content_ZH_Sep30.docx`（Subkarma 依 09-22 英文版翻譯的 SEO/GEO 中文稿），
+`db/content/250_content_zh_sep30.sql`（**只寫中文**，產生器 `tools/build-content-zh-sep30-sql.mjs`）：
+
+| 項目 | 內容 |
+|---|---|
+| 頁面文字覆寫 250 段（`PageText`，zh） | 21 頁；原文相同的段落在每一頁都換（例：設備導言在 `/facility` 與 `/solutions` 都換）。已在字典裡、譯法相同的不重寫 |
+| SEO 標題 17 頁＋首頁描述 | 只補空的或「zh 列還是英文複本」的（首頁原本就是） |
+| 方案頁 | 四頁的中文 SEO 標題與導言、8 個品項的名稱與說明（只換還是 200／230 初稿的） |
+| 認證說明 7 筆、FAQ 10 題 | 認證只補空的；FAQ 替 240 的草稿補中文（仍未上架） |
+
+- 公司中文名「**南台彩藝**」、口號「**勇於綠色印刷**」首次出現（文件註明口號譯法待客戶確認；Tim 2026-09-30 決定照文件上）。
+  **只有覆寫到的段落**會換，header／footer／表單頁等仍是 `zh.ts` 的「NTI」「勇於印綠」——要全站一致得另改 `zh.ts`。
+- 沒匯入的（站上沒有對應段落）：首頁三段式標語與兩張導覽卡、綠色優勢四頁共用引言、綠色印刷認證標章兩段、
+  聯絡我們的副標與 CTA、「多摺頁吊卡」（紙板頁沒有這個品項）。佔位符同 240，拿掉後匯入。
+- ⚠ 正式庫：**待 Tim 手動執行**（240 之後）。
+
 ### ✅ 所有固定頁的文字可從後台改＋認證證號＋客戶 09-22 英文文案匯入（2026-09-24）
 
 依客戶 `NTI_Website_Content_Sep22.docx`（SEO/GEO 改寫版英文文案）盤點「後台改不到的內容」後處理：
@@ -223,7 +241,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 綠色優勢四頁共用的 SECTION INTRO、Contact 的「Ready to Print Smarter?」CTA、首頁 Meta Description
 （文件版 205 字，超過欄位上限 180；站上現行版是精簡過的同義句）、文件建議的新網址（`/color-box-packaging` 等，網址是固定路由）。
 
-⚠ **中文**：改過的 10 段只有英文，`/zh` 仍是舊譯文，兩邊內容已對不上，要再翻：首頁 intro、
+✅ **中文**（2026-09-30 由 250 補上）：改過的 10 段原本只有英文，`/zh` 是舊譯文：首頁 intro、
 `/differences` 與 `/about-difference` 的品牌介紹、`/about-certifications` 開場段、`/facility` 與 `/solutions` 的設備導言、
 `/green-advantage` 與 `/green-our-advantage` 的 Partnering 段、`/green-advantage` 與 `/green-esg` 的 ESG 路線段。
 
