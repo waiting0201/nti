@@ -345,7 +345,8 @@ export function HeroSlides({ items, locale }: { items: Banner[]; locale: Locale 
           href={href(b)}
           {...(b.openInNewTab ? { target: '_blank', rel: 'noopener' } : {})}
         >
-          <img src={cmsMedia(b.imagePath)} alt={b.imageAlt} />
+          {/* 第一張是首頁 LCP：搶先下載；其餘疊在同一位置（opacity 切換），lazy 無效，只能降優先度別跟它搶頻寬 */}
+          <img src={cmsMedia(b.imagePath)} alt={b.imageAlt} fetchPriority={i === 0 ? 'high' : 'low'} />
         </A>
       ))}
     </>
