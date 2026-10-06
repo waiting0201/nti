@@ -8,7 +8,7 @@ import * as rest from './rest'
 /**
  * SEO 欄位組（docs/09-cms-admin.md §5.6）—— 僅 page／news／solution 三個單元有。
  * Slug 只有新聞真的會上網址（`/news/{slug}`），已上架的消息改 slug 時後端自動建 301。
- * 固定頁與方案的網址寫死在前台路由，slug 只給看（見 unitFields）。
+ * 固定頁與方案的網址寫死在前台路由，slug 在後台不顯示（見 unitFields）。
  */
 export const SEO_FIELDS: Field[] = [
   { key: 'slug', label: '網址代稱 Slug', type: 'text', i18n: true, required: true, side: 'locale',
@@ -55,20 +55,14 @@ export const UNITS: Unit[] = [
 
 export const UNIT_BY_CODE = new Map(UNITS.map((u) => [u.code, u]))
 
+const FIXED_URL_UNITS = new Set(['page', 'solution'])
+
 /** 單元的完整欄位清單（含 SEO 欄位組） */
 export function unitFields(unit: Unit): Field[] {
   if (!unit.hasSeo) return unit.fields
-  // 固定頁與方案的網址寫死在前台路由（以 pageKey／code 取資料），slug 改了也不會換網址——只給看、不給改。
-  const fixedUrl: Record<string, string> = {
-    page: '固定頁的網址由系統決定，無法修改',
-    solution: '方案頁的網址固定（/colorbox、/cardboard、/uv-printing、/other-printing），此欄僅供系統內部查找，無法修改',
-  }
-  const hint = fixedUrl[unit.code]
-  const seo = hint
-    ? SEO_FIELDS.map((f) => (f.key === 'slug'
-        ? { ...f, type: 'readonly' as const, required: false, pattern: undefined, hint }
-        : f))
-    : SEO_FIELDS
+  // 固定頁與方案的網址寫死在前台路由（以 pageKey／code 取資料），slug 改了也不會換網址，
+  // 擺出來只會讓人以為能改網址——直接不顯示。存檔時整筆資料原樣回送，DB 裡的值不受影響。
+  const seo = FIXED_URL_UNITS.has(unit.code) ? SEO_FIELDS.filter((f) => f.key !== 'slug') : SEO_FIELDS
   return [...unit.fields, ...seo]
 }
 
