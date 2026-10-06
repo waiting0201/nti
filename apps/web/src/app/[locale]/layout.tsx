@@ -10,6 +10,13 @@ import { htmlLang, isLocale, locales, siteUrl } from '@/lib/i18n'
 import { siteGraph } from '@/lib/jsonld'
 import '../globals.css'
 
+const FONTS_CSS =
+  'https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap'
+
+// 腳本跑的時候 CSS 可能已經載完（快取命中），load 事件就不會再來，所以先看 sheet
+const FONTS_SWAP =
+  "(function(l){if(!l)return;var on=function(){l.media='all'};l.sheet?on():l.addEventListener('load',on)})(document.getElementById('gfonts'))"
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 }
@@ -33,10 +40,18 @@ export default async function LocaleLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
+        {/*
+          字型 CSS 不擋渲染（2026-10-06，手機 Lighthouse 量到擋 1.9 秒）：先以 media="print" 載入，
+          載完才切成 all。字型本來就是 display=swap，差別只在系統字先出現的那一瞬間。
+          不改用 next/font：globals.css 是 mockup 原檔、寫死 "Mulish"／"Noto Sans TC"，
+          而 Noto Sans TC 自架會在部署包塞進上百個切片，SWA Free 有 250MB 上限。
+        */}
+        {/* media 會被 FONTS_SWAP 改掉，水合時跟伺服器輸出對不上是預期的 */}
+        <link id="gfonts" href={FONTS_CSS} rel="stylesheet" media="print" suppressHydrationWarning />
+        <script dangerouslySetInnerHTML={{ __html: FONTS_SWAP }} />
+        <noscript>
+          <link href={FONTS_CSS} rel="stylesheet" />
+        </noscript>
       </head>
       <body>
         <SiteHeader />

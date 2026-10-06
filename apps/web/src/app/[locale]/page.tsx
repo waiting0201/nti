@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { preload } from 'react-dom'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { CertificationLogos, ClientLogos, HeroSlides } from '@/components/cms'
@@ -28,6 +29,9 @@ export default async function Page({ params }: Props) {
   const gallery = settings?.['home.gallery_image']
   // 「印刷解決方案」四張卡：標題與短述來自後台 02（name／summary），圖與副標照 mockup
   const sol = (code: string) => home?.solutions.find((s) => s.code === code)
+  // 第一張 Banner 是 LCP：在 <head> 先 preload，不必等 HTML 解析到 <img> 才開始下載
+  const lcp = home?.banners[0]?.imagePath
+  if (lcp) preload(cmsMedia(lcp), { as: 'image', fetchPriority: 'high' })
   return (
     <T locale={locale} overrides={page?.texts}>
 
