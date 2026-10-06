@@ -95,28 +95,28 @@ export default async function Page({ params }: Props) {
           <h2 className="sec-h reveal">Printing Solutions</h2>
           <div className="prod-grid">
             <article className="pcard reveal" data-d="1">
-              <div className="ph"><img src={mediaUrl("/assets/hp-prod-boxes.png")} alt="Paper box printing" /></div>
+              <div className="ph"><img loading="lazy" src={mediaUrl("/assets/hp-prod-boxes.png")} alt="Paper box printing" /></div>
               <h3>{sol('boxes')?.name || "Color Box Packaging"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Customize package</div>
               <p>{sol('boxes')?.summary || "Multiple box-types: besides folding box, we also provide customize box structure design."}</p>
               <A href={l("/colorbox")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="2">
-              <div className="ph"><img src={mediaUrl("/assets/hp-prod-cardboard.webp")} alt="Packaging paperboard printing" /></div>
+              <div className="ph"><img loading="lazy" src={mediaUrl("/assets/hp-prod-cardboard.webp")} alt="Packaging paperboard printing" /></div>
               <h3>{sol('cardboard')?.name || "Packaging Paperboard"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Various packaging paperboards</div>
               <p>{sol('cardboard')?.summary || "Hang tags, blister cards and backcards for retail walls."}</p>
               <A href={l("/cardboard")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="3">
-              <div className="ph"><img src={mediaUrl("/assets/hp-prod-uv.webp")} alt="UV printing" /></div>
+              <div className="ph"><img loading="lazy" src={mediaUrl("/assets/hp-prod-uv.webp")} alt="UV printing" /></div>
               <h3>{sol('uv')?.name || "UV Printing"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Special printing</div>
               <p>{sol('uv')?.summary || "Printing on special materials, special varnish, anti-counterfeiting and more."}</p>
               <A href={l("/uv-printing")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="3">
-              <div className="ph"><img src={mediaUrl("/assets/hp-prod-other.webp")} alt="Other printing — hand bags, calendars, manuals" /></div>
+              <div className="ph"><img loading="lazy" src={mediaUrl("/assets/hp-prod-other.webp")} alt="Other printing — hand bags, calendars, manuals" /></div>
               <h3>{sol('other')?.name || "Other Printing"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Beyond the box</div>
               <p>{sol('other')?.summary || "Desk calendars, hand bags, red envelopes, mouse pads and manuals."}</p>
@@ -128,7 +128,7 @@ export default async function Page({ params }: Props) {
 
       {/* ============ GALLERY ============ */}
       <section className="gallery reveal">
-        <img src={gallery ? cmsMedia(gallery) : mediaUrl("/assets/ref-home-mid1.webp")} alt={settings?.['home.gallery_alt'] ?? "A showcase of NTI's printed packaging work"} />
+        <img loading="lazy" src={gallery ? cmsMedia(gallery) : mediaUrl("/assets/ref-home-mid1.webp")} alt={settings?.['home.gallery_alt'] ?? "A showcase of NTI's printed packaging work"} />
       </section>
 
       {/* ============ WHY NTI ============ */}
@@ -188,9 +188,9 @@ export default async function Page({ params }: Props) {
               <h3>Quality Management</h3>
               <p>G7 Master, ISO 9001, GMI</p>
               <div className="proof-logos">
-                <img src={mediaUrl("/assets/cert-g7.png")} alt="G7 Master Qualified Facility" />
-                <img src={mediaUrl("/assets/cert-iso9001.png")} alt="ISO 9001 Quality Assurance Management" />
-                <img src={mediaUrl("/assets/cert-gmi.png")} alt="GMI Certified Print Facility" />
+                <img loading="lazy" src={mediaUrl("/assets/cert-g7.png")} alt="G7 Master Qualified Facility" />
+                <img loading="lazy" src={mediaUrl("/assets/cert-iso9001.png")} alt="ISO 9001 Quality Assurance Management" />
+                <img loading="lazy" src={mediaUrl("/assets/cert-gmi.png")} alt="GMI Certified Print Facility" />
               </div>
             </article>
             <article className="proof-card">
@@ -200,12 +200,12 @@ export default async function Page({ params }: Props) {
               <h3>Environmental Sustainability</h3>
               <p>FSC, ISO 14001, CO2 Neutral, Green Printing, Green Building (Diamond), Mineral Oil Free</p>
               <div className="proof-logos">
-                <img className="pad-lg" src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" />
-                <img src={mediaUrl("/assets/cert-iso14001.png")} alt="ISO 14001 Environmental Management" />
-                <img src={mediaUrl("/assets/cert-co2neutral.png")} alt="CO2 Neutral" />
-                <img className="pad-md" src={mediaUrl("/assets/cert-green.png")} alt="Green Printing" />
-                <img src={mediaUrl("/assets/cert-greenbuilding.png")} alt="Green Building Label &mdash; Diamond grade" />
-                <img src={mediaUrl("/assets/cert-mof.png")} alt="Mineral Oil Free" />
+                <img loading="lazy" className="pad-lg" src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" />
+                <img loading="lazy" src={mediaUrl("/assets/cert-iso14001.png")} alt="ISO 14001 Environmental Management" />
+                <img loading="lazy" src={mediaUrl("/assets/cert-co2neutral.png")} alt="CO2 Neutral" />
+                <img loading="lazy" className="pad-md" src={mediaUrl("/assets/cert-green.png")} alt="Green Printing" />
+                <img loading="lazy" src={mediaUrl("/assets/cert-greenbuilding.png")} alt="Green Building Label &mdash; Diamond grade" />
+                <img loading="lazy" src={mediaUrl("/assets/cert-mof.png")} alt="Mineral Oil Free" />
               </div>
             </article>
             <article className="proof-card">
@@ -215,11 +215,11 @@ export default async function Page({ params }: Props) {
               <h3>Social Responsibility &amp; Safety</h3>
               <p>ISO 45001, Sedex, LEED Gold 2023, ESG, ESCI</p>
               <div className="proof-logos">
-                <img src={mediaUrl("/assets/cert-iso45001.png")} alt="ISO 45001 Occupational Health &amp; Safety" />
-                <img className="wide" src={mediaUrl("/assets/cert-sedex.png")} alt="Sedex Member" />
-                <img src={mediaUrl("/assets/cert-leed-gold.png")} alt="LEED Gold 2023" />
-                <img className="pad-sm" src={mediaUrl("/assets/cert-esg.png")} alt="ESG &mdash; Environmental, Social, Governance" />
-                <img className="lockup" src={mediaUrl("/assets/cert-esci.png")} alt="Energy Smart Communities Initiative" />
+                <img loading="lazy" src={mediaUrl("/assets/cert-iso45001.png")} alt="ISO 45001 Occupational Health &amp; Safety" />
+                <img loading="lazy" className="wide" src={mediaUrl("/assets/cert-sedex.png")} alt="Sedex Member" />
+                <img loading="lazy" src={mediaUrl("/assets/cert-leed-gold.png")} alt="LEED Gold 2023" />
+                <img loading="lazy" className="pad-sm" src={mediaUrl("/assets/cert-esg.png")} alt="ESG &mdash; Environmental, Social, Governance" />
+                <img loading="lazy" className="lockup" src={mediaUrl("/assets/cert-esci.png")} alt="Energy Smart Communities Initiative" />
               </div>
             </article>
           </div>
@@ -246,20 +246,20 @@ export default async function Page({ params }: Props) {
               ) : (
               <>
               <div className="logo-set">
-                <img src={mediaUrl("/assets/client-target.png")} alt="Target" />
-                <img src={mediaUrl("/assets/client-cvs.png")} alt="CVS pharmacy" />
-                <img src={mediaUrl("/assets/client-walgreens.png")} alt="Walgreens" />
-                <img src={mediaUrl("/assets/client-lowes.png")} alt="Lowe&rsquo;s" />
-                <img src={mediaUrl("/assets/client-academy.png")} alt="Academy Sports + Outdoors" />
-                <img src={mediaUrl("/assets/client-homedepot.png")} alt="The Home Depot" />
+                <img loading="lazy" src={mediaUrl("/assets/client-target.png")} alt="Target" />
+                <img loading="lazy" src={mediaUrl("/assets/client-cvs.png")} alt="CVS pharmacy" />
+                <img loading="lazy" src={mediaUrl("/assets/client-walgreens.png")} alt="Walgreens" />
+                <img loading="lazy" src={mediaUrl("/assets/client-lowes.png")} alt="Lowe&rsquo;s" />
+                <img loading="lazy" src={mediaUrl("/assets/client-academy.png")} alt="Academy Sports + Outdoors" />
+                <img loading="lazy" src={mediaUrl("/assets/client-homedepot.png")} alt="The Home Depot" />
               </div>
               <div className="logo-set" aria-hidden="true">
-                <img src={mediaUrl("/assets/client-target.png")} alt="" />
-                <img src={mediaUrl("/assets/client-cvs.png")} alt="" />
-                <img src={mediaUrl("/assets/client-walgreens.png")} alt="" />
-                <img src={mediaUrl("/assets/client-lowes.png")} alt="" />
-                <img src={mediaUrl("/assets/client-academy.png")} alt="" />
-                <img src={mediaUrl("/assets/client-homedepot.png")} alt="" />
+                <img loading="lazy" src={mediaUrl("/assets/client-target.png")} alt="" />
+                <img loading="lazy" src={mediaUrl("/assets/client-cvs.png")} alt="" />
+                <img loading="lazy" src={mediaUrl("/assets/client-walgreens.png")} alt="" />
+                <img loading="lazy" src={mediaUrl("/assets/client-lowes.png")} alt="" />
+                <img loading="lazy" src={mediaUrl("/assets/client-academy.png")} alt="" />
+                <img loading="lazy" src={mediaUrl("/assets/client-homedepot.png")} alt="" />
               </div>
               </>
               )}

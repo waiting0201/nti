@@ -12,6 +12,16 @@ export function HeroSlider() {
     const slides = [...hero.querySelectorAll<HTMLElement>('.slide')]
     const dotsBox = hero.querySelector<HTMLElement>('.dots')
     if (!dotsBox || !slides.length) return
+
+    // 第 2 張起的 Banner 只帶 data-src（components/cms.tsx 的 HeroSlides），頁面 load 完才下載，
+    // 不跟第一張（LCP）搶頻寬
+    const loadRest = () =>
+      hero.querySelectorAll<HTMLImageElement>('img[data-src]').forEach((img) => {
+        img.src = img.dataset.src!
+        img.removeAttribute('data-src')
+      })
+    if (document.readyState === 'complete') loadRest()
+    else window.addEventListener('load', loadRest, { once: true })
     dotsBox.innerHTML = ''
     let cur = 0
     let timer: ReturnType<typeof setInterval> | undefined
@@ -56,6 +66,7 @@ export function HeroSlider() {
     restart()
 
     return () => {
+      window.removeEventListener('load', loadRest)
       clearInterval(timer)
       prev?.removeEventListener('click', onPrev)
       next?.removeEventListener('click', onNext)

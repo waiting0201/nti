@@ -345,8 +345,16 @@ export function HeroSlides({ items, locale }: { items: Banner[]; locale: Locale 
           href={href(b)}
           {...(b.openInNewTab ? { target: '_blank', rel: 'noopener' } : {})}
         >
-          {/* 第一張是首頁 LCP：搶先下載；其餘疊在同一位置（opacity 切換），lazy 無效，只能降優先度別跟它搶頻寬 */}
-          <img src={cmsMedia(b.imagePath)} alt={b.imageAlt} fetchPriority={i === 0 ? 'high' : 'low'} />
+          {/*
+            第一張是首頁 LCP，搶先下載。其餘疊在同一位置以 opacity 切換，loading="lazy" 無效
+            （瀏覽器認定它們在視窗內），所以先不給 src：HeroSlider 等頁面 load 完才補上，
+            第一次換頁在 5.5 秒後，來得及。沒有 JS 時輪播本來就不會動，只看得到第一張。
+          */}
+          {i === 0 ? (
+            <img src={cmsMedia(b.imagePath)} alt={b.imageAlt} fetchPriority="high" />
+          ) : (
+            <img data-src={cmsMedia(b.imagePath)} alt={b.imageAlt} />
+          )}
         </A>
       ))}
     </>
@@ -487,6 +495,7 @@ export function CertificationLogos({ items, locale }: { items: Certification[]; 
                 className={PROOF_LOGO_SIZE_CLASS[basename(c.logoPath)]}
                 src={cmsMedia(c.logoPath)}
                 alt={c.logoAlt}
+                loading="lazy"
               />
             ))}
           </div>
