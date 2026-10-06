@@ -215,7 +215,8 @@ mockup 內容（現況部署），設了就改吃 CMS。
 - 舊網址由 middleware 301 到新網址（`lib/renamed-slugs.ts`），預覽站已經流出去的連結不會 404。
 - 舊站 301 的落點同步改成新網址（`legacy-redirects.ts` → 210 SQL／CSV、對照表）。
 - 前台撈 CMS 用的是 pageKey／`Solution.Code`，**DB 內容與 API 路由都沒動**；`Page.RouteTemplate`／`PageI18n.Slug` 仍是當初的提案值，前台沒用到。
-- ⚠ **正式庫要跑 `db/content/260_slug_rename.sql`**：已匯入的 301 落點（28 筆）與首頁 Banner 連結（1 筆）改到新網址。沒跑也不會 404，只是多轉一次。
+- `db/content/260_slug_rename.sql`：已匯入的 301 落點（28 筆）與首頁 Banner 連結（1 筆）改到新網址。
+  ✅ 正式庫已執行（2026-10-06，Tim，Portal 查詢編輯器）；API 與 `/zh` 首頁實測 Banner 已連到 `/zh/printing-solutions`。
 - 表上另有兩項不是網址、未處理：「projects 兩區要不要併成一頁」（本來就是同一頁）、「green-advantage 第一段是否加不同內容」（待客戶給文案）。
 
 ### ✅ 客戶 09-30 中文文案匯入（2026-09-30）
