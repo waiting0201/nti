@@ -138,6 +138,7 @@ NTI/
   db/tools/sqlcmd.sh NTI < db/content/240_content_sep22.sql    # 客戶 09-22 SEO/GEO 英文改寫（頁面文字／SEO 標題／認證說明／FAQ 草稿）
   db/tools/sqlcmd.sh NTI < db/content/250_content_zh_sep30.sql # 客戶 09-30 中文稿（頁面文字 250 段／SEO／方案導言與品項／認證說明／FAQ 中文）
   db/tools/sqlcmd.sh NTI < db/content/260_slug_rename.sql     # 客戶 10-06 網址更名：既有 301 落點與首頁 Banner 改到新網址
+  db/tools/sqlcmd.sh NTI < db/content/270_drop_zh_prefix.sql  # 客戶 10-06 中文拿掉 /zh：既有 301 的落點／來源去掉前綴
   db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql             # 應輸出「全數 PASS」
   ```
 

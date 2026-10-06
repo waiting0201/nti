@@ -32,7 +32,7 @@ for (const m of src.matchAll(/\{[^{}]*?\bto:\s*'([^']+)'[^{}]*?\}/g)) {
   const to = m[1]
   const zh = /\bzh:\s*'([^']+)'/.exec(m[0])?.[1]
   const en = /\ben:\s*'([^']+)'/.exec(m[0])?.[1]
-  if (zh) specific.set(zh.toLowerCase(), `/zh${to}`)
+  if (zh) specific.set(zh.toLowerCase(), to) // 中文無前綴（2026-10-06 起）
   if (en) specific.set(en.toLowerCase(), `/en${to}`)
 }
 if (specific.size < 30) throw new Error(`對照表只解析到 ${specific.size} 列，格式可能變了`)
@@ -42,7 +42,7 @@ const archiveSrc = read('apps/web/src/lib/legacy-archive.ts')
 const archive = new Map(
   [...archiveSrc.matchAll(/"([^"]+)"/g)]
     .map((m) => m[1])
-    .map((p) => [p.toLowerCase(), p.startsWith('/en/') ? '/en' : '/zh']),
+    .map((p) => [p.toLowerCase(), p.startsWith('/en/') ? '/en' : '/']),
 )
 
 // 展開順序＝優先順序，與 middleware 一致：專屬落點蓋掉 archive 的首頁
@@ -65,7 +65,7 @@ if (problems.length) {
 }
 
 const rows = [...map].sort(([a], [b]) => a.localeCompare(b))
-const toHome = rows.filter(([, to]) => to === '/zh' || to === '/en').length
+const toHome = rows.filter(([, to]) => to === '/' || to === '/en').length
 
 /* ── CSV（欄位順序＝ AdminPageHandler.ImportAsync 讀的順序）── */
 const csv = ['fromPath,toPath,statusCode,isActive,hitCount']

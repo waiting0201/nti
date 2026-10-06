@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { A } from './A'
 import { T } from '@/lib/t-client'
 import { NAV_ACTIVE } from './nav-active'
-import { splitLocale, withLocale, type Locale } from '@/lib/i18n'
+import { localePath, splitLocale, withLocale, type Locale } from '@/lib/i18n'
 import { mediaUrl } from '@/lib/media'
 
 const Caret = () => (
@@ -105,8 +105,8 @@ export function SiteHeader() {
   const [activeTop, activeSub] = NAV_ACTIVE[slug] ?? []
 
   const other: Locale = locale === 'en' ? 'zh' : 'en'
-  const otherHref = `/${other}${path === '/' ? '' : path}`
-  const selfHref = `/${locale}${path === '/' ? '' : path}`
+  const otherHref = localePath(other, path)
+  const selfHref = localePath(locale, path)
 
   return (
     <T locale={locale}>

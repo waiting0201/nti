@@ -1,6 +1,6 @@
 /* 由 scripts/build-seed.mjs 自 db/seed/*.sql 與 mockup/*.html 產生 —— 請勿手改。
    重新產生：npm run seed
-   筆數：category=44  page=29  solution=4  solution-item=15  home-banner=3  news=12  project=6  faq=8  job=5  trend=5  certification=14  client=6  facility=24  vlog=4  supplier-notice=5  supplier-spec=4  redirect=227 */
+   筆數：category=44  page=29  solution=4  solution-item=15  home-banner=3  news=12  project=6  faq=8  job=5  trend=5  certification=14  client=6  facility=24  vlog=4  supplier-notice=5  supplier-spec=4  redirect=226 */
 import type { Row } from './types'
 
 export const SEED: Record<string, Row[]> = {
@@ -3506,7 +3506,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "1",
       "fromPath": "/__trashed",
-      "toPath": "/zh",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3514,7 +3514,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "2",
       "fromPath": "/__trashed-2",
-      "toPath": "/zh",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3522,7 +3522,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "3",
       "fromPath": "/「綠色電動-x-數位創新」研討會落幕：esg趨勢與永續",
-      "toPath": "/zh/news-green-drive-seminar",
+      "toPath": "/news-green-drive-seminar",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3530,7 +3530,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "4",
       "fromPath": "/2019-desk-calendar",
-      "toPath": "/zh",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3538,7 +3538,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "5",
       "fromPath": "/2020-desk-calendar",
-      "toPath": "/zh",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3546,7 +3546,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "6",
       "fromPath": "/2024-desk-calendar",
-      "toPath": "/zh",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3554,7 +3554,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "7",
       "fromPath": "/2024-happy-new-year-nti",
-      "toPath": "/zh",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3562,7 +3562,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "8",
       "fromPath": "/228營運公告",
-      "toPath": "/zh",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3570,7 +3570,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "9",
       "fromPath": "/228營運公告-2",
-      "toPath": "/zh",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3578,7 +3578,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "10",
       "fromPath": "/carbon-permit",
-      "toPath": "/zh",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3586,7 +3586,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "11",
       "fromPath": "/category/news",
-      "toPath": "/zh/news",
+      "toPath": "/news",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3594,7 +3594,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "12",
       "fromPath": "/category/電子報",
-      "toPath": "/zh/blog",
+      "toPath": "/blog",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3602,61 +3602,53 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "13",
       "fromPath": "/color-printing-technology",
-      "toPath": "/zh",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "14",
-      "fromPath": "/contact",
-      "toPath": "/zh/contact",
+      "fromPath": "/cradle-to-cradle",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "15",
-      "fromPath": "/cradle-to-cradle",
-      "toPath": "/zh",
+      "fromPath": "/die-cutting",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "16",
-      "fromPath": "/die-cutting",
-      "toPath": "/zh",
+      "fromPath": "/die-cutting-2",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "17",
-      "fromPath": "/die-cutting-2",
-      "toPath": "/zh",
+      "fromPath": "/drprint",
+      "toPath": "/blog",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "18",
-      "fromPath": "/drprint",
-      "toPath": "/zh/blog",
+      "fromPath": "/eewh-nti-printing",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "19",
-      "fromPath": "/eewh-nti-printing",
-      "toPath": "/zh",
-      "statusCode": "301",
-      "isEnabled": true,
-      "hitCount": 0
-    },
-    {
-      "id": "20",
       "fromPath": "/en/contactus",
       "toPath": "/en/contact",
       "statusCode": "301",
@@ -3664,7 +3656,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "21",
+      "id": "20",
       "fromPath": "/en/home/csr",
       "toPath": "/en/green-esg",
       "statusCode": "301",
@@ -3672,7 +3664,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "22",
+      "id": "21",
       "fromPath": "/en/home/csr/employee-development",
       "toPath": "/en/green-esg",
       "statusCode": "301",
@@ -3680,7 +3672,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "23",
+      "id": "22",
       "fromPath": "/en/home/csr/environmental-sustainability",
       "toPath": "/en/green-esg",
       "statusCode": "301",
@@ -3688,7 +3680,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "24",
+      "id": "23",
       "fromPath": "/en/home/csr/make-contribution-to-the-community",
       "toPath": "/en/green-esg",
       "statusCode": "301",
@@ -3696,7 +3688,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "25",
+      "id": "24",
       "fromPath": "/en/home/factory-tour",
       "toPath": "/en/facility-tour",
       "statusCode": "301",
@@ -3704,7 +3696,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "26",
+      "id": "25",
       "fromPath": "/en/home/green-printing",
       "toPath": "/en/green-our-advantage",
       "statusCode": "301",
@@ -3712,7 +3704,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "27",
+      "id": "26",
       "fromPath": "/en/home/news",
       "toPath": "/en/news",
       "statusCode": "301",
@@ -3720,7 +3712,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "28",
+      "id": "27",
       "fromPath": "/en/home/recognition",
       "toPath": "/en/about-certifications",
       "statusCode": "301",
@@ -3728,7 +3720,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "29",
+      "id": "28",
       "fromPath": "/en/home/vision",
       "toPath": "/en/about-difference",
       "statusCode": "301",
@@ -3736,7 +3728,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "30",
+      "id": "29",
       "fromPath": "/en/production-equipment",
       "toPath": "/en/facility",
       "statusCode": "301",
@@ -3744,7 +3736,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "31",
+      "id": "30",
       "fromPath": "/en/production-equipment/post-press-finishing",
       "toPath": "/en/facility-post-press",
       "statusCode": "301",
@@ -3752,7 +3744,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "32",
+      "id": "31",
       "fromPath": "/en/production-equipment/pre-press-equipment",
       "toPath": "/en/facility-pre-press",
       "statusCode": "301",
@@ -3760,7 +3752,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "33",
+      "id": "32",
       "fromPath": "/en/production-equipment/printing-environmental-friendly",
       "toPath": "/en/facility-eco-printing",
       "statusCode": "301",
@@ -3768,7 +3760,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "34",
+      "id": "33",
       "fromPath": "/en/production-equipment/quality-inspection",
       "toPath": "/en/facility-quality",
       "statusCode": "301",
@@ -3776,7 +3768,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "35",
+      "id": "34",
       "fromPath": "/en/products",
       "toPath": "/en/printing-solutions",
       "statusCode": "301",
@@ -3784,7 +3776,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "36",
+      "id": "35",
       "fromPath": "/en/products/other-printing",
       "toPath": "/en/other-printing",
       "statusCode": "301",
@@ -3792,7 +3784,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "37",
+      "id": "36",
       "fromPath": "/en/products/packaging-boxes",
       "toPath": "/en/colorbox",
       "statusCode": "301",
@@ -3800,7 +3792,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "38",
+      "id": "37",
       "fromPath": "/en/products/uv-printing",
       "toPath": "/en/uv-printing",
       "statusCode": "301",
@@ -3808,7 +3800,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "39",
+      "id": "38",
       "fromPath": "/en/products/包裝紙卡",
       "toPath": "/en/cardboard",
       "statusCode": "301",
@@ -3816,7 +3808,7 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "40",
+      "id": "39",
       "fromPath": "/en/電子報",
       "toPath": "/en/blog",
       "statusCode": "301",
@@ -3824,1497 +3816,1497 @@ export const SEED: Record<string, Row[]> = {
       "hitCount": 0
     },
     {
-      "id": "41",
+      "id": "40",
       "fromPath": "/environmental-protection",
-      "toPath": "/zh",
+      "toPath": "/",
+      "statusCode": "301",
+      "isEnabled": true,
+      "hitCount": 0
+    },
+    {
+      "id": "41",
+      "fromPath": "/environmentally-friendly-digital-printing",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "42",
-      "fromPath": "/environmentally-friendly-digital-printing",
-      "toPath": "/zh",
+      "fromPath": "/esg",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "43",
-      "fromPath": "/esg",
-      "toPath": "/zh",
+      "fromPath": "/esg-for-culture",
+      "toPath": "/news-taicca-partnership",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "44",
-      "fromPath": "/esg-for-culture",
-      "toPath": "/zh/news-taicca-partnership",
+      "fromPath": "/exquisite-printing-process",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "45",
-      "fromPath": "/exquisite-printing-process",
-      "toPath": "/zh",
+      "fromPath": "/fsc",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "46",
-      "fromPath": "/fsc",
-      "toPath": "/zh",
+      "fromPath": "/g7-master-colorspace",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "47",
-      "fromPath": "/g7-master-colorspace",
-      "toPath": "/zh",
+      "fromPath": "/gmi_color-printing",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "48",
-      "fromPath": "/gmi_color-printing",
-      "toPath": "/zh",
+      "fromPath": "/gmi_market",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "49",
-      "fromPath": "/gmi_market",
-      "toPath": "/zh",
+      "fromPath": "/green-printing-digital-innovation",
+      "toPath": "/news-green-printing-digital-innovation",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "50",
-      "fromPath": "/green-printing-digital-innovation",
-      "toPath": "/zh/news-green-printing-digital-innovation",
+      "fromPath": "/green-supply-chain-gsc",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "51",
-      "fromPath": "/green-supply-chain-gsc",
-      "toPath": "/zh",
+      "fromPath": "/health-printing",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "52",
-      "fromPath": "/health-printing",
-      "toPath": "/zh",
+      "fromPath": "/home/csr",
+      "toPath": "/green-esg",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "53",
-      "fromPath": "/home/csr",
-      "toPath": "/zh/green-esg",
+      "fromPath": "/home/csr/community",
+      "toPath": "/green-esg",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "54",
-      "fromPath": "/home/csr/community",
-      "toPath": "/zh/green-esg",
+      "fromPath": "/home/csr/employees",
+      "toPath": "/green-esg",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "55",
-      "fromPath": "/home/csr/employees",
-      "toPath": "/zh/green-esg",
+      "fromPath": "/home/csr/environment",
+      "toPath": "/green-esg",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "56",
-      "fromPath": "/home/csr/environment",
-      "toPath": "/zh/green-esg",
+      "fromPath": "/home/factory",
+      "toPath": "/facility-tour",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "57",
-      "fromPath": "/home/factory",
-      "toPath": "/zh/facility-tour",
+      "fromPath": "/home/green-printing",
+      "toPath": "/green-our-advantage",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "58",
-      "fromPath": "/home/green-printing",
-      "toPath": "/zh/green-our-advantage",
+      "fromPath": "/home/news",
+      "toPath": "/news",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "59",
-      "fromPath": "/home/news",
-      "toPath": "/zh/news",
+      "fromPath": "/home/recognition",
+      "toPath": "/about-certifications",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "60",
-      "fromPath": "/home/recognition",
-      "toPath": "/zh/about-certifications",
+      "fromPath": "/home/vision",
+      "toPath": "/about-difference",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "61",
-      "fromPath": "/home/vision",
-      "toPath": "/zh/about-difference",
+      "fromPath": "/how-to-expedite-getting-a-quotation",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "62",
-      "fromPath": "/how-to-expedite-getting-a-quotation",
-      "toPath": "/zh",
+      "fromPath": "/hp-數位印刷變動圖文，少量也能出眾！",
+      "toPath": "/news-hp-variable-data-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "63",
-      "fromPath": "/hp-數位印刷變動圖文，少量也能出眾！",
-      "toPath": "/zh/news-hp-variable-data-printing",
+      "fromPath": "/imposition-printing",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "64",
-      "fromPath": "/imposition-printing",
-      "toPath": "/zh",
+      "fromPath": "/industrial-wastewater",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "65",
-      "fromPath": "/industrial-wastewater",
-      "toPath": "/zh",
+      "fromPath": "/lithographic-printing",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "66",
-      "fromPath": "/lithographic-printing",
-      "toPath": "/zh",
+      "fromPath": "/low-carbon-economy",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "67",
-      "fromPath": "/low-carbon-economy",
-      "toPath": "/zh",
+      "fromPath": "/news-firefighter-paper-boardgame",
+      "toPath": "/news-firefighter-boardgame",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "68",
-      "fromPath": "/news-firefighter-paper-boardgame",
-      "toPath": "/zh/news-firefighter-boardgame",
+      "fromPath": "/nti-national-sustainable-development-award",
+      "toPath": "/news-national-sustainable-development-award",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "69",
-      "fromPath": "/nti-national-sustainable-development-award",
-      "toPath": "/zh/news-national-sustainable-development-award",
+      "fromPath": "/ntiprinting-commonwealth-magazine",
+      "toPath": "/news-commonwealth-interview",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "70",
-      "fromPath": "/ntiprinting-commonwealth-magazine",
-      "toPath": "/zh/news-commonwealth-interview",
+      "fromPath": "/packaging-and-printing",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "71",
-      "fromPath": "/packaging-and-printing",
-      "toPath": "/zh",
+      "fromPath": "/packaging-and-printing-2",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "72",
-      "fromPath": "/packaging-and-printing-2",
-      "toPath": "/zh",
+      "fromPath": "/packaging-art",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "73",
-      "fromPath": "/packaging-art",
-      "toPath": "/zh",
+      "fromPath": "/packaging-materials",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "74",
-      "fromPath": "/packaging-materials",
-      "toPath": "/zh",
+      "fromPath": "/paper-bag",
+      "toPath": "/news-gentle-wild-paper-bags",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "75",
-      "fromPath": "/paper-bag",
-      "toPath": "/zh/news-gentle-wild-paper-bags",
+      "fromPath": "/paper-lamination",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "76",
-      "fromPath": "/paper-lamination",
-      "toPath": "/zh",
+      "fromPath": "/paper-lamination-2",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "77",
-      "fromPath": "/paper-lamination-2",
-      "toPath": "/zh",
+      "fromPath": "/production",
+      "toPath": "/facility",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "78",
-      "fromPath": "/production",
-      "toPath": "/zh/facility",
+      "fromPath": "/production/hp-indigo-digital-printing",
+      "toPath": "/facility-eco-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "79",
-      "fromPath": "/production/hp-indigo-digital-printing",
-      "toPath": "/zh/facility-eco-printing",
+      "fromPath": "/production/postpress",
+      "toPath": "/facility-post-press",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "80",
-      "fromPath": "/production/postpress",
-      "toPath": "/zh/facility-post-press",
+      "fromPath": "/production/prepress",
+      "toPath": "/facility-pre-press",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "81",
-      "fromPath": "/production/prepress",
-      "toPath": "/zh/facility-pre-press",
+      "fromPath": "/production/printing-equipment",
+      "toPath": "/facility-eco-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "82",
-      "fromPath": "/production/printing-equipment",
-      "toPath": "/zh/facility-eco-printing",
+      "fromPath": "/production/quality-check",
+      "toPath": "/facility-quality",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "83",
-      "fromPath": "/production/quality-check",
-      "toPath": "/zh/facility-quality",
+      "fromPath": "/products",
+      "toPath": "/printing-solutions",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "84",
-      "fromPath": "/products",
-      "toPath": "/zh/printing-solutions",
+      "fromPath": "/products/cards",
+      "toPath": "/cardboard",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "85",
-      "fromPath": "/products/cards",
-      "toPath": "/zh/cardboard",
+      "fromPath": "/products/colorbox",
+      "toPath": "/colorbox",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "86",
-      "fromPath": "/products/colorbox",
-      "toPath": "/zh/colorbox",
+      "fromPath": "/products/other-printing",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "87",
-      "fromPath": "/products/other-printing",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/products/uv-printing",
+      "toPath": "/uv-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "88",
-      "fromPath": "/products/uv-printing",
-      "toPath": "/zh/uv-printing",
+      "fromPath": "/project-nti-factory-is-leed-gold",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "89",
-      "fromPath": "/project-nti-factory-is-leed-gold",
-      "toPath": "/zh",
+      "fromPath": "/rfid",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "90",
-      "fromPath": "/rfid",
-      "toPath": "/zh",
+      "fromPath": "/sustainable-design-animal-exhibition",
+      "toPath": "/news-animals-of-tomorrow",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "91",
-      "fromPath": "/sustainable-design-animal-exhibition",
-      "toPath": "/zh/news-animals-of-tomorrow",
+      "fromPath": "/sustainable-exchange-orca-rescue",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "92",
-      "fromPath": "/sustainable-exchange-orca-rescue",
-      "toPath": "/zh",
+      "fromPath": "/tag/2024",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "93",
-      "fromPath": "/tag/2024",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/tag/2024happynewyear",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "94",
-      "fromPath": "/tag/2024happynewyear",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/tag/2024龍年桌曆",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "95",
-      "fromPath": "/tag/2024龍年桌曆",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/tag/carbon-neutral",
+      "toPath": "/news/tag/carbon-footprint",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "96",
-      "fromPath": "/tag/carbon-neutral",
-      "toPath": "/zh/news/tag/carbon-footprint",
+      "fromPath": "/tag/carbon-permit",
+      "toPath": "/news/tag/carbon-footprint",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "97",
-      "fromPath": "/tag/carbon-permit",
-      "toPath": "/zh/news/tag/carbon-footprint",
+      "fromPath": "/tag/carbon-tax",
+      "toPath": "/news/tag/carbon-footprint",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "98",
-      "fromPath": "/tag/carbon-tax",
-      "toPath": "/zh/news/tag/carbon-footprint",
+      "fromPath": "/tag/csr",
+      "toPath": "/news/tag/csr",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "99",
-      "fromPath": "/tag/csr",
-      "toPath": "/zh/news/tag/csr",
+      "fromPath": "/tag/eewh",
+      "toPath": "/news/tag/green-building",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "100",
-      "fromPath": "/tag/eewh",
-      "toPath": "/zh/news/tag/green-building",
+      "fromPath": "/tag/esg",
+      "toPath": "/news/tag/esg",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "101",
-      "fromPath": "/tag/esg",
-      "toPath": "/zh/news/tag/esg",
+      "fromPath": "/tag/esg教育",
+      "toPath": "/news/tag/esg",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "102",
-      "fromPath": "/tag/esg教育",
-      "toPath": "/zh/news/tag/esg",
+      "fromPath": "/tag/g7",
+      "toPath": "/news/tag/awards",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "103",
-      "fromPath": "/tag/g7",
-      "toPath": "/zh/news/tag/awards",
+      "fromPath": "/tag/gmi",
+      "toPath": "/news/tag/awards",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "104",
-      "fromPath": "/tag/gmi",
-      "toPath": "/zh/news/tag/awards",
+      "fromPath": "/tag/green-supply-chain",
+      "toPath": "/news/tag/green-supply-chain",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "105",
-      "fromPath": "/tag/green-supply-chain",
-      "toPath": "/zh/news/tag/green-supply-chain",
+      "fromPath": "/tag/gsc",
+      "toPath": "/news/tag/green-supply-chain",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "106",
-      "fromPath": "/tag/gsc",
-      "toPath": "/zh/news/tag/green-supply-chain",
+      "fromPath": "/tag/happy-new-year",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "107",
-      "fromPath": "/tag/happy-new-year",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/tag/leed",
+      "toPath": "/news/tag/green-building",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "108",
-      "fromPath": "/tag/leed",
-      "toPath": "/zh/news/tag/green-building",
+      "fromPath": "/tag/packaging-and-printing",
+      "toPath": "/printing-solutions",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "109",
-      "fromPath": "/tag/packaging-and-printing",
-      "toPath": "/zh/printing-solutions",
+      "fromPath": "/tag/rfid",
+      "toPath": "/news/tag/variable-data-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "110",
-      "fromPath": "/tag/rfid",
-      "toPath": "/zh/news/tag/variable-data-printing",
+      "fromPath": "/tag/rfid技術",
+      "toPath": "/news/tag/variable-data-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "111",
-      "fromPath": "/tag/rfid技術",
-      "toPath": "/zh/news/tag/variable-data-printing",
+      "fromPath": "/tag/企業社會責任",
+      "toPath": "/news/tag/csr",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "112",
-      "fromPath": "/tag/企業社會責任",
-      "toPath": "/zh/news/tag/csr",
+      "fromPath": "/tag/低碳印刷",
+      "toPath": "/news/tag/low-carbon",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "113",
-      "fromPath": "/tag/低碳印刷",
-      "toPath": "/zh/news/tag/low-carbon",
+      "fromPath": "/tag/低碳營運",
+      "toPath": "/news/tag/low-carbon",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "114",
-      "fromPath": "/tag/低碳營運",
-      "toPath": "/zh/news/tag/low-carbon",
+      "fromPath": "/tag/何謂csr？",
+      "toPath": "/news/tag/csr",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "115",
-      "fromPath": "/tag/何謂csr？",
-      "toPath": "/zh/news/tag/csr",
+      "fromPath": "/tag/保育類動物",
+      "toPath": "/news/tag/conservation",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "116",
-      "fromPath": "/tag/保育類動物",
-      "toPath": "/zh/news/tag/conservation",
+      "fromPath": "/tag/倉存管理",
+      "toPath": "/news/tag/green-supply-chain",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "117",
-      "fromPath": "/tag/倉存管理",
-      "toPath": "/zh/news/tag/green-supply-chain",
+      "fromPath": "/tag/動物紙模型",
+      "toPath": "/news/tag/paper-craft",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "118",
-      "fromPath": "/tag/動物紙模型",
-      "toPath": "/zh/news/tag/paper-craft",
+      "fromPath": "/tag/包裝印刷",
+      "toPath": "/printing-solutions",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "119",
-      "fromPath": "/tag/包裝印刷",
-      "toPath": "/zh/printing-solutions",
+      "fromPath": "/tag/包裝彩盒",
+      "toPath": "/news/tag/packaging-design",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "120",
-      "fromPath": "/tag/包裝彩盒",
-      "toPath": "/zh/news/tag/packaging-design",
+      "fromPath": "/tag/包裝材質",
+      "toPath": "/news/tag/sustainable-packaging",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "121",
-      "fromPath": "/tag/包裝材質",
-      "toPath": "/zh/news/tag/sustainable-packaging",
+      "fromPath": "/tag/包裝結構設計",
+      "toPath": "/news/tag/packaging-design",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "122",
-      "fromPath": "/tag/包裝結構設計",
-      "toPath": "/zh/news/tag/packaging-design",
+      "fromPath": "/tag/包裝設計",
+      "toPath": "/news/tag/packaging-design",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "123",
-      "fromPath": "/tag/包裝設計",
-      "toPath": "/zh/news/tag/packaging-design",
+      "fromPath": "/tag/南台彩藝",
+      "toPath": "/differences",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "124",
-      "fromPath": "/tag/南台彩藝",
-      "toPath": "/zh/differences",
+      "fromPath": "/tag/南台彩藝-綠色印刷工廠",
+      "toPath": "/news/tag/green-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "125",
-      "fromPath": "/tag/南台彩藝-綠色印刷工廠",
-      "toPath": "/zh/news/tag/green-printing",
+      "fromPath": "/tag/印刷工藝",
+      "toPath": "/facility",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "126",
-      "fromPath": "/tag/印刷工藝",
-      "toPath": "/zh/facility",
+      "fromPath": "/tag/印刷機",
+      "toPath": "/facility",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "127",
-      "fromPath": "/tag/印刷機",
-      "toPath": "/zh/facility",
+      "fromPath": "/tag/印刷認證",
+      "toPath": "/news/tag/awards",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "128",
-      "fromPath": "/tag/印刷認證",
-      "toPath": "/zh/news/tag/awards",
+      "fromPath": "/tag/取之社會用之社會",
+      "toPath": "/news/tag/csr",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "129",
-      "fromPath": "/tag/取之社會用之社會",
-      "toPath": "/zh/news/tag/csr",
+      "fromPath": "/tag/台南永續印刷-ai-數位轉型",
+      "toPath": "/news/tag/low-carbon",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "130",
-      "fromPath": "/tag/台南永續印刷-ai-數位轉型",
-      "toPath": "/zh/news/tag/low-carbon",
+      "fromPath": "/tag/台灣鑽石級綠建築",
+      "toPath": "/news/tag/green-building",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "131",
-      "fromPath": "/tag/台灣鑽石級綠建築",
-      "toPath": "/zh/news/tag/green-building",
+      "fromPath": "/tag/合板",
+      "toPath": "/cardboard",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "132",
-      "fromPath": "/tag/合板",
-      "toPath": "/zh/cardboard",
+      "fromPath": "/tag/合板印刷",
+      "toPath": "/cardboard",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "133",
-      "fromPath": "/tag/合板印刷",
-      "toPath": "/zh/cardboard",
+      "fromPath": "/tag/國際認證",
+      "toPath": "/news/tag/awards",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "134",
-      "fromPath": "/tag/國際認證",
-      "toPath": "/zh/news/tag/awards",
+      "fromPath": "/tag/地球友善",
+      "toPath": "/news/tag/green-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "135",
-      "fromPath": "/tag/地球友善",
-      "toPath": "/zh/news/tag/green-printing",
+      "fromPath": "/tag/報價單",
+      "toPath": "/get-a-quote",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "136",
-      "fromPath": "/tag/報價單",
-      "toPath": "/zh/get-a-quote",
+      "fromPath": "/tag/夥伴",
+      "toPath": "/news/tag/partnership",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "137",
-      "fromPath": "/tag/夥伴",
-      "toPath": "/zh/news/tag/partnership",
+      "fromPath": "/tag/天下雜誌",
+      "toPath": "/news/tag/media-coverage",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "138",
-      "fromPath": "/tag/天下雜誌",
-      "toPath": "/zh/news/tag/media-coverage",
+      "fromPath": "/tag/客製化印刷",
+      "toPath": "/news/tag/digital-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "139",
-      "fromPath": "/tag/客製化印刷",
-      "toPath": "/zh/news/tag/digital-printing",
+      "fromPath": "/tag/小虎鯨救援隊",
+      "toPath": "/news/tag/conservation",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "140",
-      "fromPath": "/tag/小虎鯨救援隊",
-      "toPath": "/zh/news/tag/conservation",
+      "fromPath": "/tag/少量印刷",
+      "toPath": "/news/tag/digital-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "141",
-      "fromPath": "/tag/少量印刷",
-      "toPath": "/zh/news/tag/digital-printing",
+      "fromPath": "/tag/平版印刷",
+      "toPath": "/facility",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "142",
-      "fromPath": "/tag/平版印刷",
-      "toPath": "/zh/facility",
+      "fromPath": "/tag/年曆",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "143",
-      "fromPath": "/tag/年曆",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/tag/彩盒印刷",
+      "toPath": "/news/tag/packaging-design",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "144",
-      "fromPath": "/tag/彩盒印刷",
-      "toPath": "/zh/news/tag/packaging-design",
+      "fromPath": "/tag/抽卡式桌曆",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "145",
-      "fromPath": "/tag/抽卡式桌曆",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/tag/拼版印刷",
+      "toPath": "/news/tag/digital-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "146",
-      "fromPath": "/tag/拼版印刷",
-      "toPath": "/zh/news/tag/digital-printing",
+      "fromPath": "/tag/搖籃到搖籃",
+      "toPath": "/news/tag/sustainable-packaging",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "147",
-      "fromPath": "/tag/搖籃到搖籃",
-      "toPath": "/zh/news/tag/sustainable-packaging",
+      "fromPath": "/tag/數位印刷",
+      "toPath": "/news/tag/digital-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "148",
-      "fromPath": "/tag/數位印刷",
-      "toPath": "/zh/news/tag/digital-printing",
+      "fromPath": "/tag/文策院",
+      "toPath": "/news/tag/partnership",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "149",
-      "fromPath": "/tag/文策院",
-      "toPath": "/zh/news/tag/partnership",
+      "fromPath": "/tag/新年快樂",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "150",
-      "fromPath": "/tag/新年快樂",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/tag/明日動物",
+      "toPath": "/news/tag/conservation",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "151",
-      "fromPath": "/tag/明日動物",
-      "toPath": "/zh/news/tag/conservation",
+      "fromPath": "/tag/桌曆",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "152",
-      "fromPath": "/tag/桌曆",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/tag/桌曆印刷",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "153",
-      "fromPath": "/tag/桌曆印刷",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/tag/桌曆設計",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "154",
-      "fromPath": "/tag/桌曆設計",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/tag/永續交流會",
+      "toPath": "/news/tag/partnership",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "155",
-      "fromPath": "/tag/永續交流會",
-      "toPath": "/zh/news/tag/partnership",
+      "fromPath": "/tag/永續包裝",
+      "toPath": "/news/tag/sustainable-packaging",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "156",
-      "fromPath": "/tag/永續包裝",
-      "toPath": "/zh/news/tag/sustainable-packaging",
+      "fromPath": "/tag/永續印刷",
+      "toPath": "/news/tag/green-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "157",
-      "fromPath": "/tag/永續印刷",
-      "toPath": "/zh/news/tag/green-printing",
+      "fromPath": "/tag/永續獎",
+      "toPath": "/news/tag/awards",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "158",
-      "fromPath": "/tag/永續獎",
-      "toPath": "/zh/news/tag/awards",
+      "fromPath": "/tag/永續環境",
+      "toPath": "/news/tag/conservation",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "159",
-      "fromPath": "/tag/永續環境",
-      "toPath": "/zh/news/tag/conservation",
+      "fromPath": "/tag/永續製造",
+      "toPath": "/news/tag/green-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "160",
-      "fromPath": "/tag/永續製造",
-      "toPath": "/zh/news/tag/green-printing",
+      "fromPath": "/tag/海洋保育",
+      "toPath": "/news/tag/conservation",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "161",
-      "fromPath": "/tag/海洋保育",
-      "toPath": "/zh/news/tag/conservation",
+      "fromPath": "/tag/淨零轉型",
+      "toPath": "/news/tag/low-carbon",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "162",
-      "fromPath": "/tag/淨零轉型",
-      "toPath": "/zh/news/tag/low-carbon",
+      "fromPath": "/tag/減碳",
+      "toPath": "/news/tag/low-carbon",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "163",
-      "fromPath": "/tag/減碳",
-      "toPath": "/zh/news/tag/low-carbon",
+      "fromPath": "/tag/減輕工業汙水",
+      "toPath": "/green-materials",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "164",
-      "fromPath": "/tag/減輕工業汙水",
-      "toPath": "/zh/green-materials",
+      "fromPath": "/tag/獨立版",
+      "toPath": "/news/tag/digital-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "165",
-      "fromPath": "/tag/獨立版",
-      "toPath": "/zh/news/tag/digital-printing",
+      "fromPath": "/tag/環保印刷",
+      "toPath": "/news/tag/green-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "166",
-      "fromPath": "/tag/環保印刷",
-      "toPath": "/zh/news/tag/green-printing",
+      "fromPath": "/tag/石虎",
+      "toPath": "/news/tag/conservation",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "167",
-      "fromPath": "/tag/石虎",
-      "toPath": "/zh/news/tag/conservation",
+      "fromPath": "/tag/碳中和",
+      "toPath": "/news/tag/carbon-footprint",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "168",
-      "fromPath": "/tag/碳中和",
-      "toPath": "/zh/news/tag/carbon-footprint",
+      "fromPath": "/tag/碳交易",
+      "toPath": "/news/tag/carbon-footprint",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "169",
-      "fromPath": "/tag/碳交易",
-      "toPath": "/zh/news/tag/carbon-footprint",
+      "fromPath": "/tag/碳權",
+      "toPath": "/news/tag/carbon-footprint",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "170",
-      "fromPath": "/tag/碳權",
-      "toPath": "/zh/news/tag/carbon-footprint",
+      "fromPath": "/tag/碳權交易",
+      "toPath": "/news/tag/carbon-footprint",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "171",
-      "fromPath": "/tag/碳權交易",
-      "toPath": "/zh/news/tag/carbon-footprint",
+      "fromPath": "/tag/碳足跡",
+      "toPath": "/news/tag/carbon-footprint",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "172",
-      "fromPath": "/tag/碳足跡",
-      "toPath": "/zh/news/tag/carbon-footprint",
+      "fromPath": "/tag/社會與企業間的共生共存",
+      "toPath": "/news/tag/csr",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "173",
-      "fromPath": "/tag/社會與企業間的共生共存",
-      "toPath": "/zh/news/tag/csr",
+      "fromPath": "/tag/競爭力",
+      "toPath": "/news/tag/awards",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "174",
-      "fromPath": "/tag/競爭力",
-      "toPath": "/zh/news/tag/awards",
+      "fromPath": "/tag/節省時間",
+      "toPath": "/news/tag/digital-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "175",
-      "fromPath": "/tag/節省時間",
-      "toPath": "/zh/news/tag/digital-printing",
+      "fromPath": "/tag/紙張包材",
+      "toPath": "/news/tag/sustainable-packaging",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "176",
-      "fromPath": "/tag/紙張包材",
-      "toPath": "/zh/news/tag/sustainable-packaging",
+      "fromPath": "/tag/紙模型桌遊",
+      "toPath": "/news/tag/paper-craft",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "177",
-      "fromPath": "/tag/紙模型桌遊",
-      "toPath": "/zh/news/tag/paper-craft",
+      "fromPath": "/tag/紙盒印刷",
+      "toPath": "/news/tag/packaging-design",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "178",
-      "fromPath": "/tag/紙盒印刷",
-      "toPath": "/zh/news/tag/packaging-design",
+      "fromPath": "/tag/紙袋印刷",
+      "toPath": "/news/tag/paper-craft",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "179",
-      "fromPath": "/tag/紙袋印刷",
-      "toPath": "/zh/news/tag/paper-craft",
+      "fromPath": "/tag/綠建築",
+      "toPath": "/news/tag/green-building",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "180",
-      "fromPath": "/tag/綠建築",
-      "toPath": "/zh/news/tag/green-building",
+      "fromPath": "/tag/綠色供應鏈",
+      "toPath": "/news/tag/green-supply-chain",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "181",
-      "fromPath": "/tag/綠色供應鏈",
-      "toPath": "/zh/news/tag/green-supply-chain",
+      "fromPath": "/tag/綠色包裝",
+      "toPath": "/news/tag/sustainable-packaging",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "182",
-      "fromPath": "/tag/綠色包裝",
-      "toPath": "/zh/news/tag/sustainable-packaging",
+      "fromPath": "/tag/綠色印刷",
+      "toPath": "/news/tag/green-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "183",
-      "fromPath": "/tag/綠色印刷",
-      "toPath": "/zh/news/tag/green-printing",
+      "fromPath": "/tag/綠色印刷工廠",
+      "toPath": "/news/tag/green-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "184",
-      "fromPath": "/tag/綠色印刷工廠",
-      "toPath": "/zh/news/tag/green-printing",
+      "fromPath": "/tag/美國",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "185",
-      "fromPath": "/tag/美國",
-      "toPath": "/zh",
+      "fromPath": "/tag/美國綠建築黃金級認證",
+      "toPath": "/news/tag/green-building",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "186",
-      "fromPath": "/tag/美國綠建築黃金級認證",
-      "toPath": "/zh/news/tag/green-building",
+      "fromPath": "/tag/設計桌曆",
+      "toPath": "/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "187",
-      "fromPath": "/tag/設計桌曆",
-      "toPath": "/zh/other-printing",
+      "fromPath": "/tag/遠見esg企業永續獎",
+      "toPath": "/news/tag/awards",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "188",
-      "fromPath": "/tag/遠見esg企業永續獎",
-      "toPath": "/zh/news/tag/awards",
+      "fromPath": "/tag/金箔銀箔紙張包裝",
+      "toPath": "/news/tag/packaging-design",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "189",
-      "fromPath": "/tag/金箔銀箔紙張包裝",
-      "toPath": "/zh/news/tag/packaging-design",
+      "fromPath": "/tag/防災教育",
+      "toPath": "/news/tag/disaster-education",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "190",
-      "fromPath": "/tag/防災教育",
-      "toPath": "/zh/news/tag/disaster-education",
+      "fromPath": "/tag/高品質印刷",
+      "toPath": "/facility",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "191",
-      "fromPath": "/tag/高品質印刷",
-      "toPath": "/zh/facility",
+      "fromPath": "/tag/黑熊",
+      "toPath": "/news/tag/conservation",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "192",
-      "fromPath": "/tag/黑熊",
-      "toPath": "/zh/news/tag/conservation",
+      "fromPath": "/the-perfect-partner-for-packaging-printing",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "193",
-      "fromPath": "/the-perfect-partner-for-packaging-printing",
-      "toPath": "/zh",
+      "fromPath": "/tigax-17th",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "194",
-      "fromPath": "/tigax-17th",
-      "toPath": "/zh",
+      "fromPath": "/we-utilize-an-integrated-low-carbon-production-model",
+      "toPath": "/news-low-carbon-production-film",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "195",
-      "fromPath": "/we-utilize-an-integrated-low-carbon-production-model",
-      "toPath": "/zh/news-low-carbon-production-film",
+      "fromPath": "/what-is-csr",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "196",
-      "fromPath": "/what-is-csr",
-      "toPath": "/zh",
+      "fromPath": "/中秋節營運公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "197",
-      "fromPath": "/中秋節營運公告",
-      "toPath": "/zh",
+      "fromPath": "/中秋節營運公告-2",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "198",
-      "fromPath": "/中秋節營運公告-2",
-      "toPath": "/zh",
+      "fromPath": "/中秋節營運公告-3",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "199",
-      "fromPath": "/中秋節營運公告-3",
-      "toPath": "/zh",
+      "fromPath": "/中秋節營運公告-4",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "200",
-      "fromPath": "/中秋節營運公告-4",
-      "toPath": "/zh",
+      "fromPath": "/元旦營運公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "201",
-      "fromPath": "/元旦營運公告",
-      "toPath": "/zh",
+      "fromPath": "/光復節營運公告-2",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "202",
-      "fromPath": "/光復節營運公告-2",
-      "toPath": "/zh",
+      "fromPath": "/勞動節營業公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "203",
-      "fromPath": "/勞動節營業公告",
-      "toPath": "/zh",
+      "fromPath": "/勞動節營運公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "204",
-      "fromPath": "/勞動節營運公告",
-      "toPath": "/zh",
+      "fromPath": "/勞動節營運公告-2",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "205",
-      "fromPath": "/勞動節營運公告-2",
-      "toPath": "/zh",
+      "fromPath": "/勞動節營運公告-3",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "206",
-      "fromPath": "/勞動節營運公告-3",
-      "toPath": "/zh",
+      "fromPath": "/勞動節營運公告-4",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "207",
-      "fromPath": "/勞動節營運公告-4",
-      "toPath": "/zh",
+      "fromPath": "/勞動節營運公告-5",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "208",
-      "fromPath": "/勞動節營運公告-5",
-      "toPath": "/zh",
+      "fromPath": "/南台彩藝榮獲2026《遠見》esg企業永續獎，以低碳營運",
+      "toPath": "/news-global-views-esg-award",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "209",
-      "fromPath": "/南台彩藝榮獲2026《遠見》esg企業永續獎，以低碳營運",
-      "toPath": "/zh/news-global-views-esg-award",
+      "fromPath": "/國慶日營運公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "210",
-      "fromPath": "/國慶日營運公告",
-      "toPath": "/zh",
+      "fromPath": "/慈善義賣樂捐活動",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "211",
-      "fromPath": "/慈善義賣樂捐活動",
-      "toPath": "/zh",
+      "fromPath": "/春節休假公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "212",
-      "fromPath": "/春節休假公告",
-      "toPath": "/zh",
+      "fromPath": "/春節營業公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "213",
-      "fromPath": "/春節營業公告",
-      "toPath": "/zh",
+      "fromPath": "/春節營運公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "214",
-      "fromPath": "/春節營運公告",
-      "toPath": "/zh",
+      "fromPath": "/春節營運公告-2",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "215",
-      "fromPath": "/春節營運公告-2",
-      "toPath": "/zh",
+      "fromPath": "/春節營運公告-3",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "216",
-      "fromPath": "/春節營運公告-3",
-      "toPath": "/zh",
+      "fromPath": "/榮獲-中小企業加速投資行動方案-標竿企業",
+      "toPath": "/news-sme-investment-benchmark",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "217",
-      "fromPath": "/榮獲-中小企業加速投資行動方案-標竿企業",
-      "toPath": "/zh/news-sme-investment-benchmark",
+      "fromPath": "/清明營運公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "218",
-      "fromPath": "/清明營運公告",
-      "toPath": "/zh",
+      "fromPath": "/清明節營運公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "219",
-      "fromPath": "/清明節營運公告",
-      "toPath": "/zh",
+      "fromPath": "/營業公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "220",
-      "fromPath": "/營業公告",
-      "toPath": "/zh",
+      "fromPath": "/端午節營業公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "221",
-      "fromPath": "/端午節營業公告",
-      "toPath": "/zh",
+      "fromPath": "/端午節營業公告-2",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "222",
-      "fromPath": "/端午節營業公告-2",
-      "toPath": "/zh",
+      "fromPath": "/端午節營運公告",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "223",
-      "fromPath": "/端午節營運公告",
-      "toPath": "/zh",
+      "fromPath": "/端午節營運公告-2",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "224",
-      "fromPath": "/端午節營運公告-2",
-      "toPath": "/zh",
+      "fromPath": "/終結海灘汙染物-淨灘一起來",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "225",
-      "fromPath": "/終結海灘汙染物-淨灘一起來",
-      "toPath": "/zh",
+      "fromPath": "/賀通過g7最高等級colorspace認證",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
     },
     {
       "id": "226",
-      "fromPath": "/賀通過g7最高等級colorspace認證",
-      "toPath": "/zh",
-      "statusCode": "301",
-      "isEnabled": true,
-      "hitCount": 0
-    },
-    {
-      "id": "227",
       "fromPath": "/雙十節營運公告-5",
-      "toPath": "/zh",
+      "toPath": "/",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0

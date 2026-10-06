@@ -1,5 +1,5 @@
 import { BREADCRUMBS } from './breadcrumbs'
-import { htmlLang, siteUrl, type Locale } from './i18n'
+import { htmlLang, localeUrl, siteUrl, type Locale } from './i18n'
 import { mediaUrl } from './media'
 
 /**
@@ -55,7 +55,7 @@ export function organization(locale: Locale) {
     name: 'NTI Printing',
     legalName: '南台彩藝股份有限公司',
     alternateName: '南台彩藝',
-    url: `${siteUrl}/${locale}`,
+    url: localeUrl(locale, '/'),
     logo: absolute(mediaUrl('/assets/logo.svg')),
     telephone: '+886-6-261-1358',
     email: 'service@nti-printing.com',
@@ -69,7 +69,7 @@ export function website(locale: Locale) {
   return {
     '@type': 'WebSite',
     '@id': WEBSITE_ID,
-    url: `${siteUrl}/${locale}`,
+    url: localeUrl(locale, '/'),
     name: 'NTI Printing',
     inLanguage: htmlLang[locale],
     publisher: { '@id': ORG_ID },
@@ -121,7 +121,7 @@ export function breadcrumbList(locale: Locale, trail: CrumbInput[]) {
       position: i + 1,
       name: c.name,
       // 最後一層是當前頁，依規範不給 item
-      ...(c.path ? { item: `${siteUrl}/${locale}${c.path === '/' ? '' : c.path}` } : {}),
+      ...(c.path ? { item: localeUrl(locale, c.path) } : {}),
     })),
   }
 }

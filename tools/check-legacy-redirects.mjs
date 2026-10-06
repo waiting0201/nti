@@ -33,7 +33,7 @@ function loadMap() {
     const to = m[1]
     const zh = /\bzh:\s*'([^']+)'/.exec(row)?.[1]
     const en = /\ben:\s*'([^']+)'/.exec(row)?.[1]
-    if (zh) map.set(zh, '/zh' + to)
+    if (zh) map.set(zh, to) // 中文無前綴（2026-10-06 起）
     if (en) map.set(en, '/en' + to)
   }
   if (map.size < 30) throw new Error(`對照表只解析到 ${map.size} 列，格式可能變了`)
@@ -54,7 +54,7 @@ const groups = {}
 for (const name of SITEMAPS) groups[name] = await fetchLocs(name)
 
 /** 舊網址與新網址相同的不需要轉址，middleware 本來就會放行 */
-const IDENTITY = new Set(['/en', '/en/contact'])
+const IDENTITY = new Set(['/en', '/en/contact', '/contact'])
 const isIdentity = (p) => IDENTITY.has(p)
 
 const rows = []
@@ -140,7 +140,7 @@ ${Object.entries(GROUP_TITLE)
 ${list
       .map(
         (r) =>
-          `| ${r.to ? '✅' : '↩'} | \`${r.from || '/'}\` | \`${r.to ?? (r.from.startsWith('/en/') ? '/en' : '/zh')}\` |`,
+          `| ${r.to ? '✅' : '↩'} | \`${r.from || '/'}\` | \`${r.to ?? (r.from.startsWith('/en/') ? '/en' : '/')}\` |`,
       )
       .join('\n')}`
   })

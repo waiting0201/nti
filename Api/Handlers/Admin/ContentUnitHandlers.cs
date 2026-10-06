@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
+using Nti.Api.Common;
 using Nti.Api.Data;
 using Nti.Api.Models.Entities;
 
@@ -67,8 +68,8 @@ public sealed class AdminNewsHandler(AppDbContext db) : AdminContentHandler<News
         var news = await Db.News.FindAsync(id);
         if (news is not { IsPublished: true }) return;
 
-        var from = $"/{lang}/news/{oldSlug}";
-        var to   = $"/{lang}/news/{newSlug}";
+        var from = SitePaths.For(lang, $"/news/{oldSlug}");
+        var to   = SitePaths.For(lang, $"/news/{newSlug}");
 
         // 改回以前用過的 slug：先前建的「這個網址 → 別處」會變成把現行網址轉走，停用它
         foreach (var stale in await Db.Redirect.Where(r => r.FromPath == to).ToListAsync())

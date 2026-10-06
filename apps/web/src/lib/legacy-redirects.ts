@@ -2,7 +2,7 @@
  * 舊站 301 對照表。
  *
  * 舊站 nti-printing.com 是 WordPress + WPML：**中文在根目錄、英文在 `/en/`**。
- * 新站是 `/zh/*` 與 `/en/*`，路徑幾乎全部不同 —— 不轉址的話舊網址累積的外部連結
+ * 新站結構相同（中文無前綴、英文 `/en/*`，2026-10-06 起），但路徑幾乎全部不同 —— 不轉址的話舊網址累積的外部連結
  * 與索引會整批變成 404。
  *
  * 這份表的來源是**舊站自己的 sitemap**（2026-09-07 抓取：46 個頁面、82 篇文章、
@@ -18,11 +18,13 @@
  * 重跑 `node tools/check-legacy-redirects.mjs --write`，那幾條就會從首頁改成真正的
  * 一對一 301（具體落點永遠優先於 archive 的首頁）。優先順序見 docs/05 §3。
  *
- * 舊網址與新網址相同的（`/en/contact/` → `/en/contact`）兩邊都不列——middleware 本來就會放行。
+ * 舊網址與新網址相同的（`/contact/`、`/en/contact/`）兩邊都不列——middleware 本來就會放行，
+ * 列了反而是自己轉自己。
  *
  * 逐條現況在 `reference/舊站301對照表.md`。
  */
 
+import { localePath } from './i18n'
 import { LEGACY_ARCHIVE } from './legacy-archive'
 
 /** 一列對照：`zh` 是舊站中文網址、`en` 是 WPML 的英文版（沒有就省略） */
@@ -193,8 +195,9 @@ const PAGES: Legacy[] = [
   { zh: '/drprint', en: '/en/電子報', to: '/blog' },
   { zh: '/category/電子報', to: '/blog' },
 
-  // 舊站有 /contact/ 與 /en/contactus/ 兩個聯絡頁；新站只有一個
-  { zh: '/contact', en: '/en/contactus', to: '/contact' },
+  // 舊站有 /contact/ 與 /en/contactus/ 兩個聯絡頁；新站只有一個。
+  // 中文的 /contact 新舊同網址，不列（列了就是自己轉自己）
+  { en: '/en/contactus', to: '/contact' },
 ]
 
 /**
@@ -223,13 +226,13 @@ const POSTS: Legacy[] = [
  * 攤平成 `舊路徑 → 新路徑`（都不帶結尾斜線，key 一律小寫）。
  *
  * 舊站的中文網址落在**中文站**、`/en/` 的落在英文站——把繁中的讀者丟到英文頁
- * 等於白轉一次。使用者之後自己切語系會被 cookie 記住（middleware 的 `NEXT_LOCALE`）。
+ * 等於白轉一次。
  */
 function flatten(rows: Legacy[]): Record<string, string> {
   const map: Record<string, string> = {}
   for (const { zh, en, to } of rows) {
-    if (zh) map[zh.toLowerCase()] = `/zh${to}`
-    if (en) map[en.toLowerCase()] = `/en${to}`
+    if (zh) map[zh.toLowerCase()] = localePath('zh', to)
+    if (en) map[en.toLowerCase()] = localePath('en', to)
   }
   return map
 }
@@ -239,7 +242,7 @@ function flatten(rows: Legacy[]): Record<string, string> {
  * 舊站中文在根目錄、英文在 `/en/`，前綴決定回哪一邊的首頁。
  */
 const archive = Object.fromEntries(
-  LEGACY_ARCHIVE.map((p) => [p.toLowerCase(), p.startsWith('/en/') ? '/en' : '/zh']),
+  LEGACY_ARCHIVE.map((p) => [p.toLowerCase(), p.startsWith('/en/') ? '/en' : '/']),
 )
 
 // 展開順序＝優先順序：有專屬落點的會蓋掉 archive 的首頁

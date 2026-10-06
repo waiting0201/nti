@@ -31,7 +31,7 @@
 
 ### 2.2 URL 結構
 - 層級 **3–4 層**、**小寫**、**連字號** `-` 分隔、語意化、避免參數化。
-- 雙語採 **`/zh`、`/en` 子路徑**（非參數、非子網域），每頁 `hreflang` 中英互指 + `x-default`。
+- 雙語採**子路徑**（非參數、非子網域）：**中文無前綴**（`/contact`）、英文 `/en/contact`（2026-10-06 由 `/zh`、`/en` 改，與舊站結構一致）。每頁 `hreflang` 中英互指 + `x-default`（指向英文）。`/` 固定為中文首頁，不依瀏覽器語言自動導向。
 - 固定頁的實際路徑登記在 `Page.RouteTemplate`（如 `/{lang}/about/facility/pre-press`），清單見 [`08-database.md` §6.4](08-database.md) 與 [`db/seed/140_page.sql`](../db/seed/140_page.sql)；動態內容（`news`／`solutions`）的最後一段取自 `*I18n.Slug`，允許中英不同 slug。
 - `hreflang` 不落資料庫欄位，由同一筆內容的兩列 i18n 推導（[`08-database.md` §2.7](08-database.md)）。
 
@@ -169,5 +169,6 @@
 | 2026-09-09 | Tim（Claude Code） | 依客戶 2026-09-08《網站建置 SEO 注意事項》逐條稽核，補上四項缺口：**40 頁的 meta description**（寫進 mockup，經產生器帶到 44 頁）、**36 張圖轉 WebP**（47MB→4.8MB）、**客製化 404**、**預設 og:image 與 Twitter Cards**。仍缺的項目見 STATUS §SEO |
 | 2026-09-11 | Tim（Claude Code） | 渲染策略同步 docs/02：內容頁由 SSG + ISR（webhook 重生）改為 SSR 不快取。對 SEO 的實質沒有差別——爬蟲拿到的仍是伺服器產好的完整 HTML |
 | 2026-09-16 | Tim（Claude Code） | §2.6 補上 robots.txt 開放後的三群組結構，策略本文改放 06-geo §2.3 |
+| 2026-10-06 | Tim（Claude Code） | §2.2 依客戶要求中文拿掉 `/zh` 前綴：中文在根目錄、英文 `/en/`；舊 `/zh/*` 301 到無前綴網址；`/` 不再依瀏覽器語言自動導向 |
 
-*最後更新：2026-09-16*
+*最後更新：2026-10-06*

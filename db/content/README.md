@@ -194,3 +194,15 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/250_content_zh_sep30.sql
 sqlcmd -S <server> -d NTI -I -b -i db/content/260_slug_rename.sql
 ```
 
+## 270_drop_zh_prefix.sql
+
+客戶 2026-10-06 決定中文網址拿掉 `/zh`（中文在根目錄、英文 `/en/`）。手寫、冪等，只改**還是 `/zh` 開頭**的列：
+
+- `Redirect.ToPath`：210 寫入的 `/zh`、`/zh/xxx` → `/`、`/xxx`。
+- `Redirect.FromPath`：API 在消息改 slug 時建的 `/zh/news/xxx` → `/news/xxx`（同名已存在就不動）。
+- 改完變成自己轉自己的（舊站 `/contact`）設為停用。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/270_drop_zh_prefix.sql
+```
+

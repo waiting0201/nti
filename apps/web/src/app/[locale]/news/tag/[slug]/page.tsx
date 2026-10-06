@@ -6,7 +6,7 @@ import { NewsList } from '@/components/cms'
 import { T, tr } from '@/lib/t'
 import { getNewsByTag, getTag, hasApi } from '@/lib/api'
 import { breadcrumbList } from '@/lib/jsonld'
-import { siteUrl, withLocale, type Locale } from '@/lib/i18n'
+import { localeUrl, withLocale, type Locale } from '@/lib/i18n'
 import { mediaUrl } from '@/lib/media'
 
 /**
@@ -24,7 +24,7 @@ import { mediaUrl } from '@/lib/media'
  */
 type Props = { params: Promise<{ locale: Locale; slug: string }> }
 
-const canonicalOf = (locale: Locale, slug: string) => `${siteUrl}/${locale}/news/tag/${slug}`
+const canonicalOf = (locale: Locale, slug: string) => localeUrl(locale, `/news/tag/${slug}`)
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params

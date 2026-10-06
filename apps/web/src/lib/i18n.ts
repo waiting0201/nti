@@ -6,7 +6,6 @@ import { PAGE_KEY_BY_PATH } from './pages'
 
 export const locales = ['en', 'zh'] as const
 export type Locale = (typeof locales)[number]
-export const defaultLocale: Locale = 'en'
 
 /** URL locale 段 → <html lang> / hreflang 值 */
 export const htmlLang: Record<Locale, string> = { en: 'en', zh: 'zh-Hant' }
@@ -15,16 +14,39 @@ export function isLocale(v: string): v is Locale {
   return (locales as readonly string[]).includes(v)
 }
 
-/** 把 mockup 的相對路徑（如 `/about-difference`）補上語系前綴 */
-export function withLocale(locale: Locale) {
-  return (path: string) => (path === '/' ? `/${locale}` : `/${locale}${path}`)
+/**
+ * 不帶語系前綴的語系：中文在根目錄（`/contact`），英文在 `/en/contact`。
+ *
+ * 與舊站 WordPress 的結構一致（2026-10-06 客戶決定拿掉 `/zh`）。`app/[locale]` 的
+ * 資料夾結構沒變——middleware 把無前綴的網址 rewrite 給 `[locale]=zh`，網址列不動；
+ * 舊的 `/zh/*` 一律 301 回無前綴的網址。
+ *
+ * ⚠ 站內所有網址都要經過 `localePath()`，不要自己組 `/${locale}…`——
+ * 那樣組出來的 `/zh/…` 會多吃一次 301。
+ */
+export const PREFIXLESS_LOCALE: Locale = 'zh'
+
+/** 站內路徑（如 `/about-difference`、`/`）→ 該語系的網址路徑 */
+export function localePath(locale: Locale, path: string): string {
+  if (locale === PREFIXLESS_LOCALE) return path
+  return path === '/' ? `/${locale}` : `/${locale}${path}`
 }
 
-/** 從 pathname 取出語系與去掉語系後的路徑 */
+/** 同上，但是絕對網址（canonical、hreflang、sitemap、JSON-LD 用） */
+export function localeUrl(locale: Locale, path: string): string {
+  return siteUrl + localePath(locale, path)
+}
+
+/** 把 mockup 的相對路徑（如 `/about-difference`）補上語系前綴 */
+export function withLocale(locale: Locale) {
+  return (path: string) => localePath(locale, path)
+}
+
+/** 從 pathname 取出語系與去掉語系後的路徑；沒有前綴的就是中文 */
 export function splitLocale(pathname: string): { locale: Locale; path: string } {
   const [, first = '', ...rest] = pathname.split('/')
   if (isLocale(first)) return { locale: first, path: '/' + rest.join('/') }
-  return { locale: defaultLocale, path: pathname }
+  return { locale: PREFIXLESS_LOCALE, path: pathname }
 }
 
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.nti-printing.com'
@@ -59,13 +81,12 @@ export async function pageMetadata(
   path: string,
   meta: { title: string; description?: string },
 ): Promise<Metadata> {
-  const rel = path === '/' ? '' : path
   const cms = await cmsSeo(locale, path)
 
   // 後台沒填就用各頁寫死的英文，並在 /zh 換成字典裡的中文（見 lib/t.tsx）
   const title       = cms?.seo.seoTitle       || tr(locale, meta.title)
   const description = cms?.seo.seoDescription || (meta.description && tr(locale, meta.description))
-  const canonical   = cms?.seo.canonicalUrl   || `${siteUrl}/${locale}${rel}`
+  const canonical   = cms?.seo.canonicalUrl   || localeUrl(locale, path)
 
   // OG 與 Twitter 兩組共用同一份標題／描述／圖，避免兩邊漂移
   const ogTitle = cms?.seo.ogTitle || title
@@ -101,9 +122,9 @@ export async function pageMetadata(
     alternates: {
       canonical,
       languages: {
-        en: `${siteUrl}/en${rel}`,
-        'zh-Hant': `${siteUrl}/zh${rel}`,
-        'x-default': `${siteUrl}/en${rel}`,
+        en: localeUrl('en', path),
+        'zh-Hant': localeUrl('zh', path),
+        'x-default': localeUrl('en', path),
       },
     },
   }

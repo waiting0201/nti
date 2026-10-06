@@ -220,11 +220,14 @@ NEXT_PUBLIC_MEDIA_BASE=https://stntiprod.blob.core.windows.net pnpm --filter web
 
 ## 雙語現況
 
-- 路由：`/en/...`、`/zh/...`。`<html lang>`、canonical 與 `hreflang`（en／zh-Hant／x-default）已就緒。
-- **語系解析**（`src/middleware.ts`）：使用者選過的（`NEXT_LOCALE` cookie，一年）→
-  `Accept-Language` → `en`。造訪任何 `/zh/...` 或 `/en/...` 就會把該語系記下來，
-  所以之後回到 `/` 不會被打回英文。順序與後端 `Common/LangResolver.cs` 一致，
-  只有預設值不同（前台 `en`，API `zh`）。
+- 路由：**中文無前綴**（`/`、`/contact`），英文 `/en/...`（2026-10-06 起，與舊站結構一致）。
+  `<html lang>`、canonical 與 `hreflang`（en／zh-Hant／x-default→en）已就緒。
+- **網址一律經過 `localePath()`／`localeUrl()`**（`src/lib/i18n.ts`），不要自己組 `/${locale}…`。
+  頁面資料夾仍是 `app/[locale]/`：middleware 把無前綴的網址 **rewrite** 給 `[locale]=zh`，
+  網址列不動；舊的 `/zh/*` 一律 301 到無前綴的網址（順便套用 `renamed-slugs.ts`，不走兩跳）。
+- `/` 固定是中文，**不依瀏覽器語言自動導向**：Googlebot 不帶 `Accept-Language`，
+  自動導向會讓兩個語系的首頁互搶。英文訪客靠 hreflang 與 header 的語系選單。
+  API 端組前台網址的同一條規則在 `Api/Common/SitePaths.cs`（消息改 slug 時寫進轉址表）。
 - **靜態文字**：`src/lib/zh.ts` 以**英文原文為 key**，查不到就落回英文。
   頁面把整棵 JSX 包在 `<T locale={locale}>` 裡，由 `src/lib/translate.tsx` 走訪
   element tree 換掉文字節點與 `alt`／`title`／`placeholder`／`aria-label`。

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getNews, getTags } from '@/lib/api'
-import { locales, siteUrl, type Locale } from '@/lib/i18n'
+import { localeUrl as url, locales, type Locale } from '@/lib/i18n'
 import { ROUTES } from '@/lib/routes'
 
 /**
@@ -21,9 +21,6 @@ import { ROUTES } from '@/lib/routes'
  * `SITE_URL` 與 `ALLOW_INDEXING` 兩個 variable 之後要重新 build 才會生效（STATUS §七）。
  */
 const langKey = (locale: Locale) => (locale === 'zh' ? 'zh-Hant' : 'en')
-
-const url = (locale: Locale, path: string) =>
-  `${siteUrl}/${locale}${path === '/' ? '' : path}`
 
 /** 一條路由的雙語 hreflang（含 x-default，與 `<head>` 一致指向英文） */
 const languages = (path: string) => ({

@@ -66,7 +66,7 @@ push 到 GitHub 即自動部署。後台目前接的是本機 mock，所有內�
 - **CSS 不重寫**：`globals.css` 是 `mockup/assets/site.css` 的原檔複製
 - **行為不重寫**：mockup 各頁 inline script 原樣移植成 `useEffect`
   （HeroSlider／FacilityExplorer／ProductShowcase／FaqFilter／ProjectFilter／PageForm）
-- **雙語路由**：`/en`、`/zh`；`/` 與缺語系路徑由 middleware 導向 `/en`
+- **雙語路由**：中文無前綴（`/contact`）、英文 `/en/contact`；舊的 `/zh/*` 301 到無前綴（2026-10-06，見下方）
 - **canonical 與 hreflang**：en／zh-Hant／x-default 已就緒（`src/lib/i18n.ts`）
 - **素材走 Blob**：`mediaUrl()` + `NEXT_PUBLIC_MEDIA_BASE`
 
@@ -169,7 +169,7 @@ contact 頁、`zh.ts` 的三筆 key、Google Maps embed 的查詢字串與 ifram
 ⚠ 仍是寫死的：`/contact` 的 `generateMetadata()`（SEO 摘要，屬單元 20）與
 `lib/jsonld.ts` 的結構化資料。客戶改電話，頁面會變、這兩處不會。
 
-### ✅ 語系解析（2026-09-06）
+### ✅ 語系解析（2026-09-06，⚠ 2026-10-06 已由「中文拿掉 `/zh`」取代）
 
 `src/middleware.ts` 從「一律導向 `/en`」改成：使用者選過的（`NEXT_LOCALE` cookie，
 一年）→ `Accept-Language` → `en`。造訪任何 `/zh/...` 就會把語系記下來，之後回到 `/`
@@ -198,6 +198,25 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
 清單在該腳本的 `HAND_MAINTAINED`。
+
+### ✅ 中文網址拿掉 `/zh`（2026-10-06）
+
+客戶要求中文網址不帶 `/zh`。改成**中文在根目錄、英文在 `/en/`**——剛好與舊站 WordPress 的結構一致。
+`/` 固定是中文首頁，**不再依瀏覽器語言自動導向**（客戶選的方案；Google 也不建議自動導向）。
+
+| 網址 | 行為 |
+|---|---|
+| `/`、`/contact` | 中文頁（middleware rewrite 給 `[locale]=zh`，網址列不變） |
+| `/en`、`/en/contact` | 英文頁，不變 |
+| `/zh`、`/zh/xxx` | 301 → `/`、`/xxx`（改名的頁一次到新網址，例：`/zh/solutions` → `/printing-solutions`） |
+
+- 前台：網址一律走 `lib/i18n.ts` 的 `localePath()`／`localeUrl()`——header 語系切換、canonical、hreflang、sitemap、JSON-LD、消息／標籤頁都改了；`NEXT_LOCALE` cookie 與 `Accept-Language` 判斷拿掉。
+- 舊站 301：中文落點拿掉 `/zh`；舊站 `/contact` 與新站同網址，從表裡拿掉（否則自己轉自己）。對照剩 **226 條**，210 SQL／CSV、後台種子已重產。
+- API：消息改 slug 時寫進 `Redirect` 的網址改走 `Common/SitePaths.cs`（中文 `/news/x`、英文 `/en/news/x`）。
+- `db/content/270_drop_zh_prefix.sql`：正式庫既有的 `Redirect` 落點／來源拿掉 `/zh`，自轉的那筆停用。
+  ✅ 正式庫已執行（2026-10-06，Tim）。
+- 驗證：`verify:markup` 44 頁全過；本機 standalone 實測上表各網址、`/en/contactus`、`/tag/綠色印刷`、`/nope`（404）皆符合預期，sitemap 無 `/zh`。
+- ⚠ 預覽站已流出去的 `/zh/...` 連結會 301 到新網址，不會壞。
 
 ### ✅ 依客戶「網頁優化」表更名 8 個網址（2026-10-06）
 

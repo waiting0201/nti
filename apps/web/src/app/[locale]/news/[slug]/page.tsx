@@ -3,7 +3,7 @@ import { notFound, permanentRedirect, redirect } from 'next/navigation'
 import { A } from '@/components/A'
 import { JsonLd } from '@/components/JsonLd'
 import { cmsMedia, getNewsItem, getNewsMoved, hasApi } from '@/lib/api'
-import { locales, siteUrl, withLocale, type Locale } from '@/lib/i18n'
+import { localePath, localeUrl, locales, withLocale, type Locale } from '@/lib/i18n'
 import { breadcrumbList, newsArticle } from '@/lib/jsonld'
 import { tr } from '@/lib/t'
 
@@ -27,7 +27,7 @@ async function resolveMissing(locale: Locale, slug: string): Promise<never> {
     const item = await getNewsItem(other, slug)
     if (!item) continue
     const mine = item.seo.hreflang[locale]
-    redirect(mine ? `/${locale}/news/${mine}` : `/${locale}/news`)
+    redirect(localePath(locale, mine ? `/news/${mine}` : '/news'))
   }
 
   notFound()
@@ -45,12 +45,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const item = await getNewsItem(locale, slug)
   if (!item) return {}
 
-  const canonical = item.seo.canonicalUrl || `${siteUrl}/${locale}/news/${slug}`
+  const canonical = item.seo.canonicalUrl || localeUrl(locale, `/news/${slug}`)
 
   // hreflang 由同一篇的兩筆 i18n 推導（另一個語系的 slug 可能不同）
   const languages: Record<string, string> = {}
   for (const [lang, s] of Object.entries(item.seo.hreflang)) {
-    languages[lang === 'zh' ? 'zh-Hant' : lang] = `${siteUrl}/${lang}/news/${s}`
+    languages[lang === 'zh' ? 'zh-Hant' : lang] = localeUrl(lang as Locale, `/news/${s}`)
   }
 
   // OG 與 Twitter 共用同一份，避免兩邊漂移。消息一定有封面圖，所以不需要預設圖 fallback
@@ -93,7 +93,7 @@ export default async function Page({ params }: Props) {
 
   // 這條路由是 CMS 專用的（mockup 沒有這一頁），不受版面驗收閘的節點比對限制，
   // 所以結構化資料就近放在頁面裡，資料與畫面同一份來源。
-  const canonical = item.seo.canonicalUrl || `${siteUrl}/${locale}/news/${slug}`
+  const canonical = item.seo.canonicalUrl || localeUrl(locale, `/news/${slug}`)
 
   return (
     <>

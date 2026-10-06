@@ -116,13 +116,13 @@ public sealed class NewsReadService(IDbConnection db) : INewsReadService
 
     /// <summary>
     /// 舊 slug 的新網址。後台改了已上架消息的 slug 時會在 <c>Redirect</c> 建一筆
-    /// （AdminNewsHandler.OnSlugChangedAsync），這裡只查 <c>/{lang}/news/{slug}</c> 這一條。
+    /// （AdminNewsHandler.OnSlugChangedAsync），這裡只查該語系的 <c>/news/{slug}</c> 這一條（網址組法見 <see cref="SitePaths"/>）。
     /// </summary>
     public async Task<string?> GetMovedToAsync(string lang, string slug) =>
         await db.QuerySingleOrDefaultAsync<string>("""
             SELECT ToPath FROM Redirect
             WHERE FromPath = @From AND IsActive = 1 AND IsDeleted = 0;
-            """, new { From = $"/{lang}/news/{slug.ToLowerInvariant()}" });
+            """, new { From = SitePaths.For(lang, $"/news/{slug.ToLowerInvariant()}") });
 
     private sealed class NewsDetailRow
     {

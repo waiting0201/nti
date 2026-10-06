@@ -1,44 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n'
+import { PREFIXLESS_LOCALE, localePath, locales, type Locale } from '@/lib/i18n'
 import { lookupLegacy } from '@/lib/legacy-redirects'
 import { RENAMED_SLUGS } from '@/lib/renamed-slugs'
 import { ROUTES } from '@/lib/routes'
-
-/** 記住使用者選過的語系。名稱沿用 Next 的慣例，一年後過期 */
-const LOCALE_COOKIE = 'NEXT_LOCALE'
-const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
-
-/**
- * 沒有語系前綴時要導去哪一個語系。
- *
- * 順序與後端 `Common/LangResolver.cs` 一致：使用者選過的優先，其次 Accept-Language，
- * 都沒有才用預設。差別只在前台的預設是 `en`（客戶的主要客群是國際品牌），
- * 而 API 的預設是 `zh`。
- */
-function resolveLocale(req: NextRequest): Locale {
-  const saved = req.cookies.get(LOCALE_COOKIE)?.value
-  if (saved && isLocale(saved)) return saved
-
-  // "zh-Hant-TW,zh;q=0.9,en;q=0.8" → 依 q 值排序後取第一個我們支援的
-  const header = req.headers.get('accept-language')
-  if (header) {
-    const tags = header
-      .split(',')
-      .map((part) => {
-        const [tag, ...params] = part.trim().split(';')
-        const q = params.find((p) => p.startsWith('q='))
-        return { tag: tag.toLowerCase(), q: q ? Number(q.slice(2)) : 1 }
-      })
-      .sort((a, b) => b.q - a.q)
-
-    for (const { tag } of tags) {
-      if (tag.startsWith('zh')) return 'zh'
-      if (tag.startsWith('en')) return 'en'
-    }
-  }
-
-  return defaultLocale
-}
 
 /**
  * 這條（去掉語系前綴的）路徑是不是站上真的有的頁面。
@@ -66,15 +30,15 @@ export function middleware(req: NextRequest) {
   /*
    * Route handler（`app/api/*`）直接放行。目前一支都沒有——`/api/revalidate`
    * 隨著 ISR 一起拿掉了（見 lib/api.ts）——但這條留著：route handler 沒有副檔名，
-   * matcher 擋不掉，落到下面就會被補上語系前綴變成 /zh/api/xxx，
-   * 而那不是任何路由，呼叫端永遠拿到 404 或 307，症狀完全不指向這裡。
+   * matcher 擋不掉，落到下面就會被當成中文頁 rewrite 到 /zh/api/xxx，
+   * 而那不是任何路由，呼叫端永遠拿到 404，症狀完全不指向這裡。
    */
   if (pathname.startsWith('/api/')) return NextResponse.next()
 
   /*
    * 後台是 public/admin/ 底下的 SPA（BrowserRouter，basename="/admin/"），
-   * 它的深層網址在伺服器上沒有對應檔案 —— 直接放行的話會走到下面被補上語系前綴，
-   * 變成 /en/admin/u/news 而 404（在後台按 F5 就會遇到）。
+   * 它的深層網址在伺服器上沒有對應檔案 —— 直接放行的話會走到下面被當成中文頁，
+   * 變成 /zh/admin/u/news 而 404（在後台按 F5 就會遇到）。
    *
    * 而且這件事只能在 middleware 做：`[locale]` 是動態段、什麼都吃，`/admin/news`
    * 會先被 `/[locale]/news` 接走（locale="admin"）在 layout 裡 notFound()，
@@ -113,53 +77,59 @@ export function middleware(req: NextRequest) {
   }
 
   /*
-   * 有語系前綴：照常放行，順便把這個語系記下來。
-   * 使用者是從 header 的語系選單過來的，這一步就等於「記住他選了什麼」，
-   * 不必在 client 另外寫一段 set-cookie。
+   * 舊的 `/zh/*`（2026-10-06 之前中文帶前綴）→ 301 到無前綴的網址。
+   * 已分享出去的連結、後台與 DB 裡還沒改到的落點都靠這一條接住。
    */
-  const current = locales.find((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
-  if (current) {
-    /** 新站自己改過名的頁（見 lib/renamed-slugs.ts）：301 到新網址，錨點由瀏覽器保留 */
-    const rest = pathname.slice(1 + current.length).replace(/\/$/, '')
-    const renamed = RENAMED_SLUGS[rest]
-    if (renamed) {
-      const url = req.nextUrl.clone()
-      url.pathname = `/${current}${renamed}`
-      return NextResponse.redirect(url, 301)
-    }
-
-    /*
-     * 對不到任何路由 → 客製化 404。
-     *
-     * `rewrite` 讓網址列維持使用者打的那一個（不是轉址），`status: 404` 讓它是**真的**
-     * 404 而不是 soft 404。這一步刻意不寫語系 cookie：使用者沒有真的「造訪」某個語系的頁面。
-     *
-     * `/{locale}/page-not-found` 本身也不在 `ROUTES` 裡，所以直接打那個網址一樣拿到 404
-     * （rewrite 到它自己）——這是刻意的，否則站上就多了一個回 200 的 soft 404 網址。
-     * rewrite 不會重跑 middleware，不會遞迴。
-     */
-    if (!isKnownRoute(pathname.slice(1 + current.length) || '/')) {
-      const notFound = req.nextUrl.clone()
-      notFound.pathname = `/${current}/page-not-found`
-      return NextResponse.rewrite(notFound, { status: 404 })
-    }
-
-    const res = NextResponse.next()
-    if (req.cookies.get(LOCALE_COOKIE)?.value !== current) {
-      res.cookies.set(LOCALE_COOKIE, current, {
-        path: '/',
-        maxAge: LOCALE_COOKIE_MAX_AGE,
-        sameSite: 'lax',
-      })
-    }
-    return res
+  if (pathname === `/${PREFIXLESS_LOCALE}` || pathname.startsWith(`/${PREFIXLESS_LOCALE}/`)) {
+    // 順便套用改名表，`/zh/solutions` 一次到 `/printing-solutions`，不走兩跳
+    const stripped = pathname.slice(1 + PREFIXLESS_LOCALE.length).replace(/\/$/, '') || '/'
+    const url = req.nextUrl.clone()
+    url.pathname = RENAMED_SLUGS[stripped] ?? stripped
+    return NextResponse.redirect(url, 301)
   }
 
-  /** 根路徑與缺語系的路徑：導到使用者選過的／瀏覽器偏好的語系 */
-  const locale = resolveLocale(req)
+  /*
+   * 其餘的語系前綴（`/en`）照常放行；沒有前綴的就是中文，rewrite 給 `[locale]=zh`。
+   *
+   * 根目錄 `/` 固定是中文，**不**依瀏覽器語言自動導向（2026-10-06 客戶決定）：
+   * Googlebot 不帶 Accept-Language，自動導向會讓兩個語系的首頁互相搶，
+   * 英文版靠 hreflang 與 header 的語系選單過去。
+   */
+  const prefixed = locales.find(
+    (l) => l !== PREFIXLESS_LOCALE && (pathname === `/${l}` || pathname.startsWith(`/${l}/`)),
+  )
+  const current: Locale = prefixed ?? PREFIXLESS_LOCALE
+  const rest = (prefixed ? pathname.slice(1 + prefixed.length) : pathname).replace(/\/$/, '') || '/'
+
+  /** 新站自己改過名的頁（見 lib/renamed-slugs.ts）：301 到新網址，錨點由瀏覽器保留 */
+  const renamed = RENAMED_SLUGS[rest]
+  if (renamed) {
+    const url = req.nextUrl.clone()
+    url.pathname = localePath(current, renamed)
+    return NextResponse.redirect(url, 301)
+  }
+
+  /*
+   * 對不到任何路由 → 客製化 404。
+   *
+   * `rewrite` 讓網址列維持使用者打的那一個（不是轉址），`status: 404` 讓它是**真的**
+   * 404 而不是 soft 404。
+   *
+   * `/{locale}/page-not-found` 本身也不在 `ROUTES` 裡，所以直接打那個網址一樣拿到 404
+   * （rewrite 到它自己）——這是刻意的，否則站上就多了一個回 200 的 soft 404 網址。
+   * rewrite 不會重跑 middleware，不會遞迴。
+   */
+  if (!isKnownRoute(rest)) {
+    const notFound = req.nextUrl.clone()
+    notFound.pathname = `/${current}/page-not-found`
+    return NextResponse.rewrite(notFound, { status: 404 })
+  }
+
+  if (prefixed) return NextResponse.next()
+
   const url = req.nextUrl.clone()
-  url.pathname = `/${locale}${pathname === '/' ? '' : pathname}`
-  return NextResponse.redirect(url)
+  url.pathname = `/${PREFIXLESS_LOCALE}${pathname === '/' ? '' : pathname}`
+  return NextResponse.rewrite(url)
 }
 
 export const config = {
