@@ -9,7 +9,7 @@ type Props = { params: Promise<{ locale: Locale }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
-  return pageMetadata(locale, "/green-vlog", {
+  return pageMetadata(locale, "/blog", {
     title: "Green Vlog — NTI Printing",
     description: "Green Vlog — NTI's video hub on green printing, sustainable packaging materials and low-carbon production, explained from the factory floor.",
   })

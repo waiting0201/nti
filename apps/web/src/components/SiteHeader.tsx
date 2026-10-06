@@ -58,19 +58,19 @@ const MENU: MenuItem[] = [
     ],
   },
   {
-    key: 'solutions',
-    href: '/solutions',
+    key: 'printing-solutions',
+    href: '/printing-solutions',
     label: 'Solutions',
     sub: [
-      { key: 'products-boxes', href: '/products-boxes', label: 'Color Box Packaging' },
-      { key: 'products-cardboard', href: '/products-cardboard', label: 'Packaging Paperboard' },
-      { key: 'products-uv', href: '/products-uv', label: 'UV Printing' },
-      { key: 'products-other', href: '/products-other', label: 'Other Printing' },
+      { key: 'colorbox', href: '/colorbox', label: 'Color Box Packaging' },
+      { key: 'cardboard', href: '/cardboard', label: 'Packaging Paperboard' },
+      { key: 'uv-printing', href: '/uv-printing', label: 'UV Printing' },
+      { key: 'other-printing', href: '/other-printing', label: 'Other Printing' },
     ],
   },
   {
-    key: 'projects',
-    href: '/projects',
+    key: 'printing-projects',
+    href: '/printing-projects',
     label: 'Projects',
   },
   {
@@ -90,9 +90,9 @@ const MENU: MenuItem[] = [
     label: 'Insights',
     sub: [
       { key: 'news', href: '/news', label: 'Latest News' },
-      { key: 'green-vlog', href: '/green-vlog', label: 'Green Vlog' },
+      { key: 'blog', href: '/blog', label: 'Green Vlog' },
       { key: 'faq', href: '/faq', label: 'FAQ' },
-      { key: 'industry-trends', href: '/industry-trends', label: 'Industry Trends' },
+      { key: 'printing-trends', href: '/printing-trends', label: 'Industry Trends' },
     ],
   },
 ]

@@ -44,7 +44,7 @@ export const homeBanner: Unit = {
     { key: 'imageDesktop', label: '桌機圖', type: 'image', required: true, hint: HINT.bannerDesktop, altKey: 'alt', side: 'neutral' },
     { key: 'imageMobile', label: '手機圖', type: 'image', hint: HINT.bannerMobile, altKey: 'alt', side: 'neutral' },
     alt('alt'),
-    { key: 'linkUrl', label: '連結網址', type: 'url', side: 'neutral', placeholder: '/solutions 或 https://…', hint: '站內頁面路徑（/solutions）或完整的外部網址' },
+    { key: 'linkUrl', label: '連結網址', type: 'url', side: 'neutral', placeholder: '/printing-solutions 或 https://…', hint: '站內頁面路徑（/printing-solutions）或完整的外部網址' },
     { key: 'newWindow', label: '另開視窗', type: 'switch', side: 'neutral' },
   ],
   columns: [

@@ -2954,7 +2954,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
     ]
   },
   "solutions": {
-    "mockup": "solutions.html",
+    "mockup": "printing-solutions.html",
     "items": [
       {
         "en": "NTI custom printed packaging solutions",
@@ -3505,7 +3505,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
     ]
   },
   "projects": {
-    "mockup": "projects.html",
+    "mockup": "printing-projects.html",
     "items": [
       {
         "en": "Home",
@@ -4812,7 +4812,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
     ]
   },
   "green-vlog": {
-    "mockup": "green-vlog.html",
+    "mockup": "blog.html",
     "items": [
       {
         "en": "Home",
@@ -4913,7 +4913,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
     ]
   },
   "industry-trends": {
-    "mockup": "industry-trends.html",
+    "mockup": "printing-trends.html",
     "items": [
       {
         "en": "Sustainable packaging industry trends",

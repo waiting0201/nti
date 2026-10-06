@@ -61,7 +61,7 @@ export function unitFields(unit: Unit): Field[] {
   // 固定頁與方案的網址寫死在前台路由（以 pageKey／code 取資料），slug 改了也不會換網址——只給看、不給改。
   const fixedUrl: Record<string, string> = {
     page: '固定頁的網址由系統決定，無法修改',
-    solution: '方案頁的網址固定為 /products-…，此欄僅供系統內部查找，無法修改',
+    solution: '方案頁的網址固定（/colorbox、/cardboard、/uv-printing、/other-printing），此欄僅供系統內部查找，無法修改',
   }
   const hint = fixedUrl[unit.code]
   const seo = hint

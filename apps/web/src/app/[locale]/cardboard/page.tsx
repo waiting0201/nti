@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   // SEO 來自方案本身（SolutionI18n，docs/08 §6.4），不是固定頁；後台沒填就用 mockup 的值
   const seo = (await getSolutionByCode(locale, 'cardboard'))?.seo
-  return pageMetadata(locale, "/products-cardboard", {
+  return pageMetadata(locale, "/cardboard", {
     title: seo?.seoTitle || "Packaging Paperboard — NTI Printing",
     description: seo?.seoDescription || "Custom cardboard packaging and printed cardboard boxes for retail and industrial use, including paper hang tags, blister back cards and multi-panel tags.",
   })
@@ -25,17 +25,17 @@ export default async function Page({ params }: Props) {
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
-        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/solutions")}>Solutions</A><span>&rsaquo;</span><b>Packaging Paperboard</b></div>
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/printing-solutions")}>Solutions</A><span>&rsaquo;</span><b>Packaging Paperboard</b></div>
         <h1 className="sec-title reveal">{solution?.h1 || "Packaging Paperboard"}</h1>
         <div className="sec-sub reveal">Paper hang tags &amp; backcards for blister packages.</div>
         {solution?.introHtml ? <SolutionIntro html={solution.introHtml} /> : (<>
         <p className="prose wide reveal mt-s">NTI Printing produces custom cardboard packaging and printed cardboard boxes for retail, industrial, and consumer applications, including:</p>
         </>)}
         <nav className="pr-tabs reveal" aria-label="Product categories">
-          <A href={l("/products-boxes")}>Color Box Packaging</A>{' '}
-          <A href={l("/products-cardboard")} className="active">Packaging Paperboard</A>{' '}
-          <A href={l("/products-uv")}>UV Printing</A>{' '}
-          <A href={l("/products-other")}>Other Printing</A>
+          <A href={l("/colorbox")}>Color Box Packaging</A>{' '}
+          <A href={l("/cardboard")} className="active">Packaging Paperboard</A>{' '}
+          <A href={l("/uv-printing")}>UV Printing</A>{' '}
+          <A href={l("/other-printing")}>Other Printing</A>
         </nav>
         {solution?.items.length ? (
           <SolutionItems items={solution.items} />

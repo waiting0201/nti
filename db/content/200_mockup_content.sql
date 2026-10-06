@@ -35,7 +35,7 @@ ELSE
     UPDATE dbo.HomeBannerI18n SET ImageAlt = N'The courage to print green? — NTI Printing' WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner1.webp') AND Lang = 'en';
 
 IF NOT EXISTS (SELECT 1 FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.webp')
-    INSERT dbo.HomeBanner (ImagePath, ImagePathMobile, MediaType, LinkUrl, OpenInNewTab, SortOrder, IsPublished) VALUES (N'assets/ref-home-banner2.webp', NULL, 'image', N'/solutions', 0, 20, 1);
+    INSERT dbo.HomeBanner (ImagePath, ImagePathMobile, MediaType, LinkUrl, OpenInNewTab, SortOrder, IsPublished) VALUES (N'assets/ref-home-banner2.webp', NULL, 'image', N'/printing-solutions', 0, 20, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.HomeBannerI18n WHERE HomeBannerId = (SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.webp') AND Lang = 'zh')
     INSERT dbo.HomeBannerI18n (HomeBannerId, Lang, ImageAlt)
     VALUES ((SELECT Id FROM dbo.HomeBanner WHERE ImagePath = N'assets/ref-home-banner2.webp'), 'zh', N'NTI 客製化包裝印刷');

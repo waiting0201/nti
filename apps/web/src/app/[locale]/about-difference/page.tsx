@@ -49,7 +49,7 @@ export default async function Page({ params }: Props) {
         <p className="prose wide"><b>Vision.</b> We place great significance in our employees, our product quality and the environment, working to be an outstanding printing company in the packaging field.</p>
         <p className="prose wide"><b>Mission.</b> Keep promoting green packaging and build the full concept of green supply-chain management for our customers &mdash; becoming a printing firm with genuine environmental awareness and a high sense of social responsibility.</p>
         <p className="prose wide"><b>Strategy.</b> Serve customers with all-round service and high product quality to raise satisfaction; create value and profit to sustain the business; and keep developing new technology and certification to open up new opportunities.</p>
-        <p className="mt-m"><A href={l("/solutions")} className="blink">See our printing solutions</A></p>
+        <p className="mt-m"><A href={l("/printing-solutions")} className="blink">See our printing solutions</A></p>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>

@@ -23,9 +23,24 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
     {"en":"About Us","zh":"關於我們","path":"/differences"},
     {"en":"The NTI Difference","zh":"NTI 的與眾不同"},
   ],
+  "/blog": [
+    {"en":"Home","zh":"首頁","path":"/"},
+    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Green Vlog","zh":"綠色 Vlog"},
+  ],
+  "/cardboard": [
+    {"en":"Home","zh":"首頁","path":"/"},
+    {"en":"Solutions","zh":"解決方案","path":"/printing-solutions"},
+    {"en":"Packaging Paperboard","zh":"包裝紙板"},
+  ],
   "/careers": [
     {"en":"Home","zh":"首頁","path":"/"},
     {"en":"Careers","zh":"人才招募"},
+  ],
+  "/colorbox": [
+    {"en":"Home","zh":"首頁","path":"/"},
+    {"en":"Solutions","zh":"解決方案","path":"/printing-solutions"},
+    {"en":"Color Box Packaging","zh":"彩盒包裝"},
   ],
   "/contact": [
     {"en":"Home","zh":"首頁","path":"/"},
@@ -102,16 +117,6 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
     {"en":"Home","zh":"首頁","path":"/"},
     {"en":"Sustainability","zh":"永續","path":"/green-advantage"},
     {"en":"Our Green Advantages","zh":"我們的綠色優勢"},
-  ],
-  "/green-vlog": [
-    {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
-    {"en":"Green Vlog","zh":"綠色 Vlog"},
-  ],
-  "/industry-trends": [
-    {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
-    {"en":"Industry Trends","zh":"產業趨勢"},
   ],
   "/insights": [
     {"en":"Home","zh":"首頁","path":"/"},
@@ -194,40 +199,35 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
     {"en":"Insights","zh":"洞察","path":"/insights"},
     {"en":"Latest News","zh":"最新消息"},
   ],
+  "/other-printing": [
+    {"en":"Home","zh":"首頁","path":"/"},
+    {"en":"Solutions","zh":"解決方案","path":"/printing-solutions"},
+    {"en":"Other Printing","zh":"其他印刷"},
+  ],
+  "/printing-projects": [
+    {"en":"Home","zh":"首頁","path":"/"},
+    {"en":"Projects","zh":"實績案例"},
+  ],
+  "/printing-solutions": [
+    {"en":"Home","zh":"首頁","path":"/"},
+    {"en":"Solutions","zh":"解決方案"},
+  ],
+  "/printing-trends": [
+    {"en":"Home","zh":"首頁","path":"/"},
+    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Industry Trends","zh":"產業趨勢"},
+  ],
   "/privacy-legal": [
     {"en":"Home","zh":"首頁","path":"/"},
     {"en":"Privacy & Legal","zh":"隱私權與法律聲明"},
   ],
-  "/products-boxes": [
-    {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Solutions","zh":"解決方案","path":"/solutions"},
-    {"en":"Color Box Packaging","zh":"彩盒包裝"},
-  ],
-  "/products-cardboard": [
-    {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Solutions","zh":"解決方案","path":"/solutions"},
-    {"en":"Packaging Paperboard","zh":"包裝紙板"},
-  ],
-  "/products-other": [
-    {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Solutions","zh":"解決方案","path":"/solutions"},
-    {"en":"Other Printing","zh":"其他印刷"},
-  ],
-  "/products-uv": [
-    {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Solutions","zh":"解決方案","path":"/solutions"},
-    {"en":"UV Printing","zh":"UV 印刷"},
-  ],
-  "/projects": [
-    {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Projects","zh":"實績案例"},
-  ],
-  "/solutions": [
-    {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Solutions","zh":"解決方案"},
-  ],
   "/supplier-area": [
     {"en":"Home","zh":"首頁","path":"/"},
     {"en":"Supplier Area","zh":"供應商專區"},
+  ],
+  "/uv-printing": [
+    {"en":"Home","zh":"首頁","path":"/"},
+    {"en":"Solutions","zh":"解決方案","path":"/printing-solutions"},
+    {"en":"UV Printing","zh":"UV 印刷"},
   ],
 }

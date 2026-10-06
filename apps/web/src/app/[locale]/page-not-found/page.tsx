@@ -34,11 +34,11 @@ export const metadata: Metadata = {
 
 /** 舊網址最可能指向的區塊——404 的價值在於把人接回這些地方 */
 const LINKS = [
-  ['/solutions', 'Solutions'],
-  ['/products-boxes', 'Color Box Packaging'],
+  ['/printing-solutions', 'Solutions'],
+  ['/colorbox', 'Color Box Packaging'],
   ['/facility', 'Facilities & Equipment'],
   ['/green-advantage', 'Our Green Advantage'],
-  ['/projects', 'Projects'],
+  ['/printing-projects', 'Projects'],
   ['/news', 'News'],
   ['/contact', 'Contact Us'],
 ] as const

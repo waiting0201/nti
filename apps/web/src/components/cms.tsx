@@ -142,7 +142,7 @@ export function ProjectGrid({ items, locale }: { items: Project[]; locale: Local
 }
 
 // ── 02 solution ───────────────────────────────────────────────────────────
-/** `/products-{code}` 四頁的品項卡。solutions 列表頁是 explorer 互動元件，不走這裡。 */
+/** 四個方案頁（`/colorbox` 等，以 Solution.Code 取資料）的品項卡。printing-solutions 列表頁是 explorer 互動元件，不走這裡。 */
 export function SolutionItems({ items, className = 'pr-grid' }: { items: SolutionDetail['items']; className?: string }) {
   return (
     <div className={className}>

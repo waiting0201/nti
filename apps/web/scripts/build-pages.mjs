@@ -212,9 +212,9 @@ function htmlToJsx(html, ctx) {
 const BEHAVIORS = {
   index: [['HeroSlider', '@/components/behaviors/HeroSlider']],
   facility: [['FacilityExplorer', '@/components/behaviors/FacilityExplorer']],
-  solutions: [['ProductShowcase', '@/components/behaviors/ProductShowcase']],
+  'printing-solutions': [['ProductShowcase', '@/components/behaviors/ProductShowcase']],
   faq: [['FaqFilter', '@/components/behaviors/FaqFilter']],
-  projects: [['ProjectFilter', '@/components/behaviors/ProjectFilter']],
+  'printing-projects': [['ProjectFilter', '@/components/behaviors/ProjectFilter']],
   contact: [['PageForm', '@/components/behaviors/PageForm']],
   'get-a-quote': [['PageForm', '@/components/behaviors/PageForm']],
 }
@@ -261,16 +261,16 @@ function extract(html) {
 const HAND_MAINTAINED = new Set([
   'index',                  // Hero／認證牆／客戶 logo
   'news',                   // 消息列表
-  'projects',               // 案例格線
-  'green-vlog',             // 影片
+  'printing-projects',      // 案例格線
+  'blog',                   // 影片
   'faq',                    // 問答與分組
-  'industry-trends',        // 趨勢段落
+  'printing-trends',        // 趨勢段落
   'careers',                // 職缺
   'about-certifications',   // 認證牆
   'contact',                // 公司資訊（網站設定 21，非內容單元）
   'supplier-area',          // 公告／規範／下載
   'facility-pre-press', 'facility-eco-printing', 'facility-post-press', 'facility-quality',
-  'products-boxes', 'products-cardboard', 'products-uv', 'products-other',   // 品項卡＋h1／副標／介紹
+  'colorbox', 'cardboard', 'uv-printing', 'other-printing',   // 品項卡＋h1／副標／介紹
   'privacy-legal',          // 後台內文（HasRichBody）
   'differences', 'about-difference', 'about-benefits', 'facility-tour',   // 頁面文字覆寫（about-certifications 已在上面）
 ])

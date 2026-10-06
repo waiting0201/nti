@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { defaultLocale, isLocale, locales, type Locale } from '@/lib/i18n'
 import { lookupLegacy } from '@/lib/legacy-redirects'
+import { RENAMED_SLUGS } from '@/lib/renamed-slugs'
 import { ROUTES } from '@/lib/routes'
 
 /** 記住使用者選過的語系。名稱沿用 Next 的慣例，一年後過期 */
@@ -118,6 +119,15 @@ export function middleware(req: NextRequest) {
    */
   const current = locales.find((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
   if (current) {
+    /** 新站自己改過名的頁（見 lib/renamed-slugs.ts）：301 到新網址，錨點由瀏覽器保留 */
+    const rest = pathname.slice(1 + current.length).replace(/\/$/, '')
+    const renamed = RENAMED_SLUGS[rest]
+    if (renamed) {
+      const url = req.nextUrl.clone()
+      url.pathname = `/${current}${renamed}`
+      return NextResponse.redirect(url, 301)
+    }
+
     /*
      * 對不到任何路由 → 客製化 404。
      *

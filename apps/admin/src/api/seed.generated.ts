@@ -1661,7 +1661,7 @@ export const SEED: Record<string, Row[]> = {
       "isPublished": true,
       "imageDesktop": "/assets/ref-home-banner2.webp",
       "imageMobile": "",
-      "linkUrl": "/solutions",
+      "linkUrl": "/printing-solutions",
       "newWindow": false,
       "i18n": {
         "zh": {
@@ -3594,7 +3594,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "12",
       "fromPath": "/category/電子報",
-      "toPath": "/zh/green-vlog",
+      "toPath": "/zh/blog",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3642,7 +3642,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "18",
       "fromPath": "/drprint",
-      "toPath": "/zh/green-vlog",
+      "toPath": "/zh/blog",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3778,7 +3778,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "35",
       "fromPath": "/en/products",
-      "toPath": "/en/solutions",
+      "toPath": "/en/printing-solutions",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3786,7 +3786,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "36",
       "fromPath": "/en/products/other-printing",
-      "toPath": "/en/products-other",
+      "toPath": "/en/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3794,7 +3794,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "37",
       "fromPath": "/en/products/packaging-boxes",
-      "toPath": "/en/products-boxes",
+      "toPath": "/en/colorbox",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3802,7 +3802,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "38",
       "fromPath": "/en/products/uv-printing",
-      "toPath": "/en/products-uv",
+      "toPath": "/en/uv-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3810,7 +3810,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "39",
       "fromPath": "/en/products/包裝紙卡",
-      "toPath": "/en/products-cardboard",
+      "toPath": "/en/cardboard",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -3818,7 +3818,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "40",
       "fromPath": "/en/電子報",
-      "toPath": "/en/green-vlog",
+      "toPath": "/en/blog",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4170,7 +4170,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "84",
       "fromPath": "/products",
-      "toPath": "/zh/solutions",
+      "toPath": "/zh/printing-solutions",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4178,7 +4178,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "85",
       "fromPath": "/products/cards",
-      "toPath": "/zh/products-cardboard",
+      "toPath": "/zh/cardboard",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4186,7 +4186,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "86",
       "fromPath": "/products/colorbox",
-      "toPath": "/zh/products-boxes",
+      "toPath": "/zh/colorbox",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4194,7 +4194,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "87",
       "fromPath": "/products/other-printing",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4202,7 +4202,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "88",
       "fromPath": "/products/uv-printing",
-      "toPath": "/zh/products-uv",
+      "toPath": "/zh/uv-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4242,7 +4242,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "93",
       "fromPath": "/tag/2024",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4250,7 +4250,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "94",
       "fromPath": "/tag/2024happynewyear",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4258,7 +4258,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "95",
       "fromPath": "/tag/2024龍年桌曆",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4354,7 +4354,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "107",
       "fromPath": "/tag/happy-new-year",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4370,7 +4370,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "109",
       "fromPath": "/tag/packaging-and-printing",
-      "toPath": "/zh/solutions",
+      "toPath": "/zh/printing-solutions",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4450,7 +4450,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "119",
       "fromPath": "/tag/包裝印刷",
-      "toPath": "/zh/solutions",
+      "toPath": "/zh/printing-solutions",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4554,7 +4554,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "132",
       "fromPath": "/tag/合板",
-      "toPath": "/zh/products-cardboard",
+      "toPath": "/zh/cardboard",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4562,7 +4562,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "133",
       "fromPath": "/tag/合板印刷",
-      "toPath": "/zh/products-cardboard",
+      "toPath": "/zh/cardboard",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4642,7 +4642,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "143",
       "fromPath": "/tag/年曆",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4658,7 +4658,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "145",
       "fromPath": "/tag/抽卡式桌曆",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4698,7 +4698,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "150",
       "fromPath": "/tag/新年快樂",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4714,7 +4714,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "152",
       "fromPath": "/tag/桌曆",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4722,7 +4722,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "153",
       "fromPath": "/tag/桌曆印刷",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4730,7 +4730,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "154",
       "fromPath": "/tag/桌曆設計",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0
@@ -4994,7 +4994,7 @@ export const SEED: Record<string, Row[]> = {
     {
       "id": "187",
       "fromPath": "/tag/設計桌曆",
-      "toPath": "/zh/products-other",
+      "toPath": "/zh/other-printing",
       "statusCode": "301",
       "isEnabled": true,
       "hitCount": 0

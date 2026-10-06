@@ -73,8 +73,8 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
           <div className="fcol">
             <span className="ftitle">Company</span>{' '}
             <A href={l('/differences')}>About Us</A>{' '}
-            <A href={l('/solutions')}>Solutions</A>{' '}
-            <A href={l('/projects')}>Projects</A>{' '}
+            <A href={l('/printing-solutions')}>Solutions</A>{' '}
+            <A href={l('/printing-projects')}>Projects</A>{' '}
             <A href={l('/careers')}>Careers</A>{' '}
             <A href={l('/privacy-legal')}>Privacy &amp; Legal</A>
           </div>

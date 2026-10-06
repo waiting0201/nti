@@ -55,7 +55,7 @@ export default async function Page({ params }: Props) {
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Mono-material by default</div>
         <p className="prose wide">Where a structure allows it, we redesign to a single recyclable material rather than a laminate &mdash; keeping shelf impact while making the pack straightforward for consumers to recycle.</p>
-        <p className="mt-m"><A href={l("/projects")} className="blink">See a mono-material redesign</A></p>
+        <p className="mt-m"><A href={l("/printing-projects")} className="blink">See a mono-material redesign</A></p>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>

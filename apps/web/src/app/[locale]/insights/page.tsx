@@ -32,7 +32,7 @@ export default async function Page({ params }: Props) {
             <span className="vl-thumb"><img src={mediaUrl("/assets/news/global-views-esg-award.jpg")} alt="" loading="lazy" /></span>{' '}
             <span><span className="vl-ep">Latest News</span><h3>Awards, partnerships and green printing milestones</h3></span>
           </A>{' '}
-          <A className="vl-card reveal" href={l("/green-vlog")}>
+          <A className="vl-card reveal" href={l("/blog")}>
             <span className="vl-thumb"><img src="https://img.youtube.com/vi/plgjH8Jw8pE/hqdefault.jpg" alt="" loading="lazy" /><span className="vl-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span></span>{' '}
             <span><span className="vl-ep">Green Vlog</span><h3>Watch how low-carbon packaging is actually made</h3></span>
           </A>{' '}
@@ -40,7 +40,7 @@ export default async function Page({ params }: Props) {
             <span className="vl-thumb"><img src={mediaUrl("/assets/fac-pre-proof.webp")} alt="" loading="lazy" /></span>{' '}
             <span><span className="vl-ep">FAQ</span><h3>Minimums, lead times, certifications &mdash; answered</h3></span>
           </A>{' '}
-          <A className="vl-card reveal" href={l("/industry-trends")}>
+          <A className="vl-card reveal" href={l("/printing-trends")}>
             <span className="vl-thumb"><img src={mediaUrl("/assets/sol-patterns.webp")} alt="" loading="lazy" /></span>{' '}
             <span><span className="vl-ep">Industry Trends</span><h3>Where sustainable packaging is heading next</h3></span>
           </A>

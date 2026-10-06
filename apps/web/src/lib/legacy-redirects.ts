@@ -127,30 +127,30 @@ const TAGS: Legacy[] = [
    * 這幾個舊標籤在新的 17 個裡沒有對應主題（多半是單篇專用的長尾詞），
    * 轉到內容最相近的頁面而不是硬塞一個標籤——那會做出名不副實的封存頁。
    */
-  { zh: '/tag/桌曆', to: '/products-other' },
-  { zh: '/tag/桌曆印刷', to: '/products-other' },
-  { zh: '/tag/桌曆設計', to: '/products-other' },
-  { zh: '/tag/設計桌曆', to: '/products-other' },
-  { zh: '/tag/抽卡式桌曆', to: '/products-other' },
-  { zh: '/tag/2024龍年桌曆', to: '/products-other' },
-  { zh: '/tag/年曆', to: '/products-other' },
+  { zh: '/tag/桌曆', to: '/other-printing' },
+  { zh: '/tag/桌曆印刷', to: '/other-printing' },
+  { zh: '/tag/桌曆設計', to: '/other-printing' },
+  { zh: '/tag/設計桌曆', to: '/other-printing' },
+  { zh: '/tag/抽卡式桌曆', to: '/other-printing' },
+  { zh: '/tag/2024龍年桌曆', to: '/other-printing' },
+  { zh: '/tag/年曆', to: '/other-printing' },
   { zh: '/tag/報價單', to: '/get-a-quote' },
   { zh: '/tag/印刷工藝', to: '/facility' },
   { zh: '/tag/印刷機', to: '/facility' },
   { zh: '/tag/平版印刷', to: '/facility' },
   { zh: '/tag/高品質印刷', to: '/facility' },
-  { zh: '/tag/合板', to: '/products-cardboard' },
-  { zh: '/tag/合板印刷', to: '/products-cardboard' },
-  { zh: '/tag/包裝印刷', to: '/solutions' },
-  { zh: '/tag/packaging-and-printing', to: '/solutions' },
+  { zh: '/tag/合板', to: '/cardboard' },
+  { zh: '/tag/合板印刷', to: '/cardboard' },
+  { zh: '/tag/包裝印刷', to: '/printing-solutions' },
+  { zh: '/tag/packaging-and-printing', to: '/printing-solutions' },
   { zh: '/tag/南台彩藝', to: '/differences' },
   { zh: '/tag/減輕工業汙水', to: '/green-materials' },
 
   // 這四個是同一批新年桌曆活動的標籤（舊站掛在桌曆文章上），比照上面的「桌曆」
-  { zh: '/tag/2024', to: '/products-other' },
-  { zh: '/tag/2024happynewyear', to: '/products-other' },
-  { zh: '/tag/happy-new-year', to: '/products-other' },
-  { zh: '/tag/新年快樂', to: '/products-other' },
+  { zh: '/tag/2024', to: '/other-printing' },
+  { zh: '/tag/2024happynewyear', to: '/other-printing' },
+  { zh: '/tag/happy-new-year', to: '/other-printing' },
+  { zh: '/tag/新年快樂', to: '/other-printing' },
 
   // 唯一沒有落點的是 `/tag/美國`：舊站拿它標「美國通路／美國認證」兩類不相干的文章，
   // 對到任何一頁都名不副實，維持 legacy-archive 的首頁轉址（客戶 2026-09-07 的決定）。
@@ -173,11 +173,11 @@ const PAGES: Legacy[] = [
   { zh: '/home/news', en: '/en/home/news', to: '/news' },
   { zh: '/category/news', to: '/news' },
 
-  { zh: '/products', en: '/en/products', to: '/solutions' },
-  { zh: '/products/colorbox', en: '/en/products/packaging-boxes', to: '/products-boxes' },
-  { zh: '/products/cards', en: '/en/products/包裝紙卡', to: '/products-cardboard' },
-  { zh: '/products/uv-printing', en: '/en/products/uv-printing', to: '/products-uv' },
-  { zh: '/products/other-printing', en: '/en/products/other-printing', to: '/products-other' },
+  { zh: '/products', en: '/en/products', to: '/printing-solutions' },
+  { zh: '/products/colorbox', en: '/en/products/packaging-boxes', to: '/colorbox' },
+  { zh: '/products/cards', en: '/en/products/包裝紙卡', to: '/cardboard' },
+  { zh: '/products/uv-printing', en: '/en/products/uv-printing', to: '/uv-printing' },
+  { zh: '/products/other-printing', en: '/en/products/other-printing', to: '/other-printing' },
 
   { zh: '/production', en: '/en/production-equipment', to: '/facility' },
   { zh: '/production/prepress', en: '/en/production-equipment/pre-press-equipment', to: '/facility-pre-press' },
@@ -190,8 +190,8 @@ const PAGES: Legacy[] = [
   { zh: '/production/hp-indigo-digital-printing', to: '/facility-eco-printing' },
 
   // 電子報 Dr.Print → 綠色部落格（盤點 §3）。舊站英文版的網址是中文 slug
-  { zh: '/drprint', en: '/en/電子報', to: '/green-vlog' },
-  { zh: '/category/電子報', to: '/green-vlog' },
+  { zh: '/drprint', en: '/en/電子報', to: '/blog' },
+  { zh: '/category/電子報', to: '/blog' },
 
   // 舊站有 /contact/ 與 /en/contactus/ 兩個聯絡頁；新站只有一個
   { zh: '/contact', en: '/en/contactus', to: '/contact' },

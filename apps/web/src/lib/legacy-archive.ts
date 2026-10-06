@@ -2,7 +2,7 @@
  * 舊站上**沒有專屬落點**的網址（71 條），一律 301 回首頁。
  *
  * 產生檔，不要手改：`node tools/check-legacy-redirects.mjs --write`。
- * 清單來自舊站 sitemap（2026-09-10 抓取），
+ * 清單來自舊站 sitemap（2026-10-06 抓取），
  * 決策與代價寫在 `legacy-redirects.ts` 的檔頭。
  *
  * 之後把某條的落點補進 `legacy-redirects.ts` 的 `POSTS`，重跑本腳本，

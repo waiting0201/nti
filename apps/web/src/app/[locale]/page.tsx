@@ -38,7 +38,7 @@ export default async function Page({ params }: Props) {
         ) : (
         <>
         <A className="slide on" href={l("/green-advantage")}><img src={mediaUrl("/assets/ref-home-banner1.webp")} alt="The courage to print green? — NTI Printing" /></A>{' '}
-        <A className="slide" href={l("/solutions")}><img src={mediaUrl("/assets/ref-home-banner2.webp")} alt="NTI custom printed packaging solutions" /></A>{' '}
+        <A className="slide" href={l("/printing-solutions")}><img src={mediaUrl("/assets/ref-home-banner2.webp")} alt="NTI custom printed packaging solutions" /></A>{' '}
         <A className="slide" href={l("/differences")}><img src={mediaUrl("/assets/ref-home-mid2.webp")} alt="NTI printing facility — Heidelberg press line in Tainan" /></A>{' '}
         </>
         )}
@@ -95,28 +95,28 @@ export default async function Page({ params }: Props) {
               <h3>{sol('boxes')?.name || "Color Box Packaging"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Customize package</div>
               <p>{sol('boxes')?.summary || "Multiple box-types: besides folding box, we also provide customize box structure design."}</p>
-              <A href={l("/products-boxes")} className="btn btn-out">More details &raquo;</A>
+              <A href={l("/colorbox")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="2">
               <div className="ph"><img src={mediaUrl("/assets/hp-prod-cardboard.webp")} alt="Packaging paperboard printing" /></div>
               <h3>{sol('cardboard')?.name || "Packaging Paperboard"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Various packaging paperboards</div>
               <p>{sol('cardboard')?.summary || "Hang tags, blister cards and backcards for retail walls."}</p>
-              <A href={l("/products-cardboard")} className="btn btn-out">More details &raquo;</A>
+              <A href={l("/cardboard")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="3">
               <div className="ph"><img src={mediaUrl("/assets/hp-prod-uv.webp")} alt="UV printing" /></div>
               <h3>{sol('uv')?.name || "UV Printing"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Special printing</div>
               <p>{sol('uv')?.summary || "Printing on special materials, special varnish, anti-counterfeiting and more."}</p>
-              <A href={l("/products-uv")} className="btn btn-out">More details &raquo;</A>
+              <A href={l("/uv-printing")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="3">
               <div className="ph"><img src={mediaUrl("/assets/hp-prod-other.webp")} alt="Other printing — hand bags, calendars, manuals" /></div>
               <h3>{sol('other')?.name || "Other Printing"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Beyond the box</div>
               <p>{sol('other')?.summary || "Desk calendars, hand bags, red envelopes, mouse pads and manuals."}</p>
-              <A href={l("/products-other")} className="btn btn-out">More details &raquo;</A>
+              <A href={l("/other-printing")} className="btn btn-out">More details &raquo;</A>
             </article>
           </div>
         </div>

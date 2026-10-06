@@ -101,8 +101,8 @@ function solutions() {
     })
   }
 
-  // 品項卡：mockup/solutions.html 的 SETS 常數
-  const js = readMockup('solutions.html')
+  // 品項卡：mockup/printing-solutions.html 的 SETS 常數
+  const js = readMockup('printing-solutions.html')
   const items = []
   const setRe = /(\w+):\{apps:'([^']*)',items:\[([\s\S]*?)\]\}/g
   let s
@@ -217,7 +217,7 @@ const catCode = (label) => NEWS_CAT[label] ?? 'esg'
 
 /* ── mockup：案例實績 ──────────────────────────────────── */
 function projects() {
-  const html = readMockup('projects.html')
+  const html = readMockup('printing-projects.html')
   const re =
     /<article class="pj-card[^"]*" data-tag="([^"]*)">\s*<div class="pj-img"><img src="([^"]+)"[\s\S]*?<h3>([\s\S]*?)<\/h3>\s*<p>([\s\S]*?)<\/p>(?:\s*<div class="pj-stat"><b>([^<]*)<\/b><span>([^<]*)<\/span>)?/g
   const rows = []
@@ -266,7 +266,7 @@ function detailsList(file, keys) {
 
 /* ── mockup：產業趨勢 ──────────────────────────────────── */
 function trends() {
-  const html = readMockup('industry-trends.html')
+  const html = readMockup('printing-trends.html')
   const re = /<div class="dtitle[^"]*">([\s\S]*?)<\/div>\s*<p class="prose[^"]*">([\s\S]*?)<\/p>/g
   const rows = []
   let m
@@ -358,7 +358,7 @@ function facilities() {
 
 /* ── mockup：Green Vlog ────────────────────────────────── */
 function vlogs() {
-  const html = readMockup('green-vlog.html')
+  const html = readMockup('blog.html')
   const rows = []
   let order = 0
   const add = (id, title, ep, isHero) => {

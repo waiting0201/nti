@@ -181,3 +181,16 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/250_content_zh_sep30.sql
 2. **mockup 標籤對不到 `db/seed` 分類**（目前 2 個）——`Project:esg`／`Project:retail`
    是設計稿的示範標籤，不在 docs/08 §6.2 定的專案分類裡，已對到最接近的既有分類。
    客戶若要保留原標籤，在後台新增分類後改 `CATEGORY_ALIAS`。
+
+## 260_slug_rename.sql
+
+客戶 2026-10-06「網頁優化」表的 8 個網址更名（`/solutions` → `/printing-solutions` 等，對照見 SQL 檔頭）。
+手寫、冪等，只改**還是舊值**的列：
+
+- `Redirect.ToPath`：210 寫入的舊落點（`/zh/solutions` → `/zh/printing-solutions`…）。210 對已存在的 FromPath 會跳過，所以已匯入的庫要靠這支。
+- `HomeBanner.LinkUrl`：200 寫入的 `/solutions`。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/260_slug_rename.sql
+```
+

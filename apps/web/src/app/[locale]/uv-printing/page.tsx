@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   // SEO 來自方案本身（SolutionI18n，docs/08 §6.4），不是固定頁；後台沒填就用 mockup 的值
   const seo = (await getSolutionByCode(locale, 'uv'))?.seo
-  return pageMetadata(locale, "/products-uv", {
+  return pageMetadata(locale, "/uv-printing", {
     title: seo?.seoTitle || "UV Printing — NTI Printing",
     description: seo?.seoDescription || "UV printing on plastics, metal foils and coated paperboards. Instant curing delivers vibrant, durable graphics on non-absorbent materials, faster.",
   })
@@ -25,17 +25,17 @@ export default async function Page({ params }: Props) {
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
-        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/solutions")}>Solutions</A><span>&rsaquo;</span><b>UV Printing</b></div>
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/printing-solutions")}>Solutions</A><span>&rsaquo;</span><b>UV Printing</b></div>
         <h1 className="sec-title reveal">{solution?.h1 || "UV Printing"}</h1>
         <div className="sec-sub reveal">Print on the materials ordinary ink can&rsquo;t touch.</div>
         {solution?.introHtml ? <SolutionIntro html={solution.introHtml} /> : (<>
         <p className="prose wide reveal mt-s">UV printing delivers vibrant, durable graphics on plastics, metal foils, coated paperboards, and other non-absorbent materials. Its instant curing process speeds up production, improves print quality, and supports premium finishes, specialty coatings, and anti-counterfeiting applications &mdash; one reason NTI Printing is a trusted source for UV coating printing in Taiwan.</p>
         </>)}
         <nav className="pr-tabs reveal" aria-label="Product categories">
-          <A href={l("/products-boxes")}>Color Box Packaging</A>{' '}
-          <A href={l("/products-cardboard")}>Packaging Paperboard</A>{' '}
-          <A href={l("/products-uv")} className="active">UV Printing</A>{' '}
-          <A href={l("/products-other")}>Other Printing</A>
+          <A href={l("/colorbox")}>Color Box Packaging</A>{' '}
+          <A href={l("/cardboard")}>Packaging Paperboard</A>{' '}
+          <A href={l("/uv-printing")} className="active">UV Printing</A>{' '}
+          <A href={l("/other-printing")}>Other Printing</A>
         </nav>
         {solution?.items.length ? (
           <SolutionItems items={solution.items} className="pr-grid two" />

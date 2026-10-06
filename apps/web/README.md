@@ -37,7 +37,7 @@ CMS 資料**完全不快取**（見〈存檔後多久才更新〉），所以改
 | 全部 44 頁的 `<head>` | 固定頁 SEO（`/pages/{pageKey}`，對照表在 `src/lib/pages.ts`） |
 | 首頁 | Banner、Proof 認證牆、客戶 logo |
 | `/news`、`/news/{slug}` | 消息列表與詳細頁（詳細頁是新增的動態路由） |
-| `/projects`、`/faq`、`/green-vlog`、`/industry-trends`、`/careers` | 各自的內容單元 |
+| `/printing-projects`、`/faq`、`/blog`、`/printing-trends`、`/careers` | 各自的內容單元 |
 | `/about-certifications`、`/supplier-area` | 認證牆／公告、規範、下載 |
 | `/facility-*`（4 頁） | 設備卡 |
 | `/products-*`（4 頁） | 方案品項卡、H1、導言、SEO（單元 02；首頁方案卡的標題與短述也來自這裡） |

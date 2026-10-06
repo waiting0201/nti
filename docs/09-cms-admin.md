@@ -145,7 +145,7 @@
 | 上架／上架時間／下架時間 | 狀態組 | | | 見 §5.4 |
 
 ### 02 `solution` 解決方案
-**前台**：`solutions.html` 列表、`products-boxes/cardboard/uv/other.html` 四個方案頁、首頁 Printing Solutions 四張卡。
+**前台**：`printing-solutions.html` 列表、`colorbox`／`cardboard`／`uv-printing`／`other-printing.html` 四個方案頁、首頁 Printing Solutions 四張卡。
 **操作**：**固定 4 筆，不可新增／刪除**（新增方案屬改版範圍）；可編輯、排序、上下架。品項卡為子清單，可自由增刪。
 
 主檔欄位：
@@ -163,7 +163,7 @@
 品項子清單（`SolutionItem`）：品項圖 + Alt、名稱、說明（400 字內）、排序、上架。
 
 ### 03 `project` 案例實績
-**前台**：`projects.html` `#cases` 卡片（可依分類篩選）。
+**前台**：`printing-projects.html` `#cases` 卡片（可依分類篩選）。
 
 | 欄位 | 型別 | 必 | 語 | 說明 |
 |------|------|----|----|------|
@@ -207,7 +207,7 @@
 > 前台需輸出 `FAQPage` JSON-LD（05-seo §2.3），故問答需為純文字可解析結構，答案富文本避免使用表格。
 
 ### 07 `trend` 產業趨勢
-`industry-trends.html` 的段落區塊：標題（單行 200）／內文（富文本）／排序／上下架。目前 5 筆。
+`printing-trends.html` 的段落區塊：標題（單行 200）／內文（富文本）／排序／上下架。目前 5 筆。
 
 ### 08 `certification` 認證・夥伴・獎項
 **前台**：首頁 Proof 認證牆、`about-certifications.html`、`differences.html`、`green-esg.html`。
@@ -339,7 +339,7 @@
 ### 22 `category` 分類管理
 以 `CategoryType` 分頁籤管理九類分類（News／Project／Vlog／FAQ／認證／設備／供應商公告／產業別／報價材質）。欄位：代號（建立後唯讀）、名稱（多語）、排序、啟用。
 **已被引用的分類不可刪除**，只能停用；刪除前顯示引用筆數。
-> 產業別同時供 `projects.html` 的 Industries 清單與報價表單下拉使用；報價材質供報價表單下拉使用。
+> 產業別同時供 `printing-projects.html` 的 Industries 清單與報價表單下拉使用；報價材質供報價表單下拉使用。
 
 ### 23 `admin` 管理員與角色
 管理員：帳號／通知信箱／顯示名稱／角色／啟用／最後登入；**密碼由建立者直接設定**。**登入失敗不鎖定帳號**（客戶 2026-09-09 決定移除：持續用錯誤密碼打某個帳號就能把真正的管理員鎖在外面，而攻擊者不必知道任何密碼）；暴力破解由登入端點的 reCAPTCHA v3 擋。

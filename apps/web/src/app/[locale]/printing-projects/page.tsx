@@ -11,7 +11,7 @@ type Props = { params: Promise<{ locale: Locale }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
-  return pageMetadata(locale, "/projects", {
+  return pageMetadata(locale, "/printing-projects", {
     title: "Projects — NTI Printing",
     description: "Custom box portfolio and packaging case studies from NTI — food and beverage, electronics, beauty, medical, luxury gift and hardware packaging projects.",
   })

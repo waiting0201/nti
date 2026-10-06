@@ -45,7 +45,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/carbon-permit')
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/category/news')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/category/news', N'/zh/news', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/category/電子報')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/category/電子報', N'/zh/green-vlog', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/category/電子報', N'/zh/blog', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/color-printing-technology')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/color-printing-technology', N'/zh', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/contact')
@@ -57,7 +57,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/die-cutting')
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/die-cutting-2')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/die-cutting-2', N'/zh', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/drprint')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/drprint', N'/zh/green-vlog', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/drprint', N'/zh/blog', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/eewh-nti-printing')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/eewh-nti-printing', N'/zh', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/en/contactus')
@@ -91,17 +91,17 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/en/production-equi
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/en/production-equipment/quality-inspection')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/production-equipment/quality-inspection', N'/en/facility-quality', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/en/products')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/products', N'/en/solutions', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/products', N'/en/printing-solutions', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/en/products/other-printing')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/products/other-printing', N'/en/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/products/other-printing', N'/en/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/en/products/packaging-boxes')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/products/packaging-boxes', N'/en/products-boxes', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/products/packaging-boxes', N'/en/colorbox', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/en/products/uv-printing')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/products/uv-printing', N'/en/products-uv', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/products/uv-printing', N'/en/uv-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/en/products/包裝紙卡')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/products/包裝紙卡', N'/en/products-cardboard', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/products/包裝紙卡', N'/en/cardboard', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/en/電子報')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/電子報', N'/en/green-vlog', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/en/電子報', N'/en/blog', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/environmental-protection')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/environmental-protection', N'/zh', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/environmentally-friendly-digital-printing')
@@ -189,15 +189,15 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/production/printin
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/production/quality-check')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/production/quality-check', N'/zh/facility-quality', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/products')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/products', N'/zh/solutions', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/products', N'/zh/printing-solutions', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/products/cards')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/products/cards', N'/zh/products-cardboard', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/products/cards', N'/zh/cardboard', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/products/colorbox')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/products/colorbox', N'/zh/products-boxes', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/products/colorbox', N'/zh/colorbox', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/products/other-printing')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/products/other-printing', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/products/other-printing', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/products/uv-printing')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/products/uv-printing', N'/zh/products-uv', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/products/uv-printing', N'/zh/uv-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/project-nti-factory-is-leed-gold')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/project-nti-factory-is-leed-gold', N'/zh', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/rfid')
@@ -207,11 +207,11 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/sustainable-design
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/sustainable-exchange-orca-rescue')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/sustainable-exchange-orca-rescue', N'/zh', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/2024')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/2024', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/2024', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/2024happynewyear')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/2024happynewyear', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/2024happynewyear', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/2024龍年桌曆')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/2024龍年桌曆', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/2024龍年桌曆', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/carbon-neutral')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/carbon-neutral', N'/zh/news/tag/carbon-footprint', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/carbon-permit')
@@ -235,11 +235,11 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/green-supply-c
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/gsc')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/gsc', N'/zh/news/tag/green-supply-chain', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/happy-new-year')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/happy-new-year', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/happy-new-year', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/leed')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/leed', N'/zh/news/tag/green-building', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/packaging-and-printing')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/packaging-and-printing', N'/zh/solutions', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/packaging-and-printing', N'/zh/printing-solutions', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/rfid')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/rfid', N'/zh/news/tag/variable-data-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/rfid技術')
@@ -259,7 +259,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/倉存管理')
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/動物紙模型')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/動物紙模型', N'/zh/news/tag/paper-craft', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/包裝印刷')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/包裝印刷', N'/zh/solutions', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/包裝印刷', N'/zh/printing-solutions', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/包裝彩盒')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/包裝彩盒', N'/zh/news/tag/packaging-design', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/包裝材質')
@@ -285,9 +285,9 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/台南永續�
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/台灣鑽石級綠建築')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/台灣鑽石級綠建築', N'/zh/news/tag/green-building', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/合板')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/合板', N'/zh/products-cardboard', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/合板', N'/zh/cardboard', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/合板印刷')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/合板印刷', N'/zh/products-cardboard', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/合板印刷', N'/zh/cardboard', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/國際認證')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/國際認證', N'/zh/news/tag/awards', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/地球友善')
@@ -307,11 +307,11 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/少量印刷')
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/平版印刷')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/平版印刷', N'/zh/facility', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/年曆')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/年曆', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/年曆', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/彩盒印刷')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/彩盒印刷', N'/zh/news/tag/packaging-design', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/抽卡式桌曆')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/抽卡式桌曆', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/抽卡式桌曆', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/拼版印刷')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/拼版印刷', N'/zh/news/tag/digital-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/搖籃到搖籃')
@@ -321,15 +321,15 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/數位印刷')
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/文策院')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/文策院', N'/zh/news/tag/partnership', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/新年快樂')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/新年快樂', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/新年快樂', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/明日動物')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/明日動物', N'/zh/news/tag/conservation', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/桌曆')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/桌曆', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/桌曆', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/桌曆印刷')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/桌曆印刷', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/桌曆印刷', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/桌曆設計')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/桌曆設計', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/桌曆設計', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/永續交流會')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/永續交流會', N'/zh/news/tag/partnership', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/永續包裝')
@@ -395,7 +395,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/美國')
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/美國綠建築黃金級認證')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/美國綠建築黃金級認證', N'/zh/news/tag/green-building', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/設計桌曆')
-    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/設計桌曆', N'/zh/products-other', 301, 1);
+    INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/設計桌曆', N'/zh/other-printing', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/遠見esg企業永續獎')
     INSERT dbo.Redirect (FromPath, ToPath, StatusCode, IsActive) VALUES (N'/tag/遠見esg企業永續獎', N'/zh/news/tag/awards', 301, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.Redirect WHERE FromPath = N'/tag/金箔銀箔紙張包裝')

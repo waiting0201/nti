@@ -7,7 +7,7 @@
  *
  * 對不上的兩邊都有，不是遺漏：
  *
- * - **路由有、pageKey 沒有**：`/products-*`（SEO 來自 `SolutionI18n`）、`/news-*`（來自 `NewsI18n`）
+ * - **路由有、pageKey 沒有**：四個方案頁 `/colorbox`／`/cardboard`／`/uv-printing`／`/other-printing`（SEO 來自 `SolutionI18n`）、`/news-*`（來自 `NewsI18n`）
  * - **pageKey 有、路由沒有**：`green-csr`（預留，待客戶確認）
  *
  * `about-hub`／`sustainability-hub` 就是 IA 的 About Us／Sustainability 頂層，
@@ -31,8 +31,8 @@ export const PAGE_KEY_BY_PATH: Record<string, string> = {
   '/facility-quality': 'facility-quality',
   '/facility-tour': 'facility-tour',
 
-  '/solutions': 'solutions',
-  '/projects': 'projects',
+  '/printing-solutions': 'solutions',
+  '/printing-projects': 'projects',
 
   '/green-advantage': 'sustainability-hub',
   '/green-our-advantage': 'green-our-advantage',
@@ -42,9 +42,9 @@ export const PAGE_KEY_BY_PATH: Record<string, string> = {
 
   '/insights': 'insights',
   '/news': 'news-list',
-  '/green-vlog': 'green-vlog',
+  '/blog': 'green-vlog',
   '/faq': 'faq',
-  '/industry-trends': 'industry-trends',
+  '/printing-trends': 'industry-trends',
 
   '/careers': 'careers',
   '/supplier-area': 'supplier-area',

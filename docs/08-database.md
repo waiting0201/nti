@@ -180,7 +180,7 @@ CREATE TABLE dbo.HomeBannerI18n (
 ### 4.3 Solutions（客製化解決方案）
 
 ```sql
--- 4 個方案 = products-boxes / cardboard / uv / other，同時驅動首頁 Printing Solutions 四張卡
+-- 4 個方案 = colorbox / cardboard / uv-printing / other-printing，同時驅動首頁 Printing Solutions 四張卡
 CREATE TABLE dbo.Solution (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   Code VARCHAR(30) NOT NULL UNIQUE,        -- boxes|cardboard|uv|other
@@ -249,7 +249,7 @@ CREATE TABLE dbo.ProjectI18n (
 );
 ```
 
-> `projects.html` 的 **Industries / Applications** 十項清單由 `Category(CategoryType='Industry')` 提供，與報價表單的產業下拉共用同一份主檔。
+> `printing-projects.html` 的 **Industries / Applications** 十項清單由 `Category(CategoryType='Industry')` 提供，與報價表單的產業下拉共用同一份主檔。
 
 ### 4.5 News（最新消息）
 

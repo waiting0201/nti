@@ -5,7 +5,7 @@
 > 分工：本檔記錄**狀態**；[`docs/`](docs/README.md) 的十份作業書記錄各領域的**規格與施工標準**；
 > [`CLAUDE.md`](CLAUDE.md) 記錄**專案規範與索引**。三份不要互相抄，各司其職。
 
-**最後更新**：2026-09-09
+**最後更新**：2026-10-06
 
 ---
 
@@ -186,7 +186,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 | **全部 44 頁的 `<head>`** | 固定頁 SEO（對照表 `src/lib/pages.ts`）。含 noindex 開關與 OG 欄位 |
 | 首頁 | Banner、Proof 認證牆、客戶 logo |
 | `/news` + **新增的 `/news/{slug}`** | 消息列表與詳細頁 |
-| `/projects`、`/faq`、`/green-vlog`、`/industry-trends`、`/careers` | 各內容單元 |
+| `/printing-projects`、`/faq`、`/blog`、`/printing-trends`、`/careers` | 各內容單元 |
 | `/about-certifications`、`/supplier-area` | 認證牆／公告、規範、下載 |
 | `/facility-*`（4）、`/products-*`（3） | 設備卡、方案品項卡 |
 
@@ -198,6 +198,25 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
 清單在該腳本的 `HAND_MAINTAINED`。
+
+### ✅ 依客戶「網頁優化」表更名 8 個網址（2026-10-06）
+
+來源：《南台彩藝_網站改版_SEO 驗收檢核表》的「網頁優化」分頁。兩個語系同步，`/zh/`、`/en/` 前綴不變。
+
+| 舊 | 新 |
+|---|---|
+| `/solutions` | `/printing-solutions` |
+| `/products-boxes`／`-cardboard`／`-uv`／`-other` | `/colorbox`／`/cardboard`／`/uv-printing`／`/other-printing` |
+| `/projects` | `/printing-projects`（`#industries`／`#cases` 錨點維持同一頁） |
+| `/green-vlog` | `/blog` |
+| `/industry-trends` | `/printing-trends` |
+
+- **mockup 檔名一起改**（slug＝mockup 檔名，`verify:markup` 照舊 44 頁全過）；mockup 不進版控，改的是本機／NAS 那份。
+- 舊網址由 middleware 301 到新網址（`lib/renamed-slugs.ts`），預覽站已經流出去的連結不會 404。
+- 舊站 301 的落點同步改成新網址（`legacy-redirects.ts` → 210 SQL／CSV、對照表）。
+- 前台撈 CMS 用的是 pageKey／`Solution.Code`，**DB 內容與 API 路由都沒動**；`Page.RouteTemplate`／`PageI18n.Slug` 仍是當初的提案值，前台沒用到。
+- ⚠ **正式庫要跑 `db/content/260_slug_rename.sql`**：已匯入的 301 落點（28 筆）與首頁 Banner 連結（1 筆）改到新網址。沒跑也不會 404，只是多轉一次。
+- 表上另有兩項不是網址、未處理：「projects 兩區要不要併成一頁」（本來就是同一頁）、「green-advantage 第一段是否加不同內容」（待客戶給文案）。
 
 ### ✅ 客戶 09-30 中文文案匯入（2026-09-30）
 
@@ -378,7 +397,7 @@ middleware 在 Edge runtime 查不到 CMS 的 slug，只能整個前綴放行。
 - 舊站那 170 條目前是導回首頁，**不是一對一 301**——擋在內容遷移。Google 會判成
   soft 404、權重傳不過去（客戶知情的取捨，2026-09-07）。內容搬進 CMS 後把落點補進
   `legacy-redirects.ts` 的 `POSTS` 即可，優先處理 47 篇 Dr.Print 電子報
-- `/solutions` 的 explorer 互動元件仍是寫死的四個方案（它不是卡片列表，
+- `/printing-solutions` 的 explorer 互動元件仍是寫死的四個方案（它不是卡片列表，
   是有 `data-set` 切換行為的自訂元件；四筆方案的代號固定，之後要接再說）
 
 ---

@@ -10,7 +10,7 @@ type Props = { params: Promise<{ locale: Locale }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
-  return pageMetadata(locale, "/solutions", {
+  return pageMetadata(locale, "/printing-solutions", {
     title: "Custom Packaging & Printing Solutions | NTI Printing Taiwan",
     description: "Custom packaging boxes and printing solutions from NTI Taiwan: material selection, structural design, printing, finishing and technical support.",
   })
@@ -63,7 +63,7 @@ export default async function Page({ params }: Props) {
         <div className="dtitle reveal mt-m">Industries / Applications</div>
         <div className="flist chips reveal mt-s"><p className="fi">Food &amp; Beverage</p><p className="fi">Electronics</p><p className="fi">Beauty &amp; Skincare</p><p className="fi">Medical &amp; Healthcare</p><p className="fi">Luxury &amp; Gift Packaging</p><p className="fi">Hardware &amp; Hand Tools</p><p className="fi">Automotive</p><p className="fi">Publishing &amp; Stationery</p><p className="fi">Home &amp; Lifestyle</p><p className="fi">Industrial &amp; Consumer Goods</p></div>
         <p className="prose wide reveal mt-m">Explore how global brands trust NTI to print greener &mdash; without compromise.</p>
-        <p className="mt-m reveal"><A href={l("/projects")} className="tour-more">View more projects<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg></A></p>
+        <p className="mt-m reveal"><A href={l("/printing-projects")} className="tour-more">View more projects<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg></A></p>
       </div>
       </section>
       <section className="section"><div className="wrap">
