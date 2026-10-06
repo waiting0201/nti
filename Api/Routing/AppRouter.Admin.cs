@@ -139,10 +139,10 @@ public sealed partial class AppRouter
             ("POST",           ["admin", "client"])          => await adminClients.CreateAsync(req),
             ("PUT" or "PATCH", ["admin", "client", var id])  => await adminClients.UpdateAsync(req, id),
             ("DELETE",         ["admin", "client", var id])  => await adminClients.DeleteAsync(req, id),
-            ("POST",           ["admin", "client", "upload"]) => await adminMedia.UploadAsync(req),
+            ("POST",           ["admin", "client", "upload"]) => await adminMedia.UploadAsync(req, "client"),
 
             // ── 15 page ──────────────────────────────────────────────────
-            ("POST",           ["admin", "page", "upload"])  => await adminMedia.UploadAsync(req),
+            ("POST",           ["admin", "page", "upload"])  => await adminMedia.UploadAsync(req, "page"),
             ("GET",            ["admin", "page"])           => await adminPages.GetListAsync(req),
             ("GET",            ["admin", "page", var key])  => await adminPages.GetByKeyAsync(req, key),
             ("GET",            ["admin", "page", var key, "texts"]) => await adminPages.GetTextsAsync(req, key),
@@ -175,7 +175,7 @@ public sealed partial class AppRouter
             ("DELETE",         ["admin", "contact", var id])  => await adminForms.DeleteContactAsync(req, id),
 
             // ── 21 setting ───────────────────────────────────────────────
-            ("POST",           ["admin", "setting", "upload"]) => await adminMedia.UploadAsync(req),
+            ("POST",           ["admin", "setting", "upload"]) => await adminMedia.UploadAsync(req, "setting"),
             ("GET",            ["admin", "setting"]) => await adminSettings.GetListAsync(req),
             ("PUT" or "PATCH", ["admin", "setting"]) => await adminSettings.UpdateAsync(req),
 
@@ -222,7 +222,7 @@ public sealed partial class AppRouter
         {
             ("GET",            [_, _])                      => await handler.GetListAsync(req),
             ("PUT",            [_, _, "sort"])              => await handler.SortAsync(req),
-            ("POST",           [_, _, "upload"])            => await adminMedia.UploadAsync(req),
+            ("POST",           [_, var unit, "upload"])     => await adminMedia.UploadAsync(req, unit),
             // 文件欄位（公告附件、供應商下載檔）另走一個端點：白名單與大小上限都跟圖片不同
             ("POST",           [_, _, "upload-file"])       => await adminMedia.UploadFileAsync(req),
             ("PATCH",          [_, _, var id, "publish"])   => await handler.PublishAsync(req, id),

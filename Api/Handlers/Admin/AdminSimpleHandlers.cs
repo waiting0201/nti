@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Nti.Api.Common;
 using Nti.Api.Data;
 using Nti.Api.Models.Dtos;
@@ -99,11 +100,15 @@ public sealed class AdminClientHandler(AppDbContext db)
 /// <c>/upload-file</c> 收文件）並沿用該單元的 <c>{unit}.edit</c> 權限——
 /// 另開一個 <c>media.*</c> 權限碼會讓 173 列的矩陣對不上。
 /// </summary>
-public sealed class AdminMediaHandler(IBlobStorageService blobs)
+public sealed class AdminMediaHandler(IBlobStorageService blobs, ILogger<AdminMediaHandler> logger)
 {
-    /// <summary>圖片欄位（`POST /admin/{unit}/upload`）：jpg／png／webp／svg，≤10MB。</summary>
-    public Task<IActionResult> UploadAsync(HttpRequest req) =>
-        SaveAsync(req, UploadRules.ImageExtensions, UploadRules.ImageMaxBytes, "10MB");
+    /// <summary>
+    /// 圖片欄位（`POST /admin/{unit}/upload`）：jpg／png／webp／svg，≤10MB。
+    /// 點陣圖會依單元縮到建議寬度並轉 WebP（<see cref="ImageOptimizer"/>）。
+    /// </summary>
+    public Task<IActionResult> UploadAsync(HttpRequest req, string unit) =>
+        SaveAsync(req, UploadRules.ImageExtensions, UploadRules.ImageMaxBytes, "10MB",
+            imageMaxWidth: UploadRules.ImageMaxWidthFor(unit));
 
     /// <summary>
     /// 文件欄位（`POST /admin/{unit}/upload-file`）：pdf／docx／xlsx／zip，≤20MB。
@@ -116,7 +121,7 @@ public sealed class AdminMediaHandler(IBlobStorageService blobs)
         SaveAsync(req, UploadRules.DocumentExtensions, UploadRules.DocumentMaxBytes, "20MB");
 
     private async Task<IActionResult> SaveAsync(
-        HttpRequest req, string[] allowed, long maxBytes, string maxLabel)
+        HttpRequest req, string[] allowed, long maxBytes, string maxLabel, int? imageMaxWidth = null)
     {
         if (!req.HasFormContentType)
             throw AppException.BadRequest(ErrorCodes.UploadType, "請以 multipart/form-data 上傳。");
@@ -140,11 +145,39 @@ public sealed class AdminMediaHandler(IBlobStorageService blobs)
         if (!await FileSignatureValidator.IsValidAsync(stream, file.FileName))
             throw AppException.BadRequest(ErrorCodes.UploadType, "檔案內容與副檔名不符。");
 
-        var path = await blobs.UploadAsync(UploadRules.Containers.Media, file.FileName, stream, file.ContentType);
+        var optimized = imageMaxWidth is int maxWidth ? TryOptimize(stream, file.FileName, ext, maxWidth) : null;
+
+        var path = optimized is null
+            ? await blobs.UploadAsync(UploadRules.Containers.Media, file.FileName, stream, file.ContentType)
+            : await blobs.UploadAsync(UploadRules.Containers.Media, Path.ChangeExtension(file.FileName, ".webp"),
+                new MemoryStream(optimized.Content), "image/webp");
 
         CacheControl.NoStore(req.HttpContext.Response);
         // 回相對路徑，不是 URL：DB 存的就是這個（docs/08 §2.6）
         return new OkObjectResult(ApiResponse.Ok(new { path }));
+    }
+
+    /// <summary>
+    /// 壓縮失敗不擋上傳：檔頭已經驗過，退回存原檔就是這個功能上線前的行為。
+    /// 回 null 時串流已倒回開頭。
+    /// </summary>
+    private ImageOptimizer.Optimized? TryOptimize(Stream stream, string fileName, string ext, int maxWidth)
+    {
+        ImageOptimizer.Optimized? optimized = null;
+        try
+        {
+            optimized = ImageOptimizer.Optimize(stream, ext, maxWidth);
+            if (optimized is not null)
+                logger.LogInformation("{File}（{Bytes} bytes）壓成 {Width}×{Height} WebP，{Size} bytes。",
+                    fileName, stream.Length, optimized.Width, optimized.Height, optimized.Content.Length);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "{File} 壓縮失敗，改存原檔。", fileName);
+        }
+
+        if (optimized is null) stream.Seek(0, SeekOrigin.Begin);
+        return optimized;
     }
 }
 

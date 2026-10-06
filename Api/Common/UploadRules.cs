@@ -34,6 +34,28 @@ public static class UploadRules
     /// <summary>後台圖片單檔上限 10MB。</summary>
     public const long ImageMaxBytes = 10 * 1024 * 1024;
 
+    /// <summary>
+    /// 各單元圖片的最大寬度，超過就由 <see cref="ImageOptimizer"/> 等比縮小。
+    /// 取自 docs/09 §3 建議尺寸的寬（同單元多個欄位取最寬的那個：solution 的品項圖 1280 &gt; 封面 1160）。
+    /// client 的建議只講短邊 ≥300，橫式 logo 會很寬，給 1200。
+    /// </summary>
+    private static readonly Dictionary<string, int> ImageMaxWidths = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["home-banner"]   = 2400,
+        ["setting"]       = 2400,
+        ["solution"]      = 1280,
+        ["project"]       = 1160,
+        ["news"]          = 1800,
+        ["certification"] = 600,
+        ["client"]        = 1200,
+        ["facility"]      = 1200,
+        ["vlog"]          = 1280,
+    };
+
+    /// <summary>沒列在表上的單元（例如 page 的 OG 圖）以首頁 Banner 的寬度為上限。</summary>
+    public static int ImageMaxWidthFor(string unit) =>
+        ImageMaxWidths.TryGetValue(unit, out var width) ? width : 2400;
+
     /// <summary>後台文件單檔上限 20MB（docs/09 §3）。</summary>
     public const long DocumentMaxBytes = 20 * 1024 * 1024;
 

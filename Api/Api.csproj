@@ -28,6 +28,8 @@
 
     <!-- 檔案儲存（docs/10 §9.5）；本機用 Azurite -->
     <PackageReference Include="Azure.Storage.Blobs" Version="12.27.0" />
+    <PackageReference Include="SkiaSharp" Version="4.153.1" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.153.1" />
 
     <!-- JWT 自簽（docs/10 §7.1）-->
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.4.0" />
