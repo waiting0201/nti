@@ -85,6 +85,8 @@ export type PageSeo = {
   pageKey: string
   isIndexable: boolean
   bodyHtml: string | null
+  /** 頁面影片的 YouTube 影片 ID（後台單元 15）。只有關於我們、工廠導覽兩頁會有值 */
+  youtubeId: string | null
   seo: Seo
   /** 頁面文字覆寫（後台單元 15「頁面文字」）：英文原文 → 該語系的字。只有開放的頁面會有內容 */
   texts: Record<string, string>

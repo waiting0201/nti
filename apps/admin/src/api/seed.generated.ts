@@ -693,6 +693,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/about",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasVideo": true,
+      "youtubeId": "vECuYIiFSSM",
       "sortOrder": 2,
       "i18n": {
         "zh": {
@@ -873,6 +875,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/about/facility/tour",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasVideo": true,
+      "youtubeId": "vECuYIiFSSM",
       "sortOrder": 11,
       "i18n": {
         "zh": {

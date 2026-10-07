@@ -19,3 +19,13 @@ export const mediaBase = (process.env.NEXT_PUBLIC_MEDIA_BASE ?? '').replace(/\/$
 export function mediaUrl(path: string): string {
   return mediaBase + path
 }
+
+/**
+ * 頁面影片（後台單元 15 的 `youtubeId`）→ `<iframe src>`。
+ *
+ * 值是 YouTube 影片 ID（後台貼網址時已抽出、後端存檔時再驗一次）。這裡仍只認 ID 的字元集：
+ * 沒填或認不出來就回 `fallback`——mockup 寫死的那支影片，不放一個壞掉的框。
+ */
+export function youtubeEmbedSrc(id: string | null | undefined, fallback: string): string {
+  return id && /^[\w-]{6,20}$/.test(id) ? `https://www.youtube.com/embed/${id}` : fallback
+}

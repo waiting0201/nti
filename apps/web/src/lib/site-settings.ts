@@ -77,17 +77,6 @@ export function mapEmbedSrc(value: string | undefined): string | undefined {
 }
 
 /**
- * `video.*` → 頁面影片（關於我們、工廠導覽）的 `<iframe src>`。
- *
- * 值是 YouTube 影片 ID（後台貼網址時已抽出、後端存檔時再驗一次）。這裡仍只認 ID 的字元集：
- * 認不出來就回 `undefined`，呼叫端落回 mockup 寫死的那支影片，不放一個壞掉的框。
- */
-export function youtubeEmbedSrc(id: string | undefined): string | undefined {
-  if (!id || !/^[\w-]{6,20}$/.test(id)) return undefined
-  return `https://www.youtube.com/embed/${id}`
-}
-
-/**
  * 只還原貼上片段會帶到的那幾個實體（`&amp;` 放最後，不然會把 `&amp;quot;` 解兩次）。
  * 這裡的輸出只會進 `new URL()` 做驗證，不會變成 HTML，所以不需要完整的 decoder。
  */

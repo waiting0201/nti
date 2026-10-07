@@ -56,6 +56,18 @@ function categories() {
   return rows
 }
 
+/* 有影片的固定頁 → mockup 檔（與後端 Api/Common/Constants.cs 的 PageVideoPages 一致）。
+   正式資料庫的值由 EF migration PageVideo 帶入；這裡只給 demo 用，值一樣取自 mockup。 */
+const VIDEO_PAGES = { 'about-hub': 'differences.html', 'facility-tour': 'facility-tour.html' }
+
+function pageVideo(pageKey) {
+  const file = VIDEO_PAGES[pageKey]
+  if (!file) return {}
+  const m = /<div class="video-frame[^"]*">\s*<iframe\b[^>]*?\ssrc="https:\/\/www\.youtube\.com\/embed\/([\w-]+)"/.exec(readMockup(file))
+  if (!m) throw new Error(`抽不出 ${file} 的影片——mockup 的版面改了，請改 pageVideo() 的規則`)
+  return { hasVideo: true, youtubeId: m[1] }
+}
+
 /* ── db/seed：29 筆固定頁 ──────────────────────────────── */
 function pages() {
   const sql = read(path.join(dbSeed, '140_page.sql'))
@@ -69,6 +81,7 @@ function pages() {
       path: m[3],
       hasRichBody: m[4] === '1',
       isIndexable: m[5] === '1',
+      ...pageVideo(m[2]),
       sortOrder: +m[1],
       i18n: {
         zh: { slug: m[6], seoTitle: '', metaDescription: '' },
@@ -492,9 +505,6 @@ function settings() {
   // 等於讓後台可以注入任意 HTML。前台自己組 iframe（title／loading 等屬性寫在程式裡）。
   const map = pick(/<div class="map-frame">\s*<iframe src="([^"]+)"/, contact, 'Google 地圖網址')[1]
   const gallery = pick(/<section class="gallery[^"]*">\s*<img\b[^>]*?\ssrc="([^"]+)"[^>]*?\salt="([^"]*)"/, home, '首頁形象圖帶')
-  const videoRe = /<div class="video-frame[^"]*">\s*<iframe\b[^>]*?\ssrc="https:\/\/www\.youtube\.com\/embed\/([\w-]+)"/
-  const aboutVideo = pick(videoRe, readMockup('differences.html'), '關於我們頁影片')
-  const tourVideo = pick(videoRe, readMockup('facility-tour.html'), '工廠導覽頁影片')
   // 結構化資料是公司身分的權威（出處寫在 lib/jsonld.ts 的註解）：中文法定名與粉專網址讀那份
   const jsonld = read(path.join(repo, 'apps/web/src/lib/jsonld.ts'))
   const facebook = pick(/sameAs:\s*\['([^']+)'/, jsonld, 'Facebook 粉專網址')[1]
@@ -517,8 +527,6 @@ function settings() {
     'social.youtube': '',
     'home.gallery_image': asset(gallery[1]),
     'home.gallery_alt': i18n(decode(gallery[2])),
-    'video.about': aboutVideo[1],
-    'video.facility_tour': tourVideo[1],
     // 表單通知信的收件者：reference/現有網站盤點與內容遷移.md D1 決議正式站寄
     // service@nti-printing.com，與聯絡頁公布的信箱同一個。測試站要改寄別處是在後台改，
     // 不是在這裡分環境——這張表本來就歸 CMS 管。

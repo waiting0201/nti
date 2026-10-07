@@ -11,7 +11,7 @@ public sealed class SiteSettingConfiguration : IEntityTypeConfiguration<SiteSett
     public void Configure(EntityTypeBuilder<SiteSetting> b)
     {
         b.ToTable("SiteSetting", t => t.HasCheckConstraint("CK_SiteSetting_Group",
-            "[GroupName] IN ('Company','Social','Home','Video','Mail')"));
+            "[GroupName] IN ('Company','Social','Home','Mail')"));
 
         b.HasKey(x => x.SettingKey).HasName("PK_SiteSetting");
         b.Property(x => x.SettingKey).Ascii(60).ValueGeneratedNever();

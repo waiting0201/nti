@@ -81,13 +81,15 @@ export const page: Unit = {
   group: '頁面／SEO',
   phase: 'P4',
   frontend: '全站 29 筆固定頁',
-  note: '29 筆固定頁，不可新增；刪除只給超管，刪掉之後前台那一頁就沒有 SEO 設定可用。「頁面內容」欄位只出現在少數可自行編輯內文的頁面（隱私權與法律聲明、預留的綠色 CSR）。開放的固定頁在中英分頁裡另有「頁面文字」，欄位就是前台目前的字，可逐段直接修改。',
+  note: '29 筆固定頁，不可新增；刪除只給超管，刪掉之後前台那一頁就沒有 SEO 設定可用。「頁面內容」欄位只出現在少數可自行編輯內文的頁面（隱私權與法律聲明、預留的綠色 CSR）；「頁面影片」只出現在有影片的頁面（關於我們、工廠導覽）。開放的固定頁在中英分頁裡另有「頁面文字」，欄位就是前台目前的字，可逐段直接修改。',
 
   fixedRows: true,
   hasSeo: true,
   fields: [
     { key: 'path', label: '頁面／路徑', type: 'readonly', side: 'neutral' },
     { key: 'isIndexable', label: '允許索引', type: 'switch', side: 'neutral', hint: '關閉 → 這一頁不讓搜尋引擎收錄' },
+    // 只在有影片的頁面出現（關於我們、工廠導覽；後端 PageVideoPages）。存的是影片 ID，與 05 Green Vlog 同一種欄位
+    { key: 'youtubeId', label: '頁面影片', type: 'youtube', side: 'neutral', hint: '貼上 YouTube 影片網址即可；留空則顯示預設的公司影片' },
     { key: 'body', label: '頁面內容', type: 'richtext', i18n: true, side: 'locale', hint: '只有少數可自行編輯內文的頁面才有這個欄位' },
   ],
   columns: [

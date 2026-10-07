@@ -1,7 +1,7 @@
 /* 由 scripts/build-seed.mjs 自 mockup/*.html 與 apps/web/src/lib/zh.ts 產生 —— 請勿手改。
    重新產生：npm run seed
 
-   固定 17 個 key 的值。key 與多語旗標的權威在 Api/Data/Seed/SeedData.cs，
+   固定 15 個 key 的值。key 與多語旗標的權威在 Api/Data/Seed/SeedData.cs，
    scripts/check-units.mjs 會比對兩邊；空字串代表「mockup 沒有、客戶還沒給」。
 
    同一份值也是 db/content/220_site_setting.sql 的來源
@@ -32,8 +32,6 @@ export const SETTING_VALUES: Record<string, string | { zh: string; en: string }>
     "zh": "NTI 包裝印刷作品集",
     "en": "A showcase of NTI's printed packaging work"
   },
-  "video.about": "vECuYIiFSSM",
-  "video.facility_tour": "vECuYIiFSSM",
   "mail.quote_notify_to": "service@nti-printing.com",
   "mail.contact_notify_to": "service@nti-printing.com",
   "mail.bcc": ""

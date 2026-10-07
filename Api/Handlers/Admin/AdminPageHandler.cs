@@ -43,6 +43,7 @@ public sealed class AdminPageHandler(AppDbContext db)
             .Select(p => new
             {
                 p.Id, p.PageKey, p.RouteTemplate, p.HasRichBody, p.IsIndexable, p.OgImagePath, p.UpdatedAt,
+                p.YoutubeId, HasVideo = PageVideoPages.All.Contains(p.PageKey),
                 i18n = db.PageI18n.Where(i => i.PageId == p.Id)
                     .Select(i => new { i.Lang, i.Slug, i.SeoTitle, i.SeoDescription })
                     .ToList(),
@@ -64,6 +65,7 @@ public sealed class AdminPageHandler(AppDbContext db)
         return new OkObjectResult(ApiResponse.Ok(new
         {
             item = page,
+            hasVideo = PageVideoPages.All.Contains(page.PageKey),
             i18n = i18ns.ToDictionary(i => i.Lang, i => i),
         }));
     }
@@ -79,6 +81,9 @@ public sealed class AdminPageHandler(AppDbContext db)
         // PageKey 與 RouteTemplate 不可改：前端是照 PageKey 取 SEO 的，改了會整頁抓不到
         page.OgImagePath = dto.OgImagePath;
         page.IsIndexable = dto.IsIndexable;
+
+        // 影片只有 PageVideoPages 那幾頁有前台位置；別頁送來的值直接忽略，與 BodyHtml 同理
+        if (PageVideoPages.All.Contains(page.PageKey)) page.YoutubeId = PageVideoPages.ParseYoutubeId(dto.YoutubeId);
 
         foreach (var (lang, body) in dto.I18n)
         {
@@ -221,6 +226,7 @@ public sealed class PageUpdateDto
 {
     public string? OgImagePath { get; set; }
     public bool    IsIndexable { get; set; } = true;
+    public string? YoutubeId   { get; set; }
     public Dictionary<string, PageI18nDto> I18n { get; set; } = [];
 }
 

@@ -186,7 +186,7 @@ public sealed class AdminSettingHandler(AppDbContext db)
 {
     public async Task<IActionResult> GetListAsync(HttpRequest req)
     {
-        // 後台看得到全部 17 個 key，包含前台不外露的 Mail 群組
+        // 後台看得到全部 15 個 key，包含前台不外露的 Mail 群組
         var rows = await db.SiteSetting.AsNoTracking()
             .OrderBy(x => x.GroupName).ThenBy(x => x.SortOrder).ThenBy(x => x.SettingKey)
             .ToListAsync();
@@ -238,9 +238,7 @@ public sealed class AdminSettingHandler(AppDbContext db)
     /// </summary>
     private static string? Normalize(string key, string? value)
     {
-        if (string.IsNullOrWhiteSpace(value)) return value;
-        if (key.StartsWith("video.", StringComparison.Ordinal)) return YoutubeId(value);
-        if (key != "company.map_embed") return value;
+        if (key != "company.map_embed" || string.IsNullOrWhiteSpace(value)) return value;
 
         var text = value.Trim();
         var src  = Regex.Match(text, @"src\s*=\s*[""']([^""']+)[""']", RegexOptions.IgnoreCase);
@@ -252,26 +250,6 @@ public sealed class AdminSettingHandler(AppDbContext db)
                 "Google 地圖請貼「分享 → 嵌入地圖」的內容，或以 https:// 開頭的地圖網址。");
 
         return text;
-    }
-
-    /// <summary>
-    /// <c>video.*</c>（頁面上的影片）只存 YouTube 影片 ID（與 <c>Vlog.YoutubeId</c> 同一個做法）。
-    /// <para>
-    /// 後台欄位貼網址時已經抽過一次 ID，這裡再抽一次是因為 API 不能假設呼叫端是那個表單：
-    /// 存進去的值會被前台組進 iframe 的 <c>src</c>，只收 ID 的字元集，就不會有別的東西混進頁面。
-    /// </para>
-    /// </summary>
-    private static string YoutubeId(string value)
-    {
-        var text = value.Trim();
-        var m = Regex.Match(text, @"(?:youtube(?:-nocookie)?\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/|live/|vi?/)|youtu\.be/)([\w-]{6,20})");
-        var id = m.Success ? m.Groups[1].Value : text;
-
-        if (!Regex.IsMatch(id, @"^[\w-]{6,20}$"))
-            throw AppException.BadRequest(ErrorCodes.ValidationFormat,
-                "影片請貼 YouTube 影片網址（例如 https://www.youtube.com/watch?v=…）。");
-
-        return id;
     }
 }
 

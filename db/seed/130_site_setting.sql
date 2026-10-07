@@ -28,8 +28,6 @@ GO
         ('social.youtube',          'Social',  'url',       0, 30),
         ('home.gallery_image',      'Home',    'image',     0, 10),   -- 首頁形象圖帶
         ('home.gallery_alt',        'Home',    'text',      1, 20),
-        ('video.about',             'Video',   'text',      0, 10),   -- 關於我們頁影片，存 YouTube 影片 ID（0012）
-        ('video.facility_tour',     'Video',   'text',      0, 20),   -- 工廠導覽頁影片
         ('mail.quote_notify_to',    'Mail',    'email',     0, 10),   -- 逗號分隔多組，儲存時驗格式
         ('mail.contact_notify_to',  'Mail',    'email',     0, 20),
         ('mail.bcc',                'Mail',    'email',     0, 30)

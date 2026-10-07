@@ -16,6 +16,7 @@ public sealed class PageConfiguration : IEntityTypeConfiguration<Page>
         b.Property(x => x.HasRichBody).HasDefaultValue(false);
         b.Property(x => x.OgImagePath).HasMaxLength(260);
         b.Property(x => x.IsIndexable).HasDefaultValue(true);
+        b.Property(x => x.YoutubeId).AsciiNullable(20);
         b.Audit();
 
         b.HasAlternateKey(x => x.PageKey).HasName("UQ_Page_PageKey");

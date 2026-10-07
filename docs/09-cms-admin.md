@@ -273,6 +273,11 @@
 | 社群分享標題／描述／圖片 | — | | 文字 ✓ | 留空則沿用 SEO 欄位 |
 | 允許索引 | 開關 | | | 關閉 → `noindex` |
 | 頁面內容 | 富文本 | | ✓ | **僅 `HasRichBody = 1` 者顯示此欄位**：`privacy-legal`，以及預留的 `green-csr` |
+| 頁面影片 | YouTube | | | **僅有影片的頁面顯示此欄位**：`about-hub`（關於我們）、`facility-tour`（工廠導覽）。貼網址即可，存影片 ID（與 05 Green Vlog 同一種欄位）；留空則顯示預設的公司影片 |
+
+> **頁面影片**（2026-10-07）：同一天先放在 21 網站設定（`video.*`），隨即搬到這裡——編輯要改一頁的
+> 東西，應該都在那一頁的編輯畫面裡（EF migration `PageVideo` 會把已設定的值搬過來）。
+> 哪幾頁有影片由後端 `PageVideoPages` 決定，後台依 `hasVideo` 顯示欄位。
 
 **頁面文字**（2026-09-24；2026-09-25 改版）：開放的頁面在「中文／English」分頁裡多出該頁每一段文字
 （標題、段落、清單項、按鈕字、圖片替代文字），依區塊分組，排在頁面內容之後、SEO 欄位之前，只顯示目前語系。
@@ -319,21 +324,20 @@
 > 其餘單元維持原編號，避免既有交叉引用失效。
 
 ### 21 `setting` 網站設定
-單頁表單，依 `SiteSetting` 的固定 key 清單渲染（[08-database.md §6.3](08-database.md)），分五組：
+單頁表單，依 `SiteSetting` 的固定 key 清單渲染（[08-database.md §6.3](08-database.md)），分四組：
 
 - **公司資訊**：公司名稱、地址、營業時間（多語）；電話、傳真、Email、Google Map 嵌入碼。
 - **社群**：Facebook／LinkedIn／YouTube 網址（留空則前台不顯示該圖示）。
 - **首頁**：形象圖帶圖片 + Alt。
-- **頁面影片**：關於我們頁（`/differences`）與工廠導覽頁（`/facility-tour`）的 YouTube 影片。貼網址即可，存的是影片 ID（與 05 Green Vlog 同一種欄位）；留空則顯示預設的公司影片（2026-10-07 加）。
 - **信件**：報價通知收件者、聯絡通知收件者、密件副本（支援多組，逗號分隔，儲存時驗格式）。
 
-> **值從哪來**：種子（EF 的 `HasData`／`db/seed/130_site_setting.sql`）只建 17 個 key、值留 NULL；
-> 專案裡已有依據的 13 個值由 [`db/content/220_site_setting.sql`](../db/content/README.md) 匯入，
+> **值從哪來**：種子（EF 的 `HasData`／`db/seed/130_site_setting.sql`）只建 15 個 key、值留 NULL；
+> 專案裡已有依據的 11 個值由 [`db/content/220_site_setting.sql`](../db/content/README.md) 匯入，
 > 客戶不必把公司資訊重打一遍。仍留 NULL 的 4 個是**客戶還沒提供**：傳真、LinkedIn、YouTube、密件副本
 > （社群留空前台就不顯示該圖示，所以 NULL 是有意義的狀態，不是漏掉）。
 >
 > **前台吃哪些**（2026-09-10 接上）：聯絡頁的地址／電話／Email／營業時間／地圖、footer 的社群圖示、
-> 首頁形象圖帶與 Alt、關於我們與工廠導覽頁的影片。改了設定重新整理就會變。`mail.*` 由後端寄信時讀。
+> 首頁形象圖帶與 Alt。改了設定重新整理就會變。`mail.*` 由後端寄信時讀。
 >
 > Google 地圖欄位存的是**網址**：貼整段 `<iframe>` 也可以，存檔時只留 `src`（前台自己組 iframe，
 > 資料庫裡就不會有一段能注入任意 HTML 的值）。

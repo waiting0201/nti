@@ -243,6 +243,45 @@ public static class PageTextPages
             System.Text.Encoding.UTF8.GetBytes(normalized)));
 }
 
+/// <summary>
+/// 有 YouTube 影片的固定頁（後台單元 15 的「頁面影片」欄位只在這幾頁出現）。
+/// <para>
+/// 影片原本放在網站設定（<c>video.*</c>，2026-10-07 早上），同一天搬到這裡：
+/// 編輯要改一頁的東西，應該都在那一頁的編輯畫面裡，不必再去另一個單元找。
+/// 前台要同時接線（該頁讀 <c>PageDto.YoutubeId</c>）；三邊要一致：這裡、
+/// <c>apps/admin/scripts/build-seed.mjs</c> 的 VIDEO_PAGES、以及前台那兩頁。
+/// </para>
+/// </summary>
+public static class PageVideoPages
+{
+    public static readonly IReadOnlySet<string> All = new HashSet<string>(
+        [PageKeys.AboutHub, PageKeys.FacilityTour], StringComparer.Ordinal);
+
+    /// <summary>
+    /// 貼上的網址 → YouTube 影片 ID（與 <c>Vlog.YoutubeId</c> 同一個做法）；空值回 null。
+    /// <para>
+    /// 後台欄位貼網址時已經抽過一次 ID，這裡再抽一次是因為 API 不能假設呼叫端是那個表單：
+    /// 存進去的值會被前台組進 iframe 的 <c>src</c>，只收 ID 的字元集，就不會有別的東西混進頁面。
+    /// 規則與後台 <c>extractYoutubeId</c>（components/fields.tsx）相同。
+    /// </para>
+    /// </summary>
+    public static string? ParseYoutubeId(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        var text = value.Trim();
+        var m = System.Text.RegularExpressions.Regex.Match(text,
+            @"(?:youtube(?:-nocookie)?\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/|live/|vi?/)|youtu\.be/)([\w-]{6,20})");
+        var id = m.Success ? m.Groups[1].Value : text;
+
+        if (!System.Text.RegularExpressions.Regex.IsMatch(id, @"^[\w-]{6,20}$"))
+            throw AppException.BadRequest(ErrorCodes.ValidationFormat,
+                "影片請貼 YouTube 影片網址（例如 https://www.youtube.com/watch?v=…）。");
+
+        return id;
+    }
+}
+
 /// <summary>報價單狀態（docs/03 §3）。</summary>
 public static class QuoteStatuses
 {

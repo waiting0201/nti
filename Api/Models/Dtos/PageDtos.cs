@@ -12,6 +12,8 @@ public sealed class PageDto
     public bool    HasRichBody   { get; set; }
     public bool    IsIndexable   { get; set; }
     public string? BodyHtml      { get; set; }
+    /// <summary>頁面影片（YouTube 影片 ID）。只有 PageVideoPages 那幾頁有值；null → 前台用 mockup 那支。</summary>
+    public string? YoutubeId     { get; set; }
 
     public SeoDto  Seo           { get; set; } = null!;
 

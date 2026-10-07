@@ -104,13 +104,13 @@ INSERT @r (Item, Expected, Actual) SELECT N'Tag',            N'17', CAST(COUNT(*
 INSERT @r (Item, Expected, Actual) SELECT N'TagI18n',        N'34', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.TagI18n;
 INSERT @r (Item, Expected, Actual) SELECT N'CategoryI18n',   N'88', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.CategoryI18n;
 INSERT @r (Item, Expected, Actual) SELECT N'  └ CategoryType 種類', N'9', CAST(COUNT(DISTINCT CategoryType) AS NVARCHAR(20)) FROM dbo.Category;
-INSERT @r (Item, Expected, Actual) SELECT N'SiteSetting',    N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SiteSetting;
+INSERT @r (Item, Expected, Actual) SELECT N'SiteSetting',    N'15', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SiteSetting;
 INSERT @r (Item, Expected, Actual) SELECT N'Page（固定 28 + 預留 csr）', N'29', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Page;
 INSERT @r (Item, Expected, Actual) SELECT N'PageI18n',       N'58', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.PageI18n;
 INSERT @r (Item, Expected, Actual) SELECT N'  └ HasRichBody=1（privacy-legal、green-csr）', N'2', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Page WHERE HasRichBody = 1;
 INSERT @r (Item, Expected, Actual) SELECT N'Solution（固定 4 筆）', N'4', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Solution;
 INSERT @r (Item, Expected, Actual) SELECT N'SolutionI18n',   N'8',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SolutionI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'SchemaVersion（已套用 migration 數）', N'12', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SchemaVersion;
+INSERT @r (Item, Expected, Actual) SELECT N'SchemaVersion（已套用 migration 數）', N'13', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SchemaVersion;
 
 /* 後台登入識別＝Username（2026-09-06，見 db/migrations/0005）：唯一鍵搬家了 */
 INSERT @r (Item, Expected, Actual)

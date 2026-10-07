@@ -2,8 +2,7 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { getPage } from '@/lib/api'
 import { A } from '@/components/A'
-import { mediaUrl } from '@/lib/media'
-import { getSettingMap, youtubeEmbedSrc } from '@/lib/site-settings'
+import { mediaUrl, youtubeEmbedSrc } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -19,9 +18,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { locale } = await params
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
-  // 影片網址走網站設定（單元 21 的 video.facility_tour）；沒接 API 或沒填就是 mockup 那支
-  const [page, settings] = await Promise.all([getPage(locale, 'facility-tour'), getSettingMap(locale)])
-  const video = youtubeEmbedSrc(settings?.['video.facility_tour']) ?? "https://www.youtube.com/embed/vECuYIiFSSM"
+  const page = await getPage(locale, 'facility-tour')
+  // 頁面影片（單元 15 該頁的「頁面影片」）；沒接 API 或沒填就是 mockup 那支
+  const video = youtubeEmbedSrc(page?.youtubeId, "https://www.youtube.com/embed/vECuYIiFSSM")
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
