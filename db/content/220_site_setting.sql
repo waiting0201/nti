@@ -1,5 +1,5 @@
 /* =============================================================================
-   220_site_setting.sql  —  21 網站設定的值（11 個 key）
+   220_site_setting.sql  —  21 網站設定的值（13 個 key）
    =============================================================================
    由 tools/build-settings-sql.mjs 產生，**請勿手改**（重新產生：node tools/build-settings-sql.mjs）。
 
@@ -39,6 +39,8 @@ DECLARE @missing NVARCHAR(MAX) = (
         (N'social.facebook'),
         (N'home.gallery_image'),
         (N'home.gallery_alt'),
+        (N'video.about'),
+        (N'video.facility_tour'),
         (N'mail.quote_notify_to'),
         (N'mail.contact_notify_to')
     ) k (SettingKey)
@@ -68,6 +70,10 @@ UPDATE dbo.SiteSetting SET ValueZh = N'assets/ref-home-mid1.webp', ValueEn = N'a
  WHERE SettingKey = N'home.gallery_image' AND ValueZh IS NULL AND ValueEn IS NULL;
 UPDATE dbo.SiteSetting SET ValueZh = N'NTI 包裝印刷作品集', ValueEn = N'A showcase of NTI''s printed packaging work', UpdatedAt = SYSUTCDATETIME()
  WHERE SettingKey = N'home.gallery_alt' AND ValueZh IS NULL AND ValueEn IS NULL;
+UPDATE dbo.SiteSetting SET ValueZh = N'vECuYIiFSSM', ValueEn = N'vECuYIiFSSM', UpdatedAt = SYSUTCDATETIME()
+ WHERE SettingKey = N'video.about' AND ValueZh IS NULL AND ValueEn IS NULL;
+UPDATE dbo.SiteSetting SET ValueZh = N'vECuYIiFSSM', ValueEn = N'vECuYIiFSSM', UpdatedAt = SYSUTCDATETIME()
+ WHERE SettingKey = N'video.facility_tour' AND ValueZh IS NULL AND ValueEn IS NULL;
 UPDATE dbo.SiteSetting SET ValueZh = N'service@nti-printing.com', ValueEn = N'service@nti-printing.com', UpdatedAt = SYSUTCDATETIME()
  WHERE SettingKey = N'mail.quote_notify_to' AND ValueZh IS NULL AND ValueEn IS NULL;
 UPDATE dbo.SiteSetting SET ValueZh = N'service@nti-printing.com', ValueEn = N'service@nti-printing.com', UpdatedAt = SYSUTCDATETIME()

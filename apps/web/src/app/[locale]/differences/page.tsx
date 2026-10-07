@@ -3,6 +3,7 @@ import { T } from '@/lib/t'
 import { getPage } from '@/lib/api'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
+import { getSettingMap, youtubeEmbedSrc } from '@/lib/site-settings'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -18,7 +19,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { locale } = await params
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
-  const page = await getPage(locale, 'about-hub')
+  // 影片網址走網站設定（單元 21 的 video.about）；沒接 API 或沒填就是 mockup 那支
+  const [page, settings] = await Promise.all([getPage(locale, 'about-hub'), getSettingMap(locale)])
+  const video = youtubeEmbedSrc(settings?.['video.about']) ?? "https://www.youtube.com/embed/vECuYIiFSSM"
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
@@ -28,7 +31,7 @@ export default async function Page({ params }: Props) {
         <h1 className="sec-title reveal">The NTI Difference &mdash; Where Sustainability Meets Uncompromising Quality</h1>
         <div className="sec-sub reveal">What makes NTI different is not the machines. It is how we take your constraint — food safety, pharma compliance, carbon targets — and hand back a working solution.</div>
         <div className="video-frame reveal mt-l">
-          <iframe src="https://www.youtube.com/embed/vECuYIiFSSM" title="Integrated Low-Carbon Production — NTI Printing company film" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+          <iframe src={video} title="Integrated Low-Carbon Production — NTI Printing company film" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
         </div>
       </div></section>
       <section className="section"><div className="wrap">

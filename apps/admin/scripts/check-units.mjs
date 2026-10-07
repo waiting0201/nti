@@ -3,7 +3,7 @@
  *   - 每個上傳欄位旁都顯示 §3 的建議尺寸提示文字
  *   - 每個圖片欄位都有中英 Alt
  *   - 權限矩陣展開後與 db/seed/110_role_permission.sql 的 173 列一致
- *   - 網站設定的 15 個 key 與多語旗標，與後端種子（Api/Data/Seed/SeedData.cs）一致
+ *   - 網站設定的固定 key 與多語旗標，與後端種子（Api/Data/Seed/SeedData.cs）一致
  *
  * 開發模式下 App.tsx 也會跑同一份檢查並印在 console；這支是給 CI／手動用的。
  * 用 vite 內建的 esbuild 把 TS 打包成一支 ESM，避開 `@/` 別名在 node 端的解析問題。

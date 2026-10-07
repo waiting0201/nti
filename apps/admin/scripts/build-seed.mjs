@@ -464,7 +464,7 @@ function redirects() {
 
 /* ── mockup + zh.ts：21 網站設定的**值** ────────────────────
    key 與型別的權威在 Api/Data/Seed/SeedData.cs（種子只建 key，值留 NULL）；
-   這裡產的是那 15 個 key 的值，來源一律是 mockup 與前台的中文字典，不在這支腳本裡編。
+   這裡產的是那些固定 key 的值，來源一律是 mockup 與前台的中文字典，不在這支腳本裡編。
 
    同一份輸出也是 db/content/220_site_setting.sql 的來源
    （node tools/build-settings-sql.mjs），所以客戶在 demo 上看到的設定，
@@ -491,7 +491,10 @@ function settings() {
   // 只存地圖網址，不存整段 <iframe>：那段要進頁面就得走 dangerouslySetInnerHTML，
   // 等於讓後台可以注入任意 HTML。前台自己組 iframe（title／loading 等屬性寫在程式裡）。
   const map = pick(/<div class="map-frame">\s*<iframe src="([^"]+)"/, contact, 'Google 地圖網址')[1]
-  const gallery = pick(/<section class="gallery[^"]*">\s*<img src="([^"]+)" alt="([^"]*)"/, home, '首頁形象圖帶')
+  const gallery = pick(/<section class="gallery[^"]*">\s*<img\b[^>]*?\ssrc="([^"]+)"[^>]*?\salt="([^"]*)"/, home, '首頁形象圖帶')
+  const videoRe = /<div class="video-frame[^"]*">\s*<iframe\b[^>]*?\ssrc="https:\/\/www\.youtube\.com\/embed\/([\w-]+)"/
+  const aboutVideo = pick(videoRe, readMockup('differences.html'), '關於我們頁影片')
+  const tourVideo = pick(videoRe, readMockup('facility-tour.html'), '工廠導覽頁影片')
   // 結構化資料是公司身分的權威（出處寫在 lib/jsonld.ts 的註解）：中文法定名與粉專網址讀那份
   const jsonld = read(path.join(repo, 'apps/web/src/lib/jsonld.ts'))
   const facebook = pick(/sameAs:\s*\['([^']+)'/, jsonld, 'Facebook 粉專網址')[1]
@@ -514,6 +517,8 @@ function settings() {
     'social.youtube': '',
     'home.gallery_image': asset(gallery[1]),
     'home.gallery_alt': i18n(decode(gallery[2])),
+    'video.about': aboutVideo[1],
+    'video.facility_tour': tourVideo[1],
     // 表單通知信的收件者：reference/現有網站盤點與內容遷移.md D1 決議正式站寄
     // service@nti-printing.com，與聯絡頁公布的信箱同一個。測試站要改寄別處是在後台改，
     // 不是在這裡分環境——這張表本來就歸 CMS 管。
@@ -556,7 +561,7 @@ writeFileSync(
   `/* 由 scripts/build-seed.mjs 自 mockup/*.html 與 apps/web/src/lib/zh.ts 產生 —— 請勿手改。
    重新產生：npm run seed
 
-   固定 15 個 key 的值。key 與多語旗標的權威在 Api/Data/Seed/SeedData.cs，
+   固定 ${Object.keys(settingValues).length} 個 key 的值。key 與多語旗標的權威在 Api/Data/Seed/SeedData.cs，
    scripts/check-units.mjs 會比對兩邊；空字串代表「mockup 沒有、客戶還沒給」。
 
    同一份值也是 db/content/220_site_setting.sql 的來源
@@ -566,4 +571,4 @@ export const SETTING_VALUES: Record<string, string | { zh: string; en: string }>
 `,
 )
 const blank = Object.entries(settingValues).filter(([, v]) => v === '').map(([k]) => k)
-console.log(`已產生 src/api/settings.generated.ts（15 個 key，其中 ${blank.length} 個留空待客戶提供：${blank.join('、')}）`)
+console.log(`已產生 src/api/settings.generated.ts（${Object.keys(settingValues).length} 個 key，其中 ${blank.length} 個留空待客戶提供：${blank.join('、')}）`)

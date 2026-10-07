@@ -65,7 +65,7 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/210_legacy_redirects.sql
 
 ## 220_site_setting.sql
 
-**21 網站設定**的值（`SiteSetting`）。種子只建 15 個 key、值留 NULL，這支把專案裡
+**21 網站設定**的值（`SiteSetting`）。種子只建 17 個 key、值留 NULL，這支把專案裡
 已經有依據的 11 個補上去。
 
 ```bash

@@ -3,6 +3,7 @@ import { T } from '@/lib/t'
 import { getPage } from '@/lib/api'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
+import { getSettingMap, youtubeEmbedSrc } from '@/lib/site-settings'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -18,7 +19,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { locale } = await params
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
-  const page = await getPage(locale, 'facility-tour')
+  // 影片網址走網站設定（單元 21 的 video.facility_tour）；沒接 API 或沒填就是 mockup 那支
+  const [page, settings] = await Promise.all([getPage(locale, 'facility-tour'), getSettingMap(locale)])
+  const video = youtubeEmbedSrc(settings?.['video.facility_tour']) ?? "https://www.youtube.com/embed/vECuYIiFSSM"
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
@@ -38,7 +41,7 @@ export default async function Page({ params }: Props) {
       <section className="section tight"><div className="wrap reveal">
         <p className="prose wide">At NTI Printing, ESG begins with people. Our state-of-the-art, fully air-conditioned facility is designed to provide a safe, comfortable, and inspiring workplace for every member of our team. From modern offices and efficient production floors to staff restaurants, library, dormitories, and shared spaces, we continually invest in the wellbeing of both our local and international employees. By creating an environment where people can thrive, we build a stronger culture, deliver better quality, and support a more sustainable future as a trusted sustainable packaging manufacturer in Taiwan.</p>
         <div className="video-frame reveal mt-l">
-          <iframe src="https://www.youtube.com/embed/vECuYIiFSSM" title="Integrated Low-Carbon Production — NTI Printing company film" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+          <iframe src={video} title="Integrated Low-Carbon Production — NTI Printing company film" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
         </div>
       </div></section>
       <section className="section tight"><div className="wrap reveal">

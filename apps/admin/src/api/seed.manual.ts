@@ -152,7 +152,7 @@ export const MANUAL_SEED: Record<string, Row[]> = {
 export type SettingField = {
   key: string
   label: string
-  type: 'text' | 'textarea' | 'email-list' | 'image' | 'url' | 'embed'
+  type: 'text' | 'textarea' | 'email-list' | 'image' | 'url' | 'embed' | 'youtube'
   i18n?: boolean
   hint?: string
   altKey?: string
@@ -186,6 +186,14 @@ export const SETTING_GROUPS: Array<{ title: string; fields: SettingField[] }> = 
     fields: [
       { key: 'home.gallery_image', label: '首頁形象圖帶', type: 'image', altKey: 'home.gallery_alt', hint: '建議 **2400×1000px**（12:5）｜JPG／WebP｜≤500KB' },
       { key: 'home.gallery_alt', label: '形象圖帶替代文字', type: 'text', i18n: true },
+    ],
+  },
+  {
+    title: '頁面影片',
+    fields: [
+      // 存的是影片 ID（與 05 Green Vlog 同一種欄位）：貼完整網址會自動抽出 ID、顯示縮圖預覽
+      { key: 'video.about', label: '關於我們頁影片', type: 'youtube', hint: '貼上 YouTube 影片網址即可；留空則顯示預設的公司影片' },
+      { key: 'video.facility_tour', label: '工廠導覽頁影片', type: 'youtube', hint: '貼上 YouTube 影片網址即可；留空則顯示預設的公司影片' },
     ],
   },
   {

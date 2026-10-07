@@ -387,7 +387,8 @@ export function FieldInput({
 /** 貼完整網址時自動抽出 ID（docs 單元 05） */
 export function extractYoutubeId(input: string): string {
   const m =
-    /(?:youtube\.com\/(?:watch\?v=|embed\/|vi?\/)|youtu\.be\/)([\w-]{6,})/.exec(input) ??
+    // 與後端 AdminSettingHandler.YoutubeId 同一條規則
+    /(?:youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|vi?\/)|youtu\.be\/)([\w-]{6,20})/.exec(input) ??
     /^([\w-]{6,})$/.exec(input.trim())
   return m ? m[1] : input.trim()
 }

@@ -260,7 +260,7 @@ internal static class SeedData
     ];
 
     /// <summary>
-    /// 固定 15 個設定 key（db/seed/130_site_setting.sql）。值留白由客戶在後台填。
+    /// 固定 17 個設定 key（db/seed/130_site_setting.sql）。值留白由客戶在後台填。
     /// </summary>
     public static readonly SiteSetting[] SiteSettings =
     [
@@ -279,6 +279,9 @@ internal static class SeedData
         new() { SettingKey = "company.fax", GroupName = "Company", ValueType = "text", IsLocalized = false, SortOrder = 50 },
         new() { SettingKey = "company.email", GroupName = "Company", ValueType = "email", IsLocalized = false, SortOrder = 60 },
         new() { SettingKey = "company.map_embed", GroupName = "Company", ValueType = "url", IsLocalized = false, SortOrder = 70 },
+        // 頁面上的 YouTube 影片：只存影片 ID，與 Vlog.YoutubeId 同一個做法
+        new() { SettingKey = "video.about", GroupName = "Video", ValueType = "text", IsLocalized = false, SortOrder = 10 },
+        new() { SettingKey = "video.facility_tour", GroupName = "Video", ValueType = "text", IsLocalized = false, SortOrder = 20 },
     ];
 
     /// <summary>

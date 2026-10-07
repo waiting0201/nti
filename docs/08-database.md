@@ -137,7 +137,7 @@ CREATE TABLE dbo.CategoryI18n (
 -- 全站設定：key-value，後台以固定 key 清單渲染表單（見 §6.3 種子）
 CREATE TABLE dbo.SiteSetting (
   SettingKey VARCHAR(60) NOT NULL PRIMARY KEY,
-  GroupName VARCHAR(30) NOT NULL,      -- Company|Social|Home|Mail
+  GroupName VARCHAR(30) NOT NULL,      -- Company|Social|Home|Video|Mail
   ValueType VARCHAR(10) NOT NULL,      -- text|multiline|image|url|email|html
   IsLocalized BIT NOT NULL DEFAULT 0,
   ValueZh NVARCHAR(MAX) NULL,
@@ -781,6 +781,7 @@ CREATE INDEX IX_NewsletterSubscriber_Status ON dbo.NewsletterSubscriber(Status, 
 | Company | `company.phone`、`company.fax`、`company.email`、`company.map_embed` | text/url | — |
 | Social | `social.facebook`、`social.linkedin`、`social.youtube` | url | — |
 | Home | `home.gallery_image`、`home.gallery_alt` | image/text | 圖—／alt ✓ |
+| Video | `video.about`、`video.facility_tour`（關於我們頁／工廠導覽頁的影片，存 YouTube 影片 ID；2026-10-07 加） | text | — |
 | Mail | `mail.quote_notify_to`、`mail.contact_notify_to`、`mail.bcc` | email | — |
 
 ### 6.4 頁面（`Page`）

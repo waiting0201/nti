@@ -37,7 +37,7 @@ export function SettingPage() {
       .finally(() => setLoaded(true))
   }, [])
 
-  /** 讀到了、但十五個 key 都沒有值——資料庫還沒匯入，不是這一頁壞了 */
+  /** 讀到了、但所有 key 都沒有值——資料庫還沒匯入，不是這一頁壞了 */
   const allEmpty =
     loaded &&
     !loadError &&
@@ -71,12 +71,12 @@ export function SettingPage() {
 
       {loadError && (
         <Notice kind="danger">
-          讀不到設定。下面十五個欄位空白是因為沒讀到資料，不是因為還沒填：{loadError}
+          讀不到設定。下面的欄位空白是因為沒讀到資料，不是因為還沒填：{loadError}
         </Notice>
       )}
       {allEmpty && (
         <Notice kind="info">
-          十五個設定在資料庫裡都還沒有值。值不是在這一頁編出來的——mockup 已經有的那些由
+          所有設定在資料庫裡都還沒有值。值不是在這一頁編出來的——mockup 已經有的那些由
           <code>db/content/220_site_setting.sql</code> 匯入，其餘等客戶提供後在這裡填。
         </Notice>
       )}
