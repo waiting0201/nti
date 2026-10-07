@@ -38,12 +38,16 @@ public sealed class AdminPageHandler(AppDbContext db)
             query = query.Where(KeywordSearch.Or(onPage!, p => matched.Contains(p.Id)));
         }
 
+        // 要先轉成陣列：直接在查詢裡用 PageVideoPages.All（IReadOnlySet）EF 翻不成 SQL，
+        // 執行期丟 MissingMethodException，整個清單 500（2026-10-07 上線後才發現）
+        var videoKeys = PageVideoPages.All.ToArray();
+
         var rows = await query
             .OrderBy(p => p.Id)
             .Select(p => new
             {
                 p.Id, p.PageKey, p.RouteTemplate, p.HasRichBody, p.IsIndexable, p.OgImagePath, p.UpdatedAt,
-                p.YoutubeId, HasVideo = PageVideoPages.All.Contains(p.PageKey),
+                p.YoutubeId, HasVideo = videoKeys.Contains(p.PageKey),
                 i18n = db.PageI18n.Where(i => i.PageId == p.Id)
                     .Select(i => new { i.Lang, i.Slug, i.SeoTitle, i.SeoDescription })
                     .ToList(),
