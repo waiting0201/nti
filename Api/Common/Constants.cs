@@ -282,6 +282,27 @@ public static class PageVideoPages
     }
 }
 
+/// <summary>
+/// 頂部有橫幅大圖（<c>.fac-banner</c>）的固定頁（後台單元 15 的「頂部橫幅」欄位只在這幾頁出現）。
+/// <para>
+/// 首頁的輪播不算在內，那是 01 首頁 Banner 單元。圖的替代文字不另開欄位：它本來就在
+/// 「頁面文字」裡，可逐語系修改。
+/// 三邊要一致：這裡、<c>apps/admin/scripts/build-seed.mjs</c> 的 BANNER_PAGES、以及前台那幾頁
+/// （<c>bannerSrc(page, …)</c>；由 build-pages.mjs 產生的頁自動接線）。
+/// </para>
+/// </summary>
+public static class PageBannerPages
+{
+    public static readonly IReadOnlySet<string> All = new HashSet<string>(
+    [
+        PageKeys.AboutHub, PageKeys.AboutDifference, PageKeys.AboutBenefits, PageKeys.AboutCertifications,
+        PageKeys.Facility, PageKeys.FacilityPrePress, PageKeys.FacilityEcoPrinting, PageKeys.FacilityPostPress,
+        PageKeys.FacilityQuality, PageKeys.FacilityTour, PageKeys.Solutions, PageKeys.SustainabilityHub,
+        PageKeys.GreenOurAdvantage, PageKeys.GreenCarbon, PageKeys.GreenMaterials, PageKeys.GreenEsg,
+        PageKeys.Insights, PageKeys.NewsList, PageKeys.IndustryTrends, PageKeys.Careers,
+    ], StringComparer.Ordinal);
+}
+
 /// <summary>報價單狀態（docs/03 §3）。</summary>
 public static class QuoteStatuses
 {

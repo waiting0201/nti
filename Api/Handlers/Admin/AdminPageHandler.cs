@@ -41,6 +41,7 @@ public sealed class AdminPageHandler(AppDbContext db)
         // 要先轉成陣列：直接在查詢裡用 PageVideoPages.All（IReadOnlySet）EF 翻不成 SQL，
         // 執行期丟 MissingMethodException，整個清單 500（2026-10-07 上線後才發現）
         var videoKeys = PageVideoPages.All.ToArray();
+        var bannerKeys = PageBannerPages.All.ToArray();
 
         var rows = await query
             .OrderBy(p => p.Id)
@@ -48,6 +49,7 @@ public sealed class AdminPageHandler(AppDbContext db)
             {
                 p.Id, p.PageKey, p.RouteTemplate, p.HasRichBody, p.IsIndexable, p.OgImagePath, p.UpdatedAt,
                 p.YoutubeId, HasVideo = videoKeys.Contains(p.PageKey),
+                p.BannerImagePath, HasBanner = bannerKeys.Contains(p.PageKey),
                 i18n = db.PageI18n.Where(i => i.PageId == p.Id)
                     .Select(i => new { i.Lang, i.Slug, i.SeoTitle, i.SeoDescription })
                     .ToList(),
@@ -70,6 +72,7 @@ public sealed class AdminPageHandler(AppDbContext db)
         {
             item = page,
             hasVideo = PageVideoPages.All.Contains(page.PageKey),
+            hasBanner = PageBannerPages.All.Contains(page.PageKey),
             i18n = i18ns.ToDictionary(i => i.Lang, i => i),
         }));
     }
@@ -88,6 +91,10 @@ public sealed class AdminPageHandler(AppDbContext db)
 
         // 影片只有 PageVideoPages 那幾頁有前台位置；別頁送來的值直接忽略，與 BodyHtml 同理
         if (PageVideoPages.All.Contains(page.PageKey)) page.YoutubeId = PageVideoPages.ParseYoutubeId(dto.YoutubeId);
+
+        // 頂部橫幅同理；清空 → null，前台落回 mockup 那張
+        if (PageBannerPages.All.Contains(page.PageKey))
+            page.BannerImagePath = string.IsNullOrWhiteSpace(dto.BannerImagePath) ? null : dto.BannerImagePath.Trim();
 
         foreach (var (lang, body) in dto.I18n)
         {
@@ -231,6 +238,7 @@ public sealed class PageUpdateDto
     public string? OgImagePath { get; set; }
     public bool    IsIndexable { get; set; } = true;
     public string? YoutubeId   { get; set; }
+    public string? BannerImagePath { get; set; }
     public Dictionary<string, PageI18nDto> I18n { get; set; } = [];
 }
 

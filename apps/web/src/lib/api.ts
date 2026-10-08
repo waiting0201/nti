@@ -87,6 +87,8 @@ export type PageSeo = {
   bodyHtml: string | null
   /** 頁面影片的 YouTube 影片 ID（後台單元 15）。只有關於我們、工廠導覽兩頁會有值 */
   youtubeId: string | null
+  /** 頂部橫幅圖路徑（後台單元 15）。只有頂部有大圖的 20 頁會有值 */
+  bannerImagePath: string | null
   seo: Seo
   /** 頁面文字覆寫（後台單元 15「頁面文字」）：英文原文 → 該語系的字。只有開放的頁面會有內容 */
   texts: Record<string, string>
@@ -323,4 +325,14 @@ export function cmsMedia(path: string | null | undefined): string {
   if (rel.startsWith('assets/')) return mediaUrl('/' + rel)
 
   return `${apiBase}/files/media/${rel}`
+}
+
+/**
+ * 頂部橫幅（後台單元 15 的「頂部橫幅」）→ `<img src>`。
+ *
+ * 沒接 API 或沒填就回 `fallback`——mockup 寫死的那張（素材路徑，走 `mediaUrl`）。
+ * 資料庫的預設值就是那張的 `assets/...`，經 `cmsMedia` 解出來與 fallback 逐字相同，`verify:markup` 不受影響。
+ */
+export function bannerSrc(page: PageSeo | null | undefined, fallback: string): string {
+  return cmsMedia(page?.bannerImagePath) || mediaUrl(fallback)
 }

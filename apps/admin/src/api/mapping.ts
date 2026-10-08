@@ -103,7 +103,7 @@ export const UNIT_MAP: Record<string, UnitMap> = {
   },
 
   page: {
-    entity: { path: 'routeTemplate', ...SEO_ENTITY },
+    entity: { path: 'routeTemplate', banner: 'bannerImagePath', ...SEO_ENTITY },
     i18n: { body: 'bodyHtml', ...SEO_I18N },
   },
 

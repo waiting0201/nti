@@ -301,16 +301,24 @@ for (const file of files) {
 
   const ctx = { usesA: false, usesLocale: false, usesMedia: false }
   const pageKey = PAGE_KEYS[routePath]
-  const jsx = htmlToJsx(body, ctx)
+  let jsx = htmlToJsx(body, ctx)
     .split('\n')
     .map((line) => (line.trim() ? '      ' + line : line))
     .join('\n')
+
+  // 頂部橫幅接後台（單元 15「頂部橫幅」，後端 PageBannerPages）：只換緊接 header 的那一張，
+  // 頁中段的 .fac-banner 不動。沒接 API 或沒填，bannerSrc 回的就是原本的 mediaUrl(...)
+  const usesBanner = Boolean(pageKey) && /^\s*<section className="fac-banner"><img src=\{mediaUrl\(/.test(jsx)
+  if (usesBanner) {
+    jsx = jsx.replace(/(<section className="fac-banner"><img src=\{)mediaUrl\(/, '$1bannerSrc(page, ')
+    ctx.usesMedia = jsx.includes('mediaUrl(')
+  }
 
   const behaviors = BEHAVIORS[slug] ?? []
   const imports = [
     "import type { Metadata } from 'next'",
     "import { T } from '@/lib/t'",
-    ...(pageKey ? ["import { getPage } from '@/lib/api'"] : []),
+    ...(pageKey ? [`import { ${usesBanner ? 'bannerSrc, ' : ''}getPage } from '@/lib/api'`] : []),
     ...(ctx.usesA ? ["import { A } from '@/components/A'"] : []),
     ...(ctx.usesMedia ? ["import { mediaUrl } from '@/lib/media'"] : []),
     ...behaviors.map(([name, from]) => `import { ${name} } from '${from}'`),

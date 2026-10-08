@@ -2,8 +2,7 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { TrendSections } from '@/components/cms'
-import { getPage, getTrends } from '@/lib/api'
-import { mediaUrl } from '@/lib/media'
+import { bannerSrc, getPage, getTrends } from '@/lib/api'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -24,7 +23,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/sol-patterns.webp")} alt="Sustainable packaging industry trends" /></section>
+      <section className="fac-banner"><img src={bannerSrc(page, "/assets/sol-patterns.webp")} alt="Sustainable packaging industry trends" /></section>
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/insights")}>Insights</A><span>&rsaquo;</span><b>Industry Trends</b></div>
         <h1 className="sec-title reveal">Industry Trends <span className="ti-slash">/</span> <span className="ti-alt">Where packaging is heading</span></h1>

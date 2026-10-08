@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { getPage } from '@/lib/api'
+import { bannerSrc, getPage } from '@/lib/api'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { ProductShowcase } from '@/components/behaviors/ProductShowcase'
@@ -23,7 +23,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/ref-sol-banner.webp")} alt="NTI custom printed packaging solutions" /></section>
+      <section className="fac-banner"><img src={bannerSrc(page, "/assets/ref-sol-banner.webp")} alt="NTI custom printed packaging solutions" /></section>
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Solutions</b></div>
         <h1 className="sec-title reveal">Custom Packaging &amp; Printing Solutions</h1>

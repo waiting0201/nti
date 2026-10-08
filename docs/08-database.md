@@ -480,6 +480,7 @@ CREATE TABLE dbo.Page (
   OgImagePath NVARCHAR(260) NULL,          -- OG 分享圖
   IsIndexable BIT NOT NULL DEFAULT 1,      -- 0 → noindex
   YoutubeId VARCHAR(20) NULL,              -- 頁面影片（只存影片 ID），只有 about-hub、facility-tour 用（2026-10-07）
+  BannerImagePath NVARCHAR(260) NULL,      -- 頂部橫幅圖，只有 PageBannerPages 的 20 頁用（2026-10-08）
   /* audit */
 );
 

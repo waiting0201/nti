@@ -2,8 +2,7 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { JobList } from '@/components/cms'
-import { getJobs, getPage } from '@/lib/api'
-import { mediaUrl } from '@/lib/media'
+import { bannerSrc, getJobs, getPage } from '@/lib/api'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -24,7 +23,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/fac-tour-main.webp")} alt="Working at NTI Printing in Tainan, Taiwan" /></section>
+      <section className="fac-banner"><img src={bannerSrc(page, "/assets/fac-tour-main.webp")} alt="Working at NTI Printing in Tainan, Taiwan" /></section>
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Careers</b></div>
         <h1 className="sec-title reveal">Careers <span className="ti-slash">/</span> <span className="ti-alt">Join the green print team</span></h1>

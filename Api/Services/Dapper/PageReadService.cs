@@ -15,7 +15,7 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
     private const string Sql = """
         SELECT p.Id, p.PageKey, p.RouteTemplate, p.HasRichBody, p.IsIndexable,
                i.BodyHtml, i.Slug, i.SeoTitle, i.SeoDescription, i.CanonicalUrl,
-               i.OgTitle, i.OgDescription, p.OgImagePath, p.YoutubeId
+               i.OgTitle, i.OgDescription, p.OgImagePath, p.YoutubeId, p.BannerImagePath
         FROM Page p
         INNER JOIN PageI18n i ON i.PageId = p.Id AND i.Lang = @Lang
         WHERE p.IsDeleted = 0 AND p.PageKey = @PageKey;
@@ -63,6 +63,7 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
         public string? OgDescription { get; set; }
         public string? OgImagePath   { get; set; }
         public string? YoutubeId     { get; set; }
+        public string? BannerImagePath { get; set; }
 
         public PageDto ToDto(IEnumerable<(string Lang, string Slug)> hreflang) => new()
         {
@@ -71,6 +72,7 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
             // 只有 HasRichBody = 1 的兩頁（privacy-legal、預留的 green-csr）才有內文
             BodyHtml = HasRichBody ? BodyHtml : null,
             YoutubeId = YoutubeId,
+            BannerImagePath = BannerImagePath,
             Seo = new SeoDto
             {
                 Slug = Slug, SeoTitle = SeoTitle, SeoDescription = SeoDescription,

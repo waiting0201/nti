@@ -203,7 +203,7 @@ export async function get(unit: string, id: string): Promise<Row | undefined> {
     // 固定頁的單筆端點回的是 `{ item, i18n }`（AdminPageHandler.GetByKeyAsync），
     // 也不是平的一列。與上面的報價同一種狀況：不攤平的話整頁欄位會是空的。
     if (unit === 'page' && data.item) {
-      return toRow(unit, { ...(data.item as ApiRow), hasVideo: data.hasVideo, i18n: data.i18n as ApiRow['i18n'] })
+      return toRow(unit, { ...(data.item as ApiRow), hasVideo: data.hasVideo, hasBanner: data.hasBanner, i18n: data.i18n as ApiRow['i18n'] })
     }
 
     return toRow(unit, data)

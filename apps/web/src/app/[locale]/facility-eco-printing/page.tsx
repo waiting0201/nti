@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { FacilityGrid } from '@/components/cms'
-import { getFacility, getPage } from '@/lib/api'
+import { bannerSrc, getFacility, getPage } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -24,7 +24,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/fac-eco-pressroom.jpg")} alt="NTI press room — production control" /></section>
+      <section className="fac-banner"><img src={bannerSrc(page, "/assets/fac-eco-pressroom.jpg")} alt="NTI press room — production control" /></section>
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><A href={l("/facility")}>Facilities &amp; Equipment</A><span>&rsaquo;</span><b>Environmentally Friendly Printing</b></div>
         <h1 className="sec-title reveal">Environmentally Friendly Printing</h1>

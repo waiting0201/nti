@@ -695,6 +695,8 @@ export const SEED: Record<string, Row[]> = {
       "isIndexable": true,
       "hasVideo": true,
       "youtubeId": "vECuYIiFSSM",
+      "hasBanner": true,
+      "banner": "/assets/ref-about-banner.webp",
       "sortOrder": 2,
       "i18n": {
         "zh": {
@@ -715,6 +717,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/about/difference",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/ref-about-mid1.webp",
       "sortOrder": 3,
       "i18n": {
         "zh": {
@@ -735,6 +739,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/about/benefits",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/ref-about-mid3.webp",
       "sortOrder": 4,
       "i18n": {
         "zh": {
@@ -755,6 +761,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/about/certifications",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/ref-about-mid2.webp",
       "sortOrder": 5,
       "i18n": {
         "zh": {
@@ -775,6 +783,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/about/facility",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/fac-banner.webp",
       "sortOrder": 6,
       "i18n": {
         "zh": {
@@ -795,6 +805,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/about/facility/pre-press",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/fac-pre-ctp.jpg",
       "sortOrder": 7,
       "i18n": {
         "zh": {
@@ -815,6 +827,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/about/facility/eco-printing",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/fac-eco-pressroom.jpg",
       "sortOrder": 8,
       "i18n": {
         "zh": {
@@ -835,6 +849,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/about/facility/post-press",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/fac-post-diecut.jpg",
       "sortOrder": 9,
       "i18n": {
         "zh": {
@@ -855,6 +871,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/about/facility/quality",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/fac-banner.webp",
       "sortOrder": 10,
       "i18n": {
         "zh": {
@@ -877,6 +895,8 @@ export const SEED: Record<string, Row[]> = {
       "isIndexable": true,
       "hasVideo": true,
       "youtubeId": "vECuYIiFSSM",
+      "hasBanner": true,
+      "banner": "/assets/fac-tour-main.webp",
       "sortOrder": 11,
       "i18n": {
         "zh": {
@@ -897,6 +917,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/solutions",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/ref-sol-banner.webp",
       "sortOrder": 12,
       "i18n": {
         "zh": {
@@ -937,6 +959,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/sustainability",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/ref-green-banner.webp",
       "sortOrder": 14,
       "i18n": {
         "zh": {
@@ -957,6 +981,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/sustainability/our-advantage",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/ref-green-mid2.webp",
       "sortOrder": 15,
       "i18n": {
         "zh": {
@@ -977,6 +1003,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/sustainability/carbon-efficiency",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/ref-green-mid3.webp",
       "sortOrder": 16,
       "i18n": {
         "zh": {
@@ -997,6 +1025,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/sustainability/eco-materials",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/ref-green-mid1.webp",
       "sortOrder": 17,
       "i18n": {
         "zh": {
@@ -1017,6 +1047,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/sustainability/esg",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/ref-green-mid4.webp",
       "sortOrder": 18,
       "i18n": {
         "zh": {
@@ -1057,6 +1089,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/insights",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/green-tree.webp",
       "sortOrder": 20,
       "i18n": {
         "zh": {
@@ -1077,6 +1111,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/insights/news",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/diff-grid.webp",
       "sortOrder": 21,
       "i18n": {
         "zh": {
@@ -1137,6 +1173,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/insights/industry-trends",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/sol-patterns.webp",
       "sortOrder": 24,
       "i18n": {
         "zh": {
@@ -1157,6 +1195,8 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/careers",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/fac-tour-main.webp",
       "sortOrder": 25,
       "i18n": {
         "zh": {

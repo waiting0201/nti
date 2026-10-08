@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { getPage } from '@/lib/api'
+import { bannerSrc, getPage } from '@/lib/api'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { FacilityExplorer } from '@/components/behaviors/FacilityExplorer'
@@ -23,7 +23,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/fac-banner.webp")} alt="NTI printing facility — Heidelberg press line" /></section>
+      <section className="fac-banner"><img src={bannerSrc(page, "/assets/fac-banner.webp")} alt="NTI printing facility — Heidelberg press line" /></section>
       <section className="section">
         <div className="wrap">
           <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><b>Facilities &amp; Equipment</b></div>

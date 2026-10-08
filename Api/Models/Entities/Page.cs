@@ -16,6 +16,7 @@ public sealed class Page : IAuditable
     public string? OgImagePath   { get; set; }
     public bool    IsIndexable   { get; set; } = true;   // 0 → noindex
     public string? YoutubeId     { get; set; }           // 頁面影片，只有 Common.PageVideoPages 那幾頁用
+    public string? BannerImagePath { get; set; }         // 頂部橫幅圖，只有 Common.PageBannerPages 那幾頁用
 
     public DateTime  CreatedAt { get; set; }
     public int?      CreatedBy { get; set; }

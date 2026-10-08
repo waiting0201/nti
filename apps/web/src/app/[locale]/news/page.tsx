@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { NewsList } from '@/components/cms'
-import { getNews, getPage } from '@/lib/api'
+import { bannerSrc, getNews, getPage } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -24,7 +24,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
-      <section className="fac-banner"><img src={mediaUrl("/assets/diff-grid.webp")} alt="NTI Printing news — sustainably printed packaging patterns" /></section>
+      <section className="fac-banner"><img src={bannerSrc(page, "/assets/diff-grid.webp")} alt="NTI Printing news — sustainably printed packaging patterns" /></section>
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/insights")}>Insights</A><span>&rsaquo;</span><b>Latest News</b></div>
         <h1 className="sec-title reveal">News <span className="ti-slash">/</span> <span className="ti-alt">Latest news &amp; insights</span></h1>

@@ -87,10 +87,11 @@ export function EditPage() {
   const showPageTexts = unit.code === 'page' && !isNew && hasPageTexts(pageKeyOf(row))
 
   // page 單元：只有 HasRichBody = 1 的頁面才顯示「頁面內容」欄位（docs §15），
-  // 只有有影片的頁面（後端回 hasVideo）才顯示「頁面影片」
+  // 只有有影片的頁面（後端回 hasVideo）才顯示「頁面影片」，頂部有大圖的（hasBanner）才顯示「頂部橫幅」
   const showField = (f: Field) =>
     !(unit.code === 'page' && f.key === 'body' && row.hasRichBody !== true) &&
-    !(unit.code === 'page' && f.key === 'youtubeId' && row.hasVideo !== true)
+    !(unit.code === 'page' && f.key === 'youtubeId' && row.hasVideo !== true) &&
+    !(unit.code === 'page' && f.key === 'banner' && row.hasBanner !== true)
 
   const save = async (publish?: boolean) => {
     const next: Row = structuredClone(row)

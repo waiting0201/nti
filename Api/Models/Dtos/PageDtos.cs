@@ -14,6 +14,8 @@ public sealed class PageDto
     public string? BodyHtml      { get; set; }
     /// <summary>頁面影片（YouTube 影片 ID）。只有 PageVideoPages 那幾頁有值；null → 前台用 mockup 那支。</summary>
     public string? YoutubeId     { get; set; }
+    /// <summary>頂部橫幅圖路徑。只有 PageBannerPages 那幾頁有值；null → 前台用 mockup 那張。</summary>
+    public string? BannerImagePath { get; set; }
 
     public SeoDto  Seo           { get; set; } = null!;
 

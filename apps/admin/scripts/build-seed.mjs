@@ -68,6 +68,29 @@ function pageVideo(pageKey) {
   return { hasVideo: true, youtubeId: m[1] }
 }
 
+/* 頂部有橫幅大圖的固定頁 → mockup 檔（與後端 Api/Common/Constants.cs 的 PageBannerPages 一致）。
+   正式資料庫的值由 EF migration PageBanner 帶入；這裡只給 demo 用，值一樣取自 mockup。 */
+const BANNER_PAGES = {
+  'about-hub': 'differences.html', 'about-difference': 'about-difference.html',
+  'about-benefits': 'about-benefits.html', 'about-certifications': 'about-certifications.html',
+  facility: 'facility.html', 'facility-pre-press': 'facility-pre-press.html',
+  'facility-eco-printing': 'facility-eco-printing.html', 'facility-post-press': 'facility-post-press.html',
+  'facility-quality': 'facility-quality.html', 'facility-tour': 'facility-tour.html',
+  solutions: 'printing-solutions.html', 'sustainability-hub': 'green-advantage.html',
+  'green-our-advantage': 'green-our-advantage.html', 'green-carbon': 'green-carbon.html',
+  'green-materials': 'green-materials.html', 'green-esg': 'green-esg.html',
+  insights: 'insights.html', 'news-list': 'news.html',
+  'industry-trends': 'printing-trends.html', careers: 'careers.html',
+}
+
+function pageBanner(pageKey) {
+  const file = BANNER_PAGES[pageKey]
+  if (!file) return {}
+  const m = /<\/header>\s*(?:<!--[\s\S]*?-->\s*)*<section class="fac-banner">\s*<img\b[^>]*?\ssrc="(assets\/[^"]+)"/.exec(readMockup(file))
+  if (!m) throw new Error(`抽不出 ${file} 的頂部橫幅——mockup 的版面改了，請改 pageBanner() 的規則`)
+  return { hasBanner: true, banner: asset(m[1]) }
+}
+
 /* ── db/seed：29 筆固定頁 ──────────────────────────────── */
 function pages() {
   const sql = read(path.join(dbSeed, '140_page.sql'))
@@ -82,6 +105,7 @@ function pages() {
       hasRichBody: m[4] === '1',
       isIndexable: m[5] === '1',
       ...pageVideo(m[2]),
+      ...pageBanner(m[2]),
       sortOrder: +m[1],
       i18n: {
         zh: { slug: m[6], seoTitle: '', metaDescription: '' },
