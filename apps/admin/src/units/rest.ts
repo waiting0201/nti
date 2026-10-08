@@ -91,7 +91,7 @@ export const page: Unit = {
     // 只在有影片的頁面出現（關於我們、工廠導覽；後端 PageVideoPages）。存的是影片 ID，與 05 Green Vlog 同一種欄位
     { key: 'youtubeId', label: '頁面影片', type: 'youtube', side: 'neutral', hint: '貼上 YouTube 影片網址即可；留空則顯示預設的公司影片' },
     // 只在頂部有橫幅大圖的 20 頁出現（後端 PageBannerPages）。替代文字不另開欄位：它在「頁面文字」裡
-    { key: 'banner', label: '頂部橫幅', type: 'image', side: 'neutral', hint: '建議 **2400×450px**（16:3）｜JPG／WebP｜≤300KB｜前台裁成 16:3，主體請放中間｜替代文字請到下方「頁面文字」修改',
+    { key: 'banner', label: '頂部橫幅', type: 'image', side: 'neutral', hint: '建議 **2400×450px**（16:3）｜JPG／WebP｜≤300KB｜前台裁成 16:3（手機 2:1），主體請放中間｜替代文字請到下方「頁面文字」修改',
       altExempt: '替代文字在「頁面文字」裡逐語系修改，不另開欄位' },
     { key: 'body', label: '頁面內容', type: 'richtext', i18n: true, side: 'locale', hint: '只有少數可自行編輯內文的頁面才有這個欄位' },
   ],

@@ -295,6 +295,8 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .fac-banner{line-height:0}
 .fac-banner img{width:100%;height:auto;display:block}
 header+.fac-banner img{aspect-ratio:16/3;object-fit:cover;max-height:calc(100vh - 240px)}
+/* 手機上 16:3 只剩細細一條（390px 寬約 73px 高），改 2:1；圖都是主體置中的照片，左右裁掉不影響 */
+@media(max-width:720px){header+.fac-banner img{aspect-ratio:2/1}}
 
 /* our facility & equipment (per Facility PSD) */
 .fac-sub{font-weight:800;color:var(--grey);font-size:clamp(1.15rem,1.7vw,1.4rem);line-height:1.3}
