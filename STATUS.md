@@ -211,7 +211,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 - 頁尾「開始您的專案」→「洽談您的專案」（Discuss Your Project）。
 - 首頁「我們做什麼」→「服務流程」（Our Process），4 格改 5 格（需求確認→品質與交付）。
 - `db/content/280_menu_rename_oct21.sql`：包裝紙卡、UV 頁的 H1 在 CMS，正式庫要跑這支才會換名
-  （只改還是舊值的列）。⬜ 正式庫尚未執行。方案名稱（首頁卡、報價表單品項）未動。
+  （只改還是舊值的列）。✅ 正式庫已執行（2026-10-21，Tim）。方案名稱（首頁卡、報價表單品項）未動。
 - 驗證：`verify:markup` 44 頁全過。
 
 ### ✅ 首頁 Proof 三張卡改由後台管理（2026-10-21）
@@ -223,7 +223,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 - 後台 08 新增「簡稱」欄位（`CertificationI18n.ShortName`，EF `CertificationShortName`／參考 `0015`）：
   卡片內那行用簡稱串起來（中文以「、」分隔），空白就用全名。
 - `db/content/290_cert_proof_groups.sql`：建三個分組、把 14 張認證分進去、補中英簡稱。
-  ⬜ 正式庫尚未執行（先 `dotnet ef database update` 再跑 290）。沒跑之前前台照舊依檔名分卡，不會壞。
+  ✅ 正式庫已執行（2026-10-21，Tim；migration 由 API 啟動時自動套用）。正式站實測三張卡標題／簡稱正確。
 - 驗證：本機接 API 實測中英首頁三張卡標題／圖示／簡稱／logo 數正確；`verify-ef` 全數 PASS；`verify:markup` 44 頁全過。
 - 順帶補上：about／方案／綠色永續內頁的頁內分頁連結（`.pr-tabs`）英文改成新選單名稱（上一筆漏改）。
 
