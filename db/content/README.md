@@ -227,7 +227,8 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/280_menu_rename_oct21.sql
 
 - 建三個 Certification 分組（code `quality`／`eco`／`safety`，中英名稱＝卡片標題）。
   不放進 EF 種子：`HasData` 要帶固定 Id，可能撞到客戶在正式站後台自建的分類。
-  `verify*.sql` 的 Category 筆數斷言因此排除這三筆。
+  `verify*.sql` 的 Category 筆數斷言因此**整類排除 Certification**（41／82）：正式庫已刪掉種子的
+  認證／夥伴／獎項，新建的庫則還有，兩邊都要能過。
 - 14 張認證依 logo 檔名分進去——只動**還在原「認證」分組或未分組**的列。
 - 補中英簡稱（只補 NULL）。最後列出對不上檔名、仍在原分組的認證（後台換過 logo 的），要在後台手動指定分組。
 
