@@ -11,7 +11,7 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   "/about-benefits": [
     {"en":"Home","zh":"首頁","path":"/"},
     {"en":"About Us","zh":"關於我們","path":"/differences"},
-    {"en":"Client Benefits","zh":"客戶效益"},
+    {"en":"Benefits to Clients","zh":"客戶效益"},
   ],
   "/about-certifications": [
     {"en":"Home","zh":"首頁","path":"/"},
@@ -30,8 +30,8 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   ],
   "/cardboard": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Custom Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
-    {"en":"Packaging Cards","zh":"包裝紙卡"},
+    {"en":"Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
+    {"en":"Packaging Paperboard","zh":"包裝紙卡"},
   ],
   "/careers": [
     {"en":"Home","zh":"首頁","path":"/"},
@@ -39,7 +39,7 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   ],
   "/colorbox": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Custom Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
+    {"en":"Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
     {"en":"Color Box Packaging","zh":"彩盒包裝"},
   ],
   "/contact": [
@@ -106,7 +106,7 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   "/green-esg": [
     {"en":"Home","zh":"首頁","path":"/"},
     {"en":"Sustainability","zh":"綠色永續","path":"/green-advantage"},
-    {"en":"ESG & Sustainability Goals","zh":"ESG 與永續目標"},
+    {"en":"ESG & Future Goals","zh":"ESG 與永續目標"},
   ],
   "/green-materials": [
     {"en":"Home","zh":"首頁","path":"/"},
@@ -116,7 +116,7 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   "/green-our-advantage": [
     {"en":"Home","zh":"首頁","path":"/"},
     {"en":"Sustainability","zh":"綠色永續","path":"/green-advantage"},
-    {"en":"Green Advantages","zh":"綠色優勢"},
+    {"en":"Our Green Advantages","zh":"綠色優勢"},
   ],
   "/insights": [
     {"en":"Home","zh":"首頁","path":"/"},
@@ -201,7 +201,7 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   ],
   "/other-printing": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Custom Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
+    {"en":"Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
     {"en":"Other Printing","zh":"其他印刷"},
   ],
   "/printing-projects": [
@@ -210,7 +210,7 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   ],
   "/printing-solutions": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Custom Solutions","zh":"客製化解決方案"},
+    {"en":"Solutions","zh":"客製化解決方案"},
   ],
   "/printing-trends": [
     {"en":"Home","zh":"首頁","path":"/"},
@@ -227,7 +227,7 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   ],
   "/uv-printing": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Custom Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
-    {"en":"UV Printing & Special Finishes","zh":"UV 印刷與特殊加工"},
+    {"en":"Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
+    {"en":"UV Printing","zh":"UV 印刷與特殊加工"},
   ],
 }

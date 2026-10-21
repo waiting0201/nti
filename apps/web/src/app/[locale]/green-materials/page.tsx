@@ -28,10 +28,10 @@ export default async function Page({ params }: Props) {
         <h1 className="sec-title reveal">ECO Materials</h1>
         <div className="sec-sub reveal">Substrates, inks and equipment chosen for what they leave behind</div>
         <nav className="pr-tabs reveal" aria-label="Section pages">
-          <A href={l("/green-our-advantage")}>Green Advantages</A>{' '}
+          <A href={l("/green-our-advantage")}>Our Green Advantages</A>{' '}
           <A href={l("/green-carbon")}>Carbon Efficiency</A>{' '}
           <A href={l("/green-materials")} className="active">ECO Materials</A>{' '}
-          <A href={l("/green-esg")}>ESG &amp; Sustainability Goals</A>
+          <A href={l("/green-esg")}>ESG &amp; Future Goals</A>
         </nav>
       </div></section>
       <section className="section tight"><div className="wrap">
@@ -60,7 +60,7 @@ export default async function Page({ params }: Props) {
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>
         <p className="mt-m"><A href={l("/get-a-quote")} className="btn btn-solid">Get a Quote</A></p>
-        <p className="mt-m reveal"><A href={l("/green-esg")} className="blink">Next: ESG &amp; Sustainability Goals</A></p>
+        <p className="mt-m reveal"><A href={l("/green-esg")} className="blink">Next: ESG &amp; Future Goals</A></p>
       </div></section>
     </T>
   )

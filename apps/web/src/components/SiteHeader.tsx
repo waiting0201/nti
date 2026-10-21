@@ -48,11 +48,11 @@ const MENU: MenuItem[] = [
     label: 'About Us',
     sub: [
       { key: 'about-difference', href: '/about-difference', label: 'The NTI Difference' },
-      { key: 'about-benefits', href: '/about-benefits', label: 'Client Benefits' },
+      { key: 'about-benefits', href: '/about-benefits', label: 'Benefits to Clients' },
       {
         key: 'about-certifications',
         href: '/about-certifications',
-        label: <>Quality Certifications &amp; Sustainable Practices</>,
+        label: <>Certifications, Partnerships &amp; Awards</>,
       },
       { key: 'facility', href: '/facility', label: <>Facilities &amp; Equipment</> },
     ],
@@ -60,11 +60,11 @@ const MENU: MenuItem[] = [
   {
     key: 'printing-solutions',
     href: '/printing-solutions',
-    label: 'Custom Solutions',
+    label: 'Solutions',
     sub: [
       { key: 'colorbox', href: '/colorbox', label: 'Color Box Packaging' },
-      { key: 'cardboard', href: '/cardboard', label: 'Packaging Cards' },
-      { key: 'uv-printing', href: '/uv-printing', label: <>UV Printing &amp; Special Finishes</> },
+      { key: 'cardboard', href: '/cardboard', label: 'Packaging Paperboard' },
+      { key: 'uv-printing', href: '/uv-printing', label: 'UV Printing' },
       { key: 'other-printing', href: '/other-printing', label: 'Other Printing' },
     ],
   },
@@ -73,8 +73,8 @@ const MENU: MenuItem[] = [
     href: '/printing-projects',
     label: 'Projects',
     sub: [
-      { key: 'printing-projects#industries', href: '/printing-projects#industries', label: <>Industries &amp; Solutions</> },
-      { key: 'printing-projects#cases', href: '/printing-projects#cases', label: 'Case Studies' },
+      { key: 'printing-projects#industries', href: '/printing-projects#industries', label: <>Industries / Applications</> },
+      { key: 'printing-projects#cases', href: '/printing-projects#cases', label: <>Case Studies &amp; Photos</> },
     ],
   },
   {
@@ -82,10 +82,10 @@ const MENU: MenuItem[] = [
     href: '/green-advantage',
     label: 'Sustainability',
     sub: [
-      { key: 'green-our-advantage', href: '/green-our-advantage', label: 'Green Advantages' },
+      { key: 'green-our-advantage', href: '/green-our-advantage', label: 'Our Green Advantages' },
       { key: 'green-carbon', href: '/green-carbon', label: 'Carbon Efficiency' },
       { key: 'green-materials', href: '/green-materials', label: 'ECO Materials' },
-      { key: 'green-esg', href: '/green-esg', label: <>ESG &amp; Sustainability Goals</> },
+      { key: 'green-esg', href: '/green-esg', label: <>ESG &amp; Future Goals</> },
     ],
   },
   {

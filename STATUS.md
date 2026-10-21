@@ -201,17 +201,18 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ### ✅ 依客戶《NTI WEBSITE 調整》改選單與首頁服務流程（2026-10-21）
 
-- 主選單／子選單中文照文件更名（客製化解決方案、綠色永續、知識中心、南台彩藝的差異、客戶效益、
-  品質認證與永續實踐、包裝紙卡、UV 印刷與特殊加工、綠色優勢、ESG 與永續目標），英文同步翻譯
-  （Custom Solutions、Client Benefits、Quality Certifications & Sustainable Practices、Packaging Cards、
-  UV Printing & Special Finishes、Green Advantages、ESG & Sustainability Goals；Sustainability／Insights／
-  The NTI Difference 英文不變）。麵包屑、對應頁的 h1、「下一頁」連結一併改。
-- 實績案例恢復子選單：產業與解決方案／案例分享（Industries & Solutions／Case Studies，連到該頁兩個區段）。
+- **只改中文，英文維持原文**（客戶 2026-10-21 確認；第一版曾連英文一起翻，已全數還原）。
+  中文改在 `zh.ts` 的既有 key：客製化解決方案、綠色永續、知識中心、南台彩藝的差異、客戶效益、
+  品質認證與永續實踐、包裝紙卡、UV 印刷與特殊加工、綠色優勢、ESG 與永續目標。麵包屑、h1、頁內分頁、
+  「下一頁」連結因為共用同一個 key，中文一併換新。
+  ⚠ 「UV Printing」「Packaging Paperboard」也是品項名稱的 key，首頁產品卡／方案頁分頁／報價表單的中文（沒接 CMS 時）也跟著變。
+- 實績案例恢復子選單：產業與解決方案／案例分享（英文用原本的 Industries / Applications／Case Studies & Photos）。
 - 知識中心子選單只留最新消息；Vlog／FAQ／產業趨勢頁仍在，只是不進選單。
-- 頁尾「開始您的專案」→「洽談您的專案」（Discuss Your Project）。
-- 首頁「我們做什麼」→「服務流程」（Our Process），4 格改 5 格（需求確認→品質與交付）。
-- `db/content/280_menu_rename_oct21.sql`：包裝紙卡、UV 頁的 H1 在 CMS，正式庫要跑這支才會換名
-  （只改還是舊值的列）。✅ 正式庫已執行（2026-10-21，Tim）。方案名稱（首頁卡、報價表單品項）未動。
+- 頁尾「開始您的專案」→「洽談您的專案」。
+- 首頁「我們做什麼」→「服務流程」，4 格改 5 格（需求確認→品質與交付）。內容整段換新、英文沒有原文，
+  步驟用我方英譯初稿；英文標題維持 What We Do。
+- `db/content/280_menu_rename_oct21.sql`：包裝紙卡、UV 頁的中文 H1（在 CMS）。✅ 正式庫已執行（2026-10-21，Tim）。
+  第一版連英文 H1 也改了 → `300_keep_en_h1.sql` 還原英文。⬜ 正式庫尚未執行 300。
 - 驗證：`verify:markup` 44 頁全過。
 
 ### ✅ 首頁 Proof 三張卡改由後台管理（2026-10-21）
@@ -227,7 +228,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 - 正式庫已在後台刪掉種子的認證／夥伴／獎項三個分組（前台從未用到）。`verify*.sql` 的 Category 筆數
   改為整類排除 Certification（41／82），正式庫與新建的庫都能過。
 - 驗證：本機接 API 實測中英首頁三張卡標題／圖示／簡稱／logo 數正確；`verify-ef` 全數 PASS；`verify:markup` 44 頁全過。
-- 順帶補上：about／方案／綠色永續內頁的頁內分頁連結（`.pr-tabs`）英文改成新選單名稱（上一筆漏改）。
+- （上一版曾把內頁分頁連結 `.pr-tabs` 的英文改成新名稱，已隨「英文維持原文」還原。）
 
 ### ✅ 中文網址拿掉 `/zh`（2026-10-06）
 

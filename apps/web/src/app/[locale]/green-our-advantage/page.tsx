@@ -24,14 +24,14 @@ export default async function Page({ params }: Props) {
     <T locale={locale} overrides={page?.texts}>
       <section className="fac-banner"><img src={bannerSrc(page, "/assets/ref-green-mid2.webp")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" /></section>
       <section className="section subhead"><div className="wrap">
-        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/green-advantage")}>Sustainability</A><span>&rsaquo;</span><b>Green Advantages</b></div>
-        <h1 className="sec-title reveal">Green Advantages</h1>
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/green-advantage")}>Sustainability</A><span>&rsaquo;</span><b>Our Green Advantages</b></div>
+        <h1 className="sec-title reveal">Our Green Advantages</h1>
         <div className="sec-sub reveal">Sustainability built into every stage of the business</div>
         <nav className="pr-tabs reveal" aria-label="Section pages">
-          <A href={l("/green-our-advantage")} className="active">Green Advantages</A>{' '}
+          <A href={l("/green-our-advantage")} className="active">Our Green Advantages</A>{' '}
           <A href={l("/green-carbon")}>Carbon Efficiency</A>{' '}
           <A href={l("/green-materials")}>ECO Materials</A>{' '}
-          <A href={l("/green-esg")}>ESG &amp; Sustainability Goals</A>
+          <A href={l("/green-esg")}>ESG &amp; Future Goals</A>
         </nav>
       </div></section>
       <section className="section tight"><div className="wrap">

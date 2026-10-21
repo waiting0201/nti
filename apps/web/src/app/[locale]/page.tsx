@@ -60,10 +60,10 @@ export default async function Page({ params }: Props) {
         </div>
       </section>
 
-      {/* ============ OUR PROCESS（原 WHAT WE DO）============ */}
+      {/* ============ WHAT WE DO（服務流程，2026-10-21 改 5 步）============ */}
       <section className="whatwedo" id="what-we-do">
         <div className="wrap">
-          <h2 className="sec-h reveal">Our Process</h2>
+          <h2 className="sec-h reveal">What We Do</h2>
           <div className="wwd-tiles">
             <article className="wwd-item reveal" data-d="1">
               <span className="num"><i>Step</i><b>01</b></span>

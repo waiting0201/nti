@@ -24,13 +24,13 @@ export default async function Page({ params }: Props) {
     <T locale={locale} overrides={page?.texts}>
       <section className="fac-banner"><img src={bannerSrc(page, "/assets/ref-about-mid3.webp")} alt="Range of NTI sustainably printed pattern packaging" /></section>
       <section className="section subhead"><div className="wrap">
-        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><b>Client Benefits</b></div>
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><b>Benefits to Clients</b></div>
         <h1 className="sec-title reveal">A Smarter Global Packaging Partner</h1>
         <div className="sec-sub reveal">Why Global Brands Choose NTI</div>
         <nav className="pr-tabs reveal" aria-label="Section pages">
           <A href={l("/about-difference")}>The NTI Difference</A>{' '}
-          <A href={l("/about-benefits")} className="active">Client Benefits</A>{' '}
-          <A href={l("/about-certifications")}>Quality Certifications &amp; Sustainable Practices</A>{' '}
+          <A href={l("/about-benefits")} className="active">Benefits to Clients</A>{' '}
+          <A href={l("/about-certifications")}>Certifications, Partnerships &amp; Awards</A>{' '}
           <A href={l("/facility-tour")}>Factory Tour</A>
         </nav>
       </div></section>
@@ -78,7 +78,7 @@ export default async function Page({ params }: Props) {
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>
         <p className="mt-m"><A href={l("/get-a-quote")} className="btn btn-solid">Get a Quote</A></p>
-        <p className="mt-m reveal"><A href={l("/about-certifications")} className="blink">Next: Quality Certifications &amp; Sustainable Practices</A></p>
+        <p className="mt-m reveal"><A href={l("/about-certifications")} className="blink">Next: Certifications, Partnerships &amp; Awards</A></p>
       </div></section>
     </T>
   )

@@ -73,7 +73,7 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
           <div className="fcol">
             <span className="ftitle">Company</span>{' '}
             <A href={l('/differences')}>About Us</A>{' '}
-            <A href={l('/printing-solutions')}>Custom Solutions</A>{' '}
+            <A href={l('/printing-solutions')}>Solutions</A>{' '}
             <A href={l('/printing-projects')}>Projects</A>{' '}
             <A href={l('/careers')}>Careers</A>{' '}
             <A href={l('/privacy-legal')}>Privacy &amp; Legal</A>
@@ -88,7 +88,7 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
             <span className="ftitle">Get in Touch</span>{' '}
             <A href={l('/get-a-quote')}>Get a Quote</A>{' '}
             <A href={l('/get-a-quote')} className="fcta">
-              Discuss Your Project{' '}
+              Start Your Project{' '}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>
