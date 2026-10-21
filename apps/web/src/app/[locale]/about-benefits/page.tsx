@@ -29,8 +29,8 @@ export default async function Page({ params }: Props) {
         <div className="sec-sub reveal">Why Global Brands Choose NTI</div>
         <nav className="pr-tabs reveal" aria-label="Section pages">
           <A href={l("/about-difference")}>The NTI Difference</A>{' '}
-          <A href={l("/about-benefits")} className="active">Benefits to Clients</A>{' '}
-          <A href={l("/about-certifications")}>Certifications, Partnerships &amp; Awards</A>{' '}
+          <A href={l("/about-benefits")} className="active">Client Benefits</A>{' '}
+          <A href={l("/about-certifications")}>Quality Certifications &amp; Sustainable Practices</A>{' '}
           <A href={l("/facility-tour")}>Factory Tour</A>
         </nav>
       </div></section>

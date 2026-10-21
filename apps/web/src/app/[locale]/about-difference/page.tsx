@@ -29,8 +29,8 @@ export default async function Page({ params }: Props) {
         <div className="sec-sub reveal">Beyond Ink. A mindset of sustainability.</div>
         <nav className="pr-tabs reveal" aria-label="Section pages">
           <A href={l("/about-difference")} className="active">The NTI Difference</A>{' '}
-          <A href={l("/about-benefits")}>Benefits to Clients</A>{' '}
-          <A href={l("/about-certifications")}>Certifications, Partnerships &amp; Awards</A>{' '}
+          <A href={l("/about-benefits")}>Client Benefits</A>{' '}
+          <A href={l("/about-certifications")}>Quality Certifications &amp; Sustainable Practices</A>{' '}
           <A href={l("/facility-tour")}>Factory Tour</A>
         </nav>
       </div></section>

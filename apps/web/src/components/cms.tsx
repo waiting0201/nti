@@ -371,7 +371,11 @@ const PROOF_CATEGORY_META: Record<ProofCategory, { title: string; iconClass: str
   other: { title: 'Other Certifications', iconClass: 'proof-ic--quality' },
 }
 
-// 現況種子把 14 張認證都塞進同一個分類，categoryName 派不上用場時的備援：
+// 分組代碼 → 卡片圖示：db/content/290 建的三個分組沿用這三個代碼；後台新增的其他分組用 other 的圖示。
+const isProofCategory = (code: string | null): code is ProofCategory =>
+  code === 'quality' || code === 'eco' || code === 'safety'
+
+// 還沒跑 290、14 張認證都在同一個分類時的備援：
 // 依檔名對照品質／環境／社會責任三類。對不上的一律進 other，不能讓認證憑空消失。
 const PROOF_LOGO_CATEGORY: Record<string, ProofCategory> = {
   'cert-g7.png': 'quality',
@@ -433,9 +437,10 @@ const PROOF_ICONS: Record<ProofCategory, React.ReactNode> = {
  * 首頁 Proof 認證牆：外層 `.cert-wall` 在頁面上，這裡輸出三張分類卡
  * （結構需與 page.tsx 的 fallback 分支一致，見那邊的硬寫版本）。
  *
- * 分組規則：`categoryName` 若真的有兩種以上不同值，就照它分組（後台已把認證分好類）；
- * 否則（現況：14 筆同一分類或未分類）退回用 logoPath 檔名對照表分三類，
- * 對不上的一律進最後一組，不遺漏任何一筆。
+ * 分組規則：`categoryName` 若真的有兩種以上不同值，就照它分組（後台 08 的「分組」，
+ * 卡片標題＝分組名稱，圖示依分組代碼）；否則（290 之前：14 筆同一分類或未分類）
+ * 退回用 logoPath 檔名對照表分三類，對不上的一律進最後一組，不遺漏任何一筆。
+ * 卡片內那行文字用各認證的簡稱，空的才用全名。
  */
 export function CertificationLogos({ items, locale }: { items: Certification[]; locale: Locale }) {
   const distinctNamed = new Set(items.map((c) => c.categoryName).filter(Boolean))
@@ -446,21 +451,27 @@ export function CertificationLogos({ items, locale }: { items: Certification[]; 
   if (distinctNamed.size >= 2) {
     const order: string[] = []
     const byName = new Map<string, Certification[]>()
+    const codeOf = new Map<string, string | null>()
     for (const c of items) {
       const key = c.categoryName ?? 'Other'
       if (!byName.has(key)) {
         byName.set(key, [])
         order.push(key)
+        codeOf.set(key, c.categoryCode)
       }
       byName.get(key)!.push(c)
     }
-    groups = order.map((name) => ({
-      key: name,
-      title: name,
-      iconClass: 'proof-ic--quality',
-      icon: PROOF_ICONS.quality,
-      items: byName.get(name)!,
-    }))
+    groups = order.map((name) => {
+      const code = codeOf.get(name) ?? null
+      const kind: ProofCategory = isProofCategory(code) ? code : 'other'
+      return {
+        key: name,
+        title: name,
+        iconClass: PROOF_CATEGORY_META[kind].iconClass,
+        icon: PROOF_ICONS[kind],
+        items: byName.get(name)!,
+      }
+    })
   } else {
     const byKey = new Map<ProofCategory, Certification[]>()
     for (const c of items) {
@@ -487,7 +498,7 @@ export function CertificationLogos({ items, locale }: { items: Certification[]; 
             {g.icon}
           </span>
           <h3>{g.title}</h3>
-          <p>{g.items.map((c) => c.name).join(', ')}</p>
+          <p>{g.items.map((c) => c.shortName || c.name).join(locale === 'zh' ? '、' : ', ')}</p>
           <div className="proof-logos">
             {g.items.map((c) => (
               <img

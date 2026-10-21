@@ -140,6 +140,7 @@ NTI/
   db/tools/sqlcmd.sh NTI < db/content/260_slug_rename.sql     # 客戶 10-06 網址更名：既有 301 落點與首頁 Banner 改到新網址
   db/tools/sqlcmd.sh NTI < db/content/270_drop_zh_prefix.sql  # 客戶 10-06 中文拿掉 /zh：既有 301 的落點／來源去掉前綴
   db/tools/sqlcmd.sh NTI < db/content/280_menu_rename_oct21.sql # 客戶 10-21 選單更名：包裝紙卡、UV 頁的 H1
+  db/tools/sqlcmd.sh NTI < db/content/290_cert_proof_groups.sql # 首頁 Proof 三張卡改由後台分組驅動＋認證簡稱
   db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql             # 應輸出「全數 PASS」
   ```
 

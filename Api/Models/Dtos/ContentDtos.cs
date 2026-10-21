@@ -168,6 +168,7 @@ public sealed class CertificationDto
     public bool    ShowOnHome   { get; set; }
     public int     SortOrder    { get; set; }
     public string  Name         { get; set; } = null!;
+    public string? ShortName    { get; set; }
     public string? Description  { get; set; }
     public string  LogoAlt      { get; set; } = null!;
     public string? CertificateNo { get; set; }

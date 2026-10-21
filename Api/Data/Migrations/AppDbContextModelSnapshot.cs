@@ -1250,6 +1250,10 @@ namespace Nti.Api.Data.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)");
 
+                    b.Property<string>("ShortName")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
                     b.HasKey("CertificationId", "Lang")
                         .HasName("PK_CertificationI18n");
 

@@ -33,8 +33,8 @@ export default async function Page({ params }: Props) {
         </>)}
         <nav className="pr-tabs reveal" aria-label="Product categories">
           <A href={l("/colorbox")} className="active">Color Box Packaging</A>{' '}
-          <A href={l("/cardboard")}>Packaging Paperboard</A>{' '}
-          <A href={l("/uv-printing")}>UV Printing</A>{' '}
+          <A href={l("/cardboard")}>Packaging Cards</A>{' '}
+          <A href={l("/uv-printing")}>UV Printing &amp; Special Finishes</A>{' '}
           <A href={l("/other-printing")}>Other Printing</A>
         </nav>
         {solution?.items.length ? (

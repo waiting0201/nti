@@ -28,10 +28,10 @@ export default async function Page({ params }: Props) {
         <h1 className="sec-title reveal">ESG &amp; Sustainability Goals</h1>
         <div className="sec-sub reveal">Environmental, social and governance commitments &mdash; and what comes next</div>
         <nav className="pr-tabs reveal" aria-label="Section pages">
-          <A href={l("/green-our-advantage")}>Our Green Advantages</A>{' '}
+          <A href={l("/green-our-advantage")}>Green Advantages</A>{' '}
           <A href={l("/green-carbon")}>Carbon Efficiency</A>{' '}
           <A href={l("/green-materials")}>ECO Materials</A>{' '}
-          <A href={l("/green-esg")} className="active">ESG &amp; Future Goals</A>
+          <A href={l("/green-esg")} className="active">ESG &amp; Sustainability Goals</A>
         </nav>
       </div></section>
       <section className="section tight"><div className="wrap">

@@ -99,10 +99,10 @@ INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'173', CAST
 INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'84', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'68', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'21', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
-INSERT @r (Item, Expected, Actual) SELECT N'Category',       N'44', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category;
+INSERT @r (Item, Expected, Actual) SELECT N'Category（種子，不含 content/290 的認證分組）', N'44', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category WHERE NOT (CategoryType = 'Certification' AND Code IN ('quality','eco','safety'));
 INSERT @r (Item, Expected, Actual) SELECT N'Tag',            N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Tag;
 INSERT @r (Item, Expected, Actual) SELECT N'TagI18n',        N'34', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.TagI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'CategoryI18n',   N'88', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.CategoryI18n;
+INSERT @r (Item, Expected, Actual) SELECT N'CategoryI18n（同上）', N'88', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.CategoryI18n i JOIN dbo.Category c ON c.Id = i.CategoryId WHERE NOT (c.CategoryType = 'Certification' AND c.Code IN ('quality','eco','safety'));
 INSERT @r (Item, Expected, Actual) SELECT N'  └ CategoryType 種類', N'9', CAST(COUNT(DISTINCT CategoryType) AS NVARCHAR(20)) FROM dbo.Category;
 INSERT @r (Item, Expected, Actual) SELECT N'SiteSetting',    N'15', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SiteSetting;
 INSERT @r (Item, Expected, Actual) SELECT N'Page（固定 28 + 預留 csr）', N'29', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Page;
@@ -110,7 +110,7 @@ INSERT @r (Item, Expected, Actual) SELECT N'PageI18n',       N'58', CAST(COUNT(*
 INSERT @r (Item, Expected, Actual) SELECT N'  └ HasRichBody=1（privacy-legal、green-csr）', N'2', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Page WHERE HasRichBody = 1;
 INSERT @r (Item, Expected, Actual) SELECT N'Solution（固定 4 筆）', N'4', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Solution;
 INSERT @r (Item, Expected, Actual) SELECT N'SolutionI18n',   N'8',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SolutionI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'SchemaVersion（已套用 migration 數）', N'14', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SchemaVersion;
+INSERT @r (Item, Expected, Actual) SELECT N'SchemaVersion（已套用 migration 數）', N'15', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SchemaVersion;
 
 /* 後台登入識別＝Username（2026-09-06，見 db/migrations/0005）：唯一鍵搬家了 */
 INSERT @r (Item, Expected, Actual)

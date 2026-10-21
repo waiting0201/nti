@@ -35,8 +35,8 @@ export default async function Page({ params }: Props) {
         <div className="sec-sub reveal">Proving our promise through action</div>
         <nav className="pr-tabs reveal" aria-label="Section pages">
           <A href={l("/about-difference")}>The NTI Difference</A>{' '}
-          <A href={l("/about-benefits")}>Benefits to Clients</A>{' '}
-          <A href={l("/about-certifications")} className="active">Certifications, Partnerships &amp; Awards</A>{' '}
+          <A href={l("/about-benefits")}>Client Benefits</A>{' '}
+          <A href={l("/about-certifications")} className="active">Quality Certifications &amp; Sustainable Practices</A>{' '}
           <A href={l("/facility-tour")}>Factory Tour</A>
         </nav>
       </div></section>

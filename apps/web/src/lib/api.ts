@@ -205,11 +205,14 @@ export type Trend = { id: number; title: string; bodyHtml: string }
 
 export type Certification = {
   id: number
+  categoryCode: string | null
   categoryName: string | null
   logoPath: string
   linkUrl: string | null
   showOnHome: boolean
   name: string
+  /** 首頁 Proof 牆用的簡稱（2026-10-21 起）；空的用 name */
+  shortName: string | null
   description: string | null
   logoAlt: string
   /** 證號與日期（2026-09-24 起）；都可空，DATE 欄位回 `YYYY-MM-DD` */

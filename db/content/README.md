@@ -220,3 +220,18 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/270_drop_zh_prefix.sql
 sqlcmd -S <server> -d NTI -I -b -i db/content/280_menu_rename_oct21.sql
 ```
 
+## 290_cert_proof_groups.sql
+
+首頁 Proof 牆「品質管理／環境永續／社會責任與安全」三張卡改由後台 08 的「分組」驅動（2026-10-21）。
+手寫、冪等；**須先套用 EF migration `CertificationShortName`**（`ShortName` 欄位）：
+
+- 建三個 Certification 分組（code `quality`／`eco`／`safety`，中英名稱＝卡片標題）。
+  不放進 EF 種子：`HasData` 要帶固定 Id，可能撞到客戶在正式站後台自建的分類。
+  `verify*.sql` 的 Category 筆數斷言因此排除這三筆。
+- 14 張認證依 logo 檔名分進去——只動**還在原「認證」分組或未分組**的列。
+- 補中英簡稱（只補 NULL）。最後列出對不上檔名、仍在原分組的認證（後台換過 logo 的），要在後台手動指定分組。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/290_cert_proof_groups.sql
+```
+

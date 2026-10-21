@@ -29,6 +29,8 @@ public sealed class CertificationI18n : II18n
     public int     CertificationId { get; set; }
     public string  Lang            { get; set; } = null!;
     public string  Name            { get; set; } = null!;
+    // 首頁 Proof 牆 logo 下方那行用的簡稱（例：ISO 9001）；空的就用 Name。2026-10-21 加
+    public string? ShortName       { get; set; }
     public string? Description     { get; set; }
     public string  LogoAlt         { get; set; } = null!;
 }
