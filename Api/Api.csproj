@@ -39,6 +39,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <!-- 間接相依提升（SqlClient 6.1.1 帶的 9.0.4 有 CVE-2026-84008／70162，修補版 10.0.13）。
+         TreatWarningsAsErrors 會讓 NuGet 稽核警告直接擋下 CI；SqlClient 改帶修補版之後可拿掉 -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
 
     <!-- Dapper：讀取（docs/10 §8.2）-->
     <PackageReference Include="Dapper" Version="2.1.35" />
