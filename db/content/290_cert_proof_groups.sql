@@ -4,8 +4,8 @@
    首頁「品質管理／環境永續／社會責任與安全」三張卡，原本是前台依 logo 檔名寫死分類
    （14 張認證都在同一個「認證」分組，前台無從分卡）。這支把它交給後台：
 
-     1. 建三個 Certification 分組（code：quality／eco／safety），中英名稱即卡片標題，
-        之後在「分類管理」改名就會反映在首頁。
+     1. 建三個 Certification 分組（code：quality／eco／safety），中英名稱即卡片標題。
+        ⚠ 後台「分類管理」目前只能停用／刪除，沒有改名的畫面（API 有 PUT /admin/category/{id}）。
      2. 把 14 張認證依 logo 檔名分進去——只動**還在原本「認證」分組或未分組**的列，
         後台已經改過分組的不會被蓋掉。
      3. 補上中英簡稱（CertificationI18n.ShortName，0015／EF CertificationShortName 加的欄位），
