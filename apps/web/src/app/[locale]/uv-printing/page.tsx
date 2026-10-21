@@ -25,8 +25,8 @@ export default async function Page({ params }: Props) {
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
-        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/printing-solutions")}>Solutions</A><span>&rsaquo;</span><b>UV Printing</b></div>
-        <h1 className="sec-title reveal">{solution?.h1 || "UV Printing"}</h1>
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/printing-solutions")}>Custom Solutions</A><span>&rsaquo;</span><b>UV Printing &amp; Special Finishes</b></div>
+        <h1 className="sec-title reveal">{solution?.h1 || "UV Printing & Special Finishes"}</h1>
         <div className="sec-sub reveal">Print on the materials ordinary ink can&rsquo;t touch.</div>
         {solution?.introHtml ? <SolutionIntro html={solution.introHtml} /> : (<>
         <p className="prose wide reveal mt-s">UV printing delivers vibrant, durable graphics on plastics, metal foils, coated paperboards, and other non-absorbent materials. Its instant curing process speeds up production, improves print quality, and supports premium finishes, specialty coatings, and anti-counterfeiting applications &mdash; one reason NTI Printing is a trusted source for UV coating printing in Taiwan.</p>

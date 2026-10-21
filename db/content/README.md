@@ -206,3 +206,17 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/260_slug_rename.sql
 sqlcmd -S <server> -d NTI -I -b -i db/content/270_drop_zh_prefix.sql
 ```
 
+## 280_menu_rename_oct21.sql
+
+客戶 2026-10-21《NTI WEBSITE 調整》把「包裝紙板」改為「包裝紙卡」、「UV印刷」改為「UV 印刷與特殊加工」。
+選單與麵包屑在前台程式裡，但這兩頁的 H1 來自 `SolutionI18n.H1`。手寫、冪等，只改**還是種子值或 230 寫入值**的列：
+
+- `cardboard`：包裝紙板／Packaging Paperboard → 包裝紙卡／Packaging Cards
+- `uv`：UV 印刷／UV Printing → UV 印刷與特殊加工／UV Printing & Special Finishes
+
+方案名稱（`Name`）與 SEO 標題不動。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/280_menu_rename_oct21.sql
+```
+

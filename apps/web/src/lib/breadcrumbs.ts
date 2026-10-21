@@ -11,7 +11,7 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   "/about-benefits": [
     {"en":"Home","zh":"首頁","path":"/"},
     {"en":"About Us","zh":"關於我們","path":"/differences"},
-    {"en":"Benefits to Clients","zh":"客戶得到的效益"},
+    {"en":"Client Benefits","zh":"客戶效益"},
   ],
   "/about-certifications": [
     {"en":"Home","zh":"首頁","path":"/"},
@@ -21,17 +21,17 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   "/about-difference": [
     {"en":"Home","zh":"首頁","path":"/"},
     {"en":"About Us","zh":"關於我們","path":"/differences"},
-    {"en":"The NTI Difference","zh":"NTI 的與眾不同"},
+    {"en":"The NTI Difference","zh":"南台彩藝的差異"},
   ],
   "/blog": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Green Vlog","zh":"綠色 Vlog"},
   ],
   "/cardboard": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Solutions","zh":"解決方案","path":"/printing-solutions"},
-    {"en":"Packaging Paperboard","zh":"包裝紙板"},
+    {"en":"Custom Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
+    {"en":"Packaging Cards","zh":"包裝紙卡"},
   ],
   "/careers": [
     {"en":"Home","zh":"首頁","path":"/"},
@@ -39,7 +39,7 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   ],
   "/colorbox": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Solutions","zh":"解決方案","path":"/printing-solutions"},
+    {"en":"Custom Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
     {"en":"Color Box Packaging","zh":"彩盒包裝"},
   ],
   "/contact": [
@@ -87,7 +87,7 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   ],
   "/faq": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"FAQ","zh":"常見問題"},
   ],
   "/get-a-quote": [
@@ -96,112 +96,112 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   ],
   "/green-advantage": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Sustainability","zh":"永續"},
+    {"en":"Sustainability","zh":"綠色永續"},
   ],
   "/green-carbon": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Sustainability","zh":"永續","path":"/green-advantage"},
+    {"en":"Sustainability","zh":"綠色永續","path":"/green-advantage"},
     {"en":"Carbon Efficiency","zh":"碳效率"},
   ],
   "/green-esg": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Sustainability","zh":"永續","path":"/green-advantage"},
-    {"en":"ESG & Future Goals","zh":"ESG 與未來目標"},
+    {"en":"Sustainability","zh":"綠色永續","path":"/green-advantage"},
+    {"en":"ESG & Sustainability Goals","zh":"ESG 與永續目標"},
   ],
   "/green-materials": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Sustainability","zh":"永續","path":"/green-advantage"},
+    {"en":"Sustainability","zh":"綠色永續","path":"/green-advantage"},
     {"en":"ECO Materials","zh":"環保材料"},
   ],
   "/green-our-advantage": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Sustainability","zh":"永續","path":"/green-advantage"},
-    {"en":"Our Green Advantages","zh":"我們的綠色優勢"},
+    {"en":"Sustainability","zh":"綠色永續","path":"/green-advantage"},
+    {"en":"Green Advantages","zh":"綠色優勢"},
   ],
   "/insights": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察"},
+    {"en":"Insights","zh":"知識中心"},
   ],
   "/news-animals-of-tomorrow": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
     {"en":"Exhibition","zh":"展覽"},
   ],
   "/news-commonwealth-interview": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
     {"en":"Media","zh":"媒體"},
   ],
   "/news-firefighter-boardgame": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
     {"en":"ESG","zh":"ESG"},
   ],
   "/news-gentle-wild-paper-bags": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
     {"en":"Digital Printing","zh":"數位印刷"},
   ],
   "/news-global-views-esg-award": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
     {"en":"Awards","zh":"獲獎肯定"},
   ],
   "/news-green-drive-seminar": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
     {"en":"Event","zh":"活動"},
   ],
   "/news-green-printing-digital-innovation": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
-    {"en":"Sustainability","zh":"永續"},
+    {"en":"Sustainability","zh":"綠色永續"},
   ],
   "/news-hp-variable-data-printing": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
     {"en":"Digital Printing","zh":"數位印刷"},
   ],
   "/news-low-carbon-production-film": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
-    {"en":"Sustainability","zh":"永續"},
+    {"en":"Sustainability","zh":"綠色永續"},
   ],
   "/news-national-sustainable-development-award": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
     {"en":"Awards","zh":"獲獎肯定"},
   ],
   "/news-sme-investment-benchmark": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
     {"en":"Awards","zh":"獲獎肯定"},
   ],
   "/news-taicca-partnership": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息","path":"/news"},
     {"en":"Partnership","zh":"合作夥伴"},
   ],
   "/news": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Latest News","zh":"最新消息"},
   ],
   "/other-printing": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Solutions","zh":"解決方案","path":"/printing-solutions"},
+    {"en":"Custom Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
     {"en":"Other Printing","zh":"其他印刷"},
   ],
   "/printing-projects": [
@@ -210,11 +210,11 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   ],
   "/printing-solutions": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Solutions","zh":"解決方案"},
+    {"en":"Custom Solutions","zh":"客製化解決方案"},
   ],
   "/printing-trends": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Insights","zh":"洞察","path":"/insights"},
+    {"en":"Insights","zh":"知識中心","path":"/insights"},
     {"en":"Industry Trends","zh":"產業趨勢"},
   ],
   "/privacy-legal": [
@@ -227,7 +227,7 @@ export const BREADCRUMBS: Record<string, Crumb[]> = {
   ],
   "/uv-printing": [
     {"en":"Home","zh":"首頁","path":"/"},
-    {"en":"Solutions","zh":"解決方案","path":"/printing-solutions"},
-    {"en":"UV Printing","zh":"UV 印刷"},
+    {"en":"Custom Solutions","zh":"客製化解決方案","path":"/printing-solutions"},
+    {"en":"UV Printing & Special Finishes","zh":"UV 印刷與特殊加工"},
   ],
 }

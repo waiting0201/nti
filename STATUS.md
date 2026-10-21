@@ -199,6 +199,21 @@ mockup 內容（現況部署），設了就改吃 CMS。
 ⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
 清單在該腳本的 `HAND_MAINTAINED`。
 
+### ✅ 依客戶《NTI WEBSITE 調整》改選單與首頁服務流程（2026-10-21）
+
+- 主選單／子選單中文照文件更名（客製化解決方案、綠色永續、知識中心、南台彩藝的差異、客戶效益、
+  品質認證與永續實踐、包裝紙卡、UV 印刷與特殊加工、綠色優勢、ESG 與永續目標），英文同步翻譯
+  （Custom Solutions、Client Benefits、Quality Certifications & Sustainable Practices、Packaging Cards、
+  UV Printing & Special Finishes、Green Advantages、ESG & Sustainability Goals；Sustainability／Insights／
+  The NTI Difference 英文不變）。麵包屑、對應頁的 h1、「下一頁」連結一併改。
+- 實績案例恢復子選單：產業與解決方案／案例分享（Industries & Solutions／Case Studies，連到該頁兩個區段）。
+- 知識中心子選單只留最新消息；Vlog／FAQ／產業趨勢頁仍在，只是不進選單。
+- 頁尾「開始您的專案」→「洽談您的專案」（Discuss Your Project）。
+- 首頁「我們做什麼」→「服務流程」（Our Process），4 格改 5 格（需求確認→品質與交付）。
+- `db/content/280_menu_rename_oct21.sql`：包裝紙卡、UV 頁的 H1 在 CMS，正式庫要跑這支才會換名
+  （只改還是舊值的列）。⬜ 正式庫尚未執行。方案名稱（首頁卡、報價表單品項）未動。
+- 驗證：`verify:markup` 44 頁全過。
+
 ### ✅ 中文網址拿掉 `/zh`（2026-10-06）
 
 客戶要求中文網址不帶 `/zh`。改成**中文在根目錄、英文在 `/en/`**——剛好與舊站 WordPress 的結構一致。

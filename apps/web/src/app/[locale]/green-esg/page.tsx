@@ -24,8 +24,8 @@ export default async function Page({ params }: Props) {
     <T locale={locale} overrides={page?.texts}>
       <section className="fac-banner"><img src={bannerSrc(page, "/assets/ref-green-mid4.webp")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
       <section className="section subhead"><div className="wrap">
-        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/green-advantage")}>Sustainability</A><span>&rsaquo;</span><b>ESG &amp; Future Goals</b></div>
-        <h1 className="sec-title reveal">ESG &amp; Future Goals</h1>
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/green-advantage")}>Sustainability</A><span>&rsaquo;</span><b>ESG &amp; Sustainability Goals</b></div>
+        <h1 className="sec-title reveal">ESG &amp; Sustainability Goals</h1>
         <div className="sec-sub reveal">Environmental, social and governance commitments &mdash; and what comes next</div>
         <nav className="pr-tabs reveal" aria-label="Section pages">
           <A href={l("/green-our-advantage")}>Our Green Advantages</A>{' '}
@@ -36,7 +36,7 @@ export default async function Page({ params }: Props) {
       </div></section>
       <section className="section tight"><div className="wrap">
         <div className="ga-block reveal">
-          <h2 className="ga-h">ESG &amp; Future Goals</h2>
+          <h2 className="ga-h">ESG &amp; Sustainability Goals</h2>
           <p className="prose">At NTI Printing, ESG begins with people. We believe a safe, clean, modern, and comfortable workplace is fundamental to building a sustainable business. Our fully air-conditioned offices and production facility, together with staff amenities including a restaurant, library, dormitories, and shared spaces, reflect our commitment to the wellbeing of both our local and international employees.</p>
           <p className="prose mt-s">As a sustainable packaging manufacturer committed to responsible printing, NTI Printing is aligning its ESG packaging roadmap with the UN Sustainable Development Goals (SDGs) and evaluating Science-Based Targets (SBTi) status.</p>
         </div>
@@ -69,7 +69,7 @@ export default async function Page({ params }: Props) {
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>
         <p className="mt-m"><A href={l("/get-a-quote")} className="btn btn-solid">Get a Quote</A></p>
-        <p className="mt-m reveal"><A href={l("/green-our-advantage")} className="blink">Next: Our Green Advantage</A></p>
+        <p className="mt-m reveal"><A href={l("/green-our-advantage")} className="blink">Next: Green Advantages</A></p>
       </div></section>
     </T>
   )

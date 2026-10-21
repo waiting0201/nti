@@ -30,7 +30,7 @@ export default async function Page({ params }: Props) {
         <h1 className="sec-title reveal">Projects</h1>
         <div className="sec-sub reveal">Real Projects. Real Impact.</div>
         <p className="prose wide reveal mt-s">From packaging to promotional materials, NTI collaborates with brands across industries to deliver sustainable, high-quality results &mdash; explore our custom box portfolio and packaging case study highlights below. Each project reflects our commitment to innovation, precision, and environmental responsibility.</p>
-        <div className="dtitle reveal mt-m" id="industries">Industries / Applications</div>
+        <div className="dtitle reveal mt-m" id="industries">Industries &amp; Solutions</div>
         <div className="indgrid reveal mt-s">
           <div className="ind-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8.4h7.2l-.9 10.2a1.4 1.4 0 0 1-1.4 1.3H5.3a1.4 1.4 0 0 1-1.4-1.3z"/><path d="M2.4 8.4h8.4"/><path d="M8.6 8.2 10.4 3.6"/><path d="M12.6 13.4h9a4.5 4.5 0 0 1-4.5 4.7 4.5 4.5 0 0 1-4.5-4.7Z"/><path d="M12.4 20h9.4"/><circle cx="15.6" cy="11" r="1.5"/><path d="M19.4 11.4c1.4-1.8 2.6-2.2 2.6-2.2s-.3 3-2.6 3.4"/></svg><b>Food &amp; Beverage</b></div>
           <div className="ind-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="7" y="7" width="10" height="10" rx="1.2"/><path d="M9.4 7V4.2M12 7V4.2M14.6 7V4.2M9.4 17v2.8M12 17v2.8M14.6 17v2.8M7 9.4H4.2M7 12H4.2M7 14.6H4.2M17 9.4h2.8M17 12h2.8M17 14.6h2.8"/><circle cx="10.4" cy="10.2" r="1"/><circle cx="13.8" cy="13.8" r="1"/><path d="M11.4 10.2h2.4v2.6"/></svg><b>Electronics</b></div>
@@ -43,7 +43,7 @@ export default async function Page({ params }: Props) {
           <div className="ind-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4.6 10.4h14.8L18.2 20H5.8z"/><path d="M4.6 10.4h14.8"/><path d="M9.2 10.4V8.2a2.8 2.8 0 0 1 5.6 0v2.2"/></svg><b>Industrial &amp; Consumer Goods</b></div>
           <div className="ind-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2.6 12 8.8 6.6 15 12"/><path d="M4.2 10.6V20h9.2v-9.4"/><path d="M7.2 20v-4.6h3.2V20"/><circle cx="19" cy="12.8" r="2.9"/><path d="M19 15.7V20"/><path d="M2 20h20"/></svg><b>Home &amp; Lifestyle</b></div>
         </div>
-        <div className="dtitle reveal mt-m" id="cases">Case Studies &amp; Photos</div>
+        <div className="dtitle reveal mt-m" id="cases">Case Studies</div>
         {projects?.length ? (
           <ProjectGrid items={projects} locale={locale} />
         ) : (

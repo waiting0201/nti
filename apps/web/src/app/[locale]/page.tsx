@@ -60,30 +60,35 @@ export default async function Page({ params }: Props) {
         </div>
       </section>
 
-      {/* ============ WHAT WE DO ============ */}
+      {/* ============ OUR PROCESS（原 WHAT WE DO）============ */}
       <section className="whatwedo" id="what-we-do">
         <div className="wrap">
-          <h2 className="sec-h reveal">What We Do</h2>
+          <h2 className="sec-h reveal">Our Process</h2>
           <div className="wwd-tiles">
             <article className="wwd-item reveal" data-d="1">
               <span className="num"><i>Step</i><b>01</b></span>
-              <h3>Structural Design</h3>
-              <p>Optimized packaging that reduces material use and waste.</p>
+              <h3>Requirements Review</h3>
+              <p>Clarify the product, sales channels, quantities, packing method, lead time and destination market.</p>
             </article>
             <article className="wwd-item reveal" data-d="2">
               <span className="num"><i>Step</i><b>02</b></span>
-              <h3>Pre-Press (CTP)</h3>
-              <p>Digital plate-making improves quality while reducing pollution.</p>
+              <h3>Materials &amp; Structure</h3>
+              <p>Evaluate paper stock, box style and finishing options; structural samples are arranged as the project requires.</p>
             </article>
             <article className="wwd-item reveal" data-d="2">
               <span className="num"><i>Step</i><b>03</b></span>
-              <h3>Printing</h3>
-              <p>Energy-efficient production with lower waste and emissions.</p>
+              <h3>Pre-Press &amp; Proofing</h3>
+              <p>Confirm dielines, artwork, color and copy; samples are signed off through the agreed approval method.</p>
             </article>
             <article className="wwd-item reveal" data-d="3">
               <span className="num"><i>Step</i><b>04</b></span>
-              <h3>Finishing</h3>
-              <p>Foil stamping, embossing and specialty coatings.</p>
+              <h3>Printing &amp; Finishing</h3>
+              <p>Printing, coating, die-cutting, gluing and other applicable processes, run to the confirmed specifications.</p>
+            </article>
+            <article className="wwd-item reveal" data-d="3">
+              <span className="num"><i>Step</i><b>05</b></span>
+              <h3>Quality &amp; Delivery</h3>
+              <p>Finished goods are checked against the project inspection standards, with packing and delivery coordinated.</p>
             </article>
           </div>
         </div>

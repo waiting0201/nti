@@ -60,7 +60,7 @@ export default async function Page({ params }: Props) {
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>
         <p className="mt-m"><A href={l("/get-a-quote")} className="btn btn-solid">Get a Quote</A></p>
-        <p className="mt-m reveal"><A href={l("/green-esg")} className="blink">Next: ESG &amp; Future Goals</A></p>
+        <p className="mt-m reveal"><A href={l("/green-esg")} className="blink">Next: ESG &amp; Sustainability Goals</A></p>
       </div></section>
     </T>
   )

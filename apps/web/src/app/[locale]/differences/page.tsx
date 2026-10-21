@@ -42,7 +42,7 @@ export default async function Page({ params }: Props) {
       </div></section>
       <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-mid1.webp")} alt="NTI leadership on the pressroom floor" /></section>
       <section className="section"><div className="wrap">
-        <div className="eyebrow reveal">Benefits to Clients</div>
+        <div className="eyebrow reveal">Client Benefits</div>
         <h2 className="sec-title reveal">A Smarter Global Packaging Partner</h2>
         <div className="sec-sub reveal">Why Global Brands Choose NTI</div>
         <p className="prose wide reveal mt-s">NTI helps global brands create premium, sustainable packaging and custom packaging boxes that protect products, strengthen brand value, and reduce environmental impact. Combining world-class printing with advanced digital technology and responsible manufacturing, we support domestic and international clients with complete packaging solutions, efficient supply chain coordination, and direct global delivery.</p>
@@ -51,7 +51,7 @@ export default async function Page({ params }: Props) {
       </div></section>
       <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-mid2.webp")} alt="NTI Printing headquarters in Tainan, Taiwan" /></section>
       <section className="section"><div className="wrap">
-        <div className="eyebrow reveal">Certifications, Partnerships &amp; Awards</div>
+        <div className="eyebrow reveal">Quality Certifications &amp; Sustainable Practices</div>
         <h2 className="sec-title reveal">Proving our promise through action</h2>
         <p className="prose reveal mt-s">NTI Printing holds FSC CoC certification, G7 Master Printer status, and ISO 9001/14001 certification, making it one of Taiwan&rsquo;s most certified eco-friendly printing manufacturers.</p>
         <p className="prose reveal">Green printing is more than a process &mdash; it is the way we do business. Every decision, from the materials we select to the equipment we invest in, is guided by our commitment to sustainability. Through energy-efficient production, low-emission inks, wastewater recycling, solvent recovery, solar energy, and ongoing carbon footprint reduction, NTI proves that exceptional printing and environmental responsibility can thrive together.</p>

@@ -38,7 +38,7 @@ const FlagZH = () => (
 )
 
 type SubItem = { key: string; href: string; label: React.ReactNode }
-/** 沒有 sub 的項目不出箭頭也不出下拉（Projects 2026-09-24 起隱藏子選單） */
+/** 沒有 sub 的項目不出箭頭也不出下拉 */
 type MenuItem = { key: string; href: string; label: string; sub?: SubItem[] }
 
 const MENU: MenuItem[] = [
@@ -48,11 +48,11 @@ const MENU: MenuItem[] = [
     label: 'About Us',
     sub: [
       { key: 'about-difference', href: '/about-difference', label: 'The NTI Difference' },
-      { key: 'about-benefits', href: '/about-benefits', label: 'Benefits to Clients' },
+      { key: 'about-benefits', href: '/about-benefits', label: 'Client Benefits' },
       {
         key: 'about-certifications',
         href: '/about-certifications',
-        label: <>Certifications, Partnerships &amp; Awards</>,
+        label: <>Quality Certifications &amp; Sustainable Practices</>,
       },
       { key: 'facility', href: '/facility', label: <>Facilities &amp; Equipment</> },
     ],
@@ -60,11 +60,11 @@ const MENU: MenuItem[] = [
   {
     key: 'printing-solutions',
     href: '/printing-solutions',
-    label: 'Solutions',
+    label: 'Custom Solutions',
     sub: [
       { key: 'colorbox', href: '/colorbox', label: 'Color Box Packaging' },
-      { key: 'cardboard', href: '/cardboard', label: 'Packaging Paperboard' },
-      { key: 'uv-printing', href: '/uv-printing', label: 'UV Printing' },
+      { key: 'cardboard', href: '/cardboard', label: 'Packaging Cards' },
+      { key: 'uv-printing', href: '/uv-printing', label: <>UV Printing &amp; Special Finishes</> },
       { key: 'other-printing', href: '/other-printing', label: 'Other Printing' },
     ],
   },
@@ -72,16 +72,20 @@ const MENU: MenuItem[] = [
     key: 'printing-projects',
     href: '/printing-projects',
     label: 'Projects',
+    sub: [
+      { key: 'printing-projects#industries', href: '/printing-projects#industries', label: <>Industries &amp; Solutions</> },
+      { key: 'printing-projects#cases', href: '/printing-projects#cases', label: 'Case Studies' },
+    ],
   },
   {
     key: 'green-advantage',
     href: '/green-advantage',
     label: 'Sustainability',
     sub: [
-      { key: 'green-our-advantage', href: '/green-our-advantage', label: 'Our Green Advantages' },
+      { key: 'green-our-advantage', href: '/green-our-advantage', label: 'Green Advantages' },
       { key: 'green-carbon', href: '/green-carbon', label: 'Carbon Efficiency' },
       { key: 'green-materials', href: '/green-materials', label: 'ECO Materials' },
-      { key: 'green-esg', href: '/green-esg', label: <>ESG &amp; Future Goals</> },
+      { key: 'green-esg', href: '/green-esg', label: <>ESG &amp; Sustainability Goals</> },
     ],
   },
   {
@@ -89,10 +93,8 @@ const MENU: MenuItem[] = [
     href: '/insights',
     label: 'Insights',
     sub: [
+      // 2026-10-21 客戶調整：知識中心子選單只留最新消息（Vlog／FAQ／趨勢頁仍在，只是不進選單）
       { key: 'news', href: '/news', label: 'Latest News' },
-      { key: 'blog', href: '/blog', label: 'Green Vlog' },
-      { key: 'faq', href: '/faq', label: 'FAQ' },
-      { key: 'printing-trends', href: '/printing-trends', label: 'Industry Trends' },
     ],
   },
 ]

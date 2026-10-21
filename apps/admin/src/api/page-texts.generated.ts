@@ -39,73 +39,87 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "What We Do",
-        "zh": "我們做什麼",
+        "en": "Our Process",
+        "zh": "服務流程",
         "kind": "text",
-        "section": "What We Do",
+        "section": "Our Process",
         "count": 1
       },
       {
         "en": "Step",
         "zh": "步驟",
         "kind": "text",
-        "section": "What We Do",
-        "count": 4
+        "section": "Our Process",
+        "count": 5
       },
       {
-        "en": "Structural Design",
-        "zh": "結構設計",
+        "en": "Requirements Review",
+        "zh": "需求確認",
         "kind": "text",
-        "section": "What We Do",
+        "section": "Our Process",
         "count": 1
       },
       {
-        "en": "Optimized packaging that reduces material use and waste.",
-        "zh": "最佳化的包裝設計，減少材料使用與廢棄。",
+        "en": "Clarify the product, sales channels, quantities, packing method, lead time and destination market.",
+        "zh": "釐清產品、通路、數量、裝盒方式、交期與目的市場。",
         "kind": "text",
-        "section": "What We Do",
+        "section": "Our Process",
         "count": 1
       },
       {
-        "en": "Pre-Press (CTP)",
-        "zh": "製版（CTP）",
+        "en": "Materials & Structure",
+        "zh": "材料與結構",
         "kind": "text",
-        "section": "What We Do",
+        "section": "Our Process",
         "count": 1
       },
       {
-        "en": "Digital plate-making improves quality while reducing pollution.",
-        "zh": "數位製版提升品質，同時降低污染。",
+        "en": "Evaluate paper stock, box style and finishing options; structural samples are arranged as the project requires.",
+        "zh": "評估紙材、盒型及加工搭配；視專案安排結構樣品。",
         "kind": "text",
-        "section": "What We Do",
+        "section": "Our Process",
         "count": 1
       },
       {
-        "en": "Printing",
-        "zh": "印刷",
+        "en": "Pre-Press & Proofing",
+        "zh": "印前與打樣",
         "kind": "text",
-        "section": "What We Do",
+        "section": "Our Process",
         "count": 1
       },
       {
-        "en": "Energy-efficient production with lower waste and emissions.",
-        "zh": "節能生產，更少的廢棄與排放。",
+        "en": "Confirm dielines, artwork, color and copy; samples are signed off through the agreed approval method.",
+        "zh": "確認刀模、圖稿、色彩及文字；依核准方式確認樣品。",
         "kind": "text",
-        "section": "What We Do",
+        "section": "Our Process",
         "count": 1
       },
       {
-        "en": "Finishing",
-        "zh": "加工",
+        "en": "Printing & Finishing",
+        "zh": "印刷與加工",
         "kind": "text",
-        "section": "What We Do",
+        "section": "Our Process",
         "count": 1
       },
       {
-        "en": "Foil stamping, embossing and specialty coatings.",
-        "zh": "燙金、壓凸與特殊塗層。",
+        "en": "Printing, coating, die-cutting, gluing and other applicable processes, run to the confirmed specifications.",
+        "zh": "依確認規格安排印刷、上光、模切、糊盒等適用製程。",
         "kind": "text",
-        "section": "What We Do",
+        "section": "Our Process",
+        "count": 1
+      },
+      {
+        "en": "Quality & Delivery",
+        "zh": "品質與交付",
+        "kind": "text",
+        "section": "Our Process",
+        "count": 1
+      },
+      {
+        "en": "Finished goods are checked against the project inspection standards, with packing and delivery coordinated.",
+        "zh": "依專案檢驗規範確認成品，協調包裝及交貨安排。",
+        "kind": "text",
+        "section": "Our Process",
         "count": 1
       },
       {
@@ -346,7 +360,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "The NTI Difference",
-        "zh": "NTI 的與眾不同",
+        "zh": "南台彩藝的差異",
         "kind": "text",
         "section": "The NTI Difference",
         "count": 1
@@ -394,10 +408,10 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Benefits to Clients",
-        "zh": "客戶得到的效益",
+        "en": "Client Benefits",
+        "zh": "客戶效益",
         "kind": "text",
-        "section": "Benefits to Clients",
+        "section": "Client Benefits",
         "count": 1
       },
       {
@@ -478,10 +492,10 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Certifications, Partnerships & Awards",
-        "zh": "認證、夥伴與獲獎",
+        "en": "Quality Certifications & Sustainable Practices",
+        "zh": "品質認證與永續實踐",
         "kind": "text",
-        "section": "Certifications, Partnerships & Awards",
+        "section": "Quality Certifications & Sustainable Practices",
         "count": 1
       },
       {
@@ -603,7 +617,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "The NTI Difference",
-        "zh": "NTI 的與眾不同",
+        "zh": "南台彩藝的差異",
         "kind": "text",
         "section": "頁首",
         "count": 2
@@ -624,14 +638,14 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Benefits to Clients",
-        "zh": "客戶得到的效益",
+        "zh": "客戶效益",
         "kind": "text",
         "section": "The NTI Difference — Where Sustainability Meets Uncompromising Quality",
         "count": 1
       },
       {
         "en": "Certifications, Partnerships & Awards",
-        "zh": "認證、夥伴與獲獎",
+        "zh": "品質認證與永續實踐",
         "kind": "text",
         "section": "The NTI Difference — Where Sustainability Meets Uncompromising Quality",
         "count": 1
@@ -894,11 +908,11 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Benefits to Clients",
-        "zh": "客戶得到的效益",
+        "en": "Client Benefits",
+        "zh": "客戶效益",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 1
       },
       {
         "en": "A Smarter Global Packaging Partner",
@@ -916,14 +930,21 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "The NTI Difference",
-        "zh": "NTI 的與眾不同",
+        "zh": "南台彩藝的差異",
+        "kind": "text",
+        "section": "A Smarter Global Packaging Partner",
+        "count": 1
+      },
+      {
+        "en": "Benefits to Clients",
+        "zh": "客戶效益",
         "kind": "text",
         "section": "A Smarter Global Packaging Partner",
         "count": 1
       },
       {
         "en": "Certifications, Partnerships & Awards",
-        "zh": "認證、夥伴與獲獎",
+        "zh": "品質認證與永續實踐",
         "kind": "text",
         "section": "A Smarter Global Packaging Partner",
         "count": 1
@@ -1069,8 +1090,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Next: Certifications, Partnerships & Awards",
-        "zh": "下一頁：認證、夥伴與獲獎",
+        "en": "Next: Quality Certifications & Sustainable Practices",
+        "zh": "下一頁：品質認證與永續實踐",
         "kind": "text",
         "section": "Already audited by the buyers you sell to",
         "count": 1
@@ -1124,21 +1145,21 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "The NTI Difference",
-        "zh": "NTI 的與眾不同",
+        "zh": "南台彩藝的差異",
         "kind": "text",
         "section": "Our Certifications — Proof of Quality & Sustainability",
         "count": 1
       },
       {
         "en": "Benefits to Clients",
-        "zh": "客戶得到的效益",
+        "zh": "客戶效益",
         "kind": "text",
         "section": "Our Certifications — Proof of Quality & Sustainability",
         "count": 1
       },
       {
         "en": "Certifications, Partnerships & Awards",
-        "zh": "認證、夥伴與獲獎",
+        "zh": "品質認證與永續實踐",
         "kind": "text",
         "section": "Our Certifications — Proof of Quality & Sustainability",
         "count": 1
@@ -2971,8 +2992,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Solutions",
-        "zh": "解決方案",
+        "en": "Custom Solutions",
+        "zh": "客製化解決方案",
         "kind": "text",
         "section": "頁首",
         "count": 1
@@ -3056,7 +3077,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Packaging Paperboard",
-        "zh": "包裝紙板",
+        "zh": "包裝紙卡",
         "kind": "text",
         "section": "Custom Packaging & Printing Solutions",
         "count": 1
@@ -3536,94 +3557,94 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Industries / Applications",
-        "zh": "產業與應用",
+        "en": "Industries & Solutions",
+        "zh": "產業與解決方案",
         "kind": "text",
-        "section": "Industries / Applications",
+        "section": "Industries & Solutions",
         "count": 1
       },
       {
         "en": "Food & Beverage",
         "zh": "食品與飲料",
         "kind": "text",
-        "section": "Industries / Applications",
+        "section": "Industries & Solutions",
         "count": 1
       },
       {
         "en": "Electronics",
         "zh": "電子",
         "kind": "text",
-        "section": "Industries / Applications",
+        "section": "Industries & Solutions",
         "count": 1
       },
       {
         "en": "Beauty & Skincare",
         "zh": "美妝與保養",
         "kind": "text",
-        "section": "Industries / Applications",
+        "section": "Industries & Solutions",
         "count": 1
       },
       {
         "en": "Medical & Healthcare",
         "zh": "醫療與保健",
         "kind": "text",
-        "section": "Industries / Applications",
+        "section": "Industries & Solutions",
         "count": 1
       },
       {
         "en": "Luxury & Gift Packaging",
         "zh": "精品與禮盒包裝",
         "kind": "text",
-        "section": "Industries / Applications",
+        "section": "Industries & Solutions",
         "count": 1
       },
       {
         "en": "Hardware & Hand Tools",
         "zh": "五金與手工具",
         "kind": "text",
-        "section": "Industries / Applications",
+        "section": "Industries & Solutions",
         "count": 1
       },
       {
         "en": "Publishing & Stationery",
         "zh": "出版與文具",
         "kind": "text",
-        "section": "Industries / Applications",
+        "section": "Industries & Solutions",
         "count": 1
       },
       {
         "en": "Automotive",
         "zh": "汽車",
         "kind": "text",
-        "section": "Industries / Applications",
+        "section": "Industries & Solutions",
         "count": 1
       },
       {
         "en": "Industrial & Consumer Goods",
         "zh": "工業與消費性產品",
         "kind": "text",
-        "section": "Industries / Applications",
+        "section": "Industries & Solutions",
         "count": 1
       },
       {
         "en": "Home & Lifestyle",
         "zh": "居家與生活",
         "kind": "text",
-        "section": "Industries / Applications",
+        "section": "Industries & Solutions",
         "count": 1
       },
       {
-        "en": "Case Studies & Photos",
-        "zh": "案例與實拍",
+        "en": "Case Studies",
+        "zh": "案例分享",
         "kind": "text",
-        "section": "Case Studies & Photos",
+        "section": "Case Studies",
         "count": 1
       },
       {
         "en": "Explore how global brands trust NTI to print greener — without compromise.",
         "zh": "看看國際品牌如何信賴 NTI 印得更綠 —— 而且不必妥協。",
         "kind": "text",
-        "section": "Case Studies & Photos",
+        "section": "Case Studies",
         "count": 1
       }
     ]
@@ -3647,7 +3668,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Sustainability",
-        "zh": "永續",
+        "zh": "綠色永續",
         "kind": "text",
         "section": "頁首",
         "count": 1
@@ -3660,8 +3681,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Our Green Advantage",
-        "zh": "我們的綠色優勢",
+        "en": "Green Advantages",
+        "zh": "綠色優勢",
         "kind": "text",
         "section": "Eco-Friendly Printing in Taiwan",
         "count": 1
@@ -3737,8 +3758,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "ESG & Future Goals / ESG Printing Commitment",
-        "zh": "ESG 與未來目標／ESG 印刷承諾",
+        "en": "ESG & Sustainability Goals / ESG Printing Commitment",
+        "zh": "ESG 與永續目標／ESG 印刷承諾",
         "kind": "text",
         "section": "Eco-Friendly Printing in Taiwan",
         "count": 1
@@ -3820,44 +3841,51 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Sustainability",
-        "zh": "永續",
+        "zh": "綠色永續",
         "kind": "text",
         "section": "頁首",
         "count": 1
       },
       {
-        "en": "Our Green Advantages",
-        "zh": "我們的綠色優勢",
+        "en": "Green Advantages",
+        "zh": "綠色優勢",
         "kind": "text",
         "section": "頁首",
-        "count": 3
+        "count": 2
       },
       {
         "en": "Sustainability built into every stage of the business",
         "zh": "把永續做進事業的每一個環節",
         "kind": "text",
-        "section": "Our Green Advantages",
+        "section": "Green Advantages",
+        "count": 1
+      },
+      {
+        "en": "Our Green Advantages",
+        "zh": "綠色優勢",
+        "kind": "text",
+        "section": "Green Advantages",
         "count": 1
       },
       {
         "en": "Carbon Efficiency",
         "zh": "碳效率",
         "kind": "text",
-        "section": "Our Green Advantages",
+        "section": "Green Advantages",
         "count": 1
       },
       {
         "en": "ECO Materials",
         "zh": "環保材料",
         "kind": "text",
-        "section": "Our Green Advantages",
+        "section": "Green Advantages",
         "count": 1
       },
       {
         "en": "ESG & Future Goals",
-        "zh": "ESG 與未來目標",
+        "zh": "ESG 與永續目標",
         "kind": "text",
-        "section": "Our Green Advantages",
+        "section": "Green Advantages",
         "count": 1
       },
       {
@@ -3972,7 +4000,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Sustainability",
-        "zh": "永續",
+        "zh": "綠色永續",
         "kind": "text",
         "section": "頁首",
         "count": 1
@@ -3993,7 +4021,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Our Green Advantages",
-        "zh": "我們的綠色優勢",
+        "zh": "綠色優勢",
         "kind": "text",
         "section": "Carbon Efficiency",
         "count": 1
@@ -4007,7 +4035,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "ESG & Future Goals",
-        "zh": "ESG 與未來目標",
+        "zh": "ESG 與永續目標",
         "kind": "text",
         "section": "Carbon Efficiency",
         "count": 1
@@ -4152,7 +4180,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Sustainability",
-        "zh": "永續",
+        "zh": "綠色永續",
         "kind": "text",
         "section": "頁首",
         "count": 1
@@ -4173,7 +4201,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Our Green Advantages",
-        "zh": "我們的綠色優勢",
+        "zh": "綠色優勢",
         "kind": "text",
         "section": "ECO Materials",
         "count": 1
@@ -4187,7 +4215,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "ESG & Future Goals",
-        "zh": "ESG 與未來目標",
+        "zh": "ESG 與永續目標",
         "kind": "text",
         "section": "ECO Materials",
         "count": 1
@@ -4361,8 +4389,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Next: ESG & Future Goals",
-        "zh": "下一頁：ESG 與未來目標",
+        "en": "Next: ESG & Sustainability Goals",
+        "zh": "下一頁：ESG 與永續目標",
         "kind": "text",
         "section": "Mono-material by default",
         "count": 1
@@ -4388,58 +4416,65 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Sustainability",
-        "zh": "永續",
+        "zh": "綠色永續",
         "kind": "text",
         "section": "頁首",
         "count": 1
       },
       {
-        "en": "ESG & Future Goals",
-        "zh": "ESG 與未來目標",
+        "en": "ESG & Sustainability Goals",
+        "zh": "ESG 與永續目標",
         "kind": "text",
         "section": "頁首",
-        "count": 4
+        "count": 3
       },
       {
         "en": "Environmental, social and governance commitments — and what comes next",
         "zh": "環境、社會與公司治理的承諾 —— 以及接下來要做的事",
         "kind": "text",
-        "section": "ESG & Future Goals",
+        "section": "ESG & Sustainability Goals",
         "count": 1
       },
       {
         "en": "Our Green Advantages",
-        "zh": "我們的綠色優勢",
+        "zh": "綠色優勢",
         "kind": "text",
-        "section": "ESG & Future Goals",
+        "section": "ESG & Sustainability Goals",
         "count": 1
       },
       {
         "en": "Carbon Efficiency",
         "zh": "碳效率",
         "kind": "text",
-        "section": "ESG & Future Goals",
+        "section": "ESG & Sustainability Goals",
         "count": 1
       },
       {
         "en": "ECO Materials",
         "zh": "環保材料",
         "kind": "text",
-        "section": "ESG & Future Goals",
+        "section": "ESG & Sustainability Goals",
+        "count": 1
+      },
+      {
+        "en": "ESG & Future Goals",
+        "zh": "ESG 與永續目標",
+        "kind": "text",
+        "section": "ESG & Sustainability Goals",
         "count": 1
       },
       {
         "en": "At NTI Printing, ESG begins with people. We believe a safe, clean, modern, and comfortable workplace is fundamental to building a sustainable business. Our fully air-conditioned offices and production facility, together with staff amenities including a restaurant, library, dormitories, and shared spaces, reflect our commitment to the wellbeing of both our local and international employees.",
         "zh": "在 NTI Printing，ESG 從人開始。我們相信安全、整潔、現代而舒適的工作場所，是建立永續事業的基礎。全廠空調的辦公室與生產設施，加上員工餐廳、圖書室、宿舍與共用空間等設施，體現我們對本地與外籍同仁福祉的重視。",
         "kind": "text",
-        "section": "ESG & Future Goals",
+        "section": "ESG & Sustainability Goals",
         "count": 1
       },
       {
         "en": "As a sustainable packaging manufacturer committed to responsible printing, NTI Printing is aligning its ESG packaging roadmap with the UN Sustainable Development Goals (SDGs) and evaluating Science-Based Targets (SBTi) status.",
         "zh": "作為投入負責任印刷的永續包裝製造商，NTI Printing 正將 ESG 包裝路線圖對齊聯合國永續發展目標（SDGs），並評估科學基礎減量目標（SBTi）的申請狀態。",
         "kind": "text",
-        "section": "ESG & Future Goals",
+        "section": "ESG & Sustainability Goals",
         "count": 1
       },
       {
@@ -4653,8 +4688,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Next: Our Green Advantage",
-        "zh": "下一頁：我們的綠色優勢",
+        "en": "Next: Green Advantages",
+        "zh": "下一頁：綠色優勢",
         "kind": "text",
         "section": "Contribution to the Community",
         "count": 1
@@ -4680,7 +4715,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Insights",
-        "zh": "洞察",
+        "zh": "知識中心",
         "kind": "text",
         "section": "頁首",
         "count": 2
@@ -4776,7 +4811,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Insights",
-        "zh": "洞察",
+        "zh": "知識中心",
         "kind": "text",
         "section": "頁首",
         "count": 1
@@ -4823,7 +4858,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Insights",
-        "zh": "洞察",
+        "zh": "知識中心",
         "kind": "text",
         "section": "頁首",
         "count": 1
@@ -4863,7 +4898,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Insights",
-        "zh": "洞察",
+        "zh": "知識中心",
         "kind": "text",
         "section": "頁首",
         "count": 1
@@ -4931,7 +4966,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Insights",
-        "zh": "洞察",
+        "zh": "知識中心",
         "kind": "text",
         "section": "頁首",
         "count": 1
@@ -5427,7 +5462,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       },
       {
         "en": "Packaging Paperboard",
-        "zh": "包裝紙板",
+        "zh": "包裝紙卡",
         "kind": "text",
         "section": "Get a Quote",
         "count": 1

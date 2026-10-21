@@ -25,8 +25,8 @@ export default async function Page({ params }: Props) {
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
-        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/printing-solutions")}>Solutions</A><span>&rsaquo;</span><b>Packaging Paperboard</b></div>
-        <h1 className="sec-title reveal">{solution?.h1 || "Packaging Paperboard"}</h1>
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/printing-solutions")}>Custom Solutions</A><span>&rsaquo;</span><b>Packaging Cards</b></div>
+        <h1 className="sec-title reveal">{solution?.h1 || "Packaging Cards"}</h1>
         <div className="sec-sub reveal">Paper hang tags &amp; backcards for blister packages.</div>
         {solution?.introHtml ? <SolutionIntro html={solution.introHtml} /> : (<>
         <p className="prose wide reveal mt-s">NTI Printing produces custom cardboard packaging and printed cardboard boxes for retail, industrial, and consumer applications, including:</p>

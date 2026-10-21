@@ -25,7 +25,7 @@ export default async function Page({ params }: Props) {
   return (
     <T locale={locale}>
       <section className="section"><div className="wrap">
-        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/printing-solutions")}>Solutions</A><span>&rsaquo;</span><b>Other Printing</b></div>
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/printing-solutions")}>Custom Solutions</A><span>&rsaquo;</span><b>Other Printing</b></div>
         <h1 className="sec-title reveal">{solution?.h1 || "Other Printing Services"}</h1>
         <div className="sec-sub reveal">Special Printing &amp; finishing</div>
         {solution?.introHtml ? <SolutionIntro html={solution.introHtml} /> : (<>

@@ -24,8 +24,8 @@ export default async function Page({ params }: Props) {
     <T locale={locale} overrides={page?.texts}>
       <section className="fac-banner"><img src={bannerSrc(page, "/assets/ref-green-mid2.webp")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" /></section>
       <section className="section subhead"><div className="wrap">
-        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/green-advantage")}>Sustainability</A><span>&rsaquo;</span><b>Our Green Advantages</b></div>
-        <h1 className="sec-title reveal">Our Green Advantages</h1>
+        <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/green-advantage")}>Sustainability</A><span>&rsaquo;</span><b>Green Advantages</b></div>
+        <h1 className="sec-title reveal">Green Advantages</h1>
         <div className="sec-sub reveal">Sustainability built into every stage of the business</div>
         <nav className="pr-tabs reveal" aria-label="Section pages">
           <A href={l("/green-our-advantage")} className="active">Our Green Advantages</A>{' '}
