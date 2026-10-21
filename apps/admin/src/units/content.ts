@@ -235,7 +235,6 @@ export const certification: Unit = {
   note: '現有 logo 素材解析度偏低，上線前需向客戶索取向量原檔。',
   sortable: true,
   hasStatus: true,
-  countHint: { min: 12, max: 16, message: '首頁 Proof 牆建議 12–16 枚，目前數量超出建議範圍。' },
   fields: [
     { key: 'categoryId', label: '分組', type: 'select', required: true, categoryType: 'Certification', side: 'neutral',
       hint: '只影響首頁 Proof 牆：一個分組一張卡，卡片標題就是分組名稱。認證頁不分組' },

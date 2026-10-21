@@ -367,6 +367,9 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
     {
         PropertyNamingPolicy        = JsonNamingPolicy.CamelCase,
         PropertyNameCaseInsensitive = true,
+        // 後台的 <select>／<input type="number"> 給的是字串（"46"）。不放行的話，
+        // 只要改過分組或數字欄位，整筆儲存就 500（沒改過時送回的是讀進來的數字，所以平常看不出來）
+        NumberHandling              = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
     };
 
     private static async Task<(JsonObject Body, JsonObject? I18n)> ReadBodyAsync(HttpRequest req)
