@@ -552,12 +552,8 @@ export function JobList({ items }: { items: Job[] }) {
     <div className="faq-list wide reveal mt-s">
       {items.map((j, i) => (
         <details key={j.id} className="faq" open={i === 0}>
-          <summary>
-            <span>
-              {j.title}
-              {j.location ? ` — ${j.location}` : ''}
-            </span>
-          </summary>
+          {/* 地點不自動接在標題後：mockup 只有部分職缺標題帶地點，要顯示就寫進標題 */}
+          <summary><span>{j.title}</span></summary>
           <div dangerouslySetInnerHTML={{ __html: j.descriptionHtml }} />
         </details>
       ))}
