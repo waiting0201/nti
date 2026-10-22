@@ -93,8 +93,10 @@ const MENU: MenuItem[] = [
     href: '/insights',
     label: 'Insights',
     sub: [
-      // 2026-10-21 客戶調整：知識中心子選單只留最新消息（Vlog／FAQ／趨勢頁仍在，只是不進選單）
       { key: 'news', href: '/news', label: 'Latest News' },
+      { key: 'blog', href: '/blog', label: 'Green Vlog' },
+      { key: 'faq', href: '/faq', label: 'FAQ' },
+      { key: 'printing-trends', href: '/printing-trends', label: 'Industry Trends' },
     ],
   },
 ]
