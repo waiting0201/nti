@@ -210,6 +210,8 @@ export type Certification = {
   logoPath: string
   linkUrl: string | null
   showOnHome: boolean
+  /** 列在認證頁「管理系統與環境認證」清單（2026-10-22 起） */
+  showInDetailList: boolean
   name: string
   /** 首頁 Proof 牆用的簡稱（2026-10-21 起）；空的用 name */
   shortName: string | null
@@ -219,6 +221,14 @@ export type Certification = {
   certificateNo: string | null
   certifiedDate: string | null
   lastAuditDate: string | null
+}
+
+/** 認證頁的文字清單（單元 08 附屬清單）：色彩標準／GMI 通路／獎項 */
+export type CertificationListItem = {
+  id: number
+  section: 'standards' | 'gmi' | 'award'
+  title: string
+  description: string | null
 }
 
 export type ClientLogo = { id: number; name: string; logoPath: string; linkUrl: string | null }
@@ -293,6 +303,8 @@ export const getVlogs          = (l: Locale) => fetchApi<Vlog[]>(`/green-vlog${q
 export const getFaqs           = (l: Locale) => fetchApi<Faq[]>(`/faq${q(l)}`)
 export const getTrends         = (l: Locale) => fetchApi<Trend[]>(`/industry-trends${q(l)}`)
 export const getCertifications = (l: Locale) => fetchApi<Certification[]>(`/certifications${q(l)}`)
+export const getCertificationItems = (l: Locale) =>
+  fetchApi<CertificationListItem[]>(`/certification-items${q(l)}`)
 export const getClients        = (l: Locale) => fetchApi<ClientLogo[]>('/clients')
 export const getJobs           = (l: Locale) => fetchApi<Job[]>(`/careers${q(l)}`)
 

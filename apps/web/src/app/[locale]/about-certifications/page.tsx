@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
-import { CertificationWall } from '@/components/cms'
+import { CertificationWall, DetailList } from '@/components/cms'
 import { JsonLd } from '@/components/JsonLd'
 import { organizationCredentials } from '@/lib/jsonld'
-import { bannerSrc, getCertifications, getPage } from '@/lib/api'
+import { bannerSrc, getCertificationItems, getCertifications, getPage, type CertificationListItem } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -23,6 +23,14 @@ export default async function Page({ params }: Props) {
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
   const page = await getPage(locale, 'about-certifications')
   const certs = await getCertifications(locale)
+  // 下方四個清單（單元 08 與其附屬清單）。沒接 API 是 null → 照 mockup 原文；
+  // 有接 API 但某區塊 0 筆 → 那一塊不輸出（客戶刪光獎項＝不要這塊）
+  const listItems = await getCertificationItems(locale)
+  const section = (key: CertificationListItem['section']) => listItems?.filter((it) => it.section === key) ?? null
+  const standards = section('standards')
+  const gmiChannels = section('gmi')
+  const awards = section('award')
+  const management = certs && certs.filter((c) => c.showInDetailList).map((c) => ({ id: c.id, title: c.name, description: c.description }))
   const l = withLocale(locale)
   // 沒有任何認證填了證號／日期就是 null，不輸出（沒接 API 時版面驗收閘比對的節點序列不受影響）
   const credentials = certs?.length ? organizationCredentials(certs) : null
@@ -58,25 +66,41 @@ export default async function Page({ params }: Props) {
         <img src={mediaUrl("/assets/cert-esg.png")} alt="ESG Environmental, Social, Governance" />
       </div>
         )}</section>
+      {standards?.length !== 0 && (
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Printing &amp; Colour Standards</div>
+        {standards ? <DetailList items={standards} /> : (
         <div className="flist mt-s"><p className="fi"><b>G7 Master Colorspace</b>Developed by Idealliance, a globally recognized colour calibration methodology based on ISO&nbsp;12647-2, ensuring consistent, accurate colour reproduction across every print run.</p><p className="fi"><b>ISO&nbsp;12647-2</b>The standard litho production procedure our colour management runs to, with spot colours matched to swatch under controlled viewing conditions.</p></div>
+        )}
       </div></section>
+      )}
       <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-mid1.webp")} alt="NTI leadership on the pressroom floor" /></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">GMI Professional Printing Certification</div>
         <p className="prose wide">NTI is GMI certified, ensuring consistent, colour-accurate packaging that meets the quality standards of leading global retailers, including Target, Walgreens, Lowe&rsquo;s, The Home Depot, Academy Sports&nbsp;+&nbsp;Outdoors, and CVS Pharmacy.</p>
         <p className="prose wide mt-s">GMI (Graphic Measures International) is the body appointed by Target to verify packaging suppliers and inspect packaging samples. NTI has passed GMI certification for the following retail channels:</p>
+        {gmiChannels ? (
+          gmiChannels.length > 0 && <DetailList items={gmiChannels} />
+        ) : (
         <div className="flist mt-s"><p className="fi"><b>Target</b>The retailer that commissioned the GMI audit programme.</p><p className="fi"><b>Walgreens</b>Approved packaging supplier.</p><p className="fi"><b>Lowe&rsquo;s</b>Approved packaging supplier.</p><p className="fi"><b>The Home Depot (THD)</b>Approved packaging supplier.</p><p className="fi"><b>Academy Sports + Outdoors</b>Approved packaging supplier.</p><p className="fi"><b>CVS pharmacy</b>Approved packaging supplier.</p></div>
+        )}
       </div></section>
+      {management?.length !== 0 && (
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Management System &amp; Environmental Certification</div>
+        {management ? <DetailList items={management} /> : (
         <div className="flist mt-s"><p className="fi"><b>FSC&trade;-CoC Chain of Custody</b>Guarantees that certified paper materials are sourced from responsibly managed forests and verified throughout the supply chain.</p><p className="fi"><b>ISO&nbsp;14001 &mdash; Environmental Management</b>Demonstrates NTI&rsquo;s commitment to reducing environmental impact through responsible management across every stage of production and the product lifecycle.</p><p className="fi"><b>ISO&nbsp;9001 &mdash; Quality Management System</b>Demonstrates NTI&rsquo;s commitment to consistent quality, continuous improvement, and customer satisfaction.</p><p className="fi"><b>OHSAS&nbsp;18001 &mdash; Occupational Health &amp; Safety Management</b>Certifies NTI&rsquo;s commitment to maintaining a safe, healthy workplace through effective occupational health and safety management.</p><p className="fi"><b>MOF Certified</b>NTI uses MOF-certified eco-friendly printing materials and inks, helping clients reduce environmental impact while meeting recognized sustainability and quality standards.</p></div>
+        )}
       </div></section>
+      )}
+      {awards?.length !== 0 && (
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Awards</div>
+        {awards ? <DetailList items={awards} /> : (
         <div className="flist mt-s"><p className="fi"><b>Outstanding Business Award</b>The 13th National Brand Yushan Award for Outstanding Business Award.</p><p className="fi"><b>Smart Building Award</b>Gold Award in the &lsquo;Smart Buildings&rsquo; category at the 7th APEC ESCI (Energy Smart Communities Initiative) Best Practices Awards Program.</p></div>
+        )}
       </div></section>
+      )}
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>
         <p className="mt-m"><A href={l("/get-a-quote")} className="btn btn-solid">Get a Quote</A></p>

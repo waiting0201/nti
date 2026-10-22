@@ -51,6 +51,15 @@ public sealed class CertificationHandler(ICertificationReadService reads)
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
+
+    /// <summary>認證頁的文字清單（色彩標準／GMI 通路／獎項），前台依 section 分組。</summary>
+    public async Task<IActionResult> GetListItemsAsync(HttpRequest req)
+    {
+        var rows = await reads.GetListItemsAsync(LangResolver.Resolve(req));
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok(rows));
+    }
 }
 
 /// <summary>單元 09 client。</summary>

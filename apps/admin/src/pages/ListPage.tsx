@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import * as api from '@/api/client'
 import type { Row } from '@/api/types'
 import { UNIT_BY_CODE } from '@/units'
-import { publishState, type Locale, type Unit } from '@/lib/types'
+import { perm, publishState, type Locale, type Unit } from '@/lib/types'
 import { useAuth } from '@/lib/auth'
 import { Badge, Modal, Notice, Pager, toast } from '@/components/ui'
 import { categoryName, useCategories } from '@/components/fields'
@@ -83,15 +83,15 @@ export function ListPage() {
   // 中/英徽章欄在哪些單元有，篩選就在哪些單元出現（宣告在 units/*.ts 的 columns）
   const hasI18nColumn = unit.columns.some((c) => c.render === 'i18n')
 
-  const canEdit = can(`${unit.code}.edit`)
+  const canEdit = can(perm(unit, 'edit'))
   // 兩個單元有 CSV：報價（quote.export）與 301 轉址（redirect.export）。
   // 301 另外可以「匯入」——舊站 229 條要一次帶進來，逐筆新增不切實際。
   const canExport =
     (unit.code === 'quote' && can('quote.export')) ||
     (unit.code === 'redirect' && can('redirect.export'))
   const canImport = unit.code === 'redirect' && can('redirect.export') && can('redirect.edit')
-  const canPublish = can(`${unit.code}.publish`)
-  const canDelete = can(`${unit.code}.delete`)
+  const canPublish = can(perm(unit, 'publish'))
+  const canDelete = can(perm(unit, 'delete'))
 
   async function exportCsv() {
     setExporting(true)

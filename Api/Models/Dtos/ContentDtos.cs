@@ -166,6 +166,7 @@ public sealed class CertificationDto
     public string  LogoPath     { get; set; } = null!;
     public string? LinkUrl      { get; set; }
     public bool    ShowOnHome   { get; set; }
+    public bool    ShowInDetailList { get; set; }
     public int     SortOrder    { get; set; }
     public string  Name         { get; set; } = null!;
     public string? ShortName    { get; set; }
@@ -174,6 +175,16 @@ public sealed class CertificationDto
     public string? CertificateNo { get; set; }
     public DateOnly? CertifiedDate { get; set; }
     public DateOnly? LastAuditDate { get; set; }
+}
+
+/// <summary>認證頁的文字清單項目（單元 08 附屬清單）。<see cref="Section"/>：standards／gmi／award。</summary>
+public sealed class CertificationListItemDto
+{
+    public int     Id          { get; set; }
+    public string  Section     { get; set; } = null!;
+    public int     SortOrder   { get; set; }
+    public string  Title       { get; set; } = null!;
+    public string? Description { get; set; }
 }
 
 /// <summary>客戶 logo（後台單元 09）。品牌名不翻譯，<see cref="Name"/> 同時作為 alt。</summary>

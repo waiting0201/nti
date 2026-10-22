@@ -53,6 +53,7 @@ public sealed partial class AppRouter(
     AdminFaqHandler              adminFaqs,
     AdminTrendHandler            adminTrends,
     AdminCertificationHandler    adminCertifications,
+    AdminCertificationItemHandler adminCertificationItems,
     AdminClientHandler           adminClients,
     AdminFacilityHandler         adminFacility,
     AdminJobHandler              adminJobs,

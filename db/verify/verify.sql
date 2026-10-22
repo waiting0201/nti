@@ -24,21 +24,22 @@ DECLARE @r TABLE (
 
 /* ---------- 結構 ---------- */
 INSERT @r (Item, Expected, Actual)
-SELECT N'資料表總數（46 設計 + Newsletter + SchemaVersion）', N'48',
+SELECT N'資料表總數（48 設計 + Newsletter + SchemaVersion）', N'50',
        CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables;
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'*I18n 多語子表數', N'17',
+SELECT N'*I18n 多語子表數', N'18',
        CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables WHERE name LIKE '%I18n';
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'外鍵數', N'34', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
+SELECT N'外鍵數', N'35', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
 
 /* 刪除改真刪之後（docs/10 §8.4），子表的外鍵必須是 CASCADE：17 張 *I18n
    ＋ NewsTag→News ＋ SolutionItem→Solution ＋ QuoteAttachment→QuoteRequest ＋ PageText→Page。
+   （2026-10-22 起 *I18n 為 18 張：多了 CertificationListItemI18n）
    少一條就代表某個單元一按刪除就撞 FK，而那只有實際去刪才會發現。 */
 INSERT @r (Item, Expected, Actual)
-SELECT N'ON DELETE CASCADE 的外鍵數', N'21', CAST(COUNT(*) AS NVARCHAR(20))
+SELECT N'ON DELETE CASCADE 的外鍵數', N'22', CAST(COUNT(*) AS NVARCHAR(20))
 FROM sys.foreign_keys WHERE delete_referential_action_desc = N'CASCADE';
 
 INSERT @r (Item, Expected, Actual)
@@ -62,7 +63,7 @@ SELECT N'匿名（系統命名）約束數', N'0', CAST(SUM(c) AS NVARCHAR(20)) 
 INSERT @r (Item, Expected, Actual)
 SELECT N'內容表缺稽核五欄的張數', N'0', CAST(COUNT(*) AS NVARCHAR(20))
 FROM (VALUES ('AdminUser'),('Category'),('HomeBanner'),('Solution'),('SolutionItem'),
-             ('Project'),('News'),('Vlog'),('Faq'),('IndustryTrend'),('Certification'),
+             ('Project'),('News'),('Vlog'),('Faq'),('IndustryTrend'),('Certification'),('CertificationListItem'),
              ('ClientLogo'),('FacilityItem'),('JobPosting'),('SupplierNotice'),
              ('SupplierSpec'),('SupplierDownload'),('Page'),('PageText'),('Redirect'),
              ('QuoteRequest'),('ContactMessage'),
@@ -110,7 +111,7 @@ INSERT @r (Item, Expected, Actual) SELECT N'PageI18n',       N'58', CAST(COUNT(*
 INSERT @r (Item, Expected, Actual) SELECT N'  └ HasRichBody=1（privacy-legal、green-csr）', N'2', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Page WHERE HasRichBody = 1;
 INSERT @r (Item, Expected, Actual) SELECT N'Solution（固定 4 筆）', N'4', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Solution;
 INSERT @r (Item, Expected, Actual) SELECT N'SolutionI18n',   N'8',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SolutionI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'SchemaVersion（已套用 migration 數）', N'15', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SchemaVersion;
+INSERT @r (Item, Expected, Actual) SELECT N'SchemaVersion（已套用 migration 數）', N'16', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SchemaVersion;
 
 /* 後台登入識別＝Username（2026-09-06，見 db/migrations/0005）：唯一鍵搬家了 */
 INSERT @r (Item, Expected, Actual)

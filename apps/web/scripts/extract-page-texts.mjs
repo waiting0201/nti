@@ -90,7 +90,10 @@ const CMS_BLOCKS = {
     between('<div class="cert-wall reveal"', '</section>'),          // Proof 認證牆（08）
     between('<div class="logo-track">', '</section>'),               // 客戶輪播（09）
   ],
-  'about-certifications': [/<section class="section certs reveal">[\s\S]*?<\/section>/],
+  'about-certifications': [
+    /<section class="section certs reveal">[\s\S]*?<\/section>/,  // 認證 logo 牆（08）
+    /<div class="flist mt-s">[\s\S]*?<\/div>/g,                    // 四個清單：08 的說明清單與附屬清單（大標與 GMI 導言仍可覆寫）
+  ],
   'facility-pre-press': [between('<div class="pr-grid">', '</div></section>')],
   'facility-eco-printing': [between('<div class="pr-grid">', '</div></section>')],
   'facility-post-press': [between('<div class="pr-grid">', '</div></section>')],

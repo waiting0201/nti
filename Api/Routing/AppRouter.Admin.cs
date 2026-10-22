@@ -126,6 +126,9 @@ public sealed partial class AppRouter
             _ when segments is ["admin", "vlog", ..]              => await Content(adminVlogs, req, method, segments),
             _ when segments is ["admin", "faq", ..]               => await Content(adminFaqs, req, method, segments),
             _ when segments is ["admin", "trend", ..]             => await Content(adminTrends, req, method, segments),
+            // 08 的附屬清單（色彩標準／GMI 通路／獎項）：權限碼沿用 certification.*，所以要排在主單元前面
+            _ when segments is ["admin", "certification", "item", ..] =>
+                await Content(adminCertificationItems, req, method, segments[1..]),
             _ when segments is ["admin", "certification", ..]     => await Content(adminCertifications, req, method, segments),
             _ when segments is ["admin", "facility", ..]          => await Content(adminFacility, req, method, segments),
             _ when segments is ["admin", "job", ..]               => await Content(adminJobs, req, method, segments),

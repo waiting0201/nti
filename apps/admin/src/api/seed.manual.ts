@@ -12,6 +12,50 @@ import type { Row } from './types'
 const bi = (zh: Record<string, string>, en: Record<string, string>) => ({ zh, en })
 
 export const MANUAL_SEED: Record<string, Row[]> = {
+  // 認證頁清單項目（08 附屬清單）：與 db/content/310_cert_detail_list.sql 同一份
+  'certification-item': [
+    {
+      id: '1', section: 'standards', sortOrder: 10, isPublished: true,
+      i18n: bi({ title: 'G7 Master Colorspace', description: '由Idealliance開發、以ISO 12647-2為基礎的全球公認色彩校正方法，確保每一次印刷都能呈現一致且精準的色彩重現。' }, { title: 'G7 Master Colorspace', description: 'Developed by Idealliance, a globally recognized colour calibration methodology based on ISO 12647-2, ensuring consistent, accurate colour reproduction across every print run.' }),
+    },
+    {
+      id: '2', section: 'standards', sortOrder: 20, isPublished: true,
+      i18n: bi({ title: 'ISO 12647-2', description: '我們色彩管理所遵循的標準平版印刷程序，特別色在受控觀察條件下與色票比對。' }, { title: 'ISO 12647-2', description: 'The standard litho production procedure our colour management runs to, with spot colours matched to swatch under controlled viewing conditions.' }),
+    },
+    {
+      id: '3', section: 'gmi', sortOrder: 10, isPublished: true,
+      i18n: bi({ title: 'Target', description: '委託建立 GMI 稽核制度的零售通路。' }, { title: 'Target', description: 'The retailer that commissioned the GMI audit programme.' }),
+    },
+    {
+      id: '4', section: 'gmi', sortOrder: 20, isPublished: true,
+      i18n: bi({ title: 'Walgreens', description: '認可的包裝供應商。' }, { title: 'Walgreens', description: 'Approved packaging supplier.' }),
+    },
+    {
+      id: '5', section: 'gmi', sortOrder: 30, isPublished: true,
+      i18n: bi({ title: 'Lowe’s', description: '認可的包裝供應商。' }, { title: 'Lowe’s', description: 'Approved packaging supplier.' }),
+    },
+    {
+      id: '6', section: 'gmi', sortOrder: 40, isPublished: true,
+      i18n: bi({ title: 'The Home Depot (THD)', description: '認可的包裝供應商。' }, { title: 'The Home Depot (THD)', description: 'Approved packaging supplier.' }),
+    },
+    {
+      id: '7', section: 'gmi', sortOrder: 50, isPublished: true,
+      i18n: bi({ title: 'Academy Sports + Outdoors', description: '認可的包裝供應商。' }, { title: 'Academy Sports + Outdoors', description: 'Approved packaging supplier.' }),
+    },
+    {
+      id: '8', section: 'gmi', sortOrder: 60, isPublished: true,
+      i18n: bi({ title: 'CVS pharmacy', description: '認可的包裝供應商。' }, { title: 'CVS pharmacy', description: 'Approved packaging supplier.' }),
+    },
+    {
+      id: '9', section: 'award', sortOrder: 10, isPublished: true,
+      i18n: bi({ title: '傑出企業獎', description: '第13屆國家品牌玉山獎傑出企業獎。' }, { title: 'Outstanding Business Award', description: 'The 13th National Brand Yushan Award for Outstanding Business Award.' }),
+    },
+    {
+      id: '10', section: 'award', sortOrder: 20, isPublished: true,
+      i18n: bi({ title: '智慧建築獎', description: '第7屆APEC ESCI（Energy Smart Communities Initiative）最佳實務獎「智慧建築」類別金獎。' }, { title: 'Smart Building Award', description: 'Gold Award in the ‘Smart Buildings’ category at the 7th APEC ESCI (Energy Smart Communities Initiative) Best Practices Awards Program.' }),
+    },
+  ],
+
   'supplier-download': [
     {
       id: '1', sortOrder: 10, isPublished: true,

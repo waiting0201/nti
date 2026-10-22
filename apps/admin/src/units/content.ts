@@ -231,7 +231,7 @@ export const certification: Unit = {
   title: '認證・夥伴・獎項',
   group: '內容',
   phase: 'P4',
-  frontend: '首頁 Proof 牆（依分組成卡）、品質認證與永續實踐頁的認證牆（不分組）',
+  frontend: '首頁 Proof 牆（依分組成卡）、品質認證與永續實踐頁的認證牆（不分組）與「管理系統與環境認證」清單',
   note: '現有 logo 素材解析度偏低，上線前需向客戶索取向量原檔。',
   sortable: true,
   hasStatus: true,
@@ -250,12 +250,49 @@ export const certification: Unit = {
     { key: 'certifiedDate', label: '取得日期', type: 'date', side: 'neutral' },
     { key: 'lastAuditDate', label: '最近稽核日期', type: 'date', side: 'neutral' },
     { key: 'showOnHome', label: '顯示於首頁 Proof 牆', type: 'switch', side: 'neutral', hint: '預設開' },
+    { key: 'showInDetailList', label: '列在認證頁說明清單', type: 'switch', side: 'neutral',
+      hint: '開啟後以「名稱＋說明」列在認證頁「管理系統與環境認證」區塊，順序同本清單；全部關掉整個區塊就不顯示' },
   ],
   columns: [
     { key: 'logo', label: 'Logo', render: 'thumb', width: '110px' },
     { key: 'name', label: '名稱' },
     { key: 'categoryId', label: '分組', render: 'category', width: '130px' },
     { key: 'showOnHome', label: '首頁', render: 'bool', width: '70px' },
+    { key: 'showInDetailList', label: '說明清單', render: 'bool', width: '90px' },
+    ...statusColumns,
+  ],
+}
+
+/** 認證頁清單的三個區塊（CertificationListItem.Section） */
+const CERT_LIST_SECTIONS = [
+  { value: 'standards', label: '印刷與色彩標準' },
+  { value: 'gmi', label: 'GMI 通路' },
+  { value: 'award', label: '獲獎紀錄' },
+]
+
+/**
+ * 08 的附屬清單：認證頁上「不是認證」的項目——色彩標準、GMI 通過的零售通路、獎項。
+ * 沒有 logo、不上 logo 牆與首頁 Proof 牆，所以不放進認證單元。權限沿用 certification.*。
+ */
+export const certificationItem: Unit = {
+  code: 'certification-item',
+  permUnit: 'certification',
+  no: '08b',
+  title: '認證頁清單項目',
+  group: '內容',
+  phase: 'P4',
+  frontend: '品質認證與永續實踐頁：印刷與色彩標準、GMI 通路、獲獎紀錄三個清單',
+  note: '同一區塊依排序顯示；某區塊沒有任何上架項目時，整個區塊（GMI 則是通路清單）不顯示。區塊大標與 GMI 導言請到「頁面文字」修改。',
+  sortable: true,
+  hasStatus: true,
+  fields: [
+    { key: 'section', label: '區塊', type: 'select', required: true, options: CERT_LIST_SECTIONS, side: 'neutral' },
+    { key: 'title', label: '標題', type: 'text', i18n: true, required: true, max: 200, side: 'locale', placeholder: 'Smart Building Award' },
+    { key: 'description', label: '說明', type: 'textarea', i18n: true, max: 400, side: 'locale' },
+  ],
+  columns: [
+    { key: 'title', label: '標題' },
+    { key: 'section', label: '區塊', width: '130px' },
     ...statusColumns,
   ],
 }

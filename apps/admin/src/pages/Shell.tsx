@@ -3,7 +3,7 @@ import { UNITS, UNIT_BY_CODE } from '@/units'
 import { useAuth, ROLE_LABEL } from '@/lib/auth'
 import { ToastHost } from '@/components/ui'
 import { hasApi } from '@/api/http'
-import type { UnitGroup } from '@/lib/types'
+import { perm, type UnitGroup } from '@/lib/types'
 
 export function Shell() {
   const { session, logout, can } = useAuth()
@@ -16,7 +16,7 @@ export function Shell() {
   }
 
   // 沒有 view 權限的單元不出現在選單（真正的把關在後端 RBAC）
-  const visible = UNITS.filter((u) => can(`${u.code}.view`))
+  const visible = UNITS.filter((u) => can(perm(u, 'view')))
   const groups: UnitGroup[] = []
   for (const u of visible) if (!groups.includes(u.group)) groups.push(u.group)
 

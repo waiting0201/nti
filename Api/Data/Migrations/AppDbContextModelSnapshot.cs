@@ -1203,6 +1203,10 @@ namespace Nti.Api.Data.Migrations
                         .HasMaxLength(260)
                         .HasColumnType("nvarchar(260)");
 
+                    b.Property<bool>("ShowInDetailList")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("ShowOnHome")
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
@@ -1260,6 +1264,86 @@ namespace Nti.Api.Data.Migrations
                     b.ToTable("CertificationI18n", null, t =>
                         {
                             t.HasCheckConstraint("CK_CertificationI18n_Lang", "[Lang] IN ('zh','en')");
+                        });
+                });
+
+            modelBuilder.Entity("Nti.Api.Models.Entities.CertificationListItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(0)")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Section")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<int>("SortOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2(0)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted", "IsPublished", "Section", "SortOrder")
+                        .HasDatabaseName("IX_CertificationListItem_Section");
+
+                    b.ToTable("CertificationListItem", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_CertificationListItem_Section", "[Section] IN ('standards','gmi','award')");
+                        });
+                });
+
+            modelBuilder.Entity("Nti.Api.Models.Entities.CertificationListItemI18n", b =>
+                {
+                    b.Property<int>("CertificationListItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Lang")
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("CertificationListItemId", "Lang")
+                        .HasName("PK_CertificationListItemI18n");
+
+                    b.ToTable("CertificationListItemI18n", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_CertificationListItemI18n_Lang", "[Lang] IN ('zh','en')");
                         });
                 });
 
@@ -5630,6 +5714,16 @@ namespace Nti.Api.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_CertificationI18n_Certification");
+                });
+
+            modelBuilder.Entity("Nti.Api.Models.Entities.CertificationListItemI18n", b =>
+                {
+                    b.HasOne("Nti.Api.Models.Entities.CertificationListItem", null)
+                        .WithMany()
+                        .HasForeignKey("CertificationListItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_CertificationListItemI18n_CertificationListItem");
                 });
 
             modelBuilder.Entity("Nti.Api.Models.Entities.FacilityItem", b =>

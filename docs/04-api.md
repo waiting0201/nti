@@ -74,7 +74,7 @@
 
 - `GET /content/home`（Banner、Solutions 卡、Proof 認證牆、Clients）
 - `GET /solutions`、`GET /solutions/{slug}`（含品項卡）
-- `GET /projects`（分類篩選）、`GET /facility?group={code}`、`GET /certifications`、`GET /clients`
+- `GET /projects`（分類篩選）、`GET /facility?group={code}`、`GET /certifications`、`GET /certification-items`、`GET /clients`
 - `GET /categories?type={CategoryType}`（下拉／篩選選項來源；`type` 值域為 `08-database.md` §4.1 的九種 `CategoryType`）——供 `projects.html` 的分類篩選與 Industries 清單、`get-a-quote` 的產業與材質下拉、`faq` 分組使用
 - `GET /news`、`GET /news/{slug}`、`GET /green-vlog`
   - `GET /news` 另吃 `?tag={slug}`（標籤封存頁用；slug 不分語系，中英同一個值）
@@ -212,3 +212,4 @@
 | 2026-09-24 | Tim（Claude Code） | 頁面文字覆寫（09 §7.1）：`GET /pages/{pageKey}` 多回 `texts`（原文 → 該語系的字）；新增 `GET`／`PUT /admin/page/{pageKey}/texts`，PUT body 為 `{ items: [{ lang, sourceText, value }] }`，value 為空＝刪除該覆寫。沿用 `page.view`／`page.edit`，權限矩陣不變。首批開放 About Us 五頁 |
 | 2026-09-24 | Tim（Claude Code） | `GET /certifications`（與首頁 `certifications`）每筆多回 `certificateNo`、`certifiedDate`、`lastAuditDate`（皆可空）；頁面文字的開放範圍擴大到所有固定頁（`green-csr` 除外），端點不變 |
 | 2026-10-21 | Tim（Claude Code） | `GET /certifications`（與首頁 `certifications`）每筆多回 `shortName`（可空，首頁 Proof 牆用的簡稱）；端點不變 |
+| 2026-10-22 | Tim（Claude Code） | 新增 `GET /certification-items`（認證頁的色彩標準／GMI 通路／獎項，每筆 `section`／`title`／`description`）；`GET /certifications` 每筆多回 `showInDetailList`。後台 `/admin/certification/item`（CRUD／排序／上下架）沿用 `certification.*`，權限矩陣不變。`Api/openapi.yaml` 已同步 |

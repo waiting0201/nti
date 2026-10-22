@@ -108,6 +108,16 @@ paths:
     get:
       tags: [前台內容]
       summary: 認證／夥伴／獎項
+      description: 每筆含 showInDetailList（列在認證頁「管理系統與環境認證」清單）。
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /certification-items:
+    get:
+      tags: [前台內容]
+      summary: 認證頁的文字清單（色彩標準／GMI 通路／獎項）
+      description: 每筆 { id, section, sortOrder, title, description }，section 為 standards｜gmi｜award，依 section、sortOrder 排序。
       parameters: [{ $ref: '#/components/parameters/Lang' }]
       responses:
         '200': { $ref: '#/components/responses/Ok' }

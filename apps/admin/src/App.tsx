@@ -6,6 +6,7 @@ import { ListPage } from '@/pages/ListPage'
 import { EditPage } from '@/pages/EditPage'
 import { SettingPage, CategoryPage, AdminUsersPage, AuditPage } from '@/pages/custom'
 import { Notice } from '@/components/ui'
+import { perm } from '@/lib/types'
 import { UNITS, UNIT_BY_CODE, validateUnits } from '@/units'
 
 // 開發期把設定檔的問題直接吼出來（對應 docs §8 DoD 的兩條檢查）
@@ -21,7 +22,7 @@ if (import.meta.env.DEV) {
  */
 function Landing() {
   const { can } = useAuth()
-  const first = UNITS.find((u) => can(`${u.code}.view`))
+  const first = UNITS.find((u) => can(perm(u, 'view')))
   if (!first) return <Notice kind="danger">你的角色目前沒有任何可用的單元，請聯絡超級管理員。</Notice>
   return <Navigate to={`/u/${first.code}`} replace />
 }
@@ -32,7 +33,7 @@ function UnitRoute() {
   const { can } = useAuth()
   const unit = UNIT_BY_CODE.get(code)
   if (!unit) return <Notice kind="danger">找不到這個單元。</Notice>
-  if (!can(`${code}.view`)) return <Notice kind="danger">你的角色沒有檢視這個單元的權限。</Notice>
+  if (!can(perm(unit, 'view'))) return <Notice kind="danger">你的角色沒有檢視這個單元的權限。</Notice>
   if (code === 'setting') return <SettingPage />
   if (code === 'category') return <CategoryPage />
   if (code === 'admin') return <AdminUsersPage />

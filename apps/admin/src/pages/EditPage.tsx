@@ -4,7 +4,7 @@ import * as api from '@/api/client'
 import { ApiError } from '@/api/http'
 import type { Row } from '@/api/types'
 import { SEO_FIELDS, UNIT_BY_CODE, unitFields } from '@/units'
-import { LOCALE_LABEL, LOCALES, publishState, type Field, type Locale, type Unit } from '@/lib/types'
+import { LOCALE_LABEL, LOCALES, perm, publishState, type Field, type Locale, type Unit } from '@/lib/types'
 import { useAuth } from '@/lib/auth'
 import { Badge, Modal, Notice, toast, useUnsavedGuard } from '@/components/ui'
 import { FieldInput } from '@/components/fields'
@@ -57,8 +57,8 @@ export function EditPage() {
   if (!unit) return <Notice kind="danger">找不到這個單元。</Notice>
   if (!row) return <div className="empty">載入中…</div>
 
-  const canEdit = can(`${unit.code}.edit`)
-  const canPublish = can(`${unit.code}.publish`)
+  const canEdit = can(perm(unit, 'edit'))
+  const canPublish = can(perm(unit, 'publish'))
 
   /** 動過的欄位就把它的錯誤訊息收掉——留著會變成「我已經填了它還在紅」。 */
   const clearError = (key: string) =>

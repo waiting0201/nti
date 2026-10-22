@@ -516,6 +516,23 @@ export function CertificationLogos({ items, locale }: { items: Certification[]; 
   )
 }
 
+/**
+ * 認證頁的「標題＋說明」清單（mockup 的 `.flist > .fi`）。資料已經是該語系的內容，
+ * 不經過 `<T>`——否則標題剛好等於字典裡某個英文 key 時會被換掉。
+ */
+export function DetailList({ items }: { items: { id: number; title: string; description: string | null }[] }) {
+  return (
+    <div className="flist mt-s">
+      {items.map((it) => (
+        <p key={it.id} className="fi">
+          <b>{it.title}</b>
+          {it.description}
+        </p>
+      ))}
+    </div>
+  )
+}
+
 // ── 09 client ─────────────────────────────────────────────────────────────
 export function ClientLogos({ items }: { items: ClientLogo[] }) {
   return (

@@ -68,8 +68,10 @@ export type ListColumn = {
 export type UnitGroup = '儀表板' | '首頁' | '內容' | '供應商' | '頁面／SEO' | '表單' | '系統'
 
 export type Unit = {
-  /** docs §2 的代號，同時是權限碼前綴 */
+  /** docs §2 的代號，同時是權限碼前綴（除非另設 permUnit） */
   code: string
+  /** 權限碼前綴與 code 不同時（附屬清單沿用主單元的權限，不另開權限碼） */
+  permUnit?: string
   no: string
   title: string
   group: UnitGroup
@@ -99,6 +101,11 @@ export type Unit = {
 }
 
 /** docs §5.4：上架開關與時間組合出的四種顯示狀態 */
+/** 單元的權限碼：`perm(unit, 'edit')` → `certification.edit` */
+export function perm(unit: Pick<Unit, 'code' | 'permUnit'>, action: 'view' | 'edit' | 'publish' | 'delete' | 'export'): string {
+  return `${unit.permUnit ?? unit.code}.${action}`
+}
+
 export type PublishState = '草稿' | '已排程' | '上架中' | '已下架'
 
 export function publishState(row: {

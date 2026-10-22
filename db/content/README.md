@@ -230,6 +230,22 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/280_menu_rename_oct21.sql
 sqlcmd -S <server> -d NTI -I -b -i db/content/300_keep_en_h1.sql
 ```
 
+## 310_cert_detail_list.sql
+
+`about-certifications` 下方四個清單改由資料驅動（2026-10-22）。手寫、冪等；**須先套用 EF migration
+`CertificationListItem`**（或參考版 `0016`）：
+
+- 建 10 筆 `CertificationListItem`：色彩標準 2、GMI 通路 6、獎項 2。英文＝mockup 原文，中文＝客戶 09-30 稿
+  （稿裡沒有的用 `apps/web/src/lib/zh.ts`）。某區塊已有任何一筆就整塊不動。
+- 「管理系統與環境認證」依**英文名稱**勾選 FSC／ISO 14001／ISO 9001／ISO 45001／Mineral Oil Free 的
+  `ShowInDetailList`（不靠 Id 也不靠 logo 檔名——正式庫的 MOF 已在後台重新上傳）；已有任何一筆勾選就不動。
+  說明只補空的。最後列出對不到的名稱，要到後台手動勾。
+- ⚠ 不處理這頁既有的「頁面文字」中文覆寫：區塊大標若被改成別的意思，要在後台清掉或改回。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/310_cert_detail_list.sql
+```
+
 ## 290_cert_proof_groups.sql
 
 首頁 Proof 牆「品質管理／環境永續／社會責任與安全」三張卡改由後台 08 的「分組」驅動（2026-10-21）。

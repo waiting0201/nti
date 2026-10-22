@@ -119,6 +119,9 @@ public sealed class AdminTrendHandler(AppDbContext db) : AdminContentHandler<Ind
 /// <summary>08 certification。</summary>
 public sealed class AdminCertificationHandler(AppDbContext db) : AdminContentHandler<Certification, CertificationI18n>(db);
 
+/// <summary>08 的附屬清單：認證頁的色彩標準／GMI 通路／獎項（路徑 /admin/certification/item）。</summary>
+public sealed class AdminCertificationItemHandler(AppDbContext db) : AdminContentHandler<CertificationListItem, CertificationListItemI18n>(db);
+
 /// <summary>10 facility。</summary>
 public sealed class AdminFacilityHandler(AppDbContext db) : AdminContentHandler<FacilityItem, FacilityItemI18n>(db);
 

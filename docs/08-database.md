@@ -98,7 +98,7 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 |----|--------|
 | 共用主檔 | `Category`、`CategoryI18n`、`SiteSetting` |
 | 首頁 | `HomeBanner`、`HomeBannerI18n` |
-| 內容 | `Solution`(+I18n)、`SolutionItem`(+I18n)、`Project`(+I18n)、`News`(+I18n)、`Vlog`(+I18n)、`Faq`(+I18n)、`IndustryTrend`(+I18n)、`Certification`(+I18n)、`ClientLogo`、`FacilityItem`(+I18n)、`JobPosting`(+I18n) |
+| 內容 | `Solution`(+I18n)、`SolutionItem`(+I18n)、`Project`(+I18n)、`News`(+I18n)、`Vlog`(+I18n)、`Faq`(+I18n)、`IndustryTrend`(+I18n)、`Certification`(+I18n)、`CertificationListItem`(+I18n)、`ClientLogo`、`FacilityItem`(+I18n)、`JobPosting`(+I18n) |
 | 供應商 | `SupplierNotice`(+I18n)、`SupplierSpec`(+I18n)、`SupplierDownload`(+I18n) |
 | 頁面／SEO | `Page`、`PageI18n`、`PageText`（2026-09-24 新增，頁面文字覆寫）、`Redirect` |
 | 表單 | `QuoteRequest`、`QuoteAttachment`、`ContactMessage` |
@@ -346,6 +346,7 @@ CREATE TABLE dbo.Certification (
   LogoPath NVARCHAR(260) NOT NULL,         -- 去背 PNG／SVG
   LinkUrl NVARCHAR(300) NULL,
   ShowOnHome BIT NOT NULL DEFAULT 1,       -- 是否列入首頁 Proof 牆
+  ShowInDetailList BIT NOT NULL DEFAULT 0, -- 列在 about-certifications「管理系統與環境認證」清單（2026-10-22，0016）
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1,
   CertificateNo NVARCHAR(100) NULL,        -- 證號（2026-09-24，0011）：GEO 引用要具體數字
@@ -362,6 +363,24 @@ CREATE TABLE dbo.CertificationI18n (
   Description NVARCHAR(400) NULL,
   LogoAlt NVARCHAR(200) NOT NULL,
   CONSTRAINT PK_CertificationI18n PRIMARY KEY (CertificationId, Lang)
+);
+
+-- about-certifications 上「不是認證」的文字清單：色彩標準／GMI 通路／獎項（2026-10-22，0016）
+-- 沒有 logo、不上 logo 牆與首頁 Proof 牆，所以不放進 Certification。後台是單元 08 的附屬清單
+CREATE TABLE dbo.CertificationListItem (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  Section VARCHAR(20) NOT NULL,            -- CK：standards｜gmi｜award
+  SortOrder INT NOT NULL DEFAULT 0,
+  IsPublished BIT NOT NULL DEFAULT 1,
+  /* audit */
+);
+
+CREATE TABLE dbo.CertificationListItemI18n (
+  CertificationListItemId INT NOT NULL REFERENCES dbo.CertificationListItem(Id) ON DELETE CASCADE,
+  Lang VARCHAR(5) NOT NULL,
+  Title NVARCHAR(200) NOT NULL,
+  Description NVARCHAR(400) NULL,
+  CONSTRAINT PK_CertificationListItemI18n PRIMARY KEY (CertificationListItemId, Lang)
 );
 
 -- 客戶 logo 輪播（品牌名不翻譯，無 i18n 表）
@@ -715,6 +734,7 @@ CREATE INDEX IX_SupplierNotice_List ON dbo.SupplierNotice(IsDeleted, IsPublished
 -- 列表：上架 + 手動排序
 CREATE INDEX IX_Project_List ON dbo.Project(IsDeleted, IsPublished, SortOrder);
 CREATE INDEX IX_Certification_Home ON dbo.Certification(IsDeleted, IsPublished, ShowOnHome, SortOrder);
+CREATE INDEX IX_CertificationListItem_Section ON dbo.CertificationListItem(IsDeleted, IsPublished, Section, SortOrder);
 CREATE INDEX IX_HomeBanner_List ON dbo.HomeBanner(IsDeleted, IsPublished, SortOrder);
 
 -- 分類主檔
@@ -877,6 +897,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-09-06 | Tim（Claude Code） | **操作紀錄移出本期範圍**：移除 `AuditLog` 表與 `IX_AuditLog_Entity`。表數 45 → 44、非 PK/UQ 索引 17 → 16。單元 24 保留但只剩信件紀錄（`EmailLog`），權限碼 `audit.view`／`audit.resend` 沿用，權限矩陣仍為 167 列 |
 | 2026-09-09 | Tim（Claude Code） | `AdminUser` 的刪除改為真刪（§2.3 加註）：軟刪列會佔住 `UQ_AdminUser_Username`。遷移 `Api/Data/Migrations/20260909125600_PurgeDeletedAdminUsers` 把既有的 `IsDeleted = 1` 帳號一次刪除 |
 | 2026-09-09 | Tim（Claude Code） | **全站刪除改為真刪**（§2.3 改寫）：`IsDeleted` 欄位保留但不再被寫入。子表的外鍵改 `ON DELETE CASCADE`（17 張 `*I18n`＋`SolutionItem`＋`QuoteAttachment`，加上原有的 `NewsTag` 共 20 條）；「被引用」的關聯（`Category`／`Tag`／`QuoteRequest → Solution`）維持 `Restrict`。權限矩陣 170 → 173 列（新增 `page.delete`／`quote.delete`／`contact.delete`，僅 SuperAdmin，81 → 84）。遷移 `Api/Data/Migrations/20260909135945_HardDeleteCascades` 與 `db/migrations/0009_hard_delete_cascades.sql` 一對一，並一次清掉既有的軟刪列 |
+| 2026-10-22 | Tim（Claude Code） | §4.8：`about-certifications` 下方四個清單改由資料驅動。新增 `CertificationListItem`(+I18n)（色彩標準／GMI 通路／獎項）與 `Certification.ShowInDetailList`。表數 +2、外鍵 +1（CASCADE +1）、CHECK +2、非 PK/UQ 索引 +1。遷移 `Api/Data/Migrations/*_CertificationListItem` 與 `db/migrations/0016_certification_list_item.sql` 一對一；`verify*.sql` 數字同步 |
 
-*最後更新：2026-09-09*
+*最後更新：2026-10-22*
 

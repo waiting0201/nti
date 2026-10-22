@@ -10,7 +10,7 @@
    由 db/seed 的腳本灌種子）。2026-09-02 起 schema 的權威來源改為 EF Migration
    （docs/10 §8），正式環境的庫由 Api 啟動時的 MigrateAsync() 建立，兩處差異：
 
-     - SchemaVersion 由 __EFMigrationsHistory 取代（故表數仍為 47，組成不同）
+     - SchemaVersion 由 __EFMigrationsHistory 取代（故表數仍為 49，組成不同）
      - 種子改由 Api/Data/Seed/SeedData.cs 的 HasData 寫入，筆數斷言完全相同
 
    斷言內容與 verify.sql 逐條對應，數字有異動時兩份要一起改。
@@ -34,19 +34,20 @@ DECLARE @r TABLE (
 
 /* ---------- 結構 ---------- */
 INSERT @r (Item, Expected, Actual)
-SELECT N'資料表總數（47 + __EFMigrationsHistory）', N'48', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables;
+SELECT N'資料表總數（49 + __EFMigrationsHistory）', N'50', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables;
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'*I18n 多語子表數', N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables WHERE name LIKE '%I18n';
+SELECT N'*I18n 多語子表數', N'18', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables WHERE name LIKE '%I18n';
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'外鍵數', N'34', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
+SELECT N'外鍵數', N'35', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
 
 /* 刪除改真刪之後（docs/10 §8.4），子表的外鍵必須是 CASCADE：17 張 *I18n
    ＋ NewsTag→News ＋ SolutionItem→Solution ＋ QuoteAttachment→QuoteRequest ＋ PageText→Page。
+   （2026-10-22 起 *I18n 為 18 張：多了 CertificationListItemI18n）
    少一條就代表某個單元一按刪除就撞 FK，而那只有實際去刪才會發現。 */
 INSERT @r (Item, Expected, Actual)
-SELECT N'ON DELETE CASCADE 的外鍵數', N'21', CAST(COUNT(*) AS NVARCHAR(20))
+SELECT N'ON DELETE CASCADE 的外鍵數', N'22', CAST(COUNT(*) AS NVARCHAR(20))
 FROM sys.foreign_keys WHERE delete_referential_action_desc = N'CASCADE';
 
 INSERT @r (Item, Expected, Actual)
@@ -71,15 +72,16 @@ SELECT N'匿名（系統命名）約束數', N'0', CAST(SUM(c) AS NVARCHAR(20)) 
     UNION ALL SELECT COUNT(*) FROM sys.default_constraints WHERE is_system_named = 1
 ) x;
 
-/* CHECK 約束 = 17 個 *I18n 的 Lang 值域 + PageText 的 Lang 值域 + 10 個狀態／型別值域 */
+/* CHECK 約束 = 18 個 *I18n 的 Lang 值域 + PageText 的 Lang 值域 + 11 個狀態／型別值域（含 CertificationListItem.Section） */
 INSERT @r (Item, Expected, Actual)
-SELECT N'CHECK 約束數', N'28', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.check_constraints;
+SELECT N'CHECK 約束數', N'30', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.check_constraints;
 
-/* 索引寧缺勿濫（Basic 5 DTU）：非 PK/UQ 的索引只有 docs/08 §5 明列的 20 條
-   （16 條 + 單元 25 消息標籤的 IX_Tag_List／UX_Tag_Slug／IX_NewsTag_Tag + 頁面文字的 UX_PageText_Page_Lang_Hash）。
+/* 索引寧缺勿濫（Basic 5 DTU）：非 PK/UQ 的索引只有 docs/08 §5 明列的 21 條
+   （16 條 + 單元 25 消息標籤的 IX_Tag_List／UX_Tag_Slug／IX_NewsTag_Tag + 頁面文字的 UX_PageText_Page_Lang_Hash
+   + 認證頁清單的 IX_CertificationListItem_Section）。
    EF 會自動幫每條外鍵建索引，AppDbContext 已移除該慣例——這條斷言就是在守它。 */
 INSERT @r (Item, Expected, Actual)
-SELECT N'非 PK/UQ 索引數', N'20', CAST(COUNT(*) AS NVARCHAR(20))
+SELECT N'非 PK/UQ 索引數', N'21', CAST(COUNT(*) AS NVARCHAR(20))
 FROM sys.indexes i JOIN sys.tables t ON t.object_id = i.object_id
 WHERE i.is_primary_key = 0 AND i.is_unique_constraint = 0 AND i.type > 0;
 
@@ -94,7 +96,7 @@ WHERE name IN (N'UQ_AdminUser_Username', N'UQ_AdminUser_Email');
 INSERT @r (Item, Expected, Actual)
 SELECT N'內容表缺稽核五欄的張數', N'0', CAST(COUNT(*) AS NVARCHAR(20))
 FROM (VALUES ('AdminUser'),('Category'),('HomeBanner'),('Solution'),('SolutionItem'),
-             ('Project'),('News'),('Vlog'),('Faq'),('IndustryTrend'),('Certification'),
+             ('Project'),('News'),('Vlog'),('Faq'),('IndustryTrend'),('Certification'),('CertificationListItem'),
              ('ClientLogo'),('FacilityItem'),('JobPosting'),('SupplierNotice'),
              ('SupplierSpec'),('SupplierDownload'),('Page'),('PageText'),('Redirect'),
              ('QuoteRequest'),('ContactMessage'),
@@ -147,7 +149,7 @@ INSERT @r (Item, Expected, Actual) SELECT N'Solution（固定 4 筆）', N'4', C
    green-csr 的 noindex 斷言把關（同一個機制，而 green-csr 是種子的一部分，
    不會被內容匯入改動）。 */
 INSERT @r (Item, Expected, Actual) SELECT N'SolutionI18n',   N'8',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SolutionI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'已套用的 Migration 數', N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.__EFMigrationsHistory;
+INSERT @r (Item, Expected, Actual) SELECT N'已套用的 Migration 數', N'18', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.__EFMigrationsHistory;
 
 /* ---------- 輸出 ---------- */
 SELECT Item AS [檢查項], Expected AS [預期], Actual AS [實際],

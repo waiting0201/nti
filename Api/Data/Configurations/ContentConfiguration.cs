@@ -59,6 +59,7 @@ public sealed class CertificationConfiguration : IEntityTypeConfiguration<Certif
         b.Property(x => x.LinkUrl).HasMaxLength(300);
         b.Property(x => x.CertificateNo).HasMaxLength(100);
         b.Property(x => x.ShowOnHome).HasDefaultValue(true);
+        b.Property(x => x.ShowInDetailList).HasDefaultValue(false);
         b.Property(x => x.SortOrder).HasDefaultValue(0);
         b.Property(x => x.IsPublished).HasDefaultValue(true);
         b.Audit();
@@ -79,6 +80,33 @@ public sealed class CertificationI18nConfiguration : IEntityTypeConfiguration<Ce
         b.Property(x => x.ShortName).HasMaxLength(60);
         b.Property(x => x.Description).HasMaxLength(400);
         b.Property(x => x.LogoAlt).HasMaxLength(200);
+    }
+}
+
+/// <summary>單元 08 的附屬清單：認證頁的色彩標準／GMI 通路／獎項（docs/08 §4.8）。</summary>
+public sealed class CertificationListItemConfiguration : IEntityTypeConfiguration<CertificationListItem>
+{
+    public void Configure(EntityTypeBuilder<CertificationListItem> b)
+    {
+        b.ToTable("CertificationListItem", t => t.HasCheckConstraint("CK_CertificationListItem_Section",
+            "[Section] IN ('standards','gmi','award')"));
+        b.Property(x => x.Section).HasMaxLength(20).IsUnicode(false);
+        b.Property(x => x.SortOrder).HasDefaultValue(0);
+        b.Property(x => x.IsPublished).HasDefaultValue(true);
+        b.Audit();
+
+        b.HasIndex(x => new { x.IsDeleted, x.IsPublished, x.Section, x.SortOrder })
+            .HasDatabaseName("IX_CertificationListItem_Section");
+    }
+}
+
+public sealed class CertificationListItemI18nConfiguration : IEntityTypeConfiguration<CertificationListItemI18n>
+{
+    public void Configure(EntityTypeBuilder<CertificationListItemI18n> b)
+    {
+        b.I18nOf<CertificationListItemI18n, CertificationListItem>(nameof(CertificationListItemI18n.CertificationListItemId));
+        b.Property(x => x.Title).HasMaxLength(200);
+        b.Property(x => x.Description).HasMaxLength(400);
     }
 }
 

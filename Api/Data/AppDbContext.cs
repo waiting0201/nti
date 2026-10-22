@@ -52,6 +52,8 @@ public class AppDbContext(
     public DbSet<IndustryTrendI18n>    IndustryTrendI18n    => Set<IndustryTrendI18n>();
     public DbSet<Certification>        Certification        => Set<Certification>();
     public DbSet<CertificationI18n>    CertificationI18n    => Set<CertificationI18n>();
+    public DbSet<CertificationListItem>     CertificationListItem     => Set<CertificationListItem>();
+    public DbSet<CertificationListItemI18n> CertificationListItemI18n => Set<CertificationListItemI18n>();
     public DbSet<ClientLogo>           ClientLogo           => Set<ClientLogo>();
     public DbSet<FacilityItem>         FacilityItem         => Set<FacilityItem>();
     public DbSet<FacilityItemI18n>     FacilityItemI18n     => Set<FacilityItemI18n>();

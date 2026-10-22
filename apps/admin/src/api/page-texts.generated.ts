@@ -1186,34 +1186,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "G7 Master Colorspace",
-        "zh": "G7 Master Colorspace",
-        "kind": "text",
-        "section": "Printing & Colour Standards",
-        "count": 1
-      },
-      {
-        "en": "Developed by Idealliance, a globally recognized colour calibration methodology based on ISO 12647-2, ensuring consistent, accurate colour reproduction across every print run.",
-        "zh": "由 Idealliance 發展、以 ISO 12647-2 為基礎的國際色彩校正方法，確保每一批印件都能重現一致而準確的色彩。",
-        "kind": "text",
-        "section": "Printing & Colour Standards",
-        "count": 1
-      },
-      {
-        "en": "ISO 12647-2",
-        "zh": null,
-        "kind": "text",
-        "section": "Printing & Colour Standards",
-        "count": 1
-      },
-      {
-        "en": "The standard litho production procedure our colour management runs to, with spot colours matched to swatch under controlled viewing conditions.",
-        "zh": "我們色彩管理所遵循的標準平版印刷程序，特別色在受控觀察條件下與色票比對。",
-        "kind": "text",
-        "section": "Printing & Colour Standards",
-        "count": 1
-      },
-      {
         "en": "NTI leadership on the pressroom floor",
         "zh": "NTI 經營團隊於印刷廠區",
         "kind": "alt",
@@ -1242,62 +1214,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Target",
-        "zh": null,
-        "kind": "text",
-        "section": "GMI Professional Printing Certification",
-        "count": 1
-      },
-      {
-        "en": "The retailer that commissioned the GMI audit programme.",
-        "zh": "委託建立 GMI 稽核制度的零售通路。",
-        "kind": "text",
-        "section": "GMI Professional Printing Certification",
-        "count": 1
-      },
-      {
-        "en": "Walgreens",
-        "zh": null,
-        "kind": "text",
-        "section": "GMI Professional Printing Certification",
-        "count": 1
-      },
-      {
-        "en": "Approved packaging supplier.",
-        "zh": "認可的包裝供應商。",
-        "kind": "text",
-        "section": "GMI Professional Printing Certification",
-        "count": 5
-      },
-      {
-        "en": "Lowe’s",
-        "zh": null,
-        "kind": "text",
-        "section": "GMI Professional Printing Certification",
-        "count": 1
-      },
-      {
-        "en": "The Home Depot (THD)",
-        "zh": null,
-        "kind": "text",
-        "section": "GMI Professional Printing Certification",
-        "count": 1
-      },
-      {
-        "en": "Academy Sports + Outdoors",
-        "zh": null,
-        "kind": "text",
-        "section": "GMI Professional Printing Certification",
-        "count": 1
-      },
-      {
-        "en": "CVS pharmacy",
-        "zh": null,
-        "kind": "text",
-        "section": "GMI Professional Printing Certification",
-        "count": 1
-      },
-      {
         "en": "Management System & Environmental Certification",
         "zh": "管理系統與環境認證",
         "kind": "text",
@@ -1305,106 +1221,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "FSC™-CoC Chain of Custody",
-        "zh": "FSC™-CoC 產銷監管鏈",
-        "kind": "text",
-        "section": "Management System & Environmental Certification",
-        "count": 1
-      },
-      {
-        "en": "Guarantees that certified paper materials are sourced from responsibly managed forests and verified throughout the supply chain.",
-        "zh": "確保通過認證的紙材來自負責任經營的林場，並於整條供應鏈中受到查核。",
-        "kind": "text",
-        "section": "Management System & Environmental Certification",
-        "count": 1
-      },
-      {
-        "en": "ISO 14001 — Environmental Management",
-        "zh": "ISO 14001 —— 環境管理",
-        "kind": "text",
-        "section": "Management System & Environmental Certification",
-        "count": 1
-      },
-      {
-        "en": "Demonstrates NTI’s commitment to reducing environmental impact through responsible management across every stage of production and the product lifecycle.",
-        "zh": "展現 NTI 在生產各階段與產品生命週期中，以負責任的管理降低環境衝擊的承諾。",
-        "kind": "text",
-        "section": "Management System & Environmental Certification",
-        "count": 1
-      },
-      {
-        "en": "ISO 9001 — Quality Management System",
-        "zh": "ISO 9001 —— 品質管理系統",
-        "kind": "text",
-        "section": "Management System & Environmental Certification",
-        "count": 1
-      },
-      {
-        "en": "Demonstrates NTI’s commitment to consistent quality, continuous improvement, and customer satisfaction.",
-        "zh": "展現 NTI 對品質一致、持續改善與客戶滿意的承諾。",
-        "kind": "text",
-        "section": "Management System & Environmental Certification",
-        "count": 1
-      },
-      {
-        "en": "OHSAS 18001 — Occupational Health & Safety Management",
-        "zh": "OHSAS 18001 —— 職業安全衛生管理",
-        "kind": "text",
-        "section": "Management System & Environmental Certification",
-        "count": 1
-      },
-      {
-        "en": "Certifies NTI’s commitment to maintaining a safe, healthy workplace through effective occupational health and safety management.",
-        "zh": "證明 NTI 以有效的職業安全衛生管理，維持安全健康的工作環境。",
-        "kind": "text",
-        "section": "Management System & Environmental Certification",
-        "count": 1
-      },
-      {
-        "en": "MOF Certified",
-        "zh": "MOF 認證",
-        "kind": "text",
-        "section": "Management System & Environmental Certification",
-        "count": 1
-      },
-      {
-        "en": "NTI uses MOF-certified eco-friendly printing materials and inks, helping clients reduce environmental impact while meeting recognized sustainability and quality standards.",
-        "zh": "NTI 使用通過 MOF 認證的環保印刷材料與油墨，協助客戶降低環境衝擊，同時符合公認的永續與品質標準。",
-        "kind": "text",
-        "section": "Management System & Environmental Certification",
-        "count": 1
-      },
-      {
         "en": "Awards",
         "zh": "獲獎肯定",
-        "kind": "text",
-        "section": "Awards",
-        "count": 1
-      },
-      {
-        "en": "Outstanding Business Award",
-        "zh": "傑出企業獎",
-        "kind": "text",
-        "section": "Awards",
-        "count": 1
-      },
-      {
-        "en": "The 13th National Brand Yushan Award for Outstanding Business Award.",
-        "zh": "第 13 屆國家品牌玉山獎傑出企業獎。",
-        "kind": "text",
-        "section": "Awards",
-        "count": 1
-      },
-      {
-        "en": "Smart Building Award",
-        "zh": "智慧建築獎",
-        "kind": "text",
-        "section": "Awards",
-        "count": 1
-      },
-      {
-        "en": "Gold Award in the ‘Smart Buildings’ category at the 7th APEC ESCI (Energy Smart Communities Initiative) Best Practices Awards Program.",
-        "zh": "第 7 屆 APEC ESCI（能源智慧社區倡議）最佳實務獎「智慧建築」類金獎。",
         "kind": "text",
         "section": "Awards",
         "count": 1

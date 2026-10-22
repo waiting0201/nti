@@ -22,9 +22,11 @@ type ApiRow = Record<string, unknown> & {
 /** 報價附件（單筆端點的 `attachments`）。本期不做病毒掃描，沒有 scanStatus。 */
 type ApiAttachment = { id: number; originalName: string; sizeBytes: number }
 
-/** 後台路徑：子清單掛在 `/admin/solution/item`，其餘等於單元代號。 */
+/** 後台路徑：子清單掛在 `/admin/solution/item`、`/admin/certification/item`，其餘等於單元代號。 */
 function pathOf(unit: string): string {
-  return unit === 'solution-item' ? 'solution/item' : unit
+  if (unit === 'solution-item') return 'solution/item'
+  if (unit === 'certification-item') return 'certification/item'
+  return unit
 }
 
 /** API 的一列 → UI 的 Row（欄位改名、id 轉字串、組出 fileMeta 這類顯示欄位）。 */
