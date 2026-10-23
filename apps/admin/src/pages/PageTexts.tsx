@@ -3,7 +3,7 @@ import * as api from '@/api/client'
 import { PAGE_TEXTS, type PageTextItem } from '@/api/page-texts.generated'
 import type { PageTextRow } from '@/api/types'
 import type { Locale } from '@/lib/types'
-import { Badge, Notice, toast } from '@/components/ui'
+import { Badge, toast } from '@/components/ui'
 
 /** 開放「頁面文字」的頁面（清單由 apps/web/scripts/extract-page-texts.mjs 從 mockup 產生） */
 export const hasPageTexts = (pageKey: string) => pageKey in PAGE_TEXTS
@@ -101,12 +101,6 @@ export function PageTextFields({
   }, [manifest, saved, draft, loaded])
   useEffect(() => onChangesCount(changes.length), [changes.length, onChangesCount])
 
-  /** 存過、但 mockup 已經沒有那段原文的覆寫：前台不會再顯示，列出來讓人搬到新的那段 */
-  const orphans = useMemo(() => {
-    const known = new Set(manifest?.items.map((i) => i.en))
-    return Object.keys(saved).filter((k) => !known.has(k))
-  }, [manifest, saved])
-
   const sections = useMemo(() => {
     const out: { name: string; items: PageTextItem[] }[] = []
     for (const item of manifest?.items ?? []) {
@@ -122,7 +116,6 @@ export function PageTextFields({
     if (changes.length === 0) return
     await api.savePageTexts(pageKey, changes)
     const next: Values = {}
-    for (const en of orphans) next[en] = saved[en]
     for (const item of manifest?.items ?? []) {
       const v = { zh: overrideOf(item, 'zh', draft[item.en]?.zh), en: overrideOf(item, 'en', draft[item.en]?.en) }
       if (v.zh || v.en) next[item.en] = v
@@ -136,18 +129,6 @@ export function PageTextFields({
 
   const set = (en: string, value: string) =>
     setDraft((prev) => ({ ...prev, [en]: { ...(prev[en] ?? empty()), [locale]: value } }))
-
-  const removeOrphan = async (en: string) => {
-    const items: PageTextRow[] = (['zh', 'en'] as const).map((lang) => ({ lang, sourceText: en, value: '' }))
-    try {
-      await api.savePageTexts(pageKey, items)
-    } catch (err) {
-      toast(`移除失敗：${(err as Error).message}`)
-      return
-    }
-    setSaved(({ [en]: _, ...rest }) => rest)
-    toast('已移除')
-  }
 
   if (!loaded) return <div className="empty">頁面文字載入中…</div>
 
@@ -186,28 +167,6 @@ export function PageTextFields({
           </div>
         ))}
       </fieldset>
-
-      {orphans.length > 0 && (
-        <Notice>
-          <div style={{ marginBottom: 6 }}>
-            <strong>原文已變更：</strong>以下 {orphans.length} 段是先前改過的字，但網站原文已經換掉，前台不會再顯示。
-            需要的話請把內容搬到上面對應的新段落，再移除。
-          </div>
-          {orphans.map((en) => (
-            <div key={en} className="ptext-orphan">
-              <div>
-                <div className="hint" style={{ marginTop: 0 }}>{en}</div>
-                <div>中文：{saved[en]?.zh || '—'}　English：{saved[en]?.en || '—'}</div>
-              </div>
-              {canEdit && (
-                <button type="button" className="btn btn-sm" onClick={() => void removeOrphan(en)}>
-                  移除
-                </button>
-              )}
-            </div>
-          ))}
-        </Notice>
-      )}
     </>
   )
 }

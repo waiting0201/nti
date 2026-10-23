@@ -383,4 +383,3 @@ tr.drop-target td { box-shadow: inset 0 2px 0 var(--green); }
 .ptext-row + .ptext-row { margin-top: 12px; }
 .ptext-row .field { margin-bottom: 0; }
 .ptext-meta { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
-.ptext-orphan { display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 6px 0; border-top: 1px solid rgba(0, 0, 0, .06); }
