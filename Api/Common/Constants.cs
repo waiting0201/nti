@@ -304,7 +304,7 @@ public static class PageBannerPages
 }
 
 /// <summary>
-/// 頁面中段有橫幅圖（不緊接 header 的 <c>.fac-banner</c>）的固定頁 → 張數（後台單元 15 的
+/// 頁面中段有橫幅圖（不緊接 header 的 <c>.fac-banner</c>，以及 facility 的 <c>.tour-photo</c>）的固定頁 → 張數（後台單元 15 的
 /// 「中段橫幅 1～N」欄位只在這幾頁、依張數出現）。最多 <see cref="MaxSlots"/> 張，對應
 /// <c>Page.MidBanner1ImagePath</c>～<c>MidBanner4ImagePath</c>，依頁面由上而下排。
 /// <para>
@@ -323,7 +323,9 @@ public static class PageMidBannerPages
         [PageKeys.AboutDifference]     = 1,
         [PageKeys.AboutBenefits]       = 1,
         [PageKeys.AboutCertifications] = 1,
+        [PageKeys.Facility]            = 1,   // Factory Tour 那張全幅照（.fullbleed.tour-photo）
         [PageKeys.FacilityTour]        = 2,
+        [PageKeys.Solutions]           = 1,   // Projects 區塊那張
         [PageKeys.SustainabilityHub]   = 4,
         [PageKeys.GreenOurAdvantage]   = 1,
         [PageKeys.GreenCarbon]         = 1,

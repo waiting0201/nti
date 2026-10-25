@@ -335,10 +335,19 @@ export function PageBanner({ src, alt }: { src: string | null; alt: string }) {
   return <section className="fac-banner"><img src={src} alt={alt} /></section>
 }
 
-/** 頁面中段的大圖（後台單元 15「中段橫幅 n」）。`src` 由 `midBannerSrc()` 決定，`null`＝後台清空了，整個區塊不出現 */
-export function PageMidBanner({ src, alt, loading }: { src: string | null; alt: string; loading?: 'lazy' }) {
+/**
+ * 頁面中段的大圖（後台單元 15「中段橫幅 n」）。`src` 由 `midBannerSrc()` 決定，`null`＝後台清空了，整個區塊不出現。
+ * 外框照 mockup 原樣：大多是 `<section class="fac-banner reveal">`，少數頁是 `<div>`／別的 class（`as`、`className`）
+ */
+export function PageMidBanner({ src, alt, loading, as: Tag = 'section', className = 'fac-banner reveal' }: {
+  src: string | null
+  alt: string
+  loading?: 'lazy'
+  as?: 'section' | 'div'
+  className?: string
+}) {
   if (!src) return null
-  return <section className="fac-banner reveal"><img src={src} alt={alt} loading={loading} /></section>
+  return <Tag className={className}><img src={src} alt={alt} loading={loading} /></Tag>
 }
 
 // ── 01 home-banner ────────────────────────────────────────────────────────

@@ -795,6 +795,8 @@ export const SEED: Record<string, Row[]> = {
       "isIndexable": true,
       "hasBanner": true,
       "banner": "/assets/fac-banner.webp",
+      "midBannerCount": 1,
+      "midBanner1": "/assets/fac-tour-main.webp",
       "sortOrder": 6,
       "i18n": {
         "zh": {
@@ -932,6 +934,8 @@ export const SEED: Record<string, Row[]> = {
       "isIndexable": true,
       "hasBanner": true,
       "banner": "/assets/ref-sol-banner.webp",
+      "midBannerCount": 1,
+      "midBanner1": "/assets/ref-sol-projects.webp",
       "sortOrder": 12,
       "i18n": {
         "zh": {

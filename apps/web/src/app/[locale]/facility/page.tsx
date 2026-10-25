@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { bannerSrc, getPage } from '@/lib/api'
-import { PageBanner } from '@/components/cms'
+import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
+import { PageBanner, PageMidBanner } from '@/components/cms'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { FacilityExplorer } from '@/components/behaviors/FacilityExplorer'
@@ -117,7 +117,7 @@ export default async function Page({ params }: Props) {
           <p className="prose reveal mt-s">Visitors can explore our clean water treatment system, energy-efficient production lines, and green facilities designed for both people and the planet.</p>
           <p className="prose reveal mt-s">Book a guided tour and experience how we bring &lsquo;The Courage to Print Green&rsquo; to life.</p>
           <p className="mt-m reveal"><A href={l("/facility-tour")} className="blink">More details &rsaquo;</A></p></div>
-        <div className="fullbleed tour-photo reveal mt-m"><img src={mediaUrl("/assets/fac-tour-main.webp")} alt="Inside the NTI factory floor — palletised packaging stock and clean production aisles" /></div>
+        <PageMidBanner src={midBannerSrc(page, 1, "/assets/fac-tour-main.webp")} alt="Inside the NTI factory floor — palletised packaging stock and clean production aisles" as="div" className="fullbleed tour-photo reveal mt-m" />
       </section>
       <FacilityExplorer />
     </T>

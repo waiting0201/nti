@@ -316,12 +316,16 @@ for (const file of files) {
   }
 
   // 中段橫幅接後台（單元 15「中段橫幅 1～4」，後端 PageMidBannerPages）：頁中段的 .fac-banner.reveal
-  // 依出現順序編號。張數要與後端一致，對不上時後台的種子產生器（build-seed.mjs）會直接報錯
+  // 依出現順序編號。張數要與後端一致，對不上時後台的種子產生器（build-seed.mjs）會直接報錯。
+  // 外框不一定是 <section class="fac-banner reveal">：printing-solutions 是 <div class="fac-banner reveal mt-m">、
+  // facility 的工廠導覽照是 <div class="fullbleed tour-photo reveal mt-m">，原樣帶進 as／className
   let midCount = 0
   if (pageKey) {
     jsx = jsx.replace(
-      /<section className="fac-banner reveal"><img src=\{mediaUrl\(("[^"]+")\)\} alt=("[^"]*")((?: [\w-]+="[^"]*")*) \/><\/section>/g,
-      (_, src, alt, rest) => `<PageMidBanner src={midBannerSrc(page, ${++midCount}, ${src})} alt=${alt}${rest} />`,
+      /<(section|div) className="((?:fac-banner|fullbleed tour-photo) reveal[^"]*)"><img src=\{mediaUrl\(("[^"]+")\)\} alt=("[^"]*")((?: [\w-]+="[^"]*")*) \/><\/\1>/g,
+      (_, tag, cls, src, alt, rest) =>
+        `<PageMidBanner src={midBannerSrc(page, ${++midCount}, ${src})} alt=${alt}${rest}` +
+        `${tag === 'div' ? ' as="div"' : ''}${cls === 'fac-banner reveal' ? '' : ` className="${cls}"`} />`,
     )
     ctx.usesMedia = jsx.includes('mediaUrl(')
   }

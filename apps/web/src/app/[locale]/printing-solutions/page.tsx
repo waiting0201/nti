@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { bannerSrc, getPage } from '@/lib/api'
-import { PageBanner } from '@/components/cms'
+import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
+import { PageBanner, PageMidBanner } from '@/components/cms'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { ProductShowcase } from '@/components/behaviors/ProductShowcase'
@@ -58,7 +58,7 @@ export default async function Page({ params }: Props) {
         <h2 className="sec-title reveal">Projects</h2>
         <h3 className="fac-sub reveal mt-s">Real Projects. Real Impact.</h3>
       </div>
-      <div className="fac-banner reveal mt-m"><img src={mediaUrl("/assets/ref-sol-projects.webp")} alt="Range of NTI sustainably printed product packaging" /></div>
+      <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-sol-projects.webp")} alt="Range of NTI sustainably printed product packaging" as="div" className="fac-banner reveal mt-m" />
       <div className="wrap">
         <p className="prose wide reveal mt-m">From packaging to promotional materials, NTI collaborates with brands across industries to deliver sustainable, high-quality results &mdash; explore our custom box portfolio and packaging case study highlights below. Each project reflects our commitment to innovation, precision, and environmental responsibility.</p>
         <div className="dtitle reveal mt-m">Industries / Applications</div>

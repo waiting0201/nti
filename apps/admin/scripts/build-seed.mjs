@@ -93,10 +93,12 @@ function pageBanner(pageKey) {
 
 /* 頁面中段有橫幅大圖的固定頁 → [mockup 檔, 張數]（與後端 PageMidBannerPages 一致）。
    正式資料庫的值由 EF migration PageMidBanner 帶入；這裡只給 demo 用，值一樣取自 mockup。
-   中段那幾張是 `.fac-banner.reveal`（頂部那張沒有 reveal），依頁面由上而下對到 midBanner1～4。 */
+   中段那幾張是 `.fac-banner.reveal`（頂部那張沒有 reveal）或 facility 的 `.fullbleed.tour-photo.reveal`，
+   外框可能是 section 或 div，依頁面由上而下對到 midBanner1～4（規則與 apps/web/scripts/build-pages.mjs 相同）。 */
 const MID_BANNER_PAGES = {
   'about-hub': ['differences.html', 3], 'about-difference': ['about-difference.html', 1],
   'about-benefits': ['about-benefits.html', 1], 'about-certifications': ['about-certifications.html', 1],
+  facility: ['facility.html', 1], solutions: ['printing-solutions.html', 1],
   'facility-tour': ['facility-tour.html', 2], 'sustainability-hub': ['green-advantage.html', 4],
   'green-our-advantage': ['green-our-advantage.html', 1], 'green-carbon': ['green-carbon.html', 1],
   'green-esg': ['green-esg.html', 1],
@@ -105,7 +107,7 @@ const MID_BANNER_PAGES = {
 function pageMidBanners(pageKey) {
   const [file, count] = MID_BANNER_PAGES[pageKey] ?? []
   if (!file) return {}
-  const srcs = [...readMockup(file).matchAll(/<section class="fac-banner reveal">\s*<img\b[^>]*?\ssrc="(assets\/[^"]+)"/g)].map((m) => m[1])
+  const srcs = [...readMockup(file).matchAll(/<(?:section|div) class="(?:fac-banner|fullbleed tour-photo) reveal[^"]*">\s*<img\b[^>]*?\ssrc="(assets\/[^"]+)"/g)].map((m) => m[1])
   if (srcs.length !== count) throw new Error(`${file} 的中段橫幅是 ${srcs.length} 張，MID_BANNER_PAGES 寫 ${count} 張——兩邊（與後端 PageMidBannerPages）要一起改`)
   return { midBannerCount: count, ...Object.fromEntries(srcs.map((src, i) => [`midBanner${i + 1}`, asset(src)])) }
 }
