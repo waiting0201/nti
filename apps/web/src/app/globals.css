@@ -310,6 +310,11 @@ header+.fac-banner img{aspect-ratio:16/3;object-fit:cover;max-height:calc(100vh 
 .fac-cap{margin-top:12px;text-align:center;color:var(--grey);font-weight:700;font-size:.95rem}
 .fac-count{color:var(--grey-2);font-weight:600;font-size:.82rem;margin-left:.6em;font-variant-numeric:tabular-nums}
 .ps-mediawrap .fac-cap{text-align:left;margin-top:2px}
+/* factory tour slider (EN facility-tour): images stacked, cross-fade on .on */
+.tour-frame{aspect-ratio:16/9;position:relative}
+.tour-frame img{position:absolute;inset:0;opacity:0;transition:opacity .6s var(--ease)}
+.tour-frame img.on{opacity:1}
+@media(max-width:600px){.tour-slider{gap:8px}.tour-slider .ex-arrow{width:36px;height:36px}}
 
 /* take-a-factory-tour (per Facility PSD) */
 .section.tour{padding-bottom:0}

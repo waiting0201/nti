@@ -1,12 +1,20 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { PageBanner, PageMidBanner } from '@/components/cms'
-import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
+import { bannerSrc, cmsMedia, getFacility, getPage, midBannerSrc } from '@/lib/api'
 import { A } from '@/components/A'
+import { TourSlider, type TourSlide } from '@/components/behaviors/TourSlider'
 import { mediaUrl, youtubeEmbedSrc } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
+
+/** 沒接 API 時的英文輪播：mockup 那三張（db/content/200 匯入的「參觀」分類也是這三張） */
+const MOCKUP_SLIDES: TourSlide[] = [
+  { src: mediaUrl("/assets/fac-tour1.webp"), alt: "Factory floor" },
+  { src: mediaUrl("/assets/fac-tour2.webp"), alt: "Production aisle" },
+  { src: mediaUrl("/assets/fac-tour-main.webp"), alt: "Packaging stock & logistics" },
+]
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
@@ -19,9 +27,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { locale } = await params
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
-  const page = await getPage(locale, 'facility-tour')
-  // 頁面影片（單元 15 該頁的「頁面影片」）；沒接 API 或沒填就是 mockup 那支
+  // 英文版的輪播照（單元 10「參觀」分類）；中文版是影片，不必抓
+  const [page, tour] = await Promise.all([
+    getPage(locale, 'facility-tour'),
+    locale === 'en' ? getFacility(locale, 'tour') : null,
+  ])
+  // 頁面影片（單元 15 該頁的「頁面影片」），只有中文版顯示；沒接 API 或沒填就是 mockup 那支
   const video = youtubeEmbedSrc(page?.youtubeId, "https://www.youtube.com/embed/vECuYIiFSSM")
+  // 沒接 API → mockup 那三張；接了 API 但「參觀」一張都沒上架 → 空陣列，整塊不顯示
+  const slides = tour === null
+    ? MOCKUP_SLIDES
+    : tour.map((t) => ({ src: cmsMedia(t.imagePath), alt: t.imageAlt }))
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
@@ -40,9 +56,11 @@ export default async function Page({ params }: Props) {
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose wide">At NTI Printing, ESG begins with people. Our state-of-the-art, fully air-conditioned facility is designed to provide a safe, comfortable, and inspiring workplace for every member of our team. From modern offices and efficient production floors to staff restaurants, library, dormitories, and shared spaces, we continually invest in the wellbeing of both our local and international employees. By creating an environment where people can thrive, we build a stronger culture, deliver better quality, and support a more sustainable future as a trusted sustainable packaging manufacturer in Taiwan.</p>
+        {locale === 'zh' ? (
         <div className="video-frame reveal mt-l">
           <iframe src={video} title="Integrated Low-Carbon Production — NTI Printing company film" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
         </div>
+        ) : slides.length > 0 && <TourSlider slides={slides} />}
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">On the floor</div>
