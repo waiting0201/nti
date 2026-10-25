@@ -3,12 +3,13 @@
  *
  * **由 `node apps/web/scripts/extract-page-texts.mjs` 產生，不要手改。**
  * `en` 是 mockup 的原文（也是覆寫的 key），`zh` 是 apps/web/src/lib/zh.ts 目前的譯文，
- * `count` 是同一段原文在該頁出現的次數——覆寫會一起改掉每一處。
+ * `count` 是同一段原文在該頁出現的次數——覆寫會一起改掉每一處；`tag` 是所在的標題元素（h1–h6）。
  */
 export type PageTextItem = {
   en: string
   zh: string | null
   kind: 'text' | 'alt'
+  tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
   section: string
   count: number
 }
@@ -21,6 +22,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Taiwan’s Sustainable Packaging & Printing Leader",
         "zh": "台灣永續包裝與印刷的領導者",
         "kind": "text",
+        "tag": "h1",
         "section": "Taiwan’s Sustainable Packaging & Printing Leader",
         "count": 1
       },
@@ -42,6 +44,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "What We Do",
         "zh": "服務流程",
         "kind": "text",
+        "tag": "h2",
         "section": "What We Do",
         "count": 1
       },
@@ -56,6 +59,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Requirements Review",
         "zh": "需求確認",
         "kind": "text",
+        "tag": "h3",
         "section": "What We Do",
         "count": 1
       },
@@ -70,6 +74,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Materials & Structure",
         "zh": "材料與結構",
         "kind": "text",
+        "tag": "h3",
         "section": "What We Do",
         "count": 1
       },
@@ -84,6 +89,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Pre-Press & Proofing",
         "zh": "印前與打樣",
         "kind": "text",
+        "tag": "h3",
         "section": "What We Do",
         "count": 1
       },
@@ -98,6 +104,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Printing & Finishing",
         "zh": "印刷與加工",
         "kind": "text",
+        "tag": "h3",
         "section": "What We Do",
         "count": 1
       },
@@ -112,6 +119,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Quality & Delivery",
         "zh": "品質與交付",
         "kind": "text",
+        "tag": "h3",
         "section": "What We Do",
         "count": 1
       },
@@ -126,6 +134,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Printing Solutions",
         "zh": "印刷解決方案",
         "kind": "text",
+        "tag": "h2",
         "section": "Printing Solutions",
         "count": 1
       },
@@ -203,6 +212,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Why global brands choose NTI?",
         "zh": "國際品牌為什麼選擇 NTI？",
         "kind": "text",
+        "tag": "h2",
         "section": "Why global brands choose NTI?",
         "count": 1
       },
@@ -210,6 +220,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Direct Delivery",
         "zh": "直送交付",
         "kind": "text",
+        "tag": "h3",
         "section": "Why global brands choose NTI?",
         "count": 1
       },
@@ -224,6 +235,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Simplified Coordination",
         "zh": "簡化協調",
         "kind": "text",
+        "tag": "h3",
         "section": "Why global brands choose NTI?",
         "count": 1
       },
@@ -238,6 +250,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Faster Lead Times",
         "zh": "更短的交期",
         "kind": "text",
+        "tag": "h3",
         "section": "Why global brands choose NTI?",
         "count": 1
       },
@@ -252,6 +265,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Green Printing",
         "zh": "綠色印刷",
         "kind": "text",
+        "tag": "h3",
         "section": "Why global brands choose NTI?",
         "count": 1
       },
@@ -266,6 +280,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Premium Quality",
         "zh": "頂級品質",
         "kind": "text",
+        "tag": "h3",
         "section": "Why global brands choose NTI?",
         "count": 1
       },
@@ -280,6 +295,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "One Trusted Partner",
         "zh": "一個值得信賴的夥伴",
         "kind": "text",
+        "tag": "h3",
         "section": "Why global brands choose NTI?",
         "count": 1
       },
@@ -294,6 +310,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Proof",
         "zh": "實證",
         "kind": "text",
+        "tag": "h2",
         "section": "Proof",
         "count": 1
       },
@@ -308,6 +325,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Our Clients",
         "zh": "我們的客戶",
         "kind": "text",
+        "tag": "h2",
         "section": "Our Clients",
         "count": 1
       },
@@ -348,6 +366,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "The NTI Difference — Where Sustainability Meets Uncompromising Quality",
         "zh": "NTI 的與眾不同 —— 永續與極致品質的交會",
         "kind": "text",
+        "tag": "h1",
         "section": "The NTI Difference — Where Sustainability Meets Uncompromising Quality",
         "count": 1
       },
@@ -369,6 +388,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Beyond Ink. A mindset of sustainability.",
         "zh": "不只是油墨，而是一種永續的思維。",
         "kind": "text",
+        "tag": "h2",
         "section": "Beyond Ink. A mindset of sustainability.",
         "count": 1
       },
@@ -418,6 +438,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "A Smarter Global Packaging Partner",
         "zh": "更聰明的全球包裝夥伴",
         "kind": "text",
+        "tag": "h2",
         "section": "A Smarter Global Packaging Partner",
         "count": 1
       },
@@ -502,6 +523,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Proving our promise through action",
         "zh": "以行動證明我們的承諾",
         "kind": "text",
+        "tag": "h2",
         "section": "Proving our promise through action",
         "count": 1
       },
@@ -544,6 +566,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "People are part of our sustainability journey",
         "zh": "人，是我們永續旅程的一部分",
         "kind": "text",
+        "tag": "h2",
         "section": "People are part of our sustainability journey",
         "count": 1
       },
@@ -558,34 +581,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Take a factory tour",
         "zh": "來一趟工廠導覽",
         "kind": "text",
-        "section": "People are part of our sustainability journey",
-        "count": 1
-      },
-      {
-        "en": "NTI Green Printing",
-        "zh": "NTI 綠色印刷",
-        "kind": "alt",
-        "section": "People are part of our sustainability journey",
-        "count": 1
-      },
-      {
-        "en": "FSC certified",
-        "zh": "FSC 認證",
-        "kind": "alt",
-        "section": "People are part of our sustainability journey",
-        "count": 1
-      },
-      {
-        "en": "LEED Leadership in Energy and Environmental Design",
-        "zh": "LEED 能源與環境設計領導認證",
-        "kind": "alt",
-        "section": "People are part of our sustainability journey",
-        "count": 1
-      },
-      {
-        "en": "Mineral Oil Free",
-        "zh": "無礦物油",
-        "kind": "alt",
         "section": "People are part of our sustainability journey",
         "count": 1
       }
@@ -626,6 +621,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "The NTI Difference — Where Sustainability Meets Uncompromising Quality",
         "zh": "NTI 的與眾不同 —— 永續與極致品質的交會",
         "kind": "text",
+        "tag": "h1",
         "section": "The NTI Difference — Where Sustainability Meets Uncompromising Quality",
         "count": 1
       },
@@ -918,6 +914,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "A Smarter Global Packaging Partner",
         "zh": "更聰明的全球包裝夥伴",
         "kind": "text",
+        "tag": "h1",
         "section": "A Smarter Global Packaging Partner",
         "count": 1
       },
@@ -960,6 +957,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Direct Delivery",
         "zh": "直送交付",
         "kind": "text",
+        "tag": "h3",
         "section": "A Smarter Global Packaging Partner",
         "count": 1
       },
@@ -974,6 +972,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Simplified Coordination",
         "zh": "簡化協調",
         "kind": "text",
+        "tag": "h3",
         "section": "A Smarter Global Packaging Partner",
         "count": 1
       },
@@ -988,6 +987,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Faster Lead Times",
         "zh": "更短的交期",
         "kind": "text",
+        "tag": "h3",
         "section": "A Smarter Global Packaging Partner",
         "count": 1
       },
@@ -1002,6 +1002,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Green Printing",
         "zh": "綠色印刷",
         "kind": "text",
+        "tag": "h3",
         "section": "A Smarter Global Packaging Partner",
         "count": 1
       },
@@ -1016,6 +1017,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Premium Quality",
         "zh": "頂級品質",
         "kind": "text",
+        "tag": "h3",
         "section": "A Smarter Global Packaging Partner",
         "count": 1
       },
@@ -1030,6 +1032,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "One Trusted Partner",
         "zh": "一個值得信賴的夥伴",
         "kind": "text",
+        "tag": "h3",
         "section": "A Smarter Global Packaging Partner",
         "count": 1
       },
@@ -1126,6 +1129,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Our Certifications — Proof of Quality & Sustainability",
         "zh": "我們的認證 —— 品質與永續的實證",
         "kind": "text",
+        "tag": "h1",
         "section": "Our Certifications — Proof of Quality & Sustainability",
         "count": 1
       },
@@ -1279,12 +1283,14 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "設備與廠房",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 2,
+        "tag": "h1"
       },
       {
         "en": "Where Technology Meets Sustainability",
         "zh": "技術與永續的交會之處",
         "kind": "text",
+        "tag": "h3",
         "section": "Facilities & Equipment",
         "count": 1
       },
@@ -1328,7 +1334,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "工廠導覽",
         "kind": "text",
         "section": "Facilities & Equipment",
-        "count": 2
+        "count": 2,
+        "tag": "h2"
       },
       {
         "en": "Heidelberg Suprasetter 105 S CTP",
@@ -1600,6 +1607,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Quality You Can Measure",
         "zh": "看得見數據的品質",
         "kind": "text",
+        "tag": "h3",
         "section": "Quality Inspection",
         "count": 1
       },
@@ -1733,6 +1741,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "See Sustainability in Action",
         "zh": "親眼看見永續如何運作",
         "kind": "text",
+        "tag": "h3",
         "section": "Factory Tour",
         "count": 1
       },
@@ -1802,7 +1811,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "製版設備",
         "kind": "text",
         "section": "頁首",
-        "count": 3
+        "count": 3,
+        "tag": "h1"
       },
       {
         "en": "Accurate dot rendering and faithful colour, before ink hits paper",
@@ -1989,7 +1999,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "環保印刷",
         "kind": "text",
         "section": "頁首",
-        "count": 3
+        "count": 3,
+        "tag": "h1"
       },
       {
         "en": "German presses with in-line varnishing — including a carbon-balanced line",
@@ -2218,7 +2229,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "印後加工",
         "kind": "text",
         "section": "頁首",
-        "count": 3
+        "count": 3,
+        "tag": "h1"
       },
       {
         "en": "Die-cutting, gluing, window patching and wrapping — all in-house",
@@ -2447,7 +2459,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "品質檢驗",
         "kind": "text",
         "section": "頁首",
-        "count": 3
+        "count": 3,
+        "tag": "h1"
       },
       {
         "en": "Quality You Can Measure",
@@ -2669,7 +2682,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "工廠導覽",
         "kind": "text",
         "section": "頁首",
-        "count": 3
+        "count": 3,
+        "tag": "h1"
       },
       {
         "en": "People are part of our sustainability journey",
@@ -2813,6 +2827,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Custom Packaging & Printing Solutions",
         "zh": "客製化包裝與印刷解決方案",
         "kind": "text",
+        "tag": "h1",
         "section": "Custom Packaging & Printing Solutions",
         "count": 1
       },
@@ -2820,6 +2835,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Tailored Printing. Sustainable Design.",
         "zh": "量身訂製的印刷，永續的設計。",
         "kind": "text",
+        "tag": "h3",
         "section": "Custom Packaging & Printing Solutions",
         "count": 1
       },
@@ -2876,6 +2892,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Products",
         "zh": "產品",
         "kind": "text",
+        "tag": "h4",
         "section": "Custom Packaging & Printing Solutions",
         "count": 1
       },
@@ -2911,6 +2928,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Applications",
         "zh": "應用領域",
         "kind": "text",
+        "tag": "h4",
         "section": "Custom Packaging & Printing Solutions",
         "count": 1
       },
@@ -2946,6 +2964,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Projects",
         "zh": "實績案例",
         "kind": "text",
+        "tag": "h2",
         "section": "Projects",
         "count": 1
       },
@@ -2953,6 +2972,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Real Projects. Real Impact.",
         "zh": "真實的專案，真實的影響。",
         "kind": "text",
+        "tag": "h3",
         "section": "Projects",
         "count": 1
       },
@@ -3065,6 +3085,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Facilities & Equipment",
         "zh": "設備與廠房",
         "kind": "text",
+        "tag": "h2",
         "section": "Facilities & Equipment",
         "count": 1
       },
@@ -3072,6 +3093,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Where Technology Meets Sustainability",
         "zh": "技術與永續的交會之處",
         "kind": "text",
+        "tag": "h3",
         "section": "Facilities & Equipment",
         "count": 1
       },
@@ -3100,6 +3122,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Direct to plate, in house",
         "zh": "直接製版，自廠輸出",
         "kind": "text",
+        "tag": "h3",
         "section": "Facilities & Equipment",
         "count": 1
       },
@@ -3149,6 +3172,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "German presses with in-line varnishing — including a carbon-balanced line",
         "zh": "具備線上上光的德國印刷機 —— 其中一線為碳平衡機組",
         "kind": "text",
+        "tag": "h3",
         "section": "Facilities & Equipment",
         "count": 1
       },
@@ -3219,6 +3243,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Die-cutting, gluing, window patching and wrapping — all in-house",
         "zh": "模切、糊盒、貼窗與包膜 —— 全部自廠完成",
         "kind": "text",
+        "tag": "h3",
         "section": "Facilities & Equipment",
         "count": 1
       },
@@ -3268,6 +3293,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Quality You Can Measure",
         "zh": "看得見數據的品質",
         "kind": "text",
+        "tag": "h3",
         "section": "Facilities & Equipment",
         "count": 1
       },
@@ -3351,7 +3377,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "實績案例",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 2,
+        "tag": "h1"
       },
       {
         "en": "Real Projects. Real Impact.",
@@ -3488,6 +3515,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Eco-Friendly Printing in Taiwan",
         "zh": "台灣的環保印刷",
         "kind": "text",
+        "tag": "h1",
         "section": "Eco-Friendly Printing in Taiwan",
         "count": 1
       },
@@ -3495,6 +3523,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Our Green Advantage",
         "zh": "綠色優勢",
         "kind": "text",
+        "tag": "h3",
         "section": "Eco-Friendly Printing in Taiwan",
         "count": 1
       },
@@ -3530,6 +3559,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Carbon Efficiency / Carbon Neutral Printing",
         "zh": "碳效率／碳中和印刷",
         "kind": "text",
+        "tag": "h3",
         "section": "Eco-Friendly Printing in Taiwan",
         "count": 1
       },
@@ -3551,6 +3581,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "ECO Materials / Sustainable Printing Materials",
         "zh": "環保材料／永續印刷材料",
         "kind": "text",
+        "tag": "h3",
         "section": "Eco-Friendly Printing in Taiwan",
         "count": 1
       },
@@ -3572,6 +3603,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "ESG & Future Goals / ESG Printing Commitment",
         "zh": "ESG 與永續目標／ESG 印刷承諾",
         "kind": "text",
+        "tag": "h3",
         "section": "Eco-Friendly Printing in Taiwan",
         "count": 1
       },
@@ -3662,7 +3694,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "綠色優勢",
         "kind": "text",
         "section": "頁首",
-        "count": 3
+        "count": 3,
+        "tag": "h1"
       },
       {
         "en": "Sustainability built into every stage of the business",
@@ -3696,6 +3729,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Our Green Advantage",
         "zh": "綠色優勢",
         "kind": "text",
+        "tag": "h2",
         "section": "Our Green Advantage",
         "count": 1
       },
@@ -3710,6 +3744,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Benefit to Clients from Green Printing",
         "zh": "綠色印刷帶給客戶的效益",
         "kind": "text",
+        "tag": "h2",
         "section": "Benefit to Clients from Green Printing",
         "count": 1
       },
@@ -3724,6 +3759,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "What green printing means here",
         "zh": "在這裡，綠色印刷是什麼意思",
         "kind": "text",
+        "tag": "h2",
         "section": "What green printing means here",
         "count": 1
       },
@@ -3814,7 +3850,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "碳效率",
         "kind": "text",
         "section": "頁首",
-        "count": 4
+        "count": 4,
+        "tag": "h1"
       },
       {
         "en": "Measured, tracked and reduced across every printing cycle",
@@ -3994,7 +4031,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "環保材料",
         "kind": "text",
         "section": "頁首",
-        "count": 4
+        "count": 4,
+        "tag": "h1"
       },
       {
         "en": "Substrates, inks and equipment chosen for what they leave behind",
@@ -4098,13 +4136,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Waste-oil recovery equipment and a wastewater recycling system, both meeting international environmental protection standards.",
         "zh": "廢油回收設備與廢水回收系統，兩者皆符合國際環境保護標準。",
         "kind": "text",
-        "section": "ECO Materials",
-        "count": 1
-      },
-      {
-        "en": "FSC and NTI Green Printing marks on eco-friendly packaging",
-        "zh": "環保包裝上的 FSC 與 NTI 綠色印刷標章",
-        "kind": "alt",
         "section": "ECO Materials",
         "count": 1
       },
@@ -4230,7 +4261,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "ESG 與永續目標",
         "kind": "text",
         "section": "頁首",
-        "count": 4
+        "count": 4,
+        "tag": "h1"
       },
       {
         "en": "Environmental, social and governance commitments — and what comes next",
@@ -4515,12 +4547,14 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "知識中心",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 2,
+        "tag": "h1"
       },
       {
         "en": "Knowledge hub",
         "zh": "知識中心",
         "kind": "text",
+        "tag": "h1",
         "section": "Insights",
         "count": 1
       },
@@ -4542,6 +4576,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Awards, partnerships and green printing milestones",
         "zh": "獲獎、合作夥伴與綠色印刷的里程碑",
         "kind": "text",
+        "tag": "h3",
         "section": "Insights",
         "count": 1
       },
@@ -4556,6 +4591,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Watch how low-carbon packaging is actually made",
         "zh": "看看低碳包裝實際上是怎麼做出來的",
         "kind": "text",
+        "tag": "h3",
         "section": "Insights",
         "count": 1
       },
@@ -4570,6 +4606,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Minimums, lead times, certifications — answered",
         "zh": "最小量、交期、認證 —— 都有答案",
         "kind": "text",
+        "tag": "h3",
         "section": "Insights",
         "count": 1
       },
@@ -4584,6 +4621,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Where sustainable packaging is heading next",
         "zh": "永續包裝接下來要往哪裡走",
         "kind": "text",
+        "tag": "h3",
         "section": "Insights",
         "count": 1
       }
@@ -4624,6 +4662,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "News",
         "zh": "最新消息",
         "kind": "text",
+        "tag": "h1",
         "section": "News",
         "count": 1
       },
@@ -4631,6 +4670,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Latest news & insights",
         "zh": "最新消息與觀點",
         "kind": "text",
+        "tag": "h1",
         "section": "News",
         "count": 1
       },
@@ -4665,12 +4705,14 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "綠色 Vlog",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 2,
+        "tag": "h1"
       },
       {
         "en": "Green knowledge hub",
         "zh": "綠色知識中心",
         "kind": "text",
+        "tag": "h1",
         "section": "Green Vlog",
         "count": 1
       },
@@ -4705,12 +4747,14 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "常見問題",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 2,
+        "tag": "h1"
       },
       {
         "en": "Your questions answered",
         "zh": "您的問題，我們來回答",
         "kind": "text",
+        "tag": "h1",
         "section": "FAQ",
         "count": 1
       },
@@ -4725,6 +4769,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Didn’t find your answer?",
         "zh": "沒找到您的答案？",
         "kind": "text",
+        "tag": "h3",
         "section": "FAQ",
         "count": 1
       },
@@ -4773,12 +4818,14 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "產業趨勢",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 2,
+        "tag": "h1"
       },
       {
         "en": "Where packaging is heading",
         "zh": "包裝正在往哪裡走",
         "kind": "text",
+        "tag": "h1",
         "section": "Industry Trends",
         "count": 1
       },
@@ -4820,12 +4867,14 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "人才招募",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 2,
+        "tag": "h1"
       },
       {
         "en": "Join the green print team",
         "zh": "加入綠色印刷團隊",
         "kind": "text",
+        "tag": "h1",
         "section": "Careers",
         "count": 1
       },
@@ -4903,6 +4952,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Nothing matching your skills?",
         "zh": "沒有適合你專長的職缺？",
         "kind": "text",
+        "tag": "h3",
         "section": "Open positions",
         "count": 1
       },
@@ -4937,7 +4987,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "供應商專區",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 2,
+        "tag": "h1"
       },
       {
         "en": "Announcements, specifications and downloadable documents for NTI Printing’s supply partners.",
@@ -4950,6 +5001,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Supplier Announcements",
         "zh": "供應商公告",
         "kind": "text",
+        "tag": "h2",
         "section": "Supplier Announcements",
         "count": 1
       },
@@ -4957,6 +5009,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Specifications & Requirements",
         "zh": "規範與要求",
         "kind": "text",
+        "tag": "h2",
         "section": "Specifications & Requirements",
         "count": 1
       },
@@ -4964,6 +5017,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Download Area",
         "zh": "下載專區",
         "kind": "text",
+        "tag": "h2",
         "section": "Download Area",
         "count": 1
       }
@@ -4984,12 +5038,14 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "聯絡我們",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 2,
+        "tag": "h1"
       },
       {
         "en": "Tainan Plant & Office",
         "zh": "台南廠與辦公室",
         "kind": "text",
+        "tag": "h3",
         "section": "Contact Us",
         "count": 1
       },
@@ -5004,6 +5060,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Phone & Email",
         "zh": "電話與電子郵件",
         "kind": "text",
+        "tag": "h3",
         "section": "Contact Us",
         "count": 1
       },
@@ -5018,6 +5075,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Business Hours",
         "zh": "營業時間",
         "kind": "text",
+        "tag": "h3",
         "section": "Contact Us",
         "count": 1
       },
@@ -5039,6 +5097,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Message sent",
         "zh": "訊息已送出",
         "kind": "text",
+        "tag": "h3",
         "section": "Contact Us",
         "count": 1
       },
@@ -5060,6 +5119,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Send us a message",
         "zh": "寄訊息給我們",
         "kind": "text",
+        "tag": "h2",
         "section": "Send us a message",
         "count": 1
       },
@@ -5143,7 +5203,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "索取報價",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 2,
+        "tag": "h1"
       },
       {
         "en": "Tell us what the package must do. A packaging engineer — not a bot — replies within one business day with routes and rough numbers.",
@@ -5177,6 +5238,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Request received",
         "zh": "需求已收到",
         "kind": "text",
+        "tag": "h3",
         "section": "Get a Quote",
         "count": 1
       },
@@ -5498,7 +5560,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "隱私權與法律聲明",
         "kind": "text",
         "section": "頁首",
-        "count": 2
+        "count": 2,
+        "tag": "h1"
       },
       {
         "en": "Last updated: July 2026 · Placeholder copy — final terms to be supplied by legal counsel",
@@ -5511,6 +5574,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "1. Data We Collect",
         "zh": "一、我們蒐集的資料",
         "kind": "text",
+        "tag": "h2",
         "section": "1. Data We Collect",
         "count": 1
       },
@@ -5525,6 +5589,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "2. How We Use Your Data",
         "zh": "二、我們如何使用您的資料",
         "kind": "text",
+        "tag": "h2",
         "section": "2. How We Use Your Data",
         "count": 1
       },
@@ -5539,6 +5604,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "3. Cookies & Analytics",
         "zh": "三、Cookie 與分析",
         "kind": "text",
+        "tag": "h2",
         "section": "3. Cookies & Analytics",
         "count": 1
       },
@@ -5553,6 +5619,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "4. Data Retention & Security",
         "zh": "四、資料保存與安全",
         "kind": "text",
+        "tag": "h2",
         "section": "4. Data Retention & Security",
         "count": 1
       },
@@ -5567,6 +5634,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "5. Your Rights",
         "zh": "五、您的權利",
         "kind": "text",
+        "tag": "h2",
         "section": "5. Your Rights",
         "count": 1
       },
@@ -5581,6 +5649,7 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "6. Legal Notices",
         "zh": "六、法律聲明",
         "kind": "text",
+        "tag": "h2",
         "section": "6. Legal Notices",
         "count": 1
       },

@@ -142,18 +142,23 @@ for (const [pageKey, file] of Object.entries(PAGES)) {
   const items = new Map()
   let section = '頁首'
   let nextIsSection = false
+  /** 目前所在的標題元素（h1–h6），後台在欄位前標示 */
+  let heading = null
 
   const add = (text, kind) => {
     const key = norm(text)
     if (!translatable(key)) return
+    const tag = kind === 'text' ? heading : null
     const hit = items.get(key)
-    if (hit) { hit.count++; return }
-    items.set(key, { en: key, zh: dict[key] ?? null, kind, section, count: 1 })
+    if (hit) { hit.count++; hit.tag ??= tag ?? undefined; return }
+    items.set(key, { en: key, zh: dict[key] ?? null, kind, ...(tag && { tag }), section, count: 1 })
   }
 
   for (const [token] of content.matchAll(/<[^>]+>|[^<]+/g)) {
     if (token.startsWith('<')) {
       if (SECTION_OPEN.test(token)) nextIsSection = true
+      const h = /^<(\/?)(h[1-6])\b/i.exec(token)
+      if (h) heading = h[1] ? null : h[2].toLowerCase()
       const alt = /\salt="([^"]*)"/.exec(token)
       if (alt) add(alt[1], 'alt')
       continue
@@ -176,12 +181,13 @@ writeFileSync(
  *
  * **由 \`node apps/web/scripts/extract-page-texts.mjs\` 產生，不要手改。**
  * \`en\` 是 mockup 的原文（也是覆寫的 key），\`zh\` 是 apps/web/src/lib/zh.ts 目前的譯文，
- * \`count\` 是同一段原文在該頁出現的次數——覆寫會一起改掉每一處。
+ * \`count\` 是同一段原文在該頁出現的次數——覆寫會一起改掉每一處；\`tag\` 是所在的標題元素（h1–h6）。
  */
 export type PageTextItem = {
   en: string
   zh: string | null
   kind: 'text' | 'alt'
+  tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
   section: string
   count: number
 }

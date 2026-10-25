@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { Field, Locale } from '@/lib/types'
+import type { Field, HeadingTag, Locale } from '@/lib/types'
 import { Hint } from './ui'
 import { assetUrl } from '@/lib/asset'
 import * as api from '@/api/client'
@@ -375,12 +375,28 @@ export function FieldInput({
   return (
     <div className="field">
       {label}
-      {body()}
+      {field.tag ? (
+        <div className="htag-row">
+          <HeadingTagBadge tag={field.tag} note={field.tagNote} />
+          {body()}
+        </div>
+      ) : (
+        body()
+      )}
       {field.hint && field.type !== 'image' && field.type !== 'file' && <Hint text={field.hint} />}
       {over && <div className="err">超過建議長度 {field.max} 字，搜尋結果可能被截斷。</div>}
       {field.pattern && str && !field.pattern.re.test(str) && <div className="err">{field.pattern.message}</div>}
       {error && <div className="err">{error}</div>}
     </div>
+  )
+}
+
+/** 欄位前的「H1」「H3」小標：這格的字在前台是哪個標題元素 */
+export function HeadingTagBadge({ tag, note }: { tag: HeadingTag; note?: string }) {
+  return (
+    <span className="htag" title={note ?? `前台以 <${tag}> 標題呈現`}>
+      {tag.toUpperCase()}
+    </span>
   )
 }
 

@@ -4,6 +4,7 @@ import { PAGE_TEXTS, type PageTextItem } from '@/api/page-texts.generated'
 import type { PageTextRow } from '@/api/types'
 import type { Locale } from '@/lib/types'
 import { Badge, toast } from '@/components/ui'
+import { HeadingTagBadge } from '@/components/fields'
 
 /** 開放「頁面文字」的頁面（清單由 apps/web/scripts/extract-page-texts.mjs 從 mockup 產生） */
 export const hasPageTexts = (pageKey: string) => pageKey in PAGE_TEXTS
@@ -158,7 +159,8 @@ export function PageTextFields({
                       {item.count > 1 && <Badge kind="warn">×{item.count}</Badge>}
                     </div>
                   )}
-                  <div className="field">
+                  <div className="field htag-row">
+                    {item.tag && <HeadingTagBadge tag={item.tag} />}
                     {item.en.length > 90 ? <textarea rows={3} {...props} /> : <input type="text" {...props} />}
                   </div>
                 </div>

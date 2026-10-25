@@ -43,7 +43,7 @@ export const supplierSpec: Unit = {
   sortable: true,
   hasStatus: true,
   fields: [
-    { key: 'title', label: '標題', type: 'text', i18n: true, required: true, max: 160, side: 'locale' },
+    { key: 'title', label: '標題', type: 'text', i18n: true, required: true, max: 160, side: 'locale', tag: 'h3' },
     { key: 'description', label: '說明', type: 'textarea', i18n: true, max: 600, side: 'locale' },
   ],
   columns: [{ key: 'title', label: '標題' }, ...statusColumns],

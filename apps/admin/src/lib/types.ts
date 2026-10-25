@@ -55,7 +55,12 @@ export type Field = {
   placeholder?: string
   /** 格式檢查：值不符時在欄位下方即時提示（後端另有同一條檢查，這裡只是讓錯誤早點浮現） */
   pattern?: { re: RegExp; message: string }
+  /** 前台以哪個標題元素呈現（h1–h6），欄位前會標示；`tagNote` 是滑鼠移上去的說明（同一欄在不同頁用不同層級時寫在這） */
+  tag?: HeadingTag
+  tagNote?: string
 }
+
+export type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 
 export type ListColumn = {
   key: string
