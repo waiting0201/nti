@@ -3,7 +3,6 @@ import { T } from '@/lib/t'
 import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
 import { PageBanner, PageMidBanner } from '@/components/cms'
 import { A } from '@/components/A'
-import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -60,13 +59,6 @@ export default async function Page({ params }: Props) {
         </div>
       </div></section>
       <PageMidBanner src={midBannerSrc(page, 4, "/assets/ref-green-mid4.webp")} alt="CO2-neutral Heidelberg Speedmaster press line" />
-      <section className="section certs reveal"><div className="wrap certgrid">
-        <img src={mediaUrl("/assets/cert-green.png")} alt="NTI Green Printing" />
-        <img src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" className="big" />
-        <img src={mediaUrl("/assets/cert-leed.png")} alt="LEED Leadership in Energy and Environmental Design" />
-        <img src={mediaUrl("/assets/cert-mof.png")} alt="Mineral Oil Free" />
-        <img src={mediaUrl("/assets/cert-esg.png")} alt="ESG Environmental, Social, Governance" />
-      </div></section>
     </T>
   )
 }
