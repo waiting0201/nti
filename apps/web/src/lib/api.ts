@@ -300,9 +300,10 @@ export const getNewsMoved      = (l: Locale, slug: string) => fetchApi<{ toPath:
 // ── 標籤（單元 25）──────────────────────────────────────────────────────────
 // 後端只回「有已上架消息」的標籤，所以清單與封存頁都不會出現空標籤（見 TagReadService）
 export const getTags           = (l: Locale) => fetchApi<Tag[]>(`/tags${q(l)}`)
-export const getTag            = (l: Locale, slug: string) => fetchApi<Tag>(`/tags/${slug}${q(l)}`)
-export const getNewsByTag      = (l: Locale, slug: string) =>
-  fetchApi<NewsCard[]>(`/news${q(l, `&tag=${encodeURIComponent(slug)}`)}`)
+// 這兩支 `generateMetadata`（description 要用篇數與最新標題）與頁面本體都要，`cache()` 讓同一請求只打一輪
+export const getTag            = cache((l: Locale, slug: string) => fetchApi<Tag>(`/tags/${slug}${q(l)}`))
+export const getNewsByTag      = cache((l: Locale, slug: string) =>
+  fetchApi<NewsCard[]>(`/news${q(l, `&tag=${encodeURIComponent(slug)}`)}`))
 export const getVlogs          = (l: Locale) => fetchApi<Vlog[]>(`/green-vlog${q(l)}`)
 export const getFaqs           = (l: Locale) => fetchApi<Faq[]>(`/faq${q(l)}`)
 export const getTrends         = (l: Locale) => fetchApi<Trend[]>(`/industry-trends${q(l)}`)

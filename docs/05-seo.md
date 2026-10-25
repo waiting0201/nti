@@ -70,6 +70,7 @@
 ### 2.4 渲染與可檢索
 - 公開站內容頁採 **Next.js SSR**（接 CMS 的頁 `no-store`，每個請求重新渲染；沒接 CMS 的頁仍是 SSG）；關鍵內容**不依賴 JS**。
 - CMS 後台 SPA 以 `X-Robots-Tag: noindex` / `robots.txt` 排除索引。
+- 消息標籤封存頁 `/news/tag/{slug}` 為 **`noindex, follow`**、不列入 sitemap：內容全是別頁的摘要，收錄了只會跟 `/news` 與消息詳細頁搶同一批關鍵字；`follow` 讓爬蟲與舊站 `/tag/*` 301 過來的權重仍能經由它走到各篇消息。
 - **避免文字圖片化**（標題/正文為可選取文字）。
 - 語意化標籤、單一 H1、合理 H2–H3 階層、麵包屑。
 
@@ -181,6 +182,7 @@
 | 2026-09-16 | Tim（Claude Code） | §2.6 補上 robots.txt 開放後的三群組結構，策略本文改放 06-geo §2.3 |
 | 2026-10-25 | Tim（Claude Code） | §2.3 新增 `LocalBusiness`，只發給有地址＋地圖的頁（目前僅 `/contact`），由 layout 依路徑輸出，不進驗收閘的比對區間 |
 | 2026-10-06 | Tim（Claude Code） | §2.2 依客戶要求中文拿掉 `/zh` 前綴：中文在根目錄、英文 `/en/`；舊 `/zh/*` 301 到無前綴網址；`/` 不再依瀏覽器語言自動導向 |
+| 2026-10-25 | Tim（Claude Code） | §2.4 消息標籤封存頁改為 `noindex, follow` 並移出 sitemap |
 | 2026-10-25 | Tim（Claude Code） | §2.3 補發 `FAQPage`（`/faq`）與 `VideoObject`（嵌入影片的三頁），改寫原本「刻意不發」的理由；兩者只在接 CMS 的分支輸出，`verify:markup` 不受影響 |
 
 *最後更新：2026-10-25*

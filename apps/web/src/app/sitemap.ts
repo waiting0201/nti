@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getNews, getTags } from '@/lib/api'
+import { getNews } from '@/lib/api'
 import { localeUrl as url, locales, type Locale } from '@/lib/i18n'
 import { ROUTES } from '@/lib/routes'
 
@@ -12,6 +12,7 @@ import { ROUTES } from '@/lib/routes'
  *
  * - 靜態路由來自 `lib/routes.ts`（由 mockup 產生，44 條）
  * - CMS 的消息詳細頁在有設 `NEXT_PUBLIC_API_BASE` 時一併展開；沒設就只有靜態路由
+ * - 標籤封存頁不列（noindex）
  *   （`/news/{slug}` 那條路由此時本來就會 404，列進來只會製造無效網址）
  *
  * 刻意不寫 `changeFrequency` 與 `priority`：Google 明說兩者一律忽略，
@@ -73,21 +74,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   /*
-   * 標籤封存頁。後端只回有已上架消息的標籤（見 TagReadService），所以這裡不會
-   * 產生空頁面的網址——sitemap 裡出現一堆 thin content 反而會拖累整站的評估。
-   *
-   * slug 不分語系，中英是同一個值，hreflang 因此是恆等式（與消息詳細頁不同，
-   * 那邊的 slug 可翻譯、要用 Id 配對）。
+   * 標籤封存頁**不列**：那些頁是 `noindex, follow`（見 `news/tag/[slug]/page.tsx`），
+   * sitemap 列 noindex 的網址等於同時說「請收錄」與「別收錄」，Search Console 會報衝突。
    */
-  const tags = (await getTags('en')) ?? []
-  for (const tag of tags) {
-    for (const locale of locales) {
-      entries.push({
-        url: url(locale, `/news/tag/${tag.slug}`),
-        alternates: { languages: languages(`/news/tag/${tag.slug}`) },
-      })
-    }
-  }
 
   return entries
 }

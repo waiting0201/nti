@@ -20,10 +20,48 @@ import { localeUrl, withLocale, type Locale } from '@/lib/i18n'
  * 最容易搞砸的方式就是產出一百個沒有內容的封存頁，那在 Google 眼中是 thin content。
  *
  * slug 不分語系，所以 hreflang 是恆等式（中英同一個 slug），不必像消息詳細頁那樣配對。
+ *
+ * **`noindex, follow`**（2026-10-25）：標籤頁只是消息的另一種列表，內容全是別頁的摘要，
+ * 收錄了只會跟 `/news` 與消息詳細頁搶同一批關鍵字。`follow` 保留——爬蟲仍會順著它走到各篇消息，
+ * 舊站 `/tag/*` 301 過來的權重也還能經由這些連結傳下去。sitemap 因此不列標籤頁（見 `app/sitemap.ts`）。
  */
 type Props = { params: Promise<{ locale: Locale; slug: string }> }
 
 const canonicalOf = (locale: Locale, slug: string) => localeUrl(locale, `/news/tag/${slug}`)
+
+/**
+ * 標籤頁的 description。
+ *
+ * 標籤沒有自己的說明欄位（`TagI18n` 只有名稱），早期版本是固定句型＋標籤名，
+ * 結果一百頁的開頭全是「NTI Printing 與「…」」——搜尋結果只看得到前段，等於每頁都一樣。
+ * 所以**標籤名放最前面**，後面接該標籤底下最新幾篇的標題（API 已依發布日期新到舊排）：
+ * 這是每頁真正不同的內容，也正是畫面上列出來的東西。
+ *
+ * 標題能塞幾篇看長度：Google 摘要約中文 80 字、英文 155 字元，至少放一篇。
+ * 標籤頁 noindex 之後不會出現在搜尋結果，這段主要給分享卡（OG／Twitter）用。
+ */
+const DESC_MAX: Record<Locale, number> = { zh: 80, en: 155 }
+
+function describeTag(locale: Locale, name: string, count: number, items: { title: string }[]) {
+  const zh = locale === 'zh'
+  const head = zh
+    ? `${name}：NTI Printing 的 ${count} 則相關消息`
+    : `${name}: ${count} ${count === 1 ? 'story' : 'stories'} from NTI Printing`
+  const quote = (t: string) => (zh ? `「${t}」` : `“${t}”`)
+  // 全部列得出來就不說「包括」（只有一篇時「1 則，包括…」讀起來很怪）
+  const build = (titles: string[]) => {
+    if (!titles.length) return `${head}${zh ? '。' : '.'}`
+    const lead = titles.length < count ? (zh ? '，包括' : ', including ') : (zh ? '：' : ': ')
+    return `${head}${lead}${titles.map(quote).join(zh ? '、' : ', ')}${zh ? '。' : '.'}`
+  }
+
+  const titles: string[] = []
+  for (const { title } of items) {
+    if (titles.length && build([...titles, title]).length > DESC_MAX[locale]) break
+    titles.push(title)
+  }
+  return build(titles)
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params
@@ -32,14 +70,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const canonical = canonicalOf(locale, slug)
   const title = `${tag.name} — ${tr(locale, 'News')} | NTI Printing`
-  const description =
-    locale === 'zh'
-      ? `NTI Printing 與「${tag.name}」相關的 ${tag.newsCount} 則消息：綠色印刷、永續包裝與工廠實務。`
-      : `${tag.newsCount} stories from NTI Printing tagged ${tag.name} — green printing, sustainable packaging and plant practice.`
+  const description = describeTag(locale, tag.name, tag.newsCount, (await getNewsByTag(locale, slug)) ?? [])
 
   return {
     title,
     description,
+    robots: { index: false, follow: true },
     openGraph: { title, description, url: canonical, siteName: 'NTI Printing', type: 'website' },
     twitter: { card: 'summary_large_image', title, description },
     alternates: {

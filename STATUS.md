@@ -354,7 +354,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 | 項目 | 做法 |
 |---|---|
-| `sitemap.xml` | `src/app/sitemap.ts`：44 條靜態路由 × 2 語系＝88 條，接了 CMS 再加消息詳細頁（實測 112 條）。逐條帶 `xhtml:link` hreflang，消息用 Id 把中英兩篇配對（slug 可翻譯、中英不同） |
+| `sitemap.xml` | `src/app/sitemap.ts`：44 條靜態路由 × 2 語系＝88 條，接了 CMS 再加消息詳細頁。標籤封存頁是 `noindex, follow`，不列入（2026-10-25）。逐條帶 `xhtml:link` hreflang，消息用 Id 把中英兩篇配對（slug 可翻譯、中英不同） |
 | 路由清單 | `src/lib/routes.ts` 由 `build-pages.mjs` 從 mockup 產生，不是手寫 |
 | `robots.txt` | 開放收錄時補上 sitemap 位址（預設仍是 `Disallow: /`，見 §七） |
 | 結構化資料 | `Organization`＋`WebSite`（全站）、`LocalBusiness`（只在有地址＋地圖的 `/contact`）、`BreadcrumbList`（首頁以外 43 頁，來自 mockup 的 `.crumb`）、`NewsArticle`（CMS 消息詳細頁）、`FAQPage`（`/faq`）、`VideoObject`（嵌入影片的 `/differences`、`/facility-tour` 中文、`/blog` 主打影片；上傳日期讀 YouTube 觀看頁）。後兩者只在接 CMS 時輸出。不發 `Product`，理由記在 [docs/05 §2.3](docs/05-seo.md) |
