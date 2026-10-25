@@ -294,11 +294,9 @@ const GALLERY_MAX = 20
  * 選檔只進暫存區，按下儲存才一併送出；拿掉已存過的圖，存檔後會從系統刪除。
  */
 function GalleryField({
-  field,
   value,
   onChange,
 }: {
-  field: Field
   value: unknown
   onChange: (v: GalleryItem[]) => void
 }) {
@@ -377,7 +375,7 @@ function GalleryField({
           <span className="meta">{items.length} / {GALLERY_MAX} 張</span>
         </div>
       </div>
-      {field.hint && <Hint text={field.hint} />}
+      {/* 欄位說明由外層 FieldInput 統一印（只有 image／file 例外），這裡再印一次就會出現兩串 */}
       {warn && <div className="hint">{warn}</div>}
     </>
   )
@@ -449,7 +447,7 @@ export function FieldInput({
       case 'tags':
         return <TagPicker value={value} onChange={onChange} />
       case 'gallery':
-        return <GalleryField field={field} value={value} onChange={onChange} />
+        return <GalleryField value={value} onChange={onChange} />
       case 'date':
         return <input type="date" value={str} onChange={(e) => onChange(e.target.value)} />
       case 'number':
