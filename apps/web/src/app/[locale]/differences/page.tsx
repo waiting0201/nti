@@ -66,12 +66,6 @@ export default async function Page({ params }: Props) {
         <p className="prose wide reveal mt-s">At NTI Printing, ESG begins with people. Our state-of-the-art, fully air-conditioned facility is designed to provide a safe, comfortable, and inspiring workplace for every member of our team. From modern offices and efficient production floors to staff restaurants, library, dormitories, and shared spaces, we continually invest in the wellbeing of both our local and international employees. By creating an environment where people can thrive, we build a stronger culture, deliver better quality, and support a more sustainable future as a trusted sustainable packaging manufacturer in Taiwan.</p>
         <p className="mt-m reveal"><A href={l("/facility-tour")} className="blink">Take a factory tour</A></p>
       </div></section>
-      <section className="section certs reveal"><div className="wrap certgrid">
-        <img src={mediaUrl("/assets/cert-green.png")} alt="NTI Green Printing" />
-        <img src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" className="big" />
-        <img src={mediaUrl("/assets/cert-leed.png")} alt="LEED Leadership in Energy and Environmental Design" />
-        <img src={mediaUrl("/assets/cert-mof.png")} alt="Mineral Oil Free" />
-      </div></section>
     </T>
   )
 }
