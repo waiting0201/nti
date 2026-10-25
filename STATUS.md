@@ -357,7 +357,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
 | `sitemap.xml` | `src/app/sitemap.ts`：44 條靜態路由 × 2 語系＝88 條，接了 CMS 再加消息詳細頁（實測 112 條）。逐條帶 `xhtml:link` hreflang，消息用 Id 把中英兩篇配對（slug 可翻譯、中英不同） |
 | 路由清單 | `src/lib/routes.ts` 由 `build-pages.mjs` 從 mockup 產生，不是手寫 |
 | `robots.txt` | 開放收錄時補上 sitemap 位址（預設仍是 `Disallow: /`，見 §七） |
-| 結構化資料 | `Organization`＋`WebSite`（全站）、`BreadcrumbList`（首頁以外 43 頁，來自 mockup 的 `.crumb`）、`NewsArticle`（CMS 消息詳細頁）。不發 `FAQPage`／`Product`／`VideoObject`，理由記在 [docs/05 §2.3](docs/05-seo.md) |
+| 結構化資料 | `Organization`＋`WebSite`（全站）、`LocalBusiness`（只在有地址＋地圖的 `/contact`）、`BreadcrumbList`（首頁以外 43 頁，來自 mockup 的 `.crumb`）、`NewsArticle`（CMS 消息詳細頁）。不發 `FAQPage`／`Product`／`VideoObject`，理由記在 [docs/05 §2.3](docs/05-seo.md) |
 | 舊站 301 | `src/lib/legacy-redirects.ts` + middleware，**229 條全部有去處**：158 條專屬落點（45 個固定頁、2 個分類、99 個標籤，加上 mockup 那 12 篇示範消息——它們正是舊站同一批文章），其餘 71 條依客戶決定導回首頁（產生檔 `legacy-archive.ts`） |
 | 覆蓋率檢查 | `node tools/check-legacy-redirects.mjs [--write]`：抓舊站 sitemap 比對，並重產 [`reference/舊站301對照表.md`](reference/舊站301對照表.md) |
 | 後台單元 16 的資料 | `node tools/build-redirect-sql.mjs` 由上面那份對照表產出 `db/content/210_legacy_redirects.{csv,sql}`（**227 條**＝229 扣掉兩條新舊相同的），後台一打開就是真的對照表。⚠ 前台目前**不讀這張表**，middleware 讀的是編譯進去的 `legacy-redirects.ts`——客戶現在改後台不會影響正式站，等 middleware 改讀 API 才會 |

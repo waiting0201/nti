@@ -76,6 +76,43 @@ export function website(locale: Locale) {
   }
 }
 
+/**
+ * 實體據點（`LocalBusiness`）——**只發給畫面上同時有地址與地圖的頁**，目前只有 `/contact`
+ * （facility-tour／blog／differences 的 iframe 是 YouTube，不是地圖）。
+ * 全站都帶地址的是 `Organization`；據點的營業時間、地圖是聯絡頁才有的可見內容。
+ *
+ * 地址、電話與 `Organization` 同一份來源；營業時間＝聯絡頁的「Mon–Fri 08:30–17:30 (GMT+8)」。
+ * 不給 `geo`：我們手上沒有客戶確認過的經緯度，寧缺勿編。
+ */
+export const LOCAL_BUSINESS_PATHS = new Set(['/contact'])
+
+const MAP_URL =
+  'https://www.google.com/maps?q=No.+29,+Gongye+6th+Rd.,+Annan+Dist.,+Tainan+City+709,+Taiwan'
+
+export function localBusiness(locale: Locale) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    '@id': `${siteUrl}/#tainan-plant`,
+    name: locale === 'zh' ? '南台彩藝' : 'NTI Printing',
+    url: localeUrl(locale, '/contact'),
+    image: absolute(mediaUrl('/assets/logo.svg')),
+    telephone: '+886-6-261-1358',
+    email: 'service@nti-printing.com',
+    address: { '@type': 'PostalAddress', ...ADDRESS[locale] },
+    hasMap: MAP_URL,
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        opens: '08:30',
+        closes: '17:30',
+      },
+    ],
+    parentOrganization: { '@id': ORG_ID },
+  }
+}
+
 /** 全站共用的那兩個節點，包成一張 graph 一次輸出 */
 export const siteGraph = (locale: Locale) => ({
   '@context': 'https://schema.org',

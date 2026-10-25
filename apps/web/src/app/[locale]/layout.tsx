@@ -6,6 +6,7 @@ import { FloatingPanel } from '@/components/FloatingPanel'
 import { SiteChrome } from '@/components/SiteChrome'
 import { JsonLd } from '@/components/JsonLd'
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd'
+import { LocalBusinessJsonLd } from '@/components/LocalBusinessJsonLd'
 import { htmlLang, isLocale, locales, siteUrl } from '@/lib/i18n'
 import { siteGraph } from '@/lib/jsonld'
 import '../globals.css'
@@ -73,6 +74,7 @@ export default async function LocaleLayout({
         */}
         <JsonLd data={siteGraph(locale)} />
         <BreadcrumbJsonLd />
+        <LocalBusinessJsonLd />
       </body>
     </html>
   )

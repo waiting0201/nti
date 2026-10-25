@@ -38,7 +38,7 @@
 > ⚠️ 路由細節待 [`02-frontend.md`](02-frontend.md) 定案；`db/seed/140_page.sql` 為現行提案值，改動只需更新該檔，不影響 schema。
 
 ### 2.3 結構化資料（JSON-LD）
-依頁型注入。**2026-09-07 實作時收斂為四種**（`apps/web/src/lib/jsonld.ts`）：
+依頁型注入。**2026-09-07 實作時收斂為四種**，2026-10-25 加上 `LocalBusiness`（`apps/web/src/lib/jsonld.ts`）：
 
 | 型別 | 範圍 | 來源 |
 |---|---|---|
@@ -46,6 +46,7 @@
 | `WebSite` | 全站（layout） | 同上，`publisher` 指回 `Organization` |
 | `BreadcrumbList` | 43／44 頁（首頁除外） | mockup 的 `.crumb`，由 `build-pages.mjs` 產生 `lib/breadcrumbs.ts` |
 | `NewsArticle` | CMS 的 `/news/{slug}` | 消息詳細端點 |
+| `LocalBusiness` | **只發給有地址＋地圖的頁**，目前僅 `/contact`（`LOCAL_BUSINESS_PATHS`） | 地址／電話與 `Organization` 同源；營業時間＝聯絡頁可見的 Mon–Fri 08:30–17:30；`parentOrganization` 指回 `Organization`。不給 `geo`（沒有客戶確認的經緯度） |
 
 **刻意不發的三種**，理由記在此：
 
@@ -169,6 +170,7 @@
 | 2026-09-09 | Tim（Claude Code） | 依客戶 2026-09-08《網站建置 SEO 注意事項》逐條稽核，補上四項缺口：**40 頁的 meta description**（寫進 mockup，經產生器帶到 44 頁）、**36 張圖轉 WebP**（47MB→4.8MB）、**客製化 404**、**預設 og:image 與 Twitter Cards**。仍缺的項目見 STATUS §SEO |
 | 2026-09-11 | Tim（Claude Code） | 渲染策略同步 docs/02：內容頁由 SSG + ISR（webhook 重生）改為 SSR 不快取。對 SEO 的實質沒有差別——爬蟲拿到的仍是伺服器產好的完整 HTML |
 | 2026-09-16 | Tim（Claude Code） | §2.6 補上 robots.txt 開放後的三群組結構，策略本文改放 06-geo §2.3 |
+| 2026-10-25 | Tim（Claude Code） | §2.3 新增 `LocalBusiness`，只發給有地址＋地圖的頁（目前僅 `/contact`），由 layout 依路徑輸出，不進驗收閘的比對區間 |
 | 2026-10-06 | Tim（Claude Code） | §2.2 依客戶要求中文拿掉 `/zh` 前綴：中文在根目錄、英文 `/en/`；舊 `/zh/*` 301 到無前綴網址；`/` 不再依瀏覽器語言自動導向 |
 
-*最後更新：2026-10-06*
+*最後更新：2026-10-25*
