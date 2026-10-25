@@ -3,6 +3,7 @@ import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { VlogGrid } from '@/components/cms'
 import { VideoJsonLd } from '@/components/VideoJsonLd'
+import { VlogPlayer } from '@/components/behaviors/VlogPlayer'
 import { cmsMedia, getPage, getVlogs } from '@/lib/api'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -61,6 +62,7 @@ export default async function Page({ params }: Props) {
         </>
         )}
       </div></section>
+      <VlogPlayer />
     </T>
   )
 }
