@@ -31,6 +31,12 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
         FROM PageText t
         INNER JOIN Page tp ON tp.Id = t.PageId
         WHERE tp.PageKey = @PageKey AND t.Lang = @Lang;
+
+        SELECT g.ImagePath, g.ImageAlt
+        FROM PageGalleryImage g
+        INNER JOIN Page gp ON gp.Id = g.PageId
+        WHERE gp.PageKey = @PageKey AND g.Lang = @Lang
+        ORDER BY g.SortOrder, g.Id;
         """;
 
     public async Task<PageDto?> GetByKeyAsync(string lang, string pageKey)
@@ -46,6 +52,10 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
         // 頁面文字覆寫：原文 → 該語系的字（前台 <T overrides> 以原文查表）
         dto.Texts = (await grid.ReadAsync<(string SourceText, string Value)>())
             .ToDictionary(x => x.SourceText, x => x.Value, StringComparer.Ordinal);
+
+        // 相簿照片：只有 PageGalleryPages 列出的頁與語系有前台位置
+        var gallery = (await grid.ReadAsync<PageGalleryImageItemDto>()).ToList();
+        dto.GalleryImages = PageGalleryPages.Has(pageKey, lang) ? gallery : [];
         return dto;
     }
 
@@ -78,7 +88,7 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
             HasRichBody = HasRichBody, IsIndexable = IsIndexable,
             // 只有 HasRichBody = 1 的兩頁（privacy-legal、預留的 green-csr）才有內文
             BodyHtml = HasRichBody ? BodyHtml : null,
-            // 影片分語系；工廠導覽英文版沒有影片位置（是照片輪播），就算 DB 有值也不給
+            // 影片分語系；工廠導覽英文版沒有影片位置（是相簿），就算 DB 有值也不給
             YoutubeId = PageVideoPages.Has(PageKey, Lang) ? YoutubeId : null,
             BannerImagePath = BannerImagePath,
             MidBannerImagePaths = new[] { MidBanner1ImagePath, MidBanner2ImagePath, MidBanner3ImagePath, MidBanner4ImagePath }

@@ -963,7 +963,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.ClientLogo WHERE LogoPath = N'assets/client-hom
     VALUES (N'The Home Depot', N'assets/client-homedepot.png', NULL, 60, 1);
 GO
 
-/* ── facility → FacilityItem（24 筆）──────────────────────────── */
+/* ── facility → FacilityItem（21 筆）──────────────────────────── */
 IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-ctp.jpg')
     INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'pre-press'), N'assets/fac-pre-ctp.jpg', 10, 1);
 IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-pre-ctp.jpg') AND Lang = 'zh')
@@ -1237,45 +1237,23 @@ IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT
 ELSE
     UPDATE dbo.FacilityItemI18n SET Name = N'Blister packing strength tester', Description = NULL, ImageAlt = N'Blister packing strength tester' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-qc-blister.png') AND Lang = 'en';
 
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp')
-    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'tour'), N'assets/fac-tour1.webp', 220, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp') AND Lang = 'zh')
-    INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp'), 'zh', N'廠區作業現場', NULL, N'NTI 廠區作業現場');
-ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'廠區作業現場', Description = NULL, ImageAlt = N'NTI 廠區作業現場' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp') AND Lang = 'en')
-    INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp'), 'en', N'Factory floor', NULL, N'Factory floor');
-ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'Factory floor', Description = NULL, ImageAlt = N'Factory floor' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour1.webp') AND Lang = 'en';
+GO
 
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp')
-    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'tour'), N'assets/fac-tour2.webp', 230, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp') AND Lang = 'zh')
-    INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp'), 'zh', N'生產通道', NULL, N'NTI 生產通道');
-ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'生產通道', Description = NULL, ImageAlt = N'NTI 生產通道' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp') AND Lang = 'en')
-    INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp'), 'en', N'Production aisle', NULL, N'Production aisle');
-ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'Production aisle', Description = NULL, ImageAlt = N'Production aisle' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour2.webp') AND Lang = 'en';
-
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp')
-    INSERT dbo.FacilityItem (CategoryId, ImagePath, SortOrder, IsPublished) VALUES ((SELECT Id FROM dbo.Category WHERE CategoryType = 'Facility' AND Code = 'tour'), N'assets/fac-tour-main.webp', 240, 1);
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp') AND Lang = 'zh')
-    INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp'), 'zh', N'包材倉儲與物流', NULL, N'NTI 包材倉儲與物流');
-ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'包材倉儲與物流', Description = NULL, ImageAlt = N'NTI 包材倉儲與物流' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp') AND Lang = 'zh';
-IF NOT EXISTS (SELECT 1 FROM dbo.FacilityItemI18n WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp') AND Lang = 'en')
-    INSERT dbo.FacilityItemI18n (FacilityItemId, Lang, Name, Description, ImageAlt)
-    VALUES ((SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp'), 'en', N'Packaging stock & logistics', NULL, N'Packaging stock & logistics');
-ELSE
-    UPDATE dbo.FacilityItemI18n SET Name = N'Packaging stock & logistics', Description = NULL, ImageAlt = N'Packaging stock & logistics' WHERE FacilityItemId = (SELECT Id FROM dbo.FacilityItem WHERE ImagePath = N'assets/fac-tour-main.webp') AND Lang = 'en';
-
+/* ── page facility-tour → PageGalleryImage（en，12 張）──────────── */
+IF NOT EXISTS (SELECT 1 FROM dbo.PageGalleryImage WHERE PageId = (SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour') AND Lang = N'en')
+    INSERT dbo.PageGalleryImage (PageId, Lang, ImagePath, ImageAlt, SortOrder) VALUES
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-01.webp', N'NTI Printing headquarters — building exterior', 10),
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-02.webp', N'NTI Printing headquarters at night', 20),
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-03.webp', N'Ground-floor lobby', 30),
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-04.webp', N'Ground-floor lobby reception lounge', 40),
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-05.webp', N'Ground-floor meeting room', 50),
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-06.webp', N'Second-floor staff restaurant', 60),
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-07.webp', N'Second-floor office', 70),
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-08.webp', N'Second-floor pantry', 80),
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-09.webp', N'Fourth-floor operations room', 90),
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-10.webp', N'Second-floor post-press production area', 100),
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-11.webp', N'Ground-floor paper cutting area', 110),
+        ((SELECT Id FROM dbo.Page WHERE PageKey = N'facility-tour'), N'en', N'assets/fac-gallery-12.webp', N'Offset press line on the production floor', 120);
 GO
 
 /* ── job → JobPosting（5 筆）──────────────────────────── */

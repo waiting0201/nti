@@ -28,6 +28,8 @@ export type FieldType =
   | 'number'
   /** 多選標籤晶片（單元 04 消息）；值是標籤 id 的陣列 */
   | 'tags'
+  /** 多張圖＋各自的替代文字、可調順序（單元 15 的「相簿照片」）；值是 `{ imagePath, imageAlt }` 的陣列 */
+  | 'gallery'
 
 export type Field = {
   key: string

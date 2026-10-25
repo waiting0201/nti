@@ -7,7 +7,7 @@ import { SEO_FIELDS, UNIT_BY_CODE, unitFields } from '@/units'
 import { LOCALE_LABEL, LOCALES, perm, publishState, type Field, type Locale, type Unit } from '@/lib/types'
 import { useAuth } from '@/lib/auth'
 import { Badge, Modal, Notice, toast, useUnsavedGuard } from '@/components/ui'
-import { FieldInput } from '@/components/fields'
+import { FieldInput, type GalleryItem } from '@/components/fields'
 import { blockingReasons, isComplete, missingIn, missingNeutral } from '@/lib/completeness'
 import { RecordView } from './RecordView'
 import { hasPageTexts, PageTextFields, type PageTextsHandle } from './PageTexts'
@@ -87,12 +87,14 @@ export function EditPage() {
   const showPageTexts = unit.code === 'page' && !isNew && hasPageTexts(pageKeyOf(row))
 
   // page 單元：只有 HasRichBody = 1 的頁面才顯示「頁面內容」欄位（docs §15），
-  // 「頁面影片」分語系，只在有影片的頁面與語系才顯示（後端回 videoLangs；工廠導覽只有中文），頂部有大圖的（hasBanner）才顯示「頂部橫幅」，
+  // 「頁面影片」分語系，只在有影片的頁面與語系才顯示（後端回 videoLangs；工廠導覽只有中文），
+  // 「相簿照片」同理（後端回 galleryLangs；目前只有工廠導覽的英文），頂部有大圖的（hasBanner）才顯示「頂部橫幅」，
   // 「中段橫幅 N」只顯示該頁有的那幾張（後端回 midBannerCount）
   const midSlot = (f: Field) => Number(/^midBanner(\d)$/.exec(f.key)?.[1] ?? 0)
   const showField = (f: Field) =>
     !(unit.code === 'page' && f.key === 'body' && row.hasRichBody !== true) &&
     !(unit.code === 'page' && f.key === 'youtubeId' && !(row.videoLangs as string[] | undefined)?.includes(locale)) &&
+    !(f.type === 'gallery' && !(row.galleryLangs as string[] | undefined)?.includes(locale)) &&
     !(unit.code === 'page' && f.key === 'banner' && row.hasBanner !== true) &&
     !(unit.code === 'page' && midSlot(f) > Number(row.midBannerCount ?? 0))
 
@@ -119,6 +121,17 @@ export function EditPage() {
       setFieldErrors(Object.fromEntries(showing.map((f) => [f.key, '必填，不能空著'])))
       toast(`${LOCALE_LABEL[locale]}還沒填：${showing.map((f) => f.label).join('、')}（中英至少要完整填一種）`)
       return
+    }
+
+    // 相簿照片每張都要有替代文字（後端也會擋，這裡先講清楚是哪一張）
+    for (const f of fields.filter((x) => x.type === 'gallery')) {
+      for (const [lang, items] of Object.entries((next[f.key] ?? {}) as Record<string, GalleryItem[]>)) {
+        const i = items.findIndex((x) => !x.imageAlt?.trim())
+        if (i >= 0) {
+          toast(`${LOCALE_LABEL[lang as Locale]}「${f.label}」第 ${i + 1} 張還沒填替代文字`)
+          return
+        }
+      }
     }
 
     setFieldErrors({})
@@ -165,7 +178,16 @@ export function EditPage() {
     }
   }
 
-  const renderLocaleField = (f: Field) => (
+  // 相簿照片存在列的頂層 `gallery[lang]`（i18n 的值都是字串，放不進陣列），畫面上一樣放在語系分頁
+  const renderLocaleField = (f: Field) => f.type === 'gallery' ? (
+    <FieldInput
+      key={f.key}
+      field={f}
+      value={(row[f.key] as Record<string, unknown> | undefined)?.[locale] ?? []}
+      error={fieldErrors[f.key]}
+      onChange={(v) => setNeutral(f.key, { ...((row[f.key] as Record<string, unknown>) ?? {}), [locale]: v })}
+    />
+  ) : (
     <FieldInput
       key={f.key}
       field={f}

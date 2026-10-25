@@ -1,19 +1,28 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { PageBanner, PageMidBanner } from '@/components/cms'
-import { bannerSrc, cmsMedia, getFacility, getPage, midBannerSrc } from '@/lib/api'
+import { bannerSrc, cmsMedia, getPage, midBannerSrc } from '@/lib/api'
 import { A } from '@/components/A'
-import { TourSlider, type TourSlide } from '@/components/behaviors/TourSlider'
+import { TourGallery, type TourPhoto } from '@/components/behaviors/TourGallery'
 import { mediaUrl, youtubeEmbedSrc } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
 
-/** 沒接 API 時的英文輪播：mockup 那三張（db/content/200 匯入的「參觀」分類也是這三張） */
-const MOCKUP_SLIDES: TourSlide[] = [
-  { src: mediaUrl("/assets/fac-tour1.webp"), alt: "Factory floor" },
-  { src: mediaUrl("/assets/fac-tour2.webp"), alt: "Production aisle" },
-  { src: mediaUrl("/assets/fac-tour-main.webp"), alt: "Packaging stock & logistics" },
+/** 沒接 API 時的英文相簿：mockup 那 12 張（舊站 /home/factory 的相簿；db/content 匯入的也是這 12 張） */
+const MOCKUP_PHOTOS: TourPhoto[] = [
+  { src: mediaUrl("/assets/fac-gallery-01.webp"), alt: "NTI Printing headquarters — building exterior" },
+  { src: mediaUrl("/assets/fac-gallery-02.webp"), alt: "NTI Printing headquarters at night" },
+  { src: mediaUrl("/assets/fac-gallery-03.webp"), alt: "Ground-floor lobby" },
+  { src: mediaUrl("/assets/fac-gallery-04.webp"), alt: "Ground-floor lobby reception lounge" },
+  { src: mediaUrl("/assets/fac-gallery-05.webp"), alt: "Ground-floor meeting room" },
+  { src: mediaUrl("/assets/fac-gallery-06.webp"), alt: "Second-floor staff restaurant" },
+  { src: mediaUrl("/assets/fac-gallery-07.webp"), alt: "Second-floor office" },
+  { src: mediaUrl("/assets/fac-gallery-08.webp"), alt: "Second-floor pantry" },
+  { src: mediaUrl("/assets/fac-gallery-09.webp"), alt: "Fourth-floor operations room" },
+  { src: mediaUrl("/assets/fac-gallery-10.webp"), alt: "Second-floor post-press production area" },
+  { src: mediaUrl("/assets/fac-gallery-11.webp"), alt: "Ground-floor paper cutting area" },
+  { src: mediaUrl("/assets/fac-gallery-12.webp"), alt: "Offset press line on the production floor" },
 ]
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -27,17 +36,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { locale } = await params
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
-  // 英文版的輪播照（單元 10「參觀」分類）；中文版是影片，不必抓
-  const [page, tour] = await Promise.all([
-    getPage(locale, 'facility-tour'),
-    locale === 'en' ? getFacility(locale, 'tour') : null,
-  ])
+  const page = await getPage(locale, 'facility-tour')
   // 頁面影片（單元 15 該頁的「頁面影片」），只有中文版顯示；沒接 API 或沒填就是 mockup 那支
   const video = youtubeEmbedSrc(page?.youtubeId, "https://www.youtube.com/embed/vECuYIiFSSM")
-  // 沒接 API → mockup 那三張；接了 API 但「參觀」一張都沒上架 → 空陣列，整塊不顯示
-  const slides = tour === null
-    ? MOCKUP_SLIDES
-    : tour.map((t) => ({ src: cmsMedia(t.imagePath), alt: t.imageAlt }))
+  // 英文版的相簿（單元 15 該頁英文分頁的「相簿照片」）；中文版是影片。
+  // 沒接 API → mockup 那三張；接了 API 但後台一張都沒放 → 空陣列，整塊不顯示
+  const photos = page
+    ? (page.galleryImages ?? []).map((g) => ({ src: cmsMedia(g.imagePath), alt: g.imageAlt }))
+    : MOCKUP_PHOTOS
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
@@ -60,7 +66,7 @@ export default async function Page({ params }: Props) {
         <div className="video-frame reveal mt-l">
           <iframe src={video} title="Integrated Low-Carbon Production — NTI Printing company film" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
         </div>
-        ) : slides.length > 0 && <TourSlider slides={slides} />}
+        ) : photos.length > 0 && <TourGallery photos={photos} />}
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">On the floor</div>

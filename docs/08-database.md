@@ -517,6 +517,19 @@ CREATE TABLE dbo.PageI18n (
   CONSTRAINT PK_PageI18n PRIMARY KEY (PageId, Lang)
 );
 
+-- 相簿照片（2026-10-25，單元 15 該語系分頁的「相簿照片」）
+-- 只開放 PageGalleryPages 列出的頁與語系：目前只有 facility-tour 的英文（中文版是影片）。
+-- 存檔時整組替換；照片是頁面的附屬，頁面刪掉就跟著走。
+CREATE TABLE dbo.PageGalleryImage (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  PageId INT NOT NULL REFERENCES dbo.Page(Id) ON DELETE CASCADE,
+  Lang VARCHAR(5) NOT NULL,                -- CHECK IN ('zh','en')
+  ImagePath NVARCHAR(260) NOT NULL,
+  ImageAlt NVARCHAR(200) NOT NULL,         -- 每張必填
+  SortOrder INT NOT NULL,
+  INDEX IX_PageGalleryImage_Page (PageId, Lang, SortOrder)
+);
+
 -- 頁面文字覆寫（2026-09-24，單元 15「頁面文字」，見 09 §7.1）
 -- 固定頁上某段英文原文在某語系被改成的字；沒有列＝沿用原文（中文則是前端 zh.ts 的譯文）。
 -- 以原文的 SHA-256 為鍵：原文可能是一整段，NVARCHAR(MAX) 不能進索引。
@@ -905,6 +918,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-10-25 | Tim（Claude Code） | §4.11：`Page` 加 `MidBanner1ImagePath`～`MidBanner4ImagePath`（頁面中段的大圖改由後台維護，張數由 `PageMidBannerPages` 決定）。表數、外鍵、索引不變。遷移 `Api/Data/Migrations/*_PageMidBanner` 與 `db/migrations/0017_page_mid_banner.sql` 一對一，一次性補上 mockup 目前那幾張；`verify*.sql` 數字同步 |
 | 2026-10-25 | Tim（Claude Code） | §4.11：`PageMidBannerPages` 補上漏掉的 `solutions`（Projects 圖）與 `facility`（Factory Tour 全幅照）各 1 張（9 → 11 頁、15 → 17 張），schema 不變。遷移 `Api/Data/Migrations/*_PageMidBannerFacilitySolutions` 與 `db/migrations/0018_page_mid_banner_facility_solutions.sql` 一對一，只補 NULL；`verify*.sql` 數字同步 |
 | 2026-10-25 | Tim（Claude Code） | §4.11：頁面影片分語系——`Page.YoutubeId` 搬到 `PageI18n.YoutubeId`（關於我們中英各一支；工廠導覽只有中文，英文版改為單元 10「參觀」分類的照片輪播）。表數、外鍵、索引不變。遷移 `Api/Data/Migrations/*_PageVideoI18n` 與 `db/migrations/0019_page_video_i18n.sql` 一對一，先搬值再刪欄；`verify*.sql` 數字同步 |
+| 2026-10-25 | Tim（Claude Code） | §4.11：新增 `PageGalleryImage`（工廠導覽英文版的相簿照片，改在單元 15 上傳）。表 +1、外鍵 +1（CASCADE）、CHECK +1、索引 +1。`Category` Facility/tour 停用，原本那幾筆 `FacilityItem` 搬過來後刪除。遷移 `Api/Data/Migrations/*_PageGallery` 與 `db/migrations/0020_page_gallery.sql` 一對一；`verify*.sql` 數字同步 |
 
 *最後更新：2026-10-25*
 

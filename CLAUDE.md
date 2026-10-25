@@ -144,6 +144,7 @@ NTI/
   db/tools/sqlcmd.sh NTI < db/content/300_keep_en_h1.sql        # 280 第一版改到的英文 H1 改回原文
   db/tools/sqlcmd.sh NTI < db/content/310_cert_detail_list.sql  # 認證頁四個清單：標準／GMI 通路／獎項＋管理系統勾選
   db/tools/sqlcmd.sh NTI < db/content/320_projects_hide_cases.sql # Projects 頁隱藏案例分享：導言改寫後的中文覆寫
+  db/tools/sqlcmd.sh NTI < db/content/330_factory_gallery_oldsite.sql # 工廠導覽英文相簿：預設 3 張全景圖換成舊站的 12 張
   db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql             # 應輸出「全數 PASS」
   ```
 

@@ -70,6 +70,7 @@ public class AppDbContext(
     public DbSet<Page>     Page     => Set<Page>();
     public DbSet<PageI18n> PageI18n => Set<PageI18n>();
     public DbSet<PageText> PageText => Set<PageText>();
+    public DbSet<PageGalleryImage> PageGalleryImage => Set<PageGalleryImage>();
     public DbSet<Redirect> Redirect => Set<Redirect>();
 
     // ── 表單（§4.12）────────────────────────────────────────────────────────

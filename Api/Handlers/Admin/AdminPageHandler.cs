@@ -69,6 +69,10 @@ public sealed class AdminPageHandler(AppDbContext db)
             ?? throw AppException.NotFound("Page");
 
         var i18ns = await db.PageI18n.AsNoTracking().Where(i => i.PageId == page.Id).ToListAsync();
+        var gallery = await db.PageGalleryImage.AsNoTracking()
+            .Where(g => g.PageId == page.Id)
+            .OrderBy(g => g.SortOrder).ThenBy(g => g.Id)
+            .ToListAsync();
 
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(new
@@ -77,6 +81,10 @@ public sealed class AdminPageHandler(AppDbContext db)
             hasVideo = PageVideoPages.All.Contains(page.PageKey),
             // 有影片的語系：後台只在這些語系分頁顯示「頁面影片」（工廠導覽只有中文）
             videoLangs = PageVideoPages.LangsOf(page.PageKey),
+            // 有相簿照片的語系（工廠導覽只有英文），以及各語系目前的照片（依排序）
+            galleryLangs = PageGalleryPages.LangsOf(page.PageKey),
+            gallery = gallery.GroupBy(g => g.Lang).ToDictionary(
+                g => g.Key, g => g.Select(x => new { x.ImagePath, x.ImageAlt }).ToList()),
             hasBanner = PageBannerPages.All.Contains(page.PageKey),
             midBannerCount = PageMidBannerPages.Of(page.PageKey),
             i18n = i18ns.ToDictionary(i => i.Lang, i => i),
@@ -131,6 +139,10 @@ public sealed class AdminPageHandler(AppDbContext db)
             // 影片分語系，只有 PageVideoPages 列出的頁與語系有前台位置；別處送來的值直接忽略，與 BodyHtml 同理
             if (PageVideoPages.Has(page.PageKey, lang)) i18n.YoutubeId = PageVideoPages.ParseYoutubeId(body.YoutubeId);
         }
+
+        // 相簿照片同理，只收 PageGalleryPages 列出的語系；有送的語系才整組替換，沒送就是這次沒動
+        foreach (var (lang, items) in dto.Gallery ?? [])
+            if (PageGalleryPages.Has(page.PageKey, lang)) await ReplaceGalleryAsync(page.Id, lang, items ?? []);
 
         await db.SaveChangesAsync();
 
@@ -239,6 +251,30 @@ public sealed class AdminPageHandler(AppDbContext db)
     private static string? ImagePath(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
+    /// <summary>
+    /// 整組替換某語系的相簿照片。舊列要先載入再 Remove，不能 ExecuteDelete：
+    /// 被拿掉的圖靠 SaveChanges 的變更追蹤收集，存檔後由 MediaCleaner 從 Blob 刪掉。
+    /// </summary>
+    private async Task ReplaceGalleryAsync(int pageId, string lang, List<PageGalleryImageDto> items)
+    {
+        if (items.Count > PageGalleryPages.MaxImages)
+            throw AppException.BadRequest(ErrorCodes.ValidationRange, $"相簿照片最多 {PageGalleryPages.MaxImages} 張。");
+
+        var rows = items.Select((x, i) =>
+        {
+            var path = ImagePath(x.ImagePath)
+                ?? throw AppException.BadRequest(ErrorCodes.ValidationRequired, "相簿照片缺少圖片。");
+            var alt = string.IsNullOrWhiteSpace(x.ImageAlt)
+                ? throw AppException.BadRequest(ErrorCodes.ValidationRequired, $"相簿照片第 {i + 1} 張還沒填替代文字。")
+                : Limit(x.ImageAlt.Trim(), 200, "imageAlt")!;
+            return new PageGalleryImage { PageId = pageId, Lang = lang, ImagePath = path, ImageAlt = alt, SortOrder = (i + 1) * 10 };
+        }).ToList();
+
+        db.PageGalleryImage.RemoveRange(
+            await db.PageGalleryImage.Where(g => g.PageId == pageId && g.Lang == lang).ToListAsync());
+        db.PageGalleryImage.AddRange(rows);
+    }
+
     private static string? Limit(string? value, int max, string field)
     {
         if (value is null) return null;
@@ -259,6 +295,8 @@ public sealed class PageUpdateDto
     public string? MidBanner3ImagePath { get; set; }
     public string? MidBanner4ImagePath { get; set; }
     public Dictionary<string, PageI18nDto> I18n { get; set; } = [];
+    /// <summary>各語系的相簿照片（依排序）。沒送的語系 → 這次沒動；空陣列 → 全部拿掉。</summary>
+    public Dictionary<string, List<PageGalleryImageDto>?>? Gallery { get; set; }
 }
 
 public sealed class PageTextSaveDto
@@ -283,6 +321,12 @@ public sealed class PageI18nDto
     public string? OgDescription  { get; set; }
     public string? BodyHtml       { get; set; }
     public string? YoutubeId      { get; set; }
+}
+
+public sealed class PageGalleryImageDto
+{
+    public string? ImagePath { get; set; }
+    public string? ImageAlt  { get; set; }
 }
 
 /// <summary>16 redirect。舊站 301 對照，內容遷移（P8）會一次匯入幾百筆，故有 CSV 匯出入。</summary>

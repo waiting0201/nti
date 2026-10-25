@@ -1,6 +1,6 @@
 /* 由 scripts/build-seed.mjs 自 db/seed/*.sql 與 mockup/*.html 產生 —— 請勿手改。
    重新產生：npm run seed
-   筆數：category=44  page=29  solution=4  solution-item=15  home-banner=3  news=12  project=6  faq=8  job=5  trend=5  certification=14  client=6  facility=24  vlog=4  supplier-notice=5  supplier-spec=4  redirect=226 */
+   筆數：category=44  page=29  solution=4  solution-item=15  home-banner=3  news=12  project=6  faq=8  job=5  trend=5  certification=14  client=6  facility=21  vlog=4  supplier-notice=5  supplier-spec=4  redirect=226 */
 import type { Row } from './types'
 
 export const SEED: Record<string, Row[]> = {
@@ -385,7 +385,7 @@ export const SEED: Record<string, Row[]> = {
       "categoryType": "Facility",
       "code": "tour",
       "sortOrder": 50,
-      "isActive": true,
+      "isActive": false,
       "i18n": {
         "zh": {
           "name": "廠區導覽"
@@ -914,6 +914,61 @@ export const SEED: Record<string, Row[]> = {
       "videoLangs": [
         "zh"
       ],
+      "galleryLangs": [
+        "en"
+      ],
+      "gallery": {
+        "en": [
+          {
+            "imagePath": "/assets/fac-gallery-01.webp",
+            "imageAlt": "NTI Printing headquarters — building exterior"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-02.webp",
+            "imageAlt": "NTI Printing headquarters at night"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-03.webp",
+            "imageAlt": "Ground-floor lobby"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-04.webp",
+            "imageAlt": "Ground-floor lobby reception lounge"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-05.webp",
+            "imageAlt": "Ground-floor meeting room"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-06.webp",
+            "imageAlt": "Second-floor staff restaurant"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-07.webp",
+            "imageAlt": "Second-floor office"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-08.webp",
+            "imageAlt": "Second-floor pantry"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-09.webp",
+            "imageAlt": "Fourth-floor operations room"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-10.webp",
+            "imageAlt": "Second-floor post-press production area"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-11.webp",
+            "imageAlt": "Ground-floor paper cutting area"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-12.webp",
+            "imageAlt": "Offset press line on the production floor"
+          }
+        ]
+      },
       "hasBanner": true,
       "banner": "/assets/fac-tour-main.webp",
       "midBannerCount": 2,
@@ -3288,63 +3343,6 @@ export const SEED: Record<string, Row[]> = {
         "en": {
           "name": "Blister packing strength tester",
           "alt": "Blister packing strength tester",
-          "description": ""
-        }
-      }
-    },
-    {
-      "id": "220",
-      "sortOrder": 220,
-      "isPublished": true,
-      "categoryId": "Facility:tour",
-      "image": "/assets/fac-tour1.webp",
-      "i18n": {
-        "zh": {
-          "name": "Factory floor",
-          "alt": "Factory floor",
-          "description": ""
-        },
-        "en": {
-          "name": "Factory floor",
-          "alt": "Factory floor",
-          "description": ""
-        }
-      }
-    },
-    {
-      "id": "230",
-      "sortOrder": 230,
-      "isPublished": true,
-      "categoryId": "Facility:tour",
-      "image": "/assets/fac-tour2.webp",
-      "i18n": {
-        "zh": {
-          "name": "Production aisle",
-          "alt": "Production aisle",
-          "description": ""
-        },
-        "en": {
-          "name": "Production aisle",
-          "alt": "Production aisle",
-          "description": ""
-        }
-      }
-    },
-    {
-      "id": "240",
-      "sortOrder": 240,
-      "isPublished": true,
-      "categoryId": "Facility:tour",
-      "image": "/assets/fac-tour-main.webp",
-      "i18n": {
-        "zh": {
-          "name": "Packaging stock & logistics",
-          "alt": "Packaging stock & logistics",
-          "description": ""
-        },
-        "en": {
-          "name": "Packaging stock & logistics",
-          "alt": "Packaging stock & logistics",
           "description": ""
         }
       }

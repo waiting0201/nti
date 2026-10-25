@@ -410,7 +410,7 @@ namespace Nti.Api.Data.Migrations
                             CategoryType = "Facility",
                             Code = "tour",
                             CreatedAt = new DateTime(2026, 9, 4, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
+                            IsActive = false,
                             IsDeleted = false,
                             SortOrder = 50
                         },
@@ -2632,6 +2632,47 @@ namespace Nti.Api.Data.Migrations
                             IsIndexable = true,
                             PageKey = "privacy-legal",
                             RouteTemplate = "/{lang}/privacy-legal"
+                        });
+                });
+
+            modelBuilder.Entity("Nti.Api.Models.Entities.PageGalleryImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageAlt")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<string>("Lang")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
+
+                    b.Property<int>("PageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PageId", "Lang", "SortOrder")
+                        .HasDatabaseName("IX_PageGalleryImage_Page");
+
+                    b.ToTable("PageGalleryImage", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_PageGalleryImage_Lang", "[Lang] IN ('zh','en')");
                         });
                 });
 
@@ -5847,6 +5888,16 @@ namespace Nti.Api.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_NewsTag_Tag");
+                });
+
+            modelBuilder.Entity("Nti.Api.Models.Entities.PageGalleryImage", b =>
+                {
+                    b.HasOne("Nti.Api.Models.Entities.Page", null)
+                        .WithMany()
+                        .HasForeignKey("PageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_PageGalleryImage_Page");
                 });
 
             modelBuilder.Entity("Nti.Api.Models.Entities.PageI18n", b =>

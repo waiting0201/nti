@@ -145,7 +145,7 @@ internal static class SeedData
         new() { Id = 23, CategoryType = "Facility", Code = "eco-printing", SortOrder = 20, IsActive = true, CreatedAt = SeedAt },
         new() { Id = 24, CategoryType = "Facility", Code = "post-press", SortOrder = 30, IsActive = true, CreatedAt = SeedAt },
         new() { Id = 25, CategoryType = "Facility", Code = "quality", SortOrder = 40, IsActive = true, CreatedAt = SeedAt },
-        new() { Id = 26, CategoryType = "Facility", Code = "tour", SortOrder = 50, IsActive = true, CreatedAt = SeedAt },
+        new() { Id = 26, CategoryType = "Facility", Code = "tour", SortOrder = 50, IsActive = false, CreatedAt = SeedAt },   // 2026-10-25 停用：工廠導覽輪播照搬到單元 15（PageGalleryImage）
         new() { Id = 27, CategoryType = "SupplierNotice", Code = "policy", SortOrder = 10, IsActive = true, CreatedAt = SeedAt },
         new() { Id = 28, CategoryType = "SupplierNotice", Code = "esg", SortOrder = 20, IsActive = true, CreatedAt = SeedAt },
         new() { Id = 29, CategoryType = "SupplierNotice", Code = "quality", SortOrder = 30, IsActive = true, CreatedAt = SeedAt },

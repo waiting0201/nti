@@ -321,6 +321,22 @@ section({
   i18nColumns: { Name: ['name'], Description: ['description'], ImageAlt: ['alt'] },
 })
 
+// ── 15 page：相簿照片（PageGalleryImage；目前只有工廠導覽的英文）───────────
+// 該頁該語系已經有任何一張就整組跳過：後台改過的照片不能被匯入蓋掉，也不能混進去
+for (const page of SEED.page.filter((p) => p.gallery)) {
+  for (const [lang, items] of Object.entries(page.gallery)) {
+    w(`/* ── page ${page.pageKey} → PageGalleryImage（${lang}，${items.length} 張）──────────── */`)
+    const pageId = `(SELECT Id FROM dbo.Page WHERE PageKey = ${q(page.pageKey)})`
+    w(`IF NOT EXISTS (SELECT 1 FROM dbo.PageGalleryImage WHERE PageId = ${pageId} AND Lang = ${q(lang)})`)
+    w(`    INSERT dbo.PageGalleryImage (PageId, Lang, ImagePath, ImageAlt, SortOrder) VALUES`)
+    items.forEach((it, i) =>
+      w(`        (${pageId}, ${q(lang)}, ${q(asset(it.imagePath))}, ${q(it.imageAlt)}, ${(i + 1) * 10})${i === items.length - 1 ? ';' : ','}`),
+    )
+    w('GO')
+    w()
+  }
+}
+
 // ── 11 job ────────────────────────────────────────────────────────────────
 section({
   unit: 'job', table: 'JobPosting', i18nTable: 'JobPostingI18n', fkColumn: 'JobPostingId',

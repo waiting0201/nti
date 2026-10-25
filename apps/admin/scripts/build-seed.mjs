@@ -38,6 +38,9 @@ const text = (s) => decode(String(s).replace(/<[^>]*>/g, '')).replace(/\s+/g, ' 
 const asset = (src) => '/' + String(src).replace(/^assets\//, 'assets/')
 
 /* ── db/seed：分類 ─────────────────────────────────────── */
+/* 停用的分類（與 db/seed/120_category.sql 檔尾的 UPDATE、後端 SeedData 的 IsActive 一致） */
+const INACTIVE_CATEGORIES = new Set(['Facility:tour'])
+
 function categories() {
   const sql = read(path.join(dbSeed, '120_category.sql'))
   const re = /\('(\w+)','([\w-]+)',\s*(\d+),\s*N'([^']*)',\s*N'([^']*)'\)/g
@@ -49,7 +52,7 @@ function categories() {
       categoryType: m[1],
       code: m[2],
       sortOrder: +m[3],
-      isActive: true,
+      isActive: !INACTIVE_CATEGORIES.has(`${m[1]}:${m[2]}`),
       i18n: { zh: { name: m[4] }, en: { name: m[5] } },
     })
   }
@@ -57,7 +60,7 @@ function categories() {
 }
 
 /* 有影片的固定頁 → [mockup 檔, 有影片的語系]（與後端 Api/Common/Constants.cs 的 PageVideoPages 一致）。
-   影片分語系（PageI18n.YoutubeId）：工廠導覽只有中文版是影片，英文版是照片輪播——mockup（英文）
+   影片分語系（PageI18n.YoutubeId）：工廠導覽只有中文版是影片，英文版是相簿——mockup（英文）
    因此已經沒有那支影片，改取關於我們的（兩頁的預設影片本來就是同一支，見前台 page.tsx 的 fallback）。
    正式資料庫的值由 EF migration PageVideo／PageVideoI18n 帶入；這裡只給 demo 用。 */
 const VIDEO_PAGES = { 'about-hub': ['differences.html', ['zh', 'en']], 'facility-tour': ['differences.html', ['zh']] }
@@ -68,6 +71,21 @@ function pageVideo(pageKey) {
   const m = /<div class="video-frame[^"]*">\s*<iframe\b[^>]*?\ssrc="https:\/\/www\.youtube\.com\/embed\/([\w-]+)"/.exec(readMockup(file))
   if (!m) throw new Error(`抽不出 ${file} 的影片——mockup 的版面改了，請改 pageVideo() 的規則`)
   return { hasVideo: true, videoLangs: langs, youtubeIdByLang: Object.fromEntries(langs.map((l) => [l, m[1]])) }
+}
+
+/* 有相簿照片的固定頁 → [mockup 檔, 語系]（與後端 Api/Common/Constants.cs 的 PageGalleryPages 一致）。
+   目前只有工廠導覽的英文版；mockup（英文）裡就是那個相簿（#tourGallery 的 .tg-item）。
+   正式資料庫的值由 EF migration PageGallery 從原本單元 10「參觀」分類搬入；這裡只給 demo 用。 */
+const GALLERY_PAGES = { 'facility-tour': ['facility-tour.html', 'en'] }
+
+function pageGallery(pageKey) {
+  const [file, lang] = GALLERY_PAGES[pageKey] ?? []
+  if (!file) return {}
+  const frame = /<div class="tour-gallery[^"]*" id="tourGallery">([\s\S]*?)<\/div>/.exec(readMockup(file))?.[1]
+  if (!frame) throw new Error(`抽不出 ${file} 的相簿——mockup 的版面改了，請改 pageGallery() 的規則`)
+  const items = [...frame.matchAll(/<img\b[^>]*?\ssrc="(assets\/[^"]+)"[^>]*?\salt="([^"]*)"/g)]
+    .map((m) => ({ imagePath: asset(m[1]), imageAlt: decode(m[2]) }))
+  return { galleryLangs: [lang], gallery: { [lang]: items } }
 }
 
 /* 頂部有橫幅大圖的固定頁 → mockup 檔（與後端 Api/Common/Constants.cs 的 PageBannerPages 一致）。
@@ -129,6 +147,7 @@ function pages() {
       hasRichBody: m[4] === '1',
       isIndexable: m[5] === '1',
       ...video,
+      ...pageGallery(m[2]),
       ...pageBanner(m[2]),
       ...pageMidBanners(m[2]),
       sortOrder: +m[1],
@@ -394,9 +413,10 @@ function clients() {
 /* ── mockup：設備卡（facility.html 的 SETS 常數） ───────── */
 function facilities() {
   const js = readMockup('facility.html')
-  const catByKey = { pre: 'pre-press', eco: 'eco-printing', post: 'post-press', qc: 'quality', tour: 'tour' }
+  // tour 那組不收：工廠導覽的照片 2026-10-25 起在單元 15 該頁的英文分頁（PageGalleryImage），「參觀」分類已停用
+  const catByKey = { pre: 'pre-press', eco: 'eco-printing', post: 'post-press', qc: 'quality' }
   const rows = []
-  const setRe = /(pre|eco|post|qc|tour):\[([\s\S]*?)\]/g
+  const setRe = /(pre|eco|post|qc):\[([\s\S]*?)\]/g
   let s
   let order = 0
   while ((s = setRe.exec(js))) {

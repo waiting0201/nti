@@ -59,6 +59,12 @@ public sealed class MediaReferenceScanner(AppDbContext db)
         AddRange(await db.SupplierNotice.Select(x => x.AttachmentPath).ToListAsync(ct));
         AddRange(await db.SupplierDownload.Select(x => x.FilePath).ToListAsync(ct));
         AddRange(await db.Page.Select(x => x.OgImagePath).ToListAsync(ct));
+        AddRange(await db.Page.Select(x => x.BannerImagePath).ToListAsync(ct));
+        AddRange(await db.Page.Select(x => x.MidBanner1ImagePath).ToListAsync(ct));
+        AddRange(await db.Page.Select(x => x.MidBanner2ImagePath).ToListAsync(ct));
+        AddRange(await db.Page.Select(x => x.MidBanner3ImagePath).ToListAsync(ct));
+        AddRange(await db.Page.Select(x => x.MidBanner4ImagePath).ToListAsync(ct));
+        AddRange(await db.PageGalleryImage.Select(x => x.ImagePath).ToListAsync(ct));
 
         // ── 富文本內的 <img src>（db/README 已知缺口 #2）──────────────────
         AddHtml(await db.SolutionI18n.Select(x => x.IntroHtml).ToListAsync(ct));

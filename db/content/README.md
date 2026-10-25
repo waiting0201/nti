@@ -256,6 +256,17 @@ Projects 頁隱藏「案例分享」（客戶沒有案例資料，2026-10-25）�
 sqlcmd -S <server> -d NTI -I -b -i db/content/320_projects_hide_cases.sql
 ```
 
+## 330_factory_gallery_oldsite.sql
+
+工廠導覽英文版的相簿（2026-10-25，一排四張縮圖＋燈箱，比照舊站 `/home/factory`）。EF migration `PageGallery`
+從原本單元 10「參觀」分類搬進來的是 3 張超寬全景圖，這支換成舊站相簿的 12 張
+（`mockup/assets/fac-gallery-01～12.webp`，英文替代文字）。**只在相簿還是那 3 張預設圖時才換**，
+客戶在後台動過就不碰；全新建庫時 200 已直接匯入這 12 張，這支什麼都不做。須先套用 EF migration `PageGallery`。冪等。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/330_factory_gallery_oldsite.sql
+```
+
 ## 290_cert_proof_groups.sql
 
 首頁 Proof 牆「品質管理／環境永續／社會責任與安全」三張卡改由後台 08 的「分組」驅動（2026-10-21）。

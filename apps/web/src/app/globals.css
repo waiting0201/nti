@@ -310,11 +310,24 @@ header+.fac-banner img{aspect-ratio:16/3;object-fit:cover;max-height:calc(100vh 
 .fac-cap{margin-top:12px;text-align:center;color:var(--grey);font-weight:700;font-size:.95rem}
 .fac-count{color:var(--grey-2);font-weight:600;font-size:.82rem;margin-left:.6em;font-variant-numeric:tabular-nums}
 .ps-mediawrap .fac-cap{text-align:left;margin-top:2px}
-/* factory tour slider (EN facility-tour): images stacked, cross-fade on .on */
-.tour-frame{aspect-ratio:16/9;position:relative}
-.tour-frame img{position:absolute;inset:0;opacity:0;transition:opacity .6s var(--ease)}
-.tour-frame img.on{opacity:1}
-@media(max-width:600px){.tour-slider{gap:8px}.tour-slider .ex-arrow{width:36px;height:36px}}
+/* factory tour gallery (EN facility-tour): 4-up thumbnails, click opens .lightbox */
+.tour-gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.tg-item{position:relative;display:block;aspect-ratio:4/3;overflow:hidden;border-radius:12px;background:var(--card);box-shadow:var(--shadow)}
+.tg-item img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+.tg-item::after{content:"";position:absolute;inset:0;opacity:0;transition:opacity .25s;background:rgba(14,38,28,.42) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5M11 8v6M8 11h6'/%3E%3C/svg%3E") center/38px no-repeat}
+.tg-item:hover img,.tg-item:focus-visible img{transform:scale(1.05)}
+.tg-item:hover::after,.tg-item:focus-visible::after{opacity:1}
+@media(max-width:900px){.tour-gallery{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.tour-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+.lightbox{position:fixed;inset:0;z-index:200;background:rgba(8,14,11,.92);display:flex;align-items:center;justify-content:center;padding:56px 76px}
+.lightbox img{max-width:min(100%,1600px);max-height:100%;object-fit:contain;border-radius:6px;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.lb-btn{position:absolute;width:46px;height:46px;border-radius:50%;border:none;background:rgba(0,0,0,.5);box-shadow:0 0 0 1px rgba(255,255,255,.25);color:#fff;font-size:28px;line-height:1;display:grid;place-items:center;cursor:pointer;transition:background .2s}
+.lb-btn:hover,.lb-btn:focus-visible{background:rgba(0,0,0,.75)}
+.lb-close{top:14px;right:14px}
+.lb-prev,.lb-next{top:50%;transform:translateY(-50%)}
+.lb-prev{left:14px}.lb-next{right:14px}
+@media(max-width:600px){.lightbox{padding:56px 12px}.lb-prev{left:6px}.lb-next{right:6px}}
+.lb-count{position:absolute;left:0;right:0;bottom:16px;text-align:center;color:rgba(255,255,255,.8);font-size:.88rem;font-variant-numeric:tabular-nums}
 
 /* take-a-factory-tour (per Facility PSD) */
 .section.tour{padding-bottom:0}

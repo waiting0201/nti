@@ -96,3 +96,9 @@ WHERE NOT EXISTS (
     WHERE i.CategoryId = c.Id AND i.Lang = x.Lang
 );
 GO
+
+/* 停用的分類（2026-10-25）：Facility/tour 的照片搬到單元 15 工廠導覽的英文分頁（PageGalleryImage），
+   見 db/migrations/0020_page_gallery.sql。種子每次都跑，所以這裡也要停用，免得新建的庫又冒出來。 */
+UPDATE dbo.Category SET IsActive = 0
+WHERE CategoryType = 'Facility' AND Code = 'tour' AND IsActive = 1;
+GO

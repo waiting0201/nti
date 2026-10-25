@@ -49,6 +49,26 @@ public sealed class PageI18nConfiguration : IEntityTypeConfiguration<PageI18n>
     }
 }
 
+/// <summary>單元 15 page 的「相簿照片」（docs/08 §4.11）。只有 PageGalleryPages 列出的頁與語系用。</summary>
+public sealed class PageGalleryImageConfiguration : IEntityTypeConfiguration<PageGalleryImage>
+{
+    public void Configure(EntityTypeBuilder<PageGalleryImage> b)
+    {
+        b.ToTable("PageGalleryImage", t => t.HasCheckConstraint("CK_PageGalleryImage_Lang", "[Lang] IN ('zh','en')"));
+        b.Property(x => x.Lang).Ascii(5);
+        b.Property(x => x.ImagePath).HasMaxLength(260);
+        b.Property(x => x.ImageAlt).HasMaxLength(200);
+
+        // 照片是頁面的附屬（後台就長在該頁的編輯畫面裡），頁面刪掉就跟著走
+        b.HasOne<Page>().WithMany()
+            .HasForeignKey(x => x.PageId)
+            .HasConstraintName("FK_PageGalleryImage_Page")
+            .OnDelete(DeleteBehavior.Cascade);
+
+        b.HasIndex(x => new { x.PageId, x.Lang, x.SortOrder }).HasDatabaseName("IX_PageGalleryImage_Page");
+    }
+}
+
 /// <summary>單元 15 page 的「頁面文字」覆寫（docs/08 §4.11）。</summary>
 public sealed class PageTextConfiguration : IEntityTypeConfiguration<PageText>
 {

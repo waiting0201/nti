@@ -43,6 +43,23 @@ public sealed class PageI18n : II18n
 }
 
 /// <summary>
+/// 固定頁某語系的相簿照片（後台單元 15 該語系分頁的「相簿照片」，2026-10-25）。
+/// <para>
+/// 只開放 <see cref="Common.PageGalleryPages"/> 列出的頁與語系——目前只有工廠導覽的英文版
+/// （中文版是影片）。存檔時整組替換；沒有列就是後台一張都沒放，前台那一區不顯示。
+/// </para>
+/// </summary>
+public sealed class PageGalleryImage
+{
+    public int    Id        { get; set; }
+    public int    PageId    { get; set; }
+    public string Lang      { get; set; } = null!;
+    public string ImagePath { get; set; } = null!;
+    public string ImageAlt  { get; set; } = null!;
+    public int    SortOrder { get; set; }
+}
+
+/// <summary>
 /// 固定頁的文字覆寫（後台單元 15 的「頁面文字」）。
 /// <para>
 /// 版面與英文原文的權威仍是 mockup：這張表只存「某頁某段原文 → 後台改過的字」，

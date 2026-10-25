@@ -253,7 +253,7 @@ public static class PageTextPages
 /// </para>
 /// <para>
 /// 2026-10-25 起影片分語系（<c>PageI18n.YoutubeId</c>）：關於我們中英各一支；
-/// 工廠導覽只有中文版是影片，英文版是單元 10「參觀」分類的照片輪播。
+/// 工廠導覽只有中文版是影片，英文版是相簿（<see cref="PageGalleryPages"/>）。
 /// </para>
 /// </summary>
 public static class PageVideoPages
@@ -294,6 +294,28 @@ public static class PageVideoPages
 
         return id;
     }
+}
+
+/// <summary>
+/// 有「相簿照片」的固定頁與語系（後台單元 15 該語系分頁的欄位只在這裡列出的出現，2026-10-25）。
+/// <para>
+/// 目前只有工廠導覽的英文版：中文版是影片（<see cref="PageVideoPages"/>），英文版是相簿（一排四張縮圖、點開燈箱）。
+/// 照片原本借用單元 10 的「參觀」分類，同日搬到這裡——編輯要改一頁的東西，應該都在那一頁裡。
+/// 三邊要一致：這裡、<c>apps/admin/scripts/build-seed.mjs</c> 的 GALLERY_PAGES、以及前台那一頁。
+/// </para>
+/// </summary>
+public static class PageGalleryPages
+{
+    public const int MaxImages = 20;
+
+    public static readonly IReadOnlyDictionary<string, string[]> LangsByPage = new Dictionary<string, string[]>(StringComparer.Ordinal)
+    {
+        [PageKeys.FacilityTour] = [Langs.En],
+    };
+
+    public static string[] LangsOf(string pageKey) => LangsByPage.TryGetValue(pageKey, out var langs) ? langs : [];
+
+    public static bool Has(string pageKey, string lang) => LangsOf(pageKey).Contains(lang);
 }
 
 /// <summary>

@@ -68,16 +68,17 @@ export type Target = Record<string, unknown>
  * 找出 target 裡所有指向暫存檔的位置。
  *
  * 遞迴進巢狀物件，因為圖片欄位不只出現在頂層：編輯畫面的分語系欄位在
- * `i18n[lang][key]`，設定頁的多語值在 `values[key].zh`／`.en`。
+ * `i18n[lang][key]`，設定頁的多語值在 `values[key].zh`／`.en`，
+ * 15 頁面的相簿照片在 `gallery[lang][i].imagePath`（陣列也要走進去）。
  */
 function collect(target: Target): Array<{ url: string; set: (path: string) => void }> {
   const found: Array<{ url: string; set: (path: string) => void }> = []
 
-  const walk = (node: Record<string, unknown>) => {
+  const walk = (node: Record<string, unknown> | unknown[]) => {
     for (const [key, value] of Object.entries(node)) {
-      if (isPending(value)) found.push({ url: value as string, set: (p) => (node[key] = p) })
-      else if (value && typeof value === 'object' && !Array.isArray(value)) {
-        walk(value as Record<string, unknown>)
+      if (isPending(value)) found.push({ url: value as string, set: (p) => ((node as Record<string, unknown>)[key] = p) })
+      else if (value && typeof value === 'object') {
+        walk(value as Record<string, unknown> | unknown[])
       }
     }
   }

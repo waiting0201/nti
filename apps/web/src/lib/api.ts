@@ -91,6 +91,8 @@ export type PageSeo = {
   bannerImagePath: string | null
   /** 中段橫幅圖路徑（後台單元 15「中段橫幅 1～4」），依頁面由上而下；沒有中段圖的頁是空陣列 */
   midBannerImagePaths: (string | null)[]
+  /** 該語系的相簿照片（後台單元 15「相簿照片」），依排序。目前只有工廠導覽的英文會有；空陣列 → 那一區不顯示 */
+  galleryImages: { imagePath: string; imageAlt: string }[]
   seo: Seo
   /** 頁面文字覆寫（後台單元 15「頁面文字」）：英文原文 → 該語系的字。只有開放的頁面會有內容 */
   texts: Record<string, string>

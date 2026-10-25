@@ -21,11 +21,22 @@ public sealed class PageDto
     /// 某一格是 null → 後台清空了，前台那個區塊不顯示。
     /// </summary>
     public List<string?> MidBannerImagePaths { get; set; } = [];
+    /// <summary>
+    /// 該語系的相簿照片（依排序）。只有 PageGalleryPages 列出的頁與語系才可能有；
+    /// 空陣列 → 後台一張都沒放，前台那一區不顯示。
+    /// </summary>
+    public List<PageGalleryImageItemDto> GalleryImages { get; set; } = [];
 
     public SeoDto  Seo           { get; set; } = null!;
 
     /// <summary>「頁面文字」覆寫：原文 → 該語系的字。沒有覆寫就是空物件，前台照原文顯示。</summary>
     public Dictionary<string, string> Texts { get; set; } = [];
+}
+
+public sealed class PageGalleryImageItemDto
+{
+    public string ImagePath { get; set; } = null!;
+    public string ImageAlt  { get; set; } = null!;
 }
 
 /// <summary>

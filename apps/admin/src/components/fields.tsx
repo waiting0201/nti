@@ -282,6 +282,107 @@ function Uploader({
   )
 }
 
+/* ── 多圖欄位（15 頁面的「相簿照片」） ───────────────────── */
+
+export type GalleryItem = { imagePath: string; imageAlt: string }
+
+/** 與後端 PageGalleryPages.MaxImages 一致 */
+const GALLERY_MAX = 20
+
+/**
+ * 多張圖＋各自的替代文字，可調順序。上傳規則與單張的 `Uploader` 相同：
+ * 選檔只進暫存區，按下儲存才一併送出；拿掉已存過的圖，存檔後會從系統刪除。
+ */
+function GalleryField({
+  field,
+  value,
+  onChange,
+}: {
+  field: Field
+  value: unknown
+  onChange: (v: GalleryItem[]) => void
+}) {
+  const items: GalleryItem[] = Array.isArray(value) ? (value as GalleryItem[]) : []
+  const [warn, setWarn] = useState('')
+
+  const pick = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.multiple = true
+    input.accept = IMAGE_EXTENSIONS.join(',')
+    input.onchange = () => {
+      const files = [...(input.files ?? [])]
+      const skipped: string[] = []
+      const added: GalleryItem[] = []
+      for (const file of files) {
+        const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase()
+        if (!IMAGE_EXTENSIONS.includes(ext)) skipped.push(`${file.name}（格式不支援）`)
+        else if (file.size > IMAGE_MAX_BYTES) skipped.push(`${file.name}（超過 ${IMAGE_MAX_BYTES / 1024 / 1024}MB）`)
+        else if (items.length + added.length >= GALLERY_MAX) skipped.push(`${file.name}（最多 ${GALLERY_MAX} 張）`)
+        else added.push({ imagePath: stagePending(file, 'image'), imageAlt: '' })
+      }
+      if (added.length) onChange([...items, ...added])
+      setWarn(
+        [added.length ? `已加入 ${added.length} 張，請填替代文字，按下儲存後才會上傳` : '', skipped.length ? `略過：${skipped.join('、')}` : '']
+          .filter(Boolean)
+          .join('｜'),
+      )
+    }
+    input.click()
+  }
+
+  const move = (i: number, d: -1 | 1) => {
+    const next = [...items]
+    ;[next[i], next[i + d]] = [next[i + d], next[i]]
+    onChange(next)
+  }
+
+  const remove = (i: number) => {
+    const staged = isPending(items[i].imagePath)
+    discardPending(items[i].imagePath)
+    onChange(items.filter((_, j) => j !== i))
+    setWarn(staged ? '' : '按下儲存後，拿掉的照片會從系統刪除，無法復原')
+  }
+
+  const setAlt = (i: number, alt: string) => onChange(items.map((x, j) => (j === i ? { ...x, imageAlt: alt } : x)))
+
+  return (
+    <>
+      <div className="gallery">
+        {items.length === 0 && <div className="meta">尚未上傳照片——前台這一區不會顯示</div>}
+        {items.map((it, i) => (
+          <div className="gallery-item" key={it.imagePath}>
+            <img src={assetUrl(it.imagePath)} alt="" />
+            <div className="gallery-body">
+              <input
+                value={it.imageAlt}
+                maxLength={200}
+                placeholder="替代文字（必填），例如 NTI factory floor"
+                onChange={(e) => setAlt(i, e.target.value)}
+                className={it.imageAlt.trim() ? undefined : 'invalid'}
+              />
+              <div className="btn-row">
+                <span className="meta">第 {i + 1} 張</span>
+                <button type="button" className="btn btn-sm" disabled={i === 0} onClick={() => move(i, -1)} aria-label="往前">↑</button>
+                <button type="button" className="btn btn-sm" disabled={i === items.length - 1} onClick={() => move(i, 1)} aria-label="往後">↓</button>
+                <button type="button" className="btn btn-sm btn-danger" onClick={() => remove(i)}>移除</button>
+              </div>
+            </div>
+          </div>
+        ))}
+        <div className="btn-row">
+          <button type="button" className="btn btn-sm" onClick={pick} disabled={items.length >= GALLERY_MAX}>
+            上傳照片（可多選）
+          </button>
+          <span className="meta">{items.length} / {GALLERY_MAX} 張</span>
+        </div>
+      </div>
+      {field.hint && <Hint text={field.hint} />}
+      {warn && <div className="hint">{warn}</div>}
+    </>
+  )
+}
+
 /* ── 單一欄位 ─────────────────────────────────────────── */
 
 export function FieldInput({
@@ -347,6 +448,8 @@ export function FieldInput({
         )
       case 'tags':
         return <TagPicker value={value} onChange={onChange} />
+      case 'gallery':
+        return <GalleryField field={field} value={value} onChange={onChange} />
       case 'date':
         return <input type="date" value={str} onChange={(e) => onChange(e.target.value)} />
       case 'number':
