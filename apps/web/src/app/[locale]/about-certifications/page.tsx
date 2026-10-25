@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
-import { CertificationWall, DetailList, PageBanner } from '@/components/cms'
+import { CertificationWall, DetailList, PageBanner, PageMidBanner } from '@/components/cms'
 import { JsonLd } from '@/components/JsonLd'
 import { organizationCredentials } from '@/lib/jsonld'
-import { bannerSrc, getCertificationItems, getCertifications, getPage, type CertificationListItem } from '@/lib/api'
+import { bannerSrc, getCertificationItems, getCertifications, getPage, midBannerSrc, type CertificationListItem } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -74,7 +74,7 @@ export default async function Page({ params }: Props) {
         )}
       </div></section>
       )}
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-mid1.webp")} alt="NTI leadership on the pressroom floor" /></section>
+      <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-about-mid1.webp")} alt="NTI leadership on the pressroom floor" />
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">GMI Professional Printing Certification</div>
         <p className="prose wide">NTI is GMI certified, ensuring consistent, colour-accurate packaging that meets the quality standards of leading global retailers, including Target, Walgreens, Lowe&rsquo;s, The Home Depot, Academy Sports&nbsp;+&nbsp;Outdoors, and CVS Pharmacy.</p>

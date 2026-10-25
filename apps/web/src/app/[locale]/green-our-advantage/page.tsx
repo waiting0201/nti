@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { bannerSrc, getPage } from '@/lib/api'
-import { PageBanner } from '@/components/cms'
+import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
+import { PageBanner, PageMidBanner } from '@/components/cms'
 import { A } from '@/components/A'
-import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -45,7 +44,7 @@ export default async function Page({ params }: Props) {
           <p className="prose">It is not a claim bolted onto the finished job. Every material, ink and solvent we run passes RoHS inspection standards, and the plant operates waste-oil recovery and wastewater recycling systems built to international environmental standards. The advantage shows up as fewer make-ready sheets on the floor, solvent-free lamination, an FSC&trade; claim you can print on the pack, and a supply chain your ESG team can actually evidence.</p>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid4.webp")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
+      <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-green-mid4.webp")} alt="CO2-neutral Heidelberg Speedmaster press line" />
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Company mission</div>
         <p className="prose wide">Keep promoting green packaging and build the full concept of green supply-chain management for our customers &mdash; becoming a printing firm with genuine environmental awareness and a high sense of social responsibility.</p>

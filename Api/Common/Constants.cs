@@ -303,6 +303,36 @@ public static class PageBannerPages
     ], StringComparer.Ordinal);
 }
 
+/// <summary>
+/// 頁面中段有橫幅圖（不緊接 header 的 <c>.fac-banner</c>）的固定頁 → 張數（後台單元 15 的
+/// 「中段橫幅 1～N」欄位只在這幾頁、依張數出現）。最多 <see cref="MaxSlots"/> 張，對應
+/// <c>Page.MidBanner1ImagePath</c>～<c>MidBanner4ImagePath</c>，依頁面由上而下排。
+/// <para>
+/// 與頂部橫幅同一個做法：替代文字不另開欄位，在「頁面文字」裡改；清空 → 前台那個區塊不顯示。
+/// 三邊要一致：這裡、<c>apps/admin/scripts/build-seed.mjs</c> 的 MID_BANNER_PAGES、以及前台那幾頁
+/// （<c>midBannerSrc(page, n, …)</c>；由 build-pages.mjs 產生的頁自動接線）。
+/// </para>
+/// </summary>
+public static class PageMidBannerPages
+{
+    public const int MaxSlots = 4;
+
+    public static readonly IReadOnlyDictionary<string, int> Count = new Dictionary<string, int>(StringComparer.Ordinal)
+    {
+        [PageKeys.AboutHub]            = 3,
+        [PageKeys.AboutDifference]     = 1,
+        [PageKeys.AboutBenefits]       = 1,
+        [PageKeys.AboutCertifications] = 1,
+        [PageKeys.FacilityTour]        = 2,
+        [PageKeys.SustainabilityHub]   = 4,
+        [PageKeys.GreenOurAdvantage]   = 1,
+        [PageKeys.GreenCarbon]         = 1,
+        [PageKeys.GreenEsg]            = 1,
+    };
+
+    public static int Of(string pageKey) => Count.TryGetValue(pageKey, out var n) ? n : 0;
+}
+
 /// <summary>報價單狀態（docs/03 §3）。</summary>
 public static class QuoteStatuses
 {

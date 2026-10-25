@@ -1,4 +1,5 @@
 using Dapper;
+using Nti.Api.Common;
 using Nti.Api.Models.Dtos;
 using System.Data;
 
@@ -15,7 +16,8 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
     private const string Sql = """
         SELECT p.Id, p.PageKey, p.RouteTemplate, p.HasRichBody, p.IsIndexable,
                i.BodyHtml, i.Slug, i.SeoTitle, i.SeoDescription, i.CanonicalUrl,
-               i.OgTitle, i.OgDescription, p.OgImagePath, p.YoutubeId, p.BannerImagePath
+               i.OgTitle, i.OgDescription, p.OgImagePath, p.YoutubeId, p.BannerImagePath,
+               p.MidBanner1ImagePath, p.MidBanner2ImagePath, p.MidBanner3ImagePath, p.MidBanner4ImagePath
         FROM Page p
         INNER JOIN PageI18n i ON i.PageId = p.Id AND i.Lang = @Lang
         WHERE p.IsDeleted = 0 AND p.PageKey = @PageKey;
@@ -64,6 +66,10 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
         public string? OgImagePath   { get; set; }
         public string? YoutubeId     { get; set; }
         public string? BannerImagePath { get; set; }
+        public string? MidBanner1ImagePath { get; set; }
+        public string? MidBanner2ImagePath { get; set; }
+        public string? MidBanner3ImagePath { get; set; }
+        public string? MidBanner4ImagePath { get; set; }
 
         public PageDto ToDto(IEnumerable<(string Lang, string Slug)> hreflang) => new()
         {
@@ -73,6 +79,8 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
             BodyHtml = HasRichBody ? BodyHtml : null,
             YoutubeId = YoutubeId,
             BannerImagePath = BannerImagePath,
+            MidBannerImagePaths = new[] { MidBanner1ImagePath, MidBanner2ImagePath, MidBanner3ImagePath, MidBanner4ImagePath }
+                .Take(PageMidBannerPages.Of(PageKey)).ToList(),
             Seo = new SeoDto
             {
                 Slug = Slug, SeoTitle = SeoTitle, SeoDescription = SeoDescription,

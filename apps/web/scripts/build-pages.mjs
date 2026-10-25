@@ -307,7 +307,7 @@ for (const file of files) {
     .join('\n')
 
   // 頂部橫幅接後台（單元 15「頂部橫幅」，後端 PageBannerPages）：只換緊接 header 的那一張，
-  // 頁中段的 .fac-banner 不動。沒接 API 時 bannerSrc 回的就是原本的 mediaUrl(...)；
+  // 頁中段的 .fac-banner 在下面另外接。沒接 API 時 bannerSrc 回的就是原本的 mediaUrl(...)；
   // 接了 API 但後台沒傳圖，PageBanner 整個區塊不渲染
   const bannerRe = /<section className="fac-banner"><img src=\{mediaUrl\(("[^"]+")\)\} alt=("[^"]*") \/><\/section>/
   const usesBanner = Boolean(pageKey) && /^\s*<section className="fac-banner"><img src=\{mediaUrl\(/.test(jsx)
@@ -316,12 +316,26 @@ for (const file of files) {
     ctx.usesMedia = jsx.includes('mediaUrl(')
   }
 
+  // 中段橫幅接後台（單元 15「中段橫幅 1～4」，後端 PageMidBannerPages）：頁中段的 .fac-banner.reveal
+  // 依出現順序編號。張數要與後端一致，對不上時後台的種子產生器（build-seed.mjs）會直接報錯
+  let midCount = 0
+  if (pageKey) {
+    jsx = jsx.replace(
+      /<section className="fac-banner reveal"><img src=\{mediaUrl\(("[^"]+")\)\} alt=("[^"]*")((?: [\w-]+="[^"]*")*) \/><\/section>/g,
+      (_, src, alt, rest) => `<PageMidBanner src={midBannerSrc(page, ${++midCount}, ${src})} alt=${alt}${rest} />`,
+    )
+    ctx.usesMedia = jsx.includes('mediaUrl(')
+  }
+  const usesMid = midCount > 0
+
   const behaviors = BEHAVIORS[slug] ?? []
   const imports = [
     "import type { Metadata } from 'next'",
     "import { T } from '@/lib/t'",
-    ...(pageKey ? [`import { ${usesBanner ? 'bannerSrc, ' : ''}getPage } from '@/lib/api'`] : []),
-    ...(usesBanner ? ["import { PageBanner } from '@/components/cms'"] : []),
+    ...(pageKey ? [`import { ${usesBanner ? 'bannerSrc, ' : ''}getPage${usesMid ? ', midBannerSrc' : ''} } from '@/lib/api'`] : []),
+    ...(usesBanner || usesMid
+      ? [`import { ${[usesBanner && 'PageBanner', usesMid && 'PageMidBanner'].filter(Boolean).join(', ')} } from '@/components/cms'`]
+      : []),
     ...(ctx.usesA ? ["import { A } from '@/components/A'"] : []),
     ...(ctx.usesMedia ? ["import { mediaUrl } from '@/lib/media'"] : []),
     ...behaviors.map(([name, from]) => `import { ${name} } from '${from}'`),

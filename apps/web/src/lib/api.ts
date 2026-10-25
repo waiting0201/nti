@@ -89,6 +89,8 @@ export type PageSeo = {
   youtubeId: string | null
   /** 頂部橫幅圖路徑（後台單元 15）。只有頂部有大圖的 20 頁會有值 */
   bannerImagePath: string | null
+  /** 中段橫幅圖路徑（後台單元 15「中段橫幅 1～4」），依頁面由上而下；沒有中段圖的頁是空陣列 */
+  midBannerImagePaths: (string | null)[]
   seo: Seo
   /** 頁面文字覆寫（後台單元 15「頁面文字」）：英文原文 → 該語系的字。只有開放的頁面會有內容 */
   texts: Record<string, string>
@@ -352,4 +354,13 @@ export function cmsMedia(path: string | null | undefined): string {
 export function bannerSrc(page: PageSeo | null | undefined, fallback: string): string | null {
   if (!page) return mediaUrl(fallback)
   return cmsMedia(page.bannerImagePath) || null
+}
+
+/**
+ * 頁面中段第 `n` 張橫幅（後台單元 15 的「中段橫幅 n」，從 1 起算）→ `<img src>`；規則與 `bannerSrc` 相同：
+ * 沒接 API 回 mockup 那張，接了 API 但後台清空了回 `null`，那個區塊不顯示（`PageMidBanner`）。
+ */
+export function midBannerSrc(page: PageSeo | null | undefined, n: number, fallback: string): string | null {
+  if (!page) return mediaUrl(fallback)
+  return cmsMedia(page.midBannerImagePaths?.[n - 1]) || null
 }

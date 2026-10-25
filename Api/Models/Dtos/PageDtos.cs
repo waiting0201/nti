@@ -16,6 +16,11 @@ public sealed class PageDto
     public string? YoutubeId     { get; set; }
     /// <summary>頂部橫幅圖路徑。只有 PageBannerPages 那幾頁有值；null → 前台用 mockup 那張。</summary>
     public string? BannerImagePath { get; set; }
+    /// <summary>
+    /// 中段橫幅圖路徑，依頁面由上而下；長度＝該頁的張數（PageMidBannerPages），沒有中段圖的頁是空陣列。
+    /// 某一格是 null → 後台清空了，前台那個區塊不顯示。
+    /// </summary>
+    public List<string?> MidBannerImagePaths { get; set; } = [];
 
     public SeoDto  Seo           { get; set; } = null!;
 

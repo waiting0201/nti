@@ -697,6 +697,10 @@ export const SEED: Record<string, Row[]> = {
       "youtubeId": "vECuYIiFSSM",
       "hasBanner": true,
       "banner": "/assets/ref-about-banner.webp",
+      "midBannerCount": 3,
+      "midBanner1": "/assets/ref-about-mid1.webp",
+      "midBanner2": "/assets/ref-about-mid2.webp",
+      "midBanner3": "/assets/ref-about-mid3.webp",
       "sortOrder": 2,
       "i18n": {
         "zh": {
@@ -719,6 +723,8 @@ export const SEED: Record<string, Row[]> = {
       "isIndexable": true,
       "hasBanner": true,
       "banner": "/assets/ref-about-mid1.webp",
+      "midBannerCount": 1,
+      "midBanner1": "/assets/ref-about-mid2.webp",
       "sortOrder": 3,
       "i18n": {
         "zh": {
@@ -741,6 +747,8 @@ export const SEED: Record<string, Row[]> = {
       "isIndexable": true,
       "hasBanner": true,
       "banner": "/assets/ref-about-mid3.webp",
+      "midBannerCount": 1,
+      "midBanner1": "/assets/ref-about-banner.webp",
       "sortOrder": 4,
       "i18n": {
         "zh": {
@@ -763,6 +771,8 @@ export const SEED: Record<string, Row[]> = {
       "isIndexable": true,
       "hasBanner": true,
       "banner": "/assets/ref-about-mid2.webp",
+      "midBannerCount": 1,
+      "midBanner1": "/assets/ref-about-mid1.webp",
       "sortOrder": 5,
       "i18n": {
         "zh": {
@@ -897,6 +907,9 @@ export const SEED: Record<string, Row[]> = {
       "youtubeId": "vECuYIiFSSM",
       "hasBanner": true,
       "banner": "/assets/fac-tour-main.webp",
+      "midBannerCount": 2,
+      "midBanner1": "/assets/fac-tour1.webp",
+      "midBanner2": "/assets/fac-tour2.webp",
       "sortOrder": 11,
       "i18n": {
         "zh": {
@@ -961,6 +974,11 @@ export const SEED: Record<string, Row[]> = {
       "isIndexable": true,
       "hasBanner": true,
       "banner": "/assets/ref-green-banner.webp",
+      "midBannerCount": 4,
+      "midBanner1": "/assets/ref-green-mid2.webp",
+      "midBanner2": "/assets/ref-green-mid3.webp",
+      "midBanner3": "/assets/ref-green-mid1.webp",
+      "midBanner4": "/assets/ref-green-mid4.webp",
       "sortOrder": 14,
       "i18n": {
         "zh": {
@@ -983,6 +1001,8 @@ export const SEED: Record<string, Row[]> = {
       "isIndexable": true,
       "hasBanner": true,
       "banner": "/assets/ref-green-mid2.webp",
+      "midBannerCount": 1,
+      "midBanner1": "/assets/ref-green-mid4.webp",
       "sortOrder": 15,
       "i18n": {
         "zh": {
@@ -1005,6 +1025,8 @@ export const SEED: Record<string, Row[]> = {
       "isIndexable": true,
       "hasBanner": true,
       "banner": "/assets/ref-green-mid3.webp",
+      "midBannerCount": 1,
+      "midBanner1": "/assets/ref-green-mid4.webp",
       "sortOrder": 16,
       "i18n": {
         "zh": {
@@ -1049,6 +1071,8 @@ export const SEED: Record<string, Row[]> = {
       "isIndexable": true,
       "hasBanner": true,
       "banner": "/assets/ref-green-mid4.webp",
+      "midBannerCount": 1,
+      "midBanner1": "/assets/ref-green-mid3.webp",
       "sortOrder": 18,
       "i18n": {
         "zh": {

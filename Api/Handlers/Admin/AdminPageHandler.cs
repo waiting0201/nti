@@ -42,6 +42,7 @@ public sealed class AdminPageHandler(AppDbContext db)
         // 執行期丟 MissingMethodException，整個清單 500（2026-10-07 上線後才發現）
         var videoKeys = PageVideoPages.All.ToArray();
         var bannerKeys = PageBannerPages.All.ToArray();
+        var midBannerKeys = PageMidBannerPages.Count.Keys.ToArray();
 
         var rows = await query
             .OrderBy(p => p.Id)
@@ -50,6 +51,8 @@ public sealed class AdminPageHandler(AppDbContext db)
                 p.Id, p.PageKey, p.RouteTemplate, p.HasRichBody, p.IsIndexable, p.OgImagePath, p.UpdatedAt,
                 p.YoutubeId, HasVideo = videoKeys.Contains(p.PageKey),
                 p.BannerImagePath, HasBanner = bannerKeys.Contains(p.PageKey),
+                p.MidBanner1ImagePath, p.MidBanner2ImagePath, p.MidBanner3ImagePath, p.MidBanner4ImagePath,
+                HasMidBanner = midBannerKeys.Contains(p.PageKey),
                 i18n = db.PageI18n.Where(i => i.PageId == p.Id)
                     .Select(i => new { i.Lang, i.Slug, i.SeoTitle, i.SeoDescription })
                     .ToList(),
@@ -73,6 +76,7 @@ public sealed class AdminPageHandler(AppDbContext db)
             item = page,
             hasVideo = PageVideoPages.All.Contains(page.PageKey),
             hasBanner = PageBannerPages.All.Contains(page.PageKey),
+            midBannerCount = PageMidBannerPages.Of(page.PageKey),
             i18n = i18ns.ToDictionary(i => i.Lang, i => i),
         }));
     }
@@ -95,6 +99,13 @@ public sealed class AdminPageHandler(AppDbContext db)
         // 頂部橫幅同理；清空 → null，前台落回 mockup 那張
         if (PageBannerPages.All.Contains(page.PageKey))
             page.BannerImagePath = string.IsNullOrWhiteSpace(dto.BannerImagePath) ? null : dto.BannerImagePath.Trim();
+
+        // 中段橫幅：只收該頁有的那幾格，超出張數的格子忽略（不會冒出 mockup 沒有的區塊）
+        var mid = PageMidBannerPages.Of(page.PageKey);
+        if (mid >= 1) page.MidBanner1ImagePath = ImagePath(dto.MidBanner1ImagePath);
+        if (mid >= 2) page.MidBanner2ImagePath = ImagePath(dto.MidBanner2ImagePath);
+        if (mid >= 3) page.MidBanner3ImagePath = ImagePath(dto.MidBanner3ImagePath);
+        if (mid >= 4) page.MidBanner4ImagePath = ImagePath(dto.MidBanner4ImagePath);
 
         foreach (var (lang, body) in dto.I18n)
         {
@@ -223,6 +234,9 @@ public sealed class AdminPageHandler(AppDbContext db)
 
     /// <summary>SEO 欄位長度上限（05-seo）。超過就擋，不要靜默截斷。</summary>
 
+    private static string? ImagePath(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
     private static string? Limit(string? value, int max, string field)
     {
         if (value is null) return null;
@@ -239,6 +253,10 @@ public sealed class PageUpdateDto
     public bool    IsIndexable { get; set; } = true;
     public string? YoutubeId   { get; set; }
     public string? BannerImagePath { get; set; }
+    public string? MidBanner1ImagePath { get; set; }
+    public string? MidBanner2ImagePath { get; set; }
+    public string? MidBanner3ImagePath { get; set; }
+    public string? MidBanner4ImagePath { get; set; }
     public Dictionary<string, PageI18nDto> I18n { get; set; } = [];
 }
 

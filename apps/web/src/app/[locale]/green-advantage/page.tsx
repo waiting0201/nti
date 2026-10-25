@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { bannerSrc, getPage } from '@/lib/api'
-import { PageBanner } from '@/components/cms'
+import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
+import { PageBanner, PageMidBanner } from '@/components/cms'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -34,7 +34,7 @@ export default async function Page({ params }: Props) {
           <p className="mt-m"><A href={l("/green-our-advantage")} className="blink">More details &rsaquo;</A></p>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid2.webp")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" /></section>
+      <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-green-mid2.webp")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" />
       <section className="section"><div className="wrap">
         <div className="ga-block reveal">
           <h3 className="ga-h">Carbon Efficiency / Carbon Neutral Printing</h3>
@@ -42,7 +42,7 @@ export default async function Page({ params }: Props) {
           <p className="mt-m"><A href={l("/green-carbon")} className="blink">More details &rsaquo;</A></p>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid3.webp")} alt="Recovered paper and print waste sorted for recycling" /></section>
+      <PageMidBanner src={midBannerSrc(page, 2, "/assets/ref-green-mid3.webp")} alt="Recovered paper and print waste sorted for recycling" />
       <section className="section"><div className="wrap">
         <div className="ga-block reveal">
           <h3 className="ga-h">ECO Materials / Sustainable Printing Materials</h3>
@@ -50,7 +50,7 @@ export default async function Page({ params }: Props) {
           <p className="mt-m"><A href={l("/green-materials")} className="blink">More details &rsaquo;</A></p>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid1.webp")} alt="Low-VOC eco-inks used on NTI's presses" /></section>
+      <PageMidBanner src={midBannerSrc(page, 3, "/assets/ref-green-mid1.webp")} alt="Low-VOC eco-inks used on NTI's presses" />
       <section className="section"><div className="wrap">
         <div className="ga-block reveal">
           <h3 className="ga-h">ESG &amp; Future Goals / ESG Printing Commitment</h3>
@@ -59,7 +59,7 @@ export default async function Page({ params }: Props) {
           <p className="mt-m"><A href={l("/green-esg")} className="blink">More details &rsaquo;</A></p>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid4.webp")} alt="CO2-neutral Heidelberg Speedmaster press line" /></section>
+      <PageMidBanner src={midBannerSrc(page, 4, "/assets/ref-green-mid4.webp")} alt="CO2-neutral Heidelberg Speedmaster press line" />
       <section className="section certs reveal"><div className="wrap certgrid">
         <img src={mediaUrl("/assets/cert-green.png")} alt="NTI Green Printing" />
         <img src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" className="big" />

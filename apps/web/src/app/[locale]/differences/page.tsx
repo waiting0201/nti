@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { PageBanner } from '@/components/cms'
-import { bannerSrc, getPage } from '@/lib/api'
+import { PageBanner, PageMidBanner } from '@/components/cms'
+import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
 import { A } from '@/components/A'
 import { mediaUrl, youtubeEmbedSrc } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -41,7 +41,7 @@ export default async function Page({ params }: Props) {
         <p className="prose wide reveal mt-s"><b>NTI. The Courage to Print Green.</b><br />Since 1968</p>
         <p className="mt-m reveal"><A href={l("/about-difference")} className="blink">More details &rsaquo;</A></p>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-mid1.webp")} alt="NTI leadership on the pressroom floor" /></section>
+      <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-about-mid1.webp")} alt="NTI leadership on the pressroom floor" />
       <section className="section"><div className="wrap">
         <div className="eyebrow reveal">Benefits to Clients</div>
         <h2 className="sec-title reveal">A Smarter Global Packaging Partner</h2>
@@ -50,7 +50,7 @@ export default async function Page({ params }: Props) {
         <div className="flist plain reveal"><div className="fi"><span>Sustainable packaging that meets international environmental standards.</span></div><div className="fi"><span>Direct delivery to factories, suppliers, warehouses, or assembly plants.</span></div><div className="fi"><span>Simplified coordination across Taiwan and Asia.</span></div><div className="fi"><span>Reduced handling, transportation, and packaging waste.</span></div><div className="fi"><span>Faster production and shorter supply chain lead times.</span></div><div className="fi"><span>Premium print quality with reliable global logistics.</span></div><div className="fi"><span>One trusted partner from design to final delivery.</span></div></div>
         <p className="mt-m reveal"><A href={l("/about-benefits")} className="blink">More details &rsaquo;</A></p>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-mid2.webp")} alt="NTI Printing headquarters in Tainan, Taiwan" /></section>
+      <PageMidBanner src={midBannerSrc(page, 2, "/assets/ref-about-mid2.webp")} alt="NTI Printing headquarters in Tainan, Taiwan" />
       <section className="section"><div className="wrap">
         <div className="eyebrow reveal">Certifications, Partnerships &amp; Awards</div>
         <h2 className="sec-title reveal">Proving our promise through action</h2>
@@ -59,7 +59,7 @@ export default async function Page({ params }: Props) {
         <p className="prose reveal"><b>That&rsquo;s The Courage to Print Green.</b></p>
         <p className="mt-m reveal"><A href={l("/about-certifications")} className="blink">More details &rsaquo;</A></p>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-mid3.webp")} alt="Range of NTI sustainably printed pattern packaging" /></section>
+      <PageMidBanner src={midBannerSrc(page, 3, "/assets/ref-about-mid3.webp")} alt="Range of NTI sustainably printed pattern packaging" />
       <section className="section"><div className="wrap">
         <div className="eyebrow reveal">Factory Tour</div>
         <h2 className="sec-title reveal">People are part of our sustainability journey</h2>

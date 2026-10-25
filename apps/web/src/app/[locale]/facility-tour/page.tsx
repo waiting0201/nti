@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { PageBanner } from '@/components/cms'
-import { bannerSrc, getPage } from '@/lib/api'
+import { PageBanner, PageMidBanner } from '@/components/cms'
+import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
 import { A } from '@/components/A'
 import { mediaUrl, youtubeEmbedSrc } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -49,8 +49,8 @@ export default async function Page({ params }: Props) {
         <p className="prose wide">The plant runs on a well-planned production area with a dedicated wastewater treatment zone, supporting an environmentally friendly workplace. Alongside production there is an employee cafeteria, dormitories and training rooms &mdash; the site is built for the people running it, not only for the presses.</p>
       </div></section>
       {/* panoramas (2880x620 / 2880x750) run full-width so they are never cropped */}
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/fac-tour1.webp")} alt="NTI factory floor — press hall lighting and overhead services" loading="lazy" /></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/fac-tour2.webp")} alt="NTI production aisle — palletised stock between press and finishing" loading="lazy" /></section>
+      <PageMidBanner src={midBannerSrc(page, 1, "/assets/fac-tour1.webp")} alt="NTI factory floor — press hall lighting and overhead services" loading="lazy" />
+      <PageMidBanner src={midBannerSrc(page, 2, "/assets/fac-tour2.webp")} alt="NTI production aisle — palletised stock between press and finishing" loading="lazy" />
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Booking a visit</div>
         <p className="prose wide">Factory visits run by appointment, Monday to Friday, 08:30&ndash;17:30 (GMT+8) at the Tainan plant. Tell us what you produce and we will shape the route around it.</p>

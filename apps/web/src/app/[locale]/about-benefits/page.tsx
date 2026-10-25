@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { PageBanner } from '@/components/cms'
-import { bannerSrc, getPage } from '@/lib/api'
+import { PageBanner, PageMidBanner } from '@/components/cms'
+import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
 import { A } from '@/components/A'
-import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -70,7 +69,7 @@ export default async function Page({ params }: Props) {
           </article>
         </div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-banner.webp")} alt="Colorful NTI paper-craft animal packaging figures" /></section>
+      <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-about-banner.webp")} alt="Colorful NTI paper-craft animal packaging figures" />
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Already audited by the buyers you sell to</div>
         <p className="prose wide">NTI has passed GMI certification &mdash; the packaging-supplier audit programme commissioned by Target &mdash; for Target, Walgreens, Lowe&rsquo;s, The Home Depot, Academy Sports&nbsp;+&nbsp;Outdoors and CVS pharmacy. If you sell into those channels, the supplier check has already been done.</p>

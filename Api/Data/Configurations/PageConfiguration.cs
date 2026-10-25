@@ -18,6 +18,10 @@ public sealed class PageConfiguration : IEntityTypeConfiguration<Page>
         b.Property(x => x.IsIndexable).HasDefaultValue(true);
         b.Property(x => x.YoutubeId).AsciiNullable(20);
         b.Property(x => x.BannerImagePath).HasMaxLength(260);
+        b.Property(x => x.MidBanner1ImagePath).HasMaxLength(260);
+        b.Property(x => x.MidBanner2ImagePath).HasMaxLength(260);
+        b.Property(x => x.MidBanner3ImagePath).HasMaxLength(260);
+        b.Property(x => x.MidBanner4ImagePath).HasMaxLength(260);
         b.Audit();
 
         b.HasAlternateKey(x => x.PageKey).HasName("UQ_Page_PageKey");

@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { PageBanner } from '@/components/cms'
-import { bannerSrc, getPage } from '@/lib/api'
+import { PageBanner, PageMidBanner } from '@/components/cms'
+import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
 import { A } from '@/components/A'
-import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -40,7 +39,7 @@ export default async function Page({ params }: Props) {
         <p className="prose wide mt-s"><b>NTI. The Courage to Print Green.</b><br />Since 1968</p>
         <div className="flist mt-s"><p className="fi"><b>Sustainability First</b>We follow the 4&nbsp;Rs &mdash; Reduce, Reuse, Recover, Recycle &mdash; to cut waste, save energy and keep material in circulation rather than in landfill.</p><p className="fi"><b>Digital Green Printing</b>Digital pre-press and workflow automation remove make-ready sheets, cut ink consumption and shrink the carbon cost of every short run.</p><p className="fi"><b>Future-Ready Thinking</b>We invest in green technology before regulation forces it, so our clients are already compliant when the requirement arrives.</p><p className="fi"><b>Material Responsibility</b>FSC&trade;-certified substrates, low-VOC eco-inks and RoHS-compliant formulations &mdash; safer for food contact, cleaner for the environment.</p><p className="fi"><b>Integrated Innovation</b>Colour management, in-line measurement and smart production systems raise precision and repeatability while removing rework.</p></div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-about-mid2.webp")} alt="NTI Printing headquarters in Tainan, Taiwan" /></section>
+      <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-about-mid2.webp")} alt="NTI Printing headquarters in Tainan, Taiwan" />
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Core values</div>
         <div className="flist mt-s"><p className="fi"><b>Honesty and Integrity</b>We respect intellectual property rights, and select and work with suppliers on an objective, impartial basis.</p><p className="fi"><b>Keep Commitment</b>We stay committed to shareholders, employees, suppliers and society, balancing and protecting the interests of each &mdash; and we ask the same of our partners.</p><p className="fi"><b>Mutual Trust and Assistance</b>Long-term, win-win partnerships with customers and employees are built on mutual trust and practical support.</p></div>
