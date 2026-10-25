@@ -72,10 +72,6 @@ const MENU: MenuItem[] = [
     key: 'printing-projects',
     href: '/printing-projects',
     label: 'Projects',
-    sub: [
-      { key: 'printing-projects#industries', href: '/printing-projects#industries', label: <>Industries / Applications</> },
-      { key: 'printing-projects#cases', href: '/printing-projects#cases', label: <>Case Studies &amp; Photos</> },
-    ],
   },
   {
     key: 'green-advantage',

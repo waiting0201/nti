@@ -3388,8 +3388,8 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "From packaging to promotional materials, NTI collaborates with brands across industries to deliver sustainable, high-quality results — explore our custom box portfolio and packaging case study highlights below. Each project reflects our commitment to innovation, precision, and environmental responsibility.",
-        "zh": "從包裝到宣傳品，NTI 與各產業品牌合作，交出永續而高品質的成果 —— 以下是我們的客製盒型作品與包裝案例精選。每一個專案都體現我們對創新、精準與環境責任的堅持。",
+        "en": "From packaging to promotional materials, NTI collaborates with brands across industries to deliver sustainable, high-quality results. Each project reflects our commitment to innovation, precision, and environmental responsibility.",
+        "zh": "從包裝到促銷材料，南台彩藝與各產業品牌合作，交付永續且高品質的成果，見證每個專案背後的創新、精準與環境責任。",
         "kind": "text",
         "section": "Projects",
         "count": 1
@@ -3472,17 +3472,10 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Case Studies & Photos",
-        "zh": "案例分享",
-        "kind": "text",
-        "section": "Case Studies & Photos",
-        "count": 1
-      },
-      {
         "en": "Explore how global brands trust NTI to print greener — without compromise.",
         "zh": "看看國際品牌如何信賴 NTI 印得更綠 —— 而且不必妥協。",
         "kind": "text",
-        "section": "Case Studies & Photos",
+        "section": "Industries / Applications",
         "count": 1
       }
     ]

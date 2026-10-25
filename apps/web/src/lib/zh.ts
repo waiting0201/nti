@@ -885,6 +885,7 @@ export const ZH: Record<string, string> = {
   "Projects — NTI Printing": "實績案例 —— NTI Printing",
   "Real Projects. Real Impact.": "真實的專案，真實的影響。",
   "From packaging to promotional materials, NTI collaborates with brands across industries to deliver sustainable, high-quality results — explore our custom box portfolio and packaging case study highlights below. Each project reflects our commitment to innovation, precision, and environmental responsibility.": "從包裝到宣傳品，NTI 與各產業品牌合作，交出永續而高品質的成果 —— 以下是我們的客製盒型作品與包裝案例精選。每一個專案都體現我們對創新、精準與環境責任的堅持。",
+  "From packaging to promotional materials, NTI collaborates with brands across industries to deliver sustainable, high-quality results. Each project reflects our commitment to innovation, precision, and environmental responsibility.": "從包裝到促銷材料，南台彩藝與各產業品牌合作，交付永續且高品質的成果，見證每個專案背後的創新、精準與環境責任。",
   "All projects": "全部案例",
   "Food": "食品",
   "Pharma": "醫藥",

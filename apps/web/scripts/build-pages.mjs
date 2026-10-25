@@ -214,7 +214,6 @@ const BEHAVIORS = {
   facility: [['FacilityExplorer', '@/components/behaviors/FacilityExplorer']],
   'printing-solutions': [['ProductShowcase', '@/components/behaviors/ProductShowcase']],
   faq: [['FaqFilter', '@/components/behaviors/FaqFilter']],
-  'printing-projects': [['ProjectFilter', '@/components/behaviors/ProjectFilter']],
   contact: [['PageForm', '@/components/behaviors/PageForm']],
   'get-a-quote': [['PageForm', '@/components/behaviors/PageForm']],
 }

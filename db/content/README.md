@@ -246,6 +246,16 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/300_keep_en_h1.sql
 sqlcmd -S <server> -d NTI -I -b -i db/content/310_cert_detail_list.sql
 ```
 
+## 320_projects_hide_cases.sql
+
+Projects 頁隱藏「案例分享」（客戶沒有案例資料，2026-10-25）。前台拿掉區塊與選單，導言刪掉
+「…case study highlights below」。頁面文字以英文原文的 hash 為 key，這支用新原文的 hash 補一筆中文
+（客戶 09-30 稿去掉「探索…案例精選」）；只動 `projects` 頁，Solutions 頁同一段沒改。冪等。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/320_projects_hide_cases.sql
+```
+
 ## 290_cert_proof_groups.sql
 
 首頁 Proof 牆「品質管理／環境永續／社會責任與安全」三張卡改由後台 08 的「分組」驅動（2026-10-21）。
