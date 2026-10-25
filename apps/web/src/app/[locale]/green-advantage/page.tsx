@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { bannerSrc, getPage } from '@/lib/api'
+import { PageBanner } from '@/components/cms'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -22,7 +23,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
-      <section className="fac-banner"><img src={bannerSrc(page, "/assets/ref-green-banner.webp")} alt="The courage to print green — recovered print waste ready for recycling" /></section>
+      <PageBanner src={bannerSrc(page, "/assets/ref-green-banner.webp")} alt="The courage to print green — recovered print waste ready for recycling" />
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>Sustainability</b></div>
         <h1 className="sec-title reveal">Eco-Friendly Printing in Taiwan</h1>

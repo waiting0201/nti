@@ -307,10 +307,12 @@ for (const file of files) {
     .join('\n')
 
   // 頂部橫幅接後台（單元 15「頂部橫幅」，後端 PageBannerPages）：只換緊接 header 的那一張，
-  // 頁中段的 .fac-banner 不動。沒接 API 或沒填，bannerSrc 回的就是原本的 mediaUrl(...)
+  // 頁中段的 .fac-banner 不動。沒接 API 時 bannerSrc 回的就是原本的 mediaUrl(...)；
+  // 接了 API 但後台沒傳圖，PageBanner 整個區塊不渲染
+  const bannerRe = /<section className="fac-banner"><img src=\{mediaUrl\(("[^"]+")\)\} alt=("[^"]*") \/><\/section>/
   const usesBanner = Boolean(pageKey) && /^\s*<section className="fac-banner"><img src=\{mediaUrl\(/.test(jsx)
   if (usesBanner) {
-    jsx = jsx.replace(/(<section className="fac-banner"><img src=\{)mediaUrl\(/, '$1bannerSrc(page, ')
+    jsx = jsx.replace(bannerRe, '<PageBanner src={bannerSrc(page, $1)} alt=$2 />')
     ctx.usesMedia = jsx.includes('mediaUrl(')
   }
 
@@ -319,6 +321,7 @@ for (const file of files) {
     "import type { Metadata } from 'next'",
     "import { T } from '@/lib/t'",
     ...(pageKey ? [`import { ${usesBanner ? 'bannerSrc, ' : ''}getPage } from '@/lib/api'`] : []),
+    ...(usesBanner ? ["import { PageBanner } from '@/components/cms'"] : []),
     ...(ctx.usesA ? ["import { A } from '@/components/A'"] : []),
     ...(ctx.usesMedia ? ["import { mediaUrl } from '@/lib/media'"] : []),
     ...behaviors.map(([name, from]) => `import { ${name} } from '${from}'`),

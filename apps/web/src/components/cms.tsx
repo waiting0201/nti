@@ -328,6 +328,13 @@ export function CertificationWall({ items, locale }: { items: Certification[]; l
   )
 }
 
+// ── 15 頁面頂部橫幅 ──────────────────────────────────────────────────────
+/** 緊接 header 的那張大圖。`src` 由 `bannerSrc()` 決定，`null`＝後台沒傳圖，整個區塊不出現 */
+export function PageBanner({ src, alt }: { src: string | null; alt: string }) {
+  if (!src) return null
+  return <section className="fac-banner"><img src={src} alt={alt} /></section>
+}
+
 // ── 01 home-banner ────────────────────────────────────────────────────────
 export function HeroSlides({ items, locale }: { items: Banner[]; locale: Locale }) {
   const l = withLocale(locale)

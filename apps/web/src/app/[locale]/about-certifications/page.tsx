@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
-import { CertificationWall, DetailList } from '@/components/cms'
+import { CertificationWall, DetailList, PageBanner } from '@/components/cms'
 import { JsonLd } from '@/components/JsonLd'
 import { organizationCredentials } from '@/lib/jsonld'
 import { bannerSrc, getCertificationItems, getCertifications, getPage, type CertificationListItem } from '@/lib/api'
@@ -36,7 +36,7 @@ export default async function Page({ params }: Props) {
   const credentials = certs?.length ? organizationCredentials(certs) : null
   return (
     <T locale={locale} overrides={page?.texts}>
-      <section className="fac-banner"><img src={bannerSrc(page, "/assets/ref-about-mid2.webp")} alt="NTI Printing headquarters in Tainan, Taiwan" /></section>
+      <PageBanner src={bannerSrc(page, "/assets/ref-about-mid2.webp")} alt="NTI Printing headquarters in Tainan, Taiwan" />
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><b>Our Certifications</b></div>
         <h1 className="sec-title reveal">Our Certifications &mdash; Proof of Quality &amp; Sustainability</h1>

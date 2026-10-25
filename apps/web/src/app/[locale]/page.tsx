@@ -30,15 +30,18 @@ export default async function Page({ params }: Props) {
   // 「印刷解決方案」四張卡：標題與短述來自後台 02（name／summary），圖與副標照 mockup
   const sol = (code: string) => home?.solutions.find((s) => s.code === code)
   // 第一張 Banner 是 LCP：在 <head> 先 preload，不必等 HTML 解析到 <img> 才開始下載
-  const lcp = home?.banners[0]?.imagePath
+  // 沒傳圖的 Banner 不上輪播；接了 API 卻一張都沒有時，整個 hero 不顯示（沒接 API 才照 mockup 那三張）
+  const banners = home?.banners.filter((b) => b.imagePath)
+  const lcp = banners?.[0]?.imagePath
   if (lcp) preload(cmsMedia(lcp), { as: 'image', fetchPriority: 'high' })
   return (
     <T locale={locale} overrides={page?.texts}>
 
       {/* ============ HERO ============ */}
+      {(!banners || banners.length > 0) && (
       <section className="hero" id="hero" aria-label="Featured highlights">
-        {home?.banners.length ? (
-          <HeroSlides items={home.banners} locale={locale} />
+        {banners?.length ? (
+          <HeroSlides items={banners} locale={locale} />
         ) : (
         <>
         <A className="slide on" href={l("/green-advantage")}><img src={mediaUrl("/assets/ref-home-banner1.webp")} alt="The courage to print green? — NTI Printing" /></A>{' '}
@@ -50,6 +53,7 @@ export default async function Page({ params }: Props) {
         <button className="sbtn next" aria-label="Next slide"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M9 5l7 7-7 7" /></svg></button>
         <div className="dots"></div>
       </section>
+      )}
 
       {/* ============ INTRO STATEMENT ============ */}
       <section className="intro">

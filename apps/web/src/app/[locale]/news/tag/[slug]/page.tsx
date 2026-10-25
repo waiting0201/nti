@@ -2,12 +2,11 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { A } from '@/components/A'
 import { JsonLd } from '@/components/JsonLd'
-import { NewsList } from '@/components/cms'
+import { NewsList, PageBanner } from '@/components/cms'
 import { T, tr } from '@/lib/t'
-import { getNewsByTag, getTag, hasApi } from '@/lib/api'
+import { bannerSrc, getNewsByTag, getPage, getTag, hasApi } from '@/lib/api'
 import { breadcrumbList } from '@/lib/jsonld'
 import { localeUrl, withLocale, type Locale } from '@/lib/i18n'
-import { mediaUrl } from '@/lib/media'
 
 /**
  * 標籤封存頁 `/{語系}/news/tag/{slug}`。
@@ -62,13 +61,13 @@ export default async function Page({ params }: Props) {
   const tag = hasApi ? await getTag(locale, slug) : null
   if (!tag) notFound()
 
-  const items = (await getNewsByTag(locale, slug)) ?? []
+  // 頂部橫幅跟著 /news 列表頁（後台單元 15 的 news）走：那邊沒傳圖，這裡也不顯示
+  const [news, newsPage] = await Promise.all([getNewsByTag(locale, slug), getPage(locale, 'news')])
+  const items = news ?? []
 
   return (
     <T locale={locale}>
-      <section className="fac-banner">
-        <img src={mediaUrl('/assets/diff-grid.webp')} alt="NTI Printing news" />
-      </section>
+      <PageBanner src={bannerSrc(newsPage, '/assets/diff-grid.webp')} alt="NTI Printing news" />
       <section className="section">
         <div className="wrap">
           <div className="crumb reveal">

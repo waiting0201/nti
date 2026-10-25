@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
+import { PageBanner } from '@/components/cms'
 import { bannerSrc, getPage } from '@/lib/api'
 import { A } from '@/components/A'
 import { mediaUrl, youtubeEmbedSrc } from '@/lib/media'
@@ -24,7 +25,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
-      <section className="fac-banner"><img src={bannerSrc(page, "/assets/ref-about-banner.webp")} alt="Colorful NTI paper-craft animal packaging figures" /></section>
+      <PageBanner src={bannerSrc(page, "/assets/ref-about-banner.webp")} alt="Colorful NTI paper-craft animal packaging figures" />
       <section className="section"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><b>About Us</b></div>
         <h1 className="sec-title reveal">The NTI Difference &mdash; Where Sustainability Meets Uncompromising Quality</h1>

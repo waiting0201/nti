@@ -343,11 +343,13 @@ export function cmsMedia(path: string | null | undefined): string {
 }
 
 /**
- * 頂部橫幅（後台單元 15 的「頂部橫幅」）→ `<img src>`。
+ * 頂部橫幅（後台單元 15 的「頂部橫幅」）→ `<img src>`；回 `null` 表示整個區塊不顯示（`PageBanner`）。
  *
- * 沒接 API 或沒填就回 `fallback`——mockup 寫死的那張（素材路徑，走 `mediaUrl`）。
- * 資料庫的預設值就是那張的 `assets/...`，經 `cmsMedia` 解出來與 fallback 逐字相同，`verify:markup` 不受影響。
+ * - 沒接 API（或這次取用失敗，`page` 是 null）：回 `fallback`——mockup 寫死的那張（素材路徑，走 `mediaUrl`）。
+ *   資料庫的預設值就是那張的 `assets/...`，經 `cmsMedia` 解出來與 fallback 逐字相同，`verify:markup` 不受影響。
+ * - 接了 API 但後台沒傳圖：回 `null`，區塊隱藏，不再拿 mockup 的圖頂替。
  */
-export function bannerSrc(page: PageSeo | null | undefined, fallback: string): string {
-  return cmsMedia(page?.bannerImagePath) || mediaUrl(fallback)
+export function bannerSrc(page: PageSeo | null | undefined, fallback: string): string | null {
+  if (!page) return mediaUrl(fallback)
+  return cmsMedia(page.bannerImagePath) || null
 }

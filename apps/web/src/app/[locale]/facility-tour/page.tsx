@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
+import { PageBanner } from '@/components/cms'
 import { bannerSrc, getPage } from '@/lib/api'
 import { A } from '@/components/A'
 import { mediaUrl, youtubeEmbedSrc } from '@/lib/media'
@@ -24,7 +25,7 @@ export default async function Page({ params }: Props) {
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
-      <section className="fac-banner"><img src={bannerSrc(page, "/assets/fac-tour-main.webp")} alt="Inside the NTI factory floor — palletised packaging stock and clean production aisles" /></section>
+      <PageBanner src={bannerSrc(page, "/assets/fac-tour-main.webp")} alt="Inside the NTI factory floor — palletised packaging stock and clean production aisles" />
       <section className="section subhead"><div className="wrap">
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/differences")}>About Us</A><span>&rsaquo;</span><A href={l("/facility")}>Facilities &amp; Equipment</A><span>&rsaquo;</span><b>Factory Tour</b></div>
         <h1 className="sec-title reveal">Factory Tour</h1>
