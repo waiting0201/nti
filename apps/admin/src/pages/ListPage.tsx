@@ -9,6 +9,7 @@ import { Badge, Modal, Notice, Pager, toast } from '@/components/ui'
 import { categoryName, useCategories } from '@/components/fields'
 import { isComplete } from '@/lib/completeness'
 import { assetUrl } from '@/lib/asset'
+import { MENU_LABEL } from '@/lib/menu-labels'
 
 const PAGE_SIZE = 20
 
@@ -413,6 +414,18 @@ function Cell({ unit, row, colKey, render }: { unit: Unit; row: Row; colKey: str
   if (render === 'bool') return <Badge kind={raw ? 'ok' : 'off'}>{raw ? '是' : '否'}</Badge>
   if (render === 'category') return <span>{categoryName(raw)}</span>
   if (render === 'date') return <span>{String(raw).slice(0, 10) || '—'}</span>
+  if (render === 'menu') {
+    // mock 的 id 是流水號、API 的 id 才是 pageKey；兩邊都帶 pageKey 欄
+    const m = MENU_LABEL[String(row.pageKey ?? row.id)]
+    if (!m) return <span style={{ color: 'var(--grey-2)' }}>—</span>
+    return (
+      <span>
+        {m.zh}
+        <br />
+        <span style={{ color: 'var(--grey-2)', fontSize: '0.9em' }}>{m.en}</span>
+      </span>
+    )
+  }
 
   // 有選項的欄位（例：轉址方式）清單上要顯示選項文字，不是存進資料庫的代號
   const options = unit.fields.find((f) => f.key === colKey)?.options

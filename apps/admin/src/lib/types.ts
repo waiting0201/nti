@@ -65,8 +65,8 @@ export type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 export type ListColumn = {
   key: string
   label: string
-  /** thumb 會渲染成縮圖、status 渲染成上下架狀態、i18n 渲染成中/英完成度 badge */
-  render?: 'text' | 'thumb' | 'status' | 'i18n' | 'date' | 'bool' | 'category'
+  /** thumb 會渲染成縮圖、status 渲染成上下架狀態、i18n 渲染成中/英完成度 badge、menu 渲染成前台選單的中英名稱（只有 15 頁面用） */
+  render?: 'text' | 'thumb' | 'status' | 'i18n' | 'date' | 'bool' | 'category' | 'menu'
   width?: string
 }
 
