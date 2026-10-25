@@ -24,12 +24,12 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:"Mulish","Noto Sans TC",system-ui,sans-serif;color:var(--grey);background:#fff;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{font-family:"Mulish","PingFang TC","Microsoft JhengHei","Noto Sans CJK TC","Noto Sans TC",system-ui,sans-serif;color:var(--grey);background:#fff;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 ::selection{background:var(--leaf);color:#fff}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,4vw,40px)}
-.zh{font-family:"Noto Sans TC",sans-serif}
+.zh{font-family:"PingFang TC","Microsoft JhengHei","Noto Sans CJK TC","Noto Sans TC",sans-serif}
 
 /* ---------- header ---------- */
 header{position:sticky;top:0;z-index:90;background:#fff;border-bottom:1px solid var(--line);transition:box-shadow .3s}
@@ -665,10 +665,14 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
 /* ============================================================
    中文版標題排版（只吃 <html lang="zh-*">，英文版完全不受影響）
 
-   為什麼需要這一塊：拉丁字的 Mulish 有真正的 800，中文的 Noto Sans TC
-   沒有 —— CSS 的字重挑選規則在 >=600 時「先往上找」，所以每一處
-   font-weight:800 的中文都被撐成 Black。字型請求已經拿掉 900、補上
-   300/600（軸數不變、不多載檔案），800 現在落回 700。
+   為什麼需要這一塊：拉丁字的 Mulish 有真正的 800，中文字型沒有 ——
+   CSS 的字重挑選規則在 >=600 時「先往上找」，找不到就落到最重的那一階
+   （PingFang TC 是 Semibold、微軟正黑體是 Bold）。
+
+   中文不載網路字型（2026-10-25）：原本從 Google Fonts 載 Noto Sans TC，
+   中文頁每次要下載十幾個切片、約 1MB，和首頁 Banner 搶頻寬，手機版
+   Lighthouse 的 LCP 因此到 11 秒。改用系統字：PingFang TC（Apple）、
+   微軟正黑體（Windows）、Noto Sans CJK TC（Android）。
 
    但綠色標題光是落回 700 還是太壯：方塊字沒有拉丁字的字腔起伏，同樣的
    字重看起來就是更重。所以這裡把它們再降一階到 500/600，並把為拉丁字
