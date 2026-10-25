@@ -9,7 +9,7 @@ import { Badge, Modal, Notice, Pager, toast } from '@/components/ui'
 import { categoryName, useCategories } from '@/components/fields'
 import { isComplete } from '@/lib/completeness'
 import { assetUrl } from '@/lib/asset'
-import { MENU_LABEL } from '@/lib/menu-labels'
+import { LABEL_SOURCE, MENU_LABEL } from '@/lib/menu-labels'
 
 const PAGE_SIZE = 20
 
@@ -421,6 +421,9 @@ function Cell({ unit, row, colKey, render }: { unit: Unit; row: Row; colKey: str
     return (
       <span>
         {m.zh}
+        {m.from && m.from !== 'menu' && (
+          <span style={{ color: 'var(--grey-2)', fontSize: '0.85em' }}>（{LABEL_SOURCE[m.from]}）</span>
+        )}
         <br />
         <span style={{ color: 'var(--grey-2)', fontSize: '0.9em' }}>{m.en}</span>
       </span>

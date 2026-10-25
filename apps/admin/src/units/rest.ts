@@ -103,7 +103,7 @@ export const page: Unit = {
   ],
   columns: [
     { key: 'path', label: '路徑', width: '220px' },
-    { key: 'menuLabel', label: '前台選單名稱', render: 'menu', width: '220px' },
+    { key: 'menuLabel', label: '前台名稱', render: 'menu', width: '220px' },
     { key: 'seoTitle', label: 'SEO Title' },
     { key: 'isIndexable', label: '索引', render: 'bool', width: '80px' },
     { key: 'i18n', label: '中/英', render: 'i18n', width: '90px' },
