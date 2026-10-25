@@ -85,7 +85,7 @@ export type PageSeo = {
   pageKey: string
   isIndexable: boolean
   bodyHtml: string | null
-  /** 頁面影片的 YouTube 影片 ID（後台單元 15）。只有關於我們、工廠導覽兩頁會有值 */
+  /** 頁面影片的 YouTube 影片 ID（後台單元 15，分語系）。關於我們中英都可能有值；工廠導覽只有中文 */
   youtubeId: string | null
   /** 頂部橫幅圖路徑（後台單元 15）。只有頂部有大圖的 20 頁會有值 */
   bannerImagePath: string | null

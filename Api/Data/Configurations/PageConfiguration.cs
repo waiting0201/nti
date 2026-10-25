@@ -16,7 +16,6 @@ public sealed class PageConfiguration : IEntityTypeConfiguration<Page>
         b.Property(x => x.HasRichBody).HasDefaultValue(false);
         b.Property(x => x.OgImagePath).HasMaxLength(260);
         b.Property(x => x.IsIndexable).HasDefaultValue(true);
-        b.Property(x => x.YoutubeId).AsciiNullable(20);
         b.Property(x => x.BannerImagePath).HasMaxLength(260);
         b.Property(x => x.MidBanner1ImagePath).HasMaxLength(260);
         b.Property(x => x.MidBanner2ImagePath).HasMaxLength(260);
@@ -42,6 +41,7 @@ public sealed class PageI18nConfiguration : IEntityTypeConfiguration<PageI18n>
         b.Property(x => x.CanonicalUrl).HasMaxLength(300);
         b.Property(x => x.OgTitle).HasMaxLength(90);
         b.Property(x => x.OgDescription).HasMaxLength(200);
+        b.Property(x => x.YoutubeId).AsciiNullable(20);
 
         b.HasIndex(x => new { x.Lang, x.Slug }).IsUnique().HasDatabaseName("UX_PageI18n_Lang_Slug");
 

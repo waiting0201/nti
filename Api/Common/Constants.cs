@@ -251,11 +251,25 @@ public static class PageTextPages
 /// 前台要同時接線（該頁讀 <c>PageDto.YoutubeId</c>）；三邊要一致：這裡、
 /// <c>apps/admin/scripts/build-seed.mjs</c> 的 VIDEO_PAGES、以及前台那兩頁。
 /// </para>
+/// <para>
+/// 2026-10-25 起影片分語系（<c>PageI18n.YoutubeId</c>）：關於我們中英各一支；
+/// 工廠導覽只有中文版是影片，英文版是單元 10「參觀」分類的照片輪播。
+/// </para>
 /// </summary>
 public static class PageVideoPages
 {
-    public static readonly IReadOnlySet<string> All = new HashSet<string>(
-        [PageKeys.AboutHub, PageKeys.FacilityTour], StringComparer.Ordinal);
+    /// <summary>頁面 → 有影片的語系。後台只在這些語系分頁顯示「頁面影片」，別的語系送來的值忽略。</summary>
+    public static readonly IReadOnlyDictionary<string, string[]> LangsByPage = new Dictionary<string, string[]>(StringComparer.Ordinal)
+    {
+        [PageKeys.AboutHub]     = [Langs.Zh, Langs.En],
+        [PageKeys.FacilityTour] = [Langs.Zh],
+    };
+
+    public static readonly IReadOnlySet<string> All = new HashSet<string>(LangsByPage.Keys, StringComparer.Ordinal);
+
+    public static string[] LangsOf(string pageKey) => LangsByPage.TryGetValue(pageKey, out var langs) ? langs : [];
+
+    public static bool Has(string pageKey, string lang) => LangsOf(pageKey).Contains(lang);
 
     /// <summary>
     /// 貼上的網址 → YouTube 影片 ID（與 <c>Vlog.YoutubeId</c> 同一個做法）；空值回 null。

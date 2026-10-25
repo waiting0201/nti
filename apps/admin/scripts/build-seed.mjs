@@ -56,16 +56,18 @@ function categories() {
   return rows
 }
 
-/* 有影片的固定頁 → mockup 檔（與後端 Api/Common/Constants.cs 的 PageVideoPages 一致）。
-   正式資料庫的值由 EF migration PageVideo 帶入；這裡只給 demo 用，值一樣取自 mockup。 */
-const VIDEO_PAGES = { 'about-hub': 'differences.html', 'facility-tour': 'facility-tour.html' }
+/* 有影片的固定頁 → [mockup 檔, 有影片的語系]（與後端 Api/Common/Constants.cs 的 PageVideoPages 一致）。
+   影片分語系（PageI18n.YoutubeId）：工廠導覽只有中文版是影片，英文版是照片輪播——mockup（英文）
+   因此已經沒有那支影片，改取關於我們的（兩頁的預設影片本來就是同一支，見前台 page.tsx 的 fallback）。
+   正式資料庫的值由 EF migration PageVideo／PageVideoI18n 帶入；這裡只給 demo 用。 */
+const VIDEO_PAGES = { 'about-hub': ['differences.html', ['zh', 'en']], 'facility-tour': ['differences.html', ['zh']] }
 
 function pageVideo(pageKey) {
-  const file = VIDEO_PAGES[pageKey]
+  const [file, langs] = VIDEO_PAGES[pageKey] ?? []
   if (!file) return {}
   const m = /<div class="video-frame[^"]*">\s*<iframe\b[^>]*?\ssrc="https:\/\/www\.youtube\.com\/embed\/([\w-]+)"/.exec(readMockup(file))
   if (!m) throw new Error(`抽不出 ${file} 的影片——mockup 的版面改了，請改 pageVideo() 的規則`)
-  return { hasVideo: true, youtubeId: m[1] }
+  return { hasVideo: true, videoLangs: langs, youtubeIdByLang: Object.fromEntries(langs.map((l) => [l, m[1]])) }
 }
 
 /* 頂部有橫幅大圖的固定頁 → mockup 檔（與後端 Api/Common/Constants.cs 的 PageBannerPages 一致）。
@@ -119,19 +121,20 @@ function pages() {
   const rows = []
   let m
   while ((m = re.exec(sql))) {
+    const { youtubeIdByLang, ...video } = pageVideo(m[2])
     rows.push({
       id: m[1],
       pageKey: m[2],
       path: m[3],
       hasRichBody: m[4] === '1',
       isIndexable: m[5] === '1',
-      ...pageVideo(m[2]),
+      ...video,
       ...pageBanner(m[2]),
       ...pageMidBanners(m[2]),
       sortOrder: +m[1],
       i18n: {
-        zh: { slug: m[6], seoTitle: '', metaDescription: '' },
-        en: { slug: m[6], seoTitle: '', metaDescription: '' },
+        zh: { slug: m[6], seoTitle: '', metaDescription: '', ...(youtubeIdByLang?.zh && { youtubeId: youtubeIdByLang.zh }) },
+        en: { slug: m[6], seoTitle: '', metaDescription: '', ...(youtubeIdByLang?.en && { youtubeId: youtubeIdByLang.en }) },
       },
     })
   }

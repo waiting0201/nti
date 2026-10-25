@@ -15,8 +15,8 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
 {
     private const string Sql = """
         SELECT p.Id, p.PageKey, p.RouteTemplate, p.HasRichBody, p.IsIndexable,
-               i.BodyHtml, i.Slug, i.SeoTitle, i.SeoDescription, i.CanonicalUrl,
-               i.OgTitle, i.OgDescription, p.OgImagePath, p.YoutubeId, p.BannerImagePath,
+               i.Lang, i.BodyHtml, i.Slug, i.SeoTitle, i.SeoDescription, i.CanonicalUrl,
+               i.OgTitle, i.OgDescription, p.OgImagePath, i.YoutubeId, p.BannerImagePath,
                p.MidBanner1ImagePath, p.MidBanner2ImagePath, p.MidBanner3ImagePath, p.MidBanner4ImagePath
         FROM Page p
         INNER JOIN PageI18n i ON i.PageId = p.Id AND i.Lang = @Lang
@@ -65,6 +65,7 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
         public string? OgDescription { get; set; }
         public string? OgImagePath   { get; set; }
         public string? YoutubeId     { get; set; }
+        public string  Lang          { get; set; } = null!;
         public string? BannerImagePath { get; set; }
         public string? MidBanner1ImagePath { get; set; }
         public string? MidBanner2ImagePath { get; set; }
@@ -77,7 +78,8 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
             HasRichBody = HasRichBody, IsIndexable = IsIndexable,
             // 只有 HasRichBody = 1 的兩頁（privacy-legal、預留的 green-csr）才有內文
             BodyHtml = HasRichBody ? BodyHtml : null,
-            YoutubeId = YoutubeId,
+            // 影片分語系；工廠導覽英文版沒有影片位置（是照片輪播），就算 DB 有值也不給
+            YoutubeId = PageVideoPages.Has(PageKey, Lang) ? YoutubeId : null,
             BannerImagePath = BannerImagePath,
             MidBannerImagePaths = new[] { MidBanner1ImagePath, MidBanner2ImagePath, MidBanner3ImagePath, MidBanner4ImagePath }
                 .Take(PageMidBannerPages.Of(PageKey)).ToList(),

@@ -12,7 +12,7 @@ public sealed class PageDto
     public bool    HasRichBody   { get; set; }
     public bool    IsIndexable   { get; set; }
     public string? BodyHtml      { get; set; }
-    /// <summary>頁面影片（YouTube 影片 ID）。只有 PageVideoPages 那幾頁有值；null → 前台用 mockup 那支。</summary>
+    /// <summary>頁面影片（YouTube 影片 ID，分語系）。只有 PageVideoPages 列出的頁與語系有值；null → 前台用 mockup 那支。</summary>
     public string? YoutubeId     { get; set; }
     /// <summary>頂部橫幅圖路徑。只有 PageBannerPages 那幾頁有值；null → 前台用 mockup 那張。</summary>
     public string? BannerImagePath { get; set; }

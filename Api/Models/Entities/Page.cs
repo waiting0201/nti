@@ -15,7 +15,6 @@ public sealed class Page : IAuditable
     public bool    HasRichBody   { get; set; }
     public string? OgImagePath   { get; set; }
     public bool    IsIndexable   { get; set; } = true;   // 0 → noindex
-    public string? YoutubeId     { get; set; }           // 頁面影片，只有 Common.PageVideoPages 那幾頁用
     public string? BannerImagePath { get; set; }         // 頂部橫幅圖，只有 Common.PageBannerPages 那幾頁用
     public string? MidBanner1ImagePath { get; set; }     // 中段橫幅圖 1～4，依 Common.PageMidBannerPages 的張數使用
     public string? MidBanner2ImagePath { get; set; }
@@ -34,6 +33,7 @@ public sealed class PageI18n : II18n
     public int     PageId         { get; set; }
     public string  Lang           { get; set; } = null!;
     public string? BodyHtml       { get; set; }          // 僅 HasRichBody = 1 時使用
+    public string? YoutubeId      { get; set; }          // 頁面影片，只有 Common.PageVideoPages 列出的頁與語系用
     public string  Slug           { get; set; } = null!;
     public string? SeoTitle       { get; set; }
     public string? SeoDescription { get; set; }

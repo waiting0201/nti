@@ -694,7 +694,10 @@ export const SEED: Record<string, Row[]> = {
       "hasRichBody": false,
       "isIndexable": true,
       "hasVideo": true,
-      "youtubeId": "vECuYIiFSSM",
+      "videoLangs": [
+        "zh",
+        "en"
+      ],
       "hasBanner": true,
       "banner": "/assets/ref-about-banner.webp",
       "midBannerCount": 3,
@@ -706,12 +709,14 @@ export const SEED: Record<string, Row[]> = {
         "zh": {
           "slug": "about",
           "seoTitle": "",
-          "metaDescription": ""
+          "metaDescription": "",
+          "youtubeId": "vECuYIiFSSM"
         },
         "en": {
           "slug": "about",
           "seoTitle": "",
-          "metaDescription": ""
+          "metaDescription": "",
+          "youtubeId": "vECuYIiFSSM"
         }
       }
     },
@@ -906,7 +911,9 @@ export const SEED: Record<string, Row[]> = {
       "hasRichBody": false,
       "isIndexable": true,
       "hasVideo": true,
-      "youtubeId": "vECuYIiFSSM",
+      "videoLangs": [
+        "zh"
+      ],
       "hasBanner": true,
       "banner": "/assets/fac-tour-main.webp",
       "midBannerCount": 2,
@@ -917,7 +924,8 @@ export const SEED: Record<string, Row[]> = {
         "zh": {
           "slug": "tour",
           "seoTitle": "",
-          "metaDescription": ""
+          "metaDescription": "",
+          "youtubeId": "vECuYIiFSSM"
         },
         "en": {
           "slug": "tour",

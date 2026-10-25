@@ -49,7 +49,7 @@ public sealed class AdminPageHandler(AppDbContext db)
             .Select(p => new
             {
                 p.Id, p.PageKey, p.RouteTemplate, p.HasRichBody, p.IsIndexable, p.OgImagePath, p.UpdatedAt,
-                p.YoutubeId, HasVideo = videoKeys.Contains(p.PageKey),
+                HasVideo = videoKeys.Contains(p.PageKey),
                 p.BannerImagePath, HasBanner = bannerKeys.Contains(p.PageKey),
                 p.MidBanner1ImagePath, p.MidBanner2ImagePath, p.MidBanner3ImagePath, p.MidBanner4ImagePath,
                 HasMidBanner = midBannerKeys.Contains(p.PageKey),
@@ -75,6 +75,8 @@ public sealed class AdminPageHandler(AppDbContext db)
         {
             item = page,
             hasVideo = PageVideoPages.All.Contains(page.PageKey),
+            // 有影片的語系：後台只在這些語系分頁顯示「頁面影片」（工廠導覽只有中文）
+            videoLangs = PageVideoPages.LangsOf(page.PageKey),
             hasBanner = PageBannerPages.All.Contains(page.PageKey),
             midBannerCount = PageMidBannerPages.Of(page.PageKey),
             i18n = i18ns.ToDictionary(i => i.Lang, i => i),
@@ -92,9 +94,6 @@ public sealed class AdminPageHandler(AppDbContext db)
         // PageKey 與 RouteTemplate 不可改：前端是照 PageKey 取 SEO 的，改了會整頁抓不到
         page.OgImagePath = dto.OgImagePath;
         page.IsIndexable = dto.IsIndexable;
-
-        // 影片只有 PageVideoPages 那幾頁有前台位置；別頁送來的值直接忽略，與 BodyHtml 同理
-        if (PageVideoPages.All.Contains(page.PageKey)) page.YoutubeId = PageVideoPages.ParseYoutubeId(dto.YoutubeId);
 
         // 頂部橫幅同理；清空 → null，前台落回 mockup 那張
         if (PageBannerPages.All.Contains(page.PageKey))
@@ -128,6 +127,9 @@ public sealed class AdminPageHandler(AppDbContext db)
 
             // 內文只有 HasRichBody = 1 的兩頁（privacy-legal、預留的 green-csr）能編
             if (page.HasRichBody) i18n.BodyHtml = body.BodyHtml;
+
+            // 影片分語系，只有 PageVideoPages 列出的頁與語系有前台位置；別處送來的值直接忽略，與 BodyHtml 同理
+            if (PageVideoPages.Has(page.PageKey, lang)) i18n.YoutubeId = PageVideoPages.ParseYoutubeId(body.YoutubeId);
         }
 
         await db.SaveChangesAsync();
@@ -251,7 +253,6 @@ public sealed class PageUpdateDto
 {
     public string? OgImagePath { get; set; }
     public bool    IsIndexable { get; set; } = true;
-    public string? YoutubeId   { get; set; }
     public string? BannerImagePath { get; set; }
     public string? MidBanner1ImagePath { get; set; }
     public string? MidBanner2ImagePath { get; set; }
@@ -281,6 +282,7 @@ public sealed class PageI18nDto
     public string? OgTitle        { get; set; }
     public string? OgDescription  { get; set; }
     public string? BodyHtml       { get; set; }
+    public string? YoutubeId      { get; set; }
 }
 
 /// <summary>16 redirect。舊站 301 對照，內容遷移（P8）會一次匯入幾百筆，故有 CSV 匯出入。</summary>

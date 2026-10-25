@@ -499,7 +499,6 @@ CREATE TABLE dbo.Page (
   HasRichBody BIT NOT NULL DEFAULT 0,      -- 只有 privacy-legal = 1
   OgImagePath NVARCHAR(260) NULL,          -- OG 分享圖
   IsIndexable BIT NOT NULL DEFAULT 1,      -- 0 → noindex
-  YoutubeId VARCHAR(20) NULL,              -- 頁面影片（只存影片 ID），只有 about-hub、facility-tour 用（2026-10-07）
   BannerImagePath NVARCHAR(260) NULL,      -- 頂部橫幅圖，只有 PageBannerPages 的 20 頁用（2026-10-08）
   MidBanner1ImagePath NVARCHAR(260) NULL,  -- 中段橫幅圖 1～4，依頁面由上而下；張數見 PageMidBannerPages（11 頁、17 張，2026-10-25）
   MidBanner2ImagePath NVARCHAR(260) NULL,
@@ -514,6 +513,7 @@ CREATE TABLE dbo.PageI18n (
   BodyHtml NVARCHAR(MAX) NULL,             -- 僅 HasRichBody=1 時使用
   Slug NVARCHAR(160) NOT NULL, SeoTitle NVARCHAR(70) NULL, SeoDescription NVARCHAR(180) NULL,
   CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCHAR(200) NULL,
+  YoutubeId VARCHAR(20) NULL,              -- 頁面影片（只存影片 ID），分語系：about-hub 中英、facility-tour 只有中文（2026-10-07 放 Page，2026-10-25 搬來）
   CONSTRAINT PK_PageI18n PRIMARY KEY (PageId, Lang)
 );
 
@@ -904,6 +904,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-10-22 | Tim（Claude Code） | §4.8：`about-certifications` 下方四個清單改由資料驅動。新增 `CertificationListItem`(+I18n)（色彩標準／GMI 通路／獎項）與 `Certification.ShowInDetailList`。表數 +2、外鍵 +1（CASCADE +1）、CHECK +2、非 PK/UQ 索引 +1。遷移 `Api/Data/Migrations/*_CertificationListItem` 與 `db/migrations/0016_certification_list_item.sql` 一對一；`verify*.sql` 數字同步 |
 | 2026-10-25 | Tim（Claude Code） | §4.11：`Page` 加 `MidBanner1ImagePath`～`MidBanner4ImagePath`（頁面中段的大圖改由後台維護，張數由 `PageMidBannerPages` 決定）。表數、外鍵、索引不變。遷移 `Api/Data/Migrations/*_PageMidBanner` 與 `db/migrations/0017_page_mid_banner.sql` 一對一，一次性補上 mockup 目前那幾張；`verify*.sql` 數字同步 |
 | 2026-10-25 | Tim（Claude Code） | §4.11：`PageMidBannerPages` 補上漏掉的 `solutions`（Projects 圖）與 `facility`（Factory Tour 全幅照）各 1 張（9 → 11 頁、15 → 17 張），schema 不變。遷移 `Api/Data/Migrations/*_PageMidBannerFacilitySolutions` 與 `db/migrations/0018_page_mid_banner_facility_solutions.sql` 一對一，只補 NULL；`verify*.sql` 數字同步 |
+| 2026-10-25 | Tim（Claude Code） | §4.11：頁面影片分語系——`Page.YoutubeId` 搬到 `PageI18n.YoutubeId`（關於我們中英各一支；工廠導覽只有中文，英文版改為單元 10「參觀」分類的照片輪播）。表數、外鍵、索引不變。遷移 `Api/Data/Migrations/*_PageVideoI18n` 與 `db/migrations/0019_page_video_i18n.sql` 一對一，先搬值再刪欄；`verify*.sql` 數字同步 |
 
 *最後更新：2026-10-25*
 

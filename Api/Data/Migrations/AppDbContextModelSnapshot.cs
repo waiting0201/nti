@@ -2335,11 +2335,6 @@ namespace Nti.Api.Data.Migrations
                     b.Property<int?>("UpdatedBy")
                         .HasColumnType("int");
 
-                    b.Property<string>("YoutubeId")
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)");
-
                     b.HasKey("Id");
 
                     b.HasAlternateKey("PageKey")
@@ -2677,6 +2672,11 @@ namespace Nti.Api.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("YoutubeId")
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
 
                     b.HasKey("PageId", "Lang")
                         .HasName("PK_PageI18n");
