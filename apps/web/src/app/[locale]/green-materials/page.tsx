@@ -3,7 +3,6 @@ import { T } from '@/lib/t'
 import { bannerSrc, getPage } from '@/lib/api'
 import { PageBanner } from '@/components/cms'
 import { A } from '@/components/A'
-import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -42,7 +41,6 @@ export default async function Page({ params }: Props) {
         </div>
         <div className="flist mt-s"><p className="fi"><b>RoHS-Compliant Throughout</b>Every material, ink and solvent used in production passes RoHS inspection standards.</p><p className="fi"><b>Eco-Friendly Ink</b>Ink systems formulated to under 1&#37; VOC, used with sewage treatment and solvent recovery on site.</p><p className="fi"><b>FSC&trade; Chain of Custody</b>Ink, varnish, lotions and solvents comply with RoHS and REACH; substrates carry FSC&trade; certified chain of custody from mill to finished carton.</p><p className="fi"><b>Solvent-Free Lamination</b>BOPP pre-coated film replaces traditional wet lamination &mdash; no solvent, no drying oven, no emissions.</p><p className="fi"><b>Waste Oil &amp; Water Recovery</b>Waste-oil recovery equipment and a wastewater recycling system, both meeting international environmental protection standards.</p></div>
       </div></section>
-      <section className="fac-banner reveal"><img src={mediaUrl("/assets/ref-green-mid2.webp")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" /></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Integrated Green Production</div>
         <p className="prose wide">Our integrated production process improves efficiency while reducing environmental impact. By utilizing Computer-to-Plate (CTP) technology, we eliminate traditional plate-making processes, reducing heavy metal contamination, wastewater, material waste, and overall carbon emissions.</p>
