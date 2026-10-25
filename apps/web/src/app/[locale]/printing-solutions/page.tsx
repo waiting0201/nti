@@ -58,7 +58,7 @@ export default async function Page({ params }: Props) {
         <h2 className="sec-title reveal">Projects</h2>
         <h3 className="fac-sub reveal mt-s">Real Projects. Real Impact.</h3>
       </div>
-      <div className="fac-banner reveal mt-m"><img src={mediaUrl("/assets/ref-sol-mid3.webp")} alt="Range of NTI sustainably printed product packaging" /></div>
+      <div className="fac-banner reveal mt-m"><img src={mediaUrl("/assets/ref-sol-projects.webp")} alt="Range of NTI sustainably printed product packaging" /></div>
       <div className="wrap">
         <p className="prose wide reveal mt-m">From packaging to promotional materials, NTI collaborates with brands across industries to deliver sustainable, high-quality results &mdash; explore our custom box portfolio and packaging case study highlights below. Each project reflects our commitment to innovation, precision, and environmental responsibility.</p>
         <div className="dtitle reveal mt-m">Industries / Applications</div>
