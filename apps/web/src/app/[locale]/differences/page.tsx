@@ -3,6 +3,7 @@ import { T } from '@/lib/t'
 import { PageBanner, PageMidBanner } from '@/components/cms'
 import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
 import { A } from '@/components/A'
+import { VideoJsonLd } from '@/components/VideoJsonLd'
 import { mediaUrl, youtubeEmbedSrc } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -33,6 +34,8 @@ export default async function Page({ params }: Props) {
         <div className="video-frame reveal mt-l">
           <iframe src={video} title="Integrated Low-Carbon Production — NTI Printing company film" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
         </div>
+        {/* 只在接了 CMS 時發：沒接 API 的輸出要與 mockup 逐字相同（verify:markup） */}
+        {page && <VideoJsonLd id={video.slice(video.lastIndexOf('/') + 1)} />}
       </div></section>
       <section className="section"><div className="wrap">
         <div className="eyebrow reveal">The NTI Difference</div>

@@ -38,7 +38,7 @@
 > ⚠️ 路由細節待 [`02-frontend.md`](02-frontend.md) 定案；`db/seed/140_page.sql` 為現行提案值，改動只需更新該檔，不影響 schema。
 
 ### 2.3 結構化資料（JSON-LD）
-依頁型注入。**2026-09-07 實作時收斂為四種**，2026-10-25 加上 `LocalBusiness`（`apps/web/src/lib/jsonld.ts`）：
+依頁型注入。**2026-09-07 實作時收斂為四種**，2026-10-25 加上 `LocalBusiness`、`FAQPage`、`VideoObject`（`apps/web/src/lib/jsonld.ts`）：
 
 | 型別 | 範圍 | 來源 |
 |---|---|---|
@@ -47,12 +47,21 @@
 | `BreadcrumbList` | 43／44 頁（首頁除外） | mockup 的 `.crumb`，由 `build-pages.mjs` 產生 `lib/breadcrumbs.ts` |
 | `NewsArticle` | CMS 的 `/news/{slug}` | 消息詳細端點 |
 | `LocalBusiness` | **只發給有地址＋地圖的頁**，目前僅 `/contact`（`LOCAL_BUSINESS_PATHS`） | 地址／電話與 `Organization` 同源；營業時間＝聯絡頁可見的 Mon–Fri 08:30–17:30；`parentOrganization` 指回 `Organization`。不給 `geo`（沒有客戶確認的經緯度） |
+| `FAQPage` | `/faq` | CMS 的問答（單元 FAQ），與畫面上 `<details>` 渲染的是同一份 |
+| `VideoObject` | 頁面上嵌入播放的影片：`/differences`、`/facility-tour`（僅中文）、`/blog` 的主打影片 | 影片 ID 來自後台（單元 15 頁面影片／Green Vlog）；`uploadDate`／`duration` 讀 YouTube 觀看頁 |
 
-**刻意不發的三種**，理由記在此：
+**刻意不發的**：**`Product`／`Offer`**——方案頁沒有價格、庫存、評價，發了只會在 Search Console 累積必填欄位警告。
 
-- **`FAQPage`**：Google 2023-08 起只對政府與醫療網站顯示 FAQ 複合結果，一般企業站發了不會有任何呈現。
-- **`Product`／`Offer`**：方案頁沒有價格、庫存、評價，發了只會在 Search Console 累積必填欄位警告。
-- **`VideoObject`**：影片都是 YouTube 嵌入，`thumbnailUrl`／`uploadDate`／`duration` 目前拿不到。
+`FAQPage` 與 `VideoObject` 原本也列在這裡，2026-10-25 補上：
+
+- **`FAQPage`**：Google 2023-08 起只對政府與醫療網站顯示 FAQ 複合結果，本站發了也不會有複合結果；
+  補的理由是客戶 SEO 檢核表把它列為 P0（5.6）、`/faq` 確實有可見問答，而且生成式引擎讀得到（[06-geo](06-geo.md)）。
+- **`VideoObject`**：當初缺的是 `uploadDate`／`duration`。這兩個是 YouTube 那端的事實，改由伺服器讀影片觀看頁的
+  microdata 取得（`lib/youtube.ts`，只快取解析後的欄位、一天更新一次）；讀不到就整段不發。
+  **只算在本頁嵌入播放的 `<iframe>`**——`/blog` 下方連去 YouTube 的縮圖卡、`/insights` 的那張卡都不算。
+
+⚠️ 這兩種會放進頁面本體，**只在接了 CMS 的分支輸出**：沒接 API 時頁面要與 mockup 逐字相同（`verify:markup`），
+比對區間內不能多出 script 節點（見 `components/JsonLd.tsx`）。正式站一定接 API，所以不影響上線。
 
 原則：**結構化資料只描述畫面上真的有、且我們有依據的事實**。`BreadcrumbList` 因此只發給
 畫面上真的有 `.crumb` 的頁（首頁以外 43／44 頁，2026-09-21 補齊；首頁是麵包屑的根，本來就
@@ -172,5 +181,6 @@
 | 2026-09-16 | Tim（Claude Code） | §2.6 補上 robots.txt 開放後的三群組結構，策略本文改放 06-geo §2.3 |
 | 2026-10-25 | Tim（Claude Code） | §2.3 新增 `LocalBusiness`，只發給有地址＋地圖的頁（目前僅 `/contact`），由 layout 依路徑輸出，不進驗收閘的比對區間 |
 | 2026-10-06 | Tim（Claude Code） | §2.2 依客戶要求中文拿掉 `/zh` 前綴：中文在根目錄、英文 `/en/`；舊 `/zh/*` 301 到無前綴網址；`/` 不再依瀏覽器語言自動導向 |
+| 2026-10-25 | Tim（Claude Code） | §2.3 補發 `FAQPage`（`/faq`）與 `VideoObject`（嵌入影片的三頁），改寫原本「刻意不發」的理由；兩者只在接 CMS 的分支輸出，`verify:markup` 不受影響 |
 
 *最後更新：2026-10-25*

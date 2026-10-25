@@ -9,9 +9,10 @@ import { mediaUrl } from './media'
  * 麵包屑來自 mockup 的 `.crumb`（`lib/breadcrumbs.ts`），消息來自 CMS。
  * Google 對「結構化資料與可見內容不符」會直接判違規，所以這裡不編任何東西。
  *
- * 沒有發的兩種：
- * - **FAQPage**：Google 2023 年起只對政府與醫療網站顯示 FAQ 複合結果，對本站無效益。
- * - **Product／Offer**：方案頁沒有價格、庫存、評價，發了只會拿到一堆 Search Console 警告。
+ * 沒有發的：**Product／Offer**——方案頁沒有價格、庫存、評價，發了只會拿到一堆 Search Console 警告。
+ *
+ * `FAQPage` 有發（2026-10-25）：Google 2023 年起只對政府與醫療網站顯示 FAQ 複合結果，
+ * 但客戶 SEO 檢核表把它列為 P0、`/faq` 也確實有可見問答，而且生成式引擎讀得到（06-geo）。
  */
 
 const ORG_ID = `${siteUrl}/#organization`
@@ -196,5 +197,49 @@ export function newsArticle(
     mainEntityOfPage: article.url,
     author: { '@id': ORG_ID },
     publisher: { '@id': ORG_ID },
+  }
+}
+
+/**
+ * `/faq` 的問答。答案原樣給後台富文本的 HTML——Google 允許 `p`／`ul`／`a`／`strong` 等少數標籤，
+ * 與畫面上 `<details>` 裡渲染的是同一份。
+ */
+export function faqPage(items: { question: string; answerHtml: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answerHtml },
+    })),
+  }
+}
+
+/**
+ * 頁面上嵌入播放的 YouTube 影片（只算 `<iframe>`；連去 YouTube 的縮圖卡不算——那支影片不在本頁播）。
+ *
+ * `uploadDate`／`duration`／預設的名稱與說明來自 YouTube 觀看頁（`lib/youtube.ts`）；
+ * `name`／`description`／`thumbnailUrl` 有傳就用傳進來的（Vlog 的標題、後台換過的縮圖是畫面上那份）。
+ * 不給 `inLanguage`：英文頁也可能嵌中文影片，頁面語系不等於影片語系。
+ */
+export function videoObject(video: {
+  id: string
+  uploadDate: string
+  name: string
+  description?: string | null
+  duration?: string | null
+  thumbnailUrl?: string | null
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: video.name,
+    ...(video.description ? { description: video.description } : {}),
+    thumbnailUrl: [absolute(video.thumbnailUrl ?? `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`)],
+    uploadDate: video.uploadDate,
+    ...(video.duration ? { duration: video.duration } : {}),
+    embedUrl: `https://www.youtube.com/embed/${video.id}`,
+    contentUrl: `https://www.youtube.com/watch?v=${video.id}`,
   }
 }

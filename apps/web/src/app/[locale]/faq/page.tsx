@@ -2,9 +2,11 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { FaqList } from '@/components/cms'
+import { JsonLd } from '@/components/JsonLd'
 import { getFaqs, getPage } from '@/lib/api'
 import { FaqFilter } from '@/components/behaviors/FaqFilter'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
+import { faqPage } from '@/lib/jsonld'
 
 type Props = { params: Promise<{ locale: Locale }> }
 
@@ -39,7 +41,11 @@ export default async function Page({ params }: Props) {
         <h1 className="sec-title reveal">FAQ <span className="ti-slash">/</span> <span className="ti-alt">Your questions answered</span></h1>
         <div className="sec-sub reveal">Find answers to common questions about green printing, packaging, certifications, sustainability, and working with NTI.</div>
         {faqs?.length ? (
+          <>
           <FaqList items={faqs} locale={locale}>{faqCta}</FaqList>
+          {/* 與上面渲染的是同一份問答；只在接了 CMS 時發，沒接 API 的輸出要與 mockup 逐字相同 */}
+          <JsonLd data={faqPage(faqs)} />
+          </>
         ) : (
         <div className="faq-layout">
           <nav className="faq-nav reveal" id="faqNav" aria-label="FAQ categories">

@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { VlogGrid } from '@/components/cms'
-import { getPage, getVlogs } from '@/lib/api'
+import { VideoJsonLd } from '@/components/VideoJsonLd'
+import { cmsMedia, getPage, getVlogs } from '@/lib/api'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -28,7 +29,16 @@ export default async function Page({ params }: Props) {
         <h1 className="sec-title reveal">Green Vlog <span className="ti-slash">/</span> <span className="ti-alt">Green knowledge hub</span></h1>
         <div className="sec-sub reveal">Explore practical insights, industry trends, and sustainable packaging and eco friendly printing solutions that help brands build a greener future.</div>
         {vlogs?.length ? (
+          <>
           <VlogGrid items={vlogs} />
+          {/* 只有頂部那支是在本頁播的（主打影片，API 已排在第一）；其餘是連去 YouTube 的縮圖卡。
+              說明不給 Vlog 的 description——畫面上沒顯示它，改用 YouTube 那端的 */}
+          <VideoJsonLd
+            id={vlogs[0].youtubeId}
+            name={vlogs[0].title}
+            thumbnailUrl={vlogs[0].thumbOverridePath ? cmsMedia(vlogs[0].thumbOverridePath) : null}
+          />
+          </>
         ) : (
         <>
         <div className="video-frame reveal mt-l">

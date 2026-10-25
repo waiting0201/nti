@@ -3,6 +3,7 @@ import { T } from '@/lib/t'
 import { PageBanner, PageMidBanner } from '@/components/cms'
 import { bannerSrc, cmsMedia, getPage, midBannerSrc } from '@/lib/api'
 import { A } from '@/components/A'
+import { VideoJsonLd } from '@/components/VideoJsonLd'
 import { TourGallery, type TourPhoto } from '@/components/behaviors/TourGallery'
 import { mediaUrl, youtubeEmbedSrc } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -63,9 +64,13 @@ export default async function Page({ params }: Props) {
       <section className="section tight"><div className="wrap reveal">
         <p className="prose wide">At NTI Printing, ESG begins with people. Our state-of-the-art, fully air-conditioned facility is designed to provide a safe, comfortable, and inspiring workplace for every member of our team. From modern offices and efficient production floors to staff restaurants, library, dormitories, and shared spaces, we continually invest in the wellbeing of both our local and international employees. By creating an environment where people can thrive, we build a stronger culture, deliver better quality, and support a more sustainable future as a trusted sustainable packaging manufacturer in Taiwan.</p>
         {locale === 'zh' ? (
+        <>
         <div className="video-frame reveal mt-l">
           <iframe src={video} title="Integrated Low-Carbon Production — NTI Printing company film" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
         </div>
+        {/* 只在接了 CMS 時發：沒接 API 的輸出要與 mockup 逐字相同（verify:markup） */}
+        {page && <VideoJsonLd id={video.slice(video.lastIndexOf('/') + 1)} />}
+        </>
         ) : photos.length > 0 && <TourGallery photos={photos} />}
       </div></section>
       <section className="section tight"><div className="wrap reveal">
