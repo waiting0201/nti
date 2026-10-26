@@ -512,7 +512,7 @@ footer a:hover{color:var(--leaf)}
 .legal-meta{font-size:.85rem;color:#9aa39a;font-weight:600}
 
 /* ---------- forms (quote / contact) ---------- */
-.form-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:clamp(36px,5vw,72px);align-items:start}
+.form-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:clamp(36px,5vw,72px);align-items:start}
 .form-side{position:sticky;top:104px}
 .fsteps{display:flex;flex-direction:column;gap:16px;margin-top:32px}
 .fstep{display:flex;gap:14px;align-items:center;font-size:.9rem;font-weight:700;color:var(--grey)}
@@ -635,7 +635,7 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
   .explorer{grid-template-columns:1fr;gap:30px}
   .fgrid{grid-template-columns:1fr 1fr;gap:40px;padding:56px 0 48px}
   .news-feature{grid-template-columns:1fr}
-  .form-grid{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:minmax(0,1fr)}
   .form-side{position:static}
   .pj-grid,.vl-grid{grid-template-columns:1fr 1fr}
   .pr-grid,.pr-grid.two{grid-template-columns:1fr 1fr}
