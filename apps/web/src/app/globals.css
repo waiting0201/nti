@@ -663,11 +663,13 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
 @media(max-width:560px){
   .indgrid{grid-template-columns:1fr 1fr}
   .wwd-tiles,.why-grid{grid-template-columns:1fr}
-  .wwd-item,.why-item{
+  /* 帶上父層：900px 段的 :nth-child(even) 權重是 (0,2,0)，單寫 .wwd-item 蓋不過，
+     單欄時偶數項會留著左線與縮排。權重拉平後靠出現順序勝出 */
+  .wwd-tiles>.wwd-item,.why-grid>.why-item{
     border-left:none;padding-left:0;
     border-top:1px solid var(--line);padding-top:clamp(20px,5vw,26px);
   }
-  .wwd-item:first-child,.why-item:first-child{border-top:none;padding-top:0}
+  .wwd-tiles>.wwd-item:first-child,.why-grid>.why-item:first-child{border-top:none;padding-top:0}
   .sec-title{line-height:1.16;letter-spacing:-.015em}
   .sec-title .ti-alt{font-size:.58em}
   .flist .fi{padding:12px 0}
