@@ -75,6 +75,21 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 .lang-menu a.active{color:var(--green)}
 .burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer}
 .burger span{width:24px;height:2px;background:var(--grey);border-radius:2px}
+.burger span{transition:transform .25s var(--ease),opacity .2s}
+/* header mobile menu: the burger toggles header.mopen (behaviour in SiteChrome); .menu unfolds into a panel under the bar */
+@media(max-width:900px){
+  header.mopen{z-index:130}
+  header.mopen .menu{display:flex;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;margin:0;padding:6px clamp(20px,4vw,40px) 18px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 18px 30px -22px rgba(0,0,0,.3);max-height:calc(100vh - 74px);max-height:calc(100dvh - 74px);overflow-y:auto;overscroll-behavior:contain}
+  header.mopen .menu .mi{flex-direction:column;align-items:stretch;border-bottom:1px solid var(--line)}
+  header.mopen .menu .mi:last-child{border-bottom:none}
+  header.mopen .menu .mi::after,header.mopen .menu .mi>a::after,header.mopen .menu .mi>a .ca{display:none}
+  header.mopen .menu .mi>a{padding:14px 0;font-size:1rem}
+  header.mopen .sub-menu,header.mopen .menu .mi:hover .sub-menu{position:static;opacity:1;visibility:visible;transform:none;min-width:0;border:none;border-radius:0;box-shadow:none;background:none;padding:0 0 12px 12px}
+  header.mopen .sub-menu a{white-space:normal;padding:8px 12px}
+  header.mopen .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  header.mopen .burger span:nth-child(2){opacity:0}
+  header.mopen .burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+}
 
 /* ---------- buttons ---------- */
 .btn{display:inline-flex;align-items:center;gap:.6em;font-weight:800;font-size:.92rem;padding:.82em 1.6em;border-radius:100px;cursor:pointer;border:none;font-family:inherit;transition:transform .25s var(--ease),box-shadow .25s,background .2s,color .2s;white-space:nowrap}
@@ -628,7 +643,7 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
   .why-item:nth-child(-n+2){border-top:none}
   .why-item:nth-child(n+3){border-top:1px solid var(--line)}
   /* 語系鈕在手機版要留著：雙語站沒有它就沒有其他切換入口
-     （漢堡選單在 mockup 本來就沒有實作行為）。間距收窄讓 htools 在 320px 也放得下。 */
+     （漢堡選單只放頁面導覽，不含語系）。間距收窄讓 htools 在 320px 也放得下。 */
   .menu{display:none}
   .htools{gap:12px}
   .burger{display:flex}

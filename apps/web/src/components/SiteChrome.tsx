@@ -107,6 +107,44 @@ export function SiteChrome() {
       })
     }
 
+    // mobile menu: mockup 的漢堡鈕只有外觀，這裡補上行為 —— header 加 .mopen 時
+    // 把 .menu 攤成下拉面板（樣式在 globals.css 的 header mobile menu 段）
+    const burger = document.querySelector('.burger')
+    const menu = document.querySelector('.menu')
+    if (hdr && burger && menu) {
+      burger.setAttribute('aria-expanded', 'false')
+      const setOpen = (open: boolean) => {
+        hdr.classList.toggle('mopen', open)
+        burger.setAttribute('aria-expanded', String(open))
+      }
+      const toggle = () => setOpen(!hdr.classList.contains('mopen'))
+      const outside = (e: MouseEvent) => {
+        if (!hdr.contains(e.target as Node)) setOpen(false)
+      }
+      // 點到選單裡的連結就收起（連到本頁時 pathname 不變，不會重新掛載）
+      const pick = (e: MouseEvent) => {
+        if ((e.target as Element).closest('a')) setOpen(false)
+      }
+      const esc = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setOpen(false)
+      }
+      const wide = matchMedia('(min-width: 901px)')
+      const onWide = () => wide.matches && setOpen(false)
+      burger.addEventListener('click', toggle)
+      menu.addEventListener('click', pick as EventListener)
+      document.addEventListener('click', outside)
+      document.addEventListener('keydown', esc)
+      wide.addEventListener('change', onWide)
+      cleanups.push(() => {
+        setOpen(false)
+        burger.removeEventListener('click', toggle)
+        menu.removeEventListener('click', pick as EventListener)
+        document.removeEventListener('click', outside)
+        document.removeEventListener('keydown', esc)
+        wide.removeEventListener('change', onWide)
+      })
+    }
+
     return () => cleanups.forEach((fn) => fn())
   }, [pathname, revealThreshold])
 
