@@ -213,3 +213,4 @@
 | 2026-09-24 | Tim（Claude Code） | `GET /certifications`（與首頁 `certifications`）每筆多回 `certificateNo`、`certifiedDate`、`lastAuditDate`（皆可空）；頁面文字的開放範圍擴大到所有固定頁（`green-csr` 除外），端點不變 |
 | 2026-10-21 | Tim（Claude Code） | `GET /certifications`（與首頁 `certifications`）每筆多回 `shortName`（可空，首頁 Proof 牆用的簡稱）；端點不變 |
 | 2026-10-22 | Tim（Claude Code） | 新增 `GET /certification-items`（認證頁的色彩標準／GMI 通路／獎項，每筆 `section`／`title`／`description`）；`GET /certifications` 每筆多回 `showInDetailList`。後台 `/admin/certification/item`（CRUD／排序／上下架）沿用 `certification.*`，權限矩陣不變。`Api/openapi.yaml` 已同步 |
+| 2026-10-30 | Tim（Claude Code） | `GET /certification-items` 的 `section` 改為 `management`／`quality`／`material`／`building`／`membership`／`award`／`partner`（認證頁七個區塊）；`/certifications` 的 `showInDetailList` 保留但前台不再使用。`Api/openapi.yaml` 已同步 |

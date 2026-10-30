@@ -83,13 +83,13 @@ public sealed class CertificationI18nConfiguration : IEntityTypeConfiguration<Ce
     }
 }
 
-/// <summary>單元 08 的附屬清單：認證頁的色彩標準／GMI 通路／獎項（docs/08 §4.8）。</summary>
+/// <summary>單元 08 的附屬清單：認證頁的七個清單區塊（docs/08 §4.8）。</summary>
 public sealed class CertificationListItemConfiguration : IEntityTypeConfiguration<CertificationListItem>
 {
     public void Configure(EntityTypeBuilder<CertificationListItem> b)
     {
         b.ToTable("CertificationListItem", t => t.HasCheckConstraint("CK_CertificationListItem_Section",
-            "[Section] IN ('standards','gmi','award')"));
+            "[Section] IN ('management','quality','material','building','membership','award','partner')"));
         b.Property(x => x.Section).HasMaxLength(20).IsUnicode(false);
         b.Property(x => x.SortOrder).HasDefaultValue(0);
         b.Property(x => x.IsPublished).HasDefaultValue(true);

@@ -227,10 +227,10 @@ export type Certification = {
   lastAuditDate: string | null
 }
 
-/** 認證頁的文字清單（單元 08 附屬清單）：色彩標準／GMI 通路／獎項 */
+/** 認證頁的文字清單（單元 08 附屬清單）：七個固定區塊，順序見 about-certifications/page.tsx */
 export type CertificationListItem = {
   id: number
-  section: 'standards' | 'gmi' | 'award'
+  section: 'management' | 'quality' | 'material' | 'building' | 'membership' | 'award' | 'partner'
   title: string
   description: string | null
 }

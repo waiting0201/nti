@@ -346,7 +346,7 @@ CREATE TABLE dbo.Certification (
   LogoPath NVARCHAR(260) NOT NULL,         -- 去背 PNG／SVG
   LinkUrl NVARCHAR(300) NULL,
   ShowOnHome BIT NOT NULL DEFAULT 1,       -- 是否列入首頁 Proof 牆
-  ShowInDetailList BIT NOT NULL DEFAULT 0, -- 列在 about-certifications「管理系統與環境認證」清單（2026-10-22，0016）
+  ShowInDetailList BIT NOT NULL DEFAULT 0, -- 列在 about-certifications「管理系統與環境認證」清單（2026-10-22，0016）；2026-10-30 起不再使用
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1,
   CertificateNo NVARCHAR(100) NULL,        -- 證號（2026-09-24，0011）：GEO 引用要具體數字
@@ -369,7 +369,7 @@ CREATE TABLE dbo.CertificationI18n (
 -- 沒有 logo、不上 logo 牆與首頁 Proof 牆，所以不放進 Certification。後台是單元 08 的附屬清單
 CREATE TABLE dbo.CertificationListItem (
   Id INT IDENTITY(1,1) PRIMARY KEY,
-  Section VARCHAR(20) NOT NULL,            -- CK：standards｜gmi｜award
+  Section VARCHAR(20) NOT NULL,            -- CK：management｜quality｜material｜building｜membership｜award｜partner（2026-10-30，0021；原 standards｜gmi｜award）
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1,
   /* audit */
@@ -919,6 +919,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-10-25 | Tim（Claude Code） | §4.11：`PageMidBannerPages` 補上漏掉的 `solutions`（Projects 圖）與 `facility`（Factory Tour 全幅照）各 1 張（9 → 11 頁、15 → 17 張），schema 不變。遷移 `Api/Data/Migrations/*_PageMidBannerFacilitySolutions` 與 `db/migrations/0018_page_mid_banner_facility_solutions.sql` 一對一，只補 NULL；`verify*.sql` 數字同步 |
 | 2026-10-25 | Tim（Claude Code） | §4.11：頁面影片分語系——`Page.YoutubeId` 搬到 `PageI18n.YoutubeId`（關於我們中英各一支；工廠導覽只有中文，英文版改為單元 10「參觀」分類的照片輪播）。表數、外鍵、索引不變。遷移 `Api/Data/Migrations/*_PageVideoI18n` 與 `db/migrations/0019_page_video_i18n.sql` 一對一，先搬值再刪欄；`verify*.sql` 數字同步 |
 | 2026-10-25 | Tim（Claude Code） | §4.11：新增 `PageGalleryImage`（工廠導覽英文版的相簿照片，改在單元 15 上傳）。表 +1、外鍵 +1（CASCADE）、CHECK +1、索引 +1。`Category` Facility/tour 停用，原本那幾筆 `FacilityItem` 搬過來後刪除。遷移 `Api/Data/Migrations/*_PageGallery` 與 `db/migrations/0020_page_gallery.sql` 一對一；`verify*.sql` 數字同步 |
+| 2026-10-30 | Tim（Claude Code） | §4.8：`CertificationListItem.Section` 改為七個區塊（management／quality／material／building／membership／award／partner）；standards 併入 quality、gmi 軟刪除。表數與 CHECK 數不變。遷移 `Api/Data/Migrations/*_CertificationListSections` 與 `db/migrations/0021_certification_list_sections.sql` 一對一；`ShowInDetailList` 不再使用 |
 
-*最後更新：2026-10-25*
+*最後更新：2026-10-30*
 

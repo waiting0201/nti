@@ -8,7 +8,7 @@ public sealed class Certification : IAuditable
     public string  LogoPath    { get; set; } = null!;   // 去背 PNG／SVG
     public string? LinkUrl     { get; set; }
     public bool    ShowOnHome  { get; set; } = true;
-    // 列在認證頁「管理系統與環境認證」清單（名稱＋說明）。2026-10-22 加
+    // 列在認證頁「管理系統與環境認證」清單（名稱＋說明）。2026-10-22 加；2026-10-30 起認證頁改全由 CertificationListItem 驅動，此欄已無作用
     public bool    ShowInDetailList { get; set; }
     public int     SortOrder   { get; set; }
     public bool    IsPublished { get; set; } = true;
@@ -38,13 +38,13 @@ public sealed class CertificationI18n : II18n
 }
 
 /// <summary>
-/// 認證頁的文字清單項目（後台單元 08 的附屬清單，2026-10-22 加）：色彩標準、GMI 通路、獎項。
+/// 認證頁的文字清單項目（後台單元 08 的附屬清單，2026-10-22 加；2026-10-30 起改為客戶指定的七個區塊）。
 /// 這些不是認證——沒有 logo，也不該出現在 logo 牆與首頁 Proof 牆，所以不放進 <see cref="Certification"/>。
 /// </summary>
 public sealed class CertificationListItem : IAuditable
 {
     public int    Id          { get; set; }
-    public string Section     { get; set; } = null!;   // standards（色彩標準）／gmi（GMI 通路）／award（獎項）
+    public string Section     { get; set; } = null!;   // management 管理系統／quality 色彩與印刷品質資格／material 紙材與油墨／building 廠房建築／membership 會員與自有標章／award 獲獎記錄／partner 合作夥伴
     public int    SortOrder   { get; set; }
     public bool   IsPublished { get; set; } = true;
 

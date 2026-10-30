@@ -1315,7 +1315,7 @@ namespace Nti.Api.Data.Migrations
 
                     b.ToTable("CertificationListItem", null, t =>
                         {
-                            t.HasCheckConstraint("CK_CertificationListItem_Section", "[Section] IN ('standards','gmi','award')");
+                            t.HasCheckConstraint("CK_CertificationListItem_Section", "[Section] IN ('management','quality','material','building','membership','award','partner')");
                         });
                 });
 

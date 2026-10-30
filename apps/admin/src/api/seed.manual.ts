@@ -12,46 +12,66 @@ import type { Row } from './types'
 const bi = (zh: Record<string, string>, en: Record<string, string>) => ({ zh, en })
 
 export const MANUAL_SEED: Record<string, Row[]> = {
-  // 認證頁清單項目（08 附屬清單）：與 db/content/310_cert_detail_list.sql 同一份
+  // 認證頁清單項目（08 附屬清單）：與 db/content/310＋340 執行後的結果同一份
   'certification-item': [
     {
-      id: '1', section: 'standards', sortOrder: 10, isPublished: true,
+      id: '1', section: 'management', sortOrder: 10, isPublished: true,
+      i18n: bi({ title: 'ISO 9001品質管理系統', description: '展現南台彩藝對一致品質、持續改善與客戶滿意度的承諾。' }, { title: 'ISO 9001 — Quality Management System', description: 'Demonstrates NTI’s commitment to consistent quality, continuous improvement, and customer satisfaction.' }),
+    },
+    {
+      id: '2', section: 'management', sortOrder: 20, isPublished: true,
+      i18n: bi({ title: 'ISO 14001環境管理系統', description: '展現南台彩藝在生產與產品生命週期各階段，透過負責任管理降低環境衝擊的承諾。' }, { title: 'ISO 14001 — Environmental Management', description: 'Demonstrates NTI’s commitment to reducing environmental impact through responsible management across every stage of production and the product lifecycle.' }),
+    },
+    {
+      id: '3', section: 'management', sortOrder: 30, isPublished: true,
+      i18n: bi({ title: 'ISO 45001職業安全衛生管理系統', description: '證明南台彩藝致力於透過有效的職業健康與安全管理，維持安全健康的工作環境。' }, { title: 'ISO 45001 — Occupational Health & Safety Management', description: 'Certifies NTI’s commitment to maintaining a safe, healthy workplace through effective occupational health and safety management.' }),
+    },
+    {
+      id: '4', section: 'quality', sortOrder: 10, isPublished: true,
       i18n: bi({ title: 'G7 Master Colorspace', description: '由Idealliance開發、以ISO 12647-2為基礎的全球公認色彩校正方法，確保每一次印刷都能呈現一致且精準的色彩重現。' }, { title: 'G7 Master Colorspace', description: 'Developed by Idealliance, a globally recognized colour calibration methodology based on ISO 12647-2, ensuring consistent, accurate colour reproduction across every print run.' }),
     },
     {
-      id: '2', section: 'standards', sortOrder: 20, isPublished: true,
-      i18n: bi({ title: 'ISO 12647-2', description: '我們色彩管理所遵循的標準平版印刷程序，特別色在受控觀察條件下與色票比對。' }, { title: 'ISO 12647-2', description: 'The standard litho production procedure our colour management runs to, with spot colours matched to swatch under controlled viewing conditions.' }),
+      id: '5', section: 'quality', sortOrder: 20, isPublished: true,
+      i18n: bi({ title: 'GMI 認證', description: 'GMI（Graphic Measures International）為國際大型零售通路查核包裝供應商。南台彩藝已通過Target、Walgreens、Lowe’s、The Home Depot、Academy Sports + Outdoors與CVS Pharmacy的GMI認證。' }, { title: 'GMI Professional Printing Certification', description: 'GMI (Graphic Measures International) verifies packaging suppliers for leading global retailers. NTI has passed GMI certification for Target, Walgreens, Lowe’s, The Home Depot, Academy Sports + Outdoors, and CVS Pharmacy.' }),
     },
     {
-      id: '3', section: 'gmi', sortOrder: 10, isPublished: true,
-      i18n: bi({ title: 'Target', description: '委託建立 GMI 稽核制度的零售通路。' }, { title: 'Target', description: 'The retailer that commissioned the GMI audit programme.' }),
+      id: '6', section: 'material', sortOrder: 10, isPublished: true,
+      i18n: bi({ title: 'FSC™ CoC 產銷監管鏈驗證', description: '確保通過認證的紙材來自負責任管理的森林，並在整個供應鏈中受到驗證。' }, { title: 'FSC™-CoC Chain of Custody', description: 'Guarantees that certified paper materials are sourced from responsibly managed forests and verified throughout the supply chain.' }),
     },
     {
-      id: '4', section: 'gmi', sortOrder: 20, isPublished: true,
-      i18n: bi({ title: 'Walgreens', description: '認可的包裝供應商。' }, { title: 'Walgreens', description: 'Approved packaging supplier.' }),
+      id: '7', section: 'material', sortOrder: 20, isPublished: true,
+      i18n: bi({ title: '無礦物油（Mineral Oil Free）油墨', description: '南台彩藝使用MOF認證的環保印刷材料與油墨，協助客戶在符合公認永續與品質標準的同時降低環境衝擊。' }, { title: 'MOF Certified', description: 'NTI uses MOF-certified eco-friendly printing materials and inks, helping clients reduce environmental impact while meeting recognized sustainability and quality standards.' }),
     },
     {
-      id: '5', section: 'gmi', sortOrder: 30, isPublished: true,
-      i18n: bi({ title: 'Lowe’s', description: '認可的包裝供應商。' }, { title: 'Lowe’s', description: 'Approved packaging supplier.' }),
+      id: '8', section: 'building', sortOrder: 10, isPublished: true,
+      i18n: bi({ title: '綠建築鑽石級', description: '台南總部取得台灣綠建築最高等級EEWH鑽石級標章，涵蓋生態、節能、減廢與健康四大面向，有效期2024/04/30–2029/04/29。' }, { title: 'EEWH Diamond Green Building', description: 'Our Tainan headquarters holds Taiwan’s highest green building rating, EEWH Diamond, for ecology, energy saving, waste reduction and health. Valid 30 April 2024 – 29 April 2029.' }),
     },
     {
-      id: '6', section: 'gmi', sortOrder: 40, isPublished: true,
-      i18n: bi({ title: 'The Home Depot (THD)', description: '認可的包裝供應商。' }, { title: 'The Home Depot (THD)', description: 'Approved packaging supplier.' }),
+      id: '9', section: 'building', sortOrder: 20, isPublished: true,
+      i18n: bi({ title: 'LEED 黃金級', description: '同一棟廠房也取得美國綠建築協會LEED（能源與環境設計先導）黃金級認證。' }, { title: 'LEED Gold', description: 'The same building is also certified LEED Gold under the U.S. Green Building Council’s Leadership in Energy and Environmental Design rating system.' }),
     },
     {
-      id: '7', section: 'gmi', sortOrder: 50, isPublished: true,
-      i18n: bi({ title: 'Academy Sports + Outdoors', description: '認可的包裝供應商。' }, { title: 'Academy Sports + Outdoors', description: 'Approved packaging supplier.' }),
+      id: '10', section: 'membership', sortOrder: 10, isPublished: true,
+      i18n: bi({ title: 'Sedex 會員', description: '屬於會員資格而非認證：南台彩藝透過全球供應鏈透明平台Sedex，與客戶分享道德與負責任採購的相關資料。' }, { title: 'Sedex Member', description: 'A membership rather than a certification: NTI shares its ethical and responsible sourcing data with customers through Sedex, the global supply-chain transparency platform.' }),
     },
     {
-      id: '8', section: 'gmi', sortOrder: 60, isPublished: true,
-      i18n: bi({ title: 'CVS pharmacy', description: '認可的包裝供應商。' }, { title: 'CVS pharmacy', description: 'Approved packaging supplier.' }),
+      id: '11', section: 'membership', sortOrder: 20, isPublished: true,
+      i18n: bi({ title: '南台彩藝綠色印刷標章', description: '南台彩藝自行建立的標章（非第三方國際認證），客戶符合使用條件時可印於包裝上，作為環保印刷製程的證明。' }, { title: 'NTI Green Printing Certificate', description: 'Our own mark, not a third-party certification, which clients who meet its conditions of use can print on their packaging as proof of an eco-conscious printing process.' }),
     },
     {
-      id: '9', section: 'award', sortOrder: 10, isPublished: true,
+      id: '12', section: 'award', sortOrder: 1, isPublished: true,
+      i18n: bi({ title: '國家永續發展獎', description: '由行政院國家永續發展委員會頒發，肯定南台彩藝多年來在ESG與低碳製程上的投入。' }, { title: 'National Sustainable Development Award', description: 'Presented by Taiwan’s National Council for Sustainable Development, recognizing NTI’s years of work on ESG and low-carbon production.' }),
+    },
+    {
+      id: '13', section: 'award', sortOrder: 2, isPublished: true,
+      i18n: bi({ title: '2026遠見ESG企業永續獎', description: '第22屆遠見ESG企業永續獎，中小企業組「低碳營運」傑出方案獎。' }, { title: 'Global Views ESG Award 2026', description: 'Outstanding Project award in the Low-Carbon Operations, SME category, at the 22nd Global Views ESG Corporate Sustainability Awards.' }),
+    },
+    {
+      id: '14', section: 'award', sortOrder: 10, isPublished: true,
       i18n: bi({ title: '傑出企業獎', description: '第13屆國家品牌玉山獎傑出企業獎。' }, { title: 'Outstanding Business Award', description: 'The 13th National Brand Yushan Award for Outstanding Business Award.' }),
     },
     {
-      id: '10', section: 'award', sortOrder: 20, isPublished: true,
+      id: '15', section: 'award', sortOrder: 20, isPublished: true,
       i18n: bi({ title: '智慧建築獎', description: '第7屆APEC ESCI（Energy Smart Communities Initiative）最佳實務獎「智慧建築」類別金獎。' }, { title: 'Smart Building Award', description: 'Gold Award in the ‘Smart Buildings’ category at the 7th APEC ESCI (Energy Smart Communities Initiative) Best Practices Awards Program.' }),
     },
   ],

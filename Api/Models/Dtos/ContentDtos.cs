@@ -177,7 +177,7 @@ public sealed class CertificationDto
     public DateOnly? LastAuditDate { get; set; }
 }
 
-/// <summary>認證頁的文字清單項目（單元 08 附屬清單）。<see cref="Section"/>：standards／gmi／award。</summary>
+/// <summary>認證頁的文字清單項目（單元 08 附屬清單）。<see cref="Section"/>：management／quality／material／building／membership／award／partner。</summary>
 public sealed class CertificationListItemDto
 {
     public int     Id          { get; set; }

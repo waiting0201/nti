@@ -1183,45 +1183,45 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Printing & Colour Standards",
-        "zh": "印刷與色彩標準",
+        "en": "Management Systems",
+        "zh": "管理系統",
         "kind": "text",
-        "section": "Printing & Colour Standards",
+        "section": "Management Systems",
+        "count": 1
+      },
+      {
+        "en": "Colour & Print Quality Qualifications",
+        "zh": "色彩與印刷品質資格",
+        "kind": "text",
+        "section": "Colour & Print Quality Qualifications",
         "count": 1
       },
       {
         "en": "NTI leadership on the pressroom floor",
         "zh": "NTI 經營團隊於印刷廠區",
         "kind": "alt",
-        "section": "Printing & Colour Standards",
+        "section": "Colour & Print Quality Qualifications",
         "count": 1
       },
       {
-        "en": "GMI Professional Printing Certification",
-        "zh": "GMI 專業印刷認證",
+        "en": "Paper & Inks",
+        "zh": "紙材與油墨",
         "kind": "text",
-        "section": "GMI Professional Printing Certification",
+        "section": "Paper & Inks",
         "count": 1
       },
       {
-        "en": "NTI is GMI certified, ensuring consistent, colour-accurate packaging that meets the quality standards of leading global retailers, including Target, Walgreens, Lowe’s, The Home Depot, Academy Sports + Outdoors, and CVS Pharmacy.",
-        "zh": "NTI 已通過 GMI 認證，確保包裝色彩準確、品質一致，符合 Target、Walgreens、Lowe’s、The Home Depot、Academy Sports + Outdoors 與 CVS Pharmacy 等國際零售通路的品質要求。",
+        "en": "Green Buildings",
+        "zh": "廠房建築",
         "kind": "text",
-        "section": "GMI Professional Printing Certification",
+        "section": "Green Buildings",
         "count": 1
       },
       {
-        "en": "GMI (Graphic Measures International) is the body appointed by Target to verify packaging suppliers and inspect packaging samples. NTI has passed GMI certification for the following retail channels:",
-        "zh": "GMI（Graphic Measures International）是 Target 指定用來查核包裝供應商與檢驗包裝樣品的機構。NTI 已通過下列零售通路的 GMI 認證：",
+        "en": "Memberships & Own Marks",
+        "zh": "會員與自有標章",
         "kind": "text",
-        "section": "GMI Professional Printing Certification",
-        "count": 1
-      },
-      {
-        "en": "Management System & Environmental Certification",
-        "zh": "管理系統與環境認證",
-        "kind": "text",
-        "section": "Management System & Environmental Certification",
+        "section": "Memberships & Own Marks",
         "count": 1
       },
       {

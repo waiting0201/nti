@@ -233,7 +233,7 @@ export const certification: Unit = {
   title: '認證・夥伴・獎項',
   group: '內容',
   phase: 'P4',
-  frontend: '首頁 Proof 牆（依分組成卡）、品質認證與永續實踐頁的認證牆（不分組）與「管理系統與環境認證」清單',
+  frontend: '首頁 Proof 牆（依分組成卡）、品質認證與永續實踐頁的認證牆（不分組）',
   note: '現有 logo 素材解析度偏低，上線前需向客戶索取向量原檔。',
   sortable: true,
   hasStatus: true,
@@ -252,28 +252,29 @@ export const certification: Unit = {
     { key: 'certifiedDate', label: '取得日期', type: 'date', side: 'neutral' },
     { key: 'lastAuditDate', label: '最近稽核日期', type: 'date', side: 'neutral' },
     { key: 'showOnHome', label: '顯示於首頁 Proof 牆', type: 'switch', side: 'neutral', hint: '預設開' },
-    { key: 'showInDetailList', label: '列在認證頁說明清單', type: 'switch', side: 'neutral',
-      hint: '開啟後以「名稱＋說明」列在認證頁「管理系統與環境認證」區塊，順序同本清單；全部關掉整個區塊就不顯示' },
   ],
   columns: [
     { key: 'logo', label: 'Logo', render: 'thumb', width: '110px' },
     { key: 'name', label: '名稱' },
     { key: 'categoryId', label: '分組', render: 'category', width: '130px' },
     { key: 'showOnHome', label: '首頁', render: 'bool', width: '70px' },
-    { key: 'showInDetailList', label: '說明清單', render: 'bool', width: '90px' },
     ...statusColumns,
   ],
 }
 
-/** 認證頁清單的三個區塊（CertificationListItem.Section） */
+/** 認證頁清單的七個區塊（CertificationListItem.Section），順序即前台由上而下的順序 */
 const CERT_LIST_SECTIONS = [
-  { value: 'standards', label: '印刷與色彩標準' },
-  { value: 'gmi', label: 'GMI 通路' },
-  { value: 'award', label: '獲獎紀錄' },
+  { value: 'management', label: '管理系統' },
+  { value: 'quality', label: '色彩與印刷品質資格' },
+  { value: 'material', label: '紙材與油墨' },
+  { value: 'building', label: '廠房建築' },
+  { value: 'membership', label: '會員與自有標章' },
+  { value: 'award', label: '獲獎記錄' },
+  { value: 'partner', label: '合作夥伴' },
 ]
 
 /**
- * 08 的附屬清單：認證頁上「不是認證」的項目——色彩標準、GMI 通過的零售通路、獎項。
+ * 08 的附屬清單：認證頁 logo 牆下方的七個文字清單（管理系統、品質資格、紙材、廠房、標章、獎項、夥伴）。
  * 沒有 logo、不上 logo 牆與首頁 Proof 牆，所以不放進認證單元。權限沿用 certification.*。
  */
 export const certificationItem: Unit = {
@@ -283,8 +284,8 @@ export const certificationItem: Unit = {
   title: '認證頁清單項目',
   group: '內容',
   phase: 'P4',
-  frontend: '品質認證與永續實踐頁：印刷與色彩標準、GMI 通路、獲獎紀錄三個清單',
-  note: '同一區塊依排序顯示；某區塊沒有任何上架項目時，整個區塊（GMI 則是通路清單）不顯示。區塊大標與 GMI 導言請到「頁面文字」修改。',
+  frontend: '品質認證與永續實踐頁：管理系統、色彩與印刷品質資格、紙材與油墨、廠房建築、會員與自有標章、獲獎記錄、合作夥伴七個清單',
+  note: '選好區塊再新增項目，同一區塊依排序顯示、筆數不限；某區塊沒有任何上架項目時整個區塊不顯示。區塊大標請到「頁面文字」修改。',
   sortable: true,
   hasStatus: true,
   fields: [

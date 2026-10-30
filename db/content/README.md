@@ -246,6 +246,24 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/300_keep_en_h1.sql
 sqlcmd -S <server> -d NTI -I -b -i db/content/310_cert_detail_list.sql
 ```
 
+## 340_cert_sections_oct30.sql
+
+認證頁下方清單改為客戶指定的七個區塊（2026-10-30）：管理系統／色彩與印刷品質資格／紙材與油墨／
+廠房建築／會員與自有標章／獲獎記錄／合作夥伴，全由 `CertificationListItem` 驅動（`Certification.ShowInDetailList`
+不再使用）。手寫、冪等；**須先套用 EF migration `CertificationListSections`**（或參考版 `0021`，負責
+standards → quality、gmi 軟刪除）：
+
+- 補 12 筆：管理系統 3、GMI 1（零售通路寫進說明）、紙材與油墨 2、廠房建築 2、會員與自有標章 2、獎項 2。
+  英文＝mockup 原文；中文標題與區內順序依客戶 10-21 在「頁面文字」打的草稿，說明沿用 09-30 稿／`zh.ts`。
+  新的五個區塊只要有任何一列（含已刪除）就整段不動，避免把客戶刪掉的項目加回來。ISO 12647-2 下架（已寫進 G7 說明）。
+- 合作夥伴先不放（0 筆＝不顯示）；獎項其餘筆數與合作夥伴請客戶在後台補。
+- 還原客戶為了「新增區塊」誤填的三筆中文頁面文字：導言大標「管理系統」→「認證」、導言段落的條列草稿 → 09-30 稿、
+  GMI 大標「紙材與油墨」→「GMI 專業印刷認證」。只動仍是那些值的列；最後列出本頁仍含「請提供」的覆寫。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/340_cert_sections_oct30.sql
+```
+
 ## 320_projects_hide_cases.sql
 
 Projects 頁隱藏「案例分享」（客戶沒有案例資料，2026-10-25）。前台拿掉區塊與選單，導言刪掉

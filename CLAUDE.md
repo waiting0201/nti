@@ -145,6 +145,7 @@ NTI/
   db/tools/sqlcmd.sh NTI < db/content/310_cert_detail_list.sql  # 認證頁四個清單：標準／GMI 通路／獎項＋管理系統勾選
   db/tools/sqlcmd.sh NTI < db/content/320_projects_hide_cases.sql # Projects 頁隱藏案例分享：導言改寫後的中文覆寫
   db/tools/sqlcmd.sh NTI < db/content/330_factory_gallery_oldsite.sql # 工廠導覽英文相簿：預設 3 張全景圖換成舊站的 12 張
+  db/tools/sqlcmd.sh NTI < db/content/340_cert_sections_oct30.sql    # 客戶 10-30 認證頁改七個清單區塊＋還原誤填的頁面文字
   db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql             # 應輸出「全數 PASS」
   ```
 
