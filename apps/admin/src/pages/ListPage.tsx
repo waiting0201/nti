@@ -386,7 +386,7 @@ export function ListPage() {
   )
 }
 
-function Cell({ unit, row, colKey, render }: { unit: Unit; row: Row; colKey: string; render?: string }) {
+export function Cell({ unit, row, colKey, render }: { unit: Unit; row: Row; colKey: string; render?: string }) {
   const raw = row[colKey] ?? row.i18n?.zh?.[colKey] ?? ''
 
   if (render === 'thumb') {

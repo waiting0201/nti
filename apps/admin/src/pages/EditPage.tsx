@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import * as api from '@/api/client'
 import { ApiError } from '@/api/http'
 import type { Row } from '@/api/types'
@@ -11,14 +11,16 @@ import { FieldInput, type GalleryItem } from '@/components/fields'
 import { blockingReasons, isComplete, missingIn, missingNeutral } from '@/lib/completeness'
 import { RecordView } from './RecordView'
 import { hasPageTexts, PageTextFields, type PageTextsHandle } from './PageTexts'
-import { assetUrl } from '@/lib/asset'
 import { countPending, resolvePendingUploads } from '@/lib/pending-uploads'
+import { Cell } from './ListPage'
 
 export function EditPage() {
   const { code = '', id = '' } = useParams()
   const unit = UNIT_BY_CODE.get(code)
   const { can } = useAuth()
   const nav = useNavigate()
+  /** 子清單新增時的母體 id（`?parent=`），由母體編輯頁的「新增」帶過來 */
+  const [search] = useSearchParams()
 
   const [row, setRow] = useState<Row | null>(null)
   const [dirty, setDirty] = useState(false)
@@ -37,13 +39,22 @@ export function EditPage() {
   const load = useCallback(async () => {
     if (!unit) return
     if (isNew) {
-      setRow({ id: '', isPublished: false, i18n: { zh: {}, en: {} } })
+      const blank: Row = { id: '', isPublished: false, i18n: { zh: {}, en: {} } }
+      const parentId = search.get('parent')
+      if (unit.parent && parentId) {
+        // 排在同一個母體的最後面：API 的 SortOrder 預設 0，不給的話新的一筆會跑到第一個
+        const siblings = await api.listChildren(unit.code, parentId)
+        blank.parentId = parentId
+        blank[unit.parent.key] = Number(parentId)
+        blank.sortOrder = Math.max(0, ...siblings.map((r) => r.sortOrder ?? 0)) + 10
+      }
+      setRow(blank)
       return
     }
     const r = await api.get(unit.code, id)
     setRow(r ? structuredClone(r) : null)
-    if (unit.child) setChildren(await api.listChildren(`${unit.code}-item`, id))
-  }, [unit, id, isNew])
+    if (unit.child) setChildren(await api.listChildren(unit.child.unit, id))
+  }, [unit, id, isNew, search])
 
   useEffect(() => {
     void load()
@@ -56,6 +67,11 @@ export function EditPage() {
 
   if (!unit) return <Notice kind="danger">找不到這個單元。</Notice>
   if (!row) return <div className="empty">載入中…</div>
+
+  /** 子清單的母體編輯頁；新增或編輯完都回到那裡，而不是一個不存在的清單頁 */
+  const parentId = unit.parent ? String(row[unit.parent.key] ?? row.parentId ?? '') : ''
+  const backTo = unit.parent ? `/u/${unit.parent.unit}/${parentId}` : `/u/${unit.code}`
+  if (unit.parent && !parentId) return <Notice kind="danger">請從所屬項目的編輯頁新增。</Notice>
 
   const canEdit = can(perm(unit, 'edit'))
   const canPublish = can(perm(unit, 'publish'))
@@ -156,14 +172,15 @@ export function EditPage() {
     let phase: 'upload' | 'write' = 'upload'
     setSaving(true)
     try {
-      await resolvePendingUploads(unit.code, next)
+      // 子清單的圖片上傳到母體的端點（`/admin/solution/upload`；後端的子清單路徑下沒有上傳）
+      await resolvePendingUploads(unit.parent?.unit ?? unit.code, next)
       phase = 'write'
 
       if (isNew) {
         const created = await api.create(unit.code, next)
         setDirty(false)
         toast('已新增')
-        nav(`/u/${unit.code}/${created.id}`, { replace: true })
+        nav(unit.parent ? backTo : `/u/${unit.code}/${created.id}`, { replace: true })
         return
       }
       await api.save(unit.code, next)
@@ -310,12 +327,20 @@ export function EditPage() {
         </div>
       )}
 
-      {unit.child && !isNew && <ChildList unit={unit} rows={children} />}
+      {unit.child && !isNew && (
+        <ChildList
+          title={unit.child.title}
+          unit={UNIT_BY_CODE.get(unit.child.unit)!}
+          parentId={row.id}
+          rows={children}
+          onChanged={async () => setChildren(await api.listChildren(unit.child!.unit, row.id))}
+        />
+      )}
 
       <div className="card">
         <div className="card-b btn-row">
-          <button className="btn" onClick={() => nav(`/u/${unit.code}`)}>
-            返回清單
+          <button className="btn" onClick={() => nav(backTo)}>
+            {unit.parent ? `返回${UNIT_BY_CODE.get(unit.parent.unit)?.title ?? ''}` : '返回清單'}
           </button>
           <span style={{ marginLeft: 'auto' }} />
           {unsaved && (
@@ -432,14 +457,62 @@ function StatusCard({ row, onChange, canEdit }: { row: Row; onChange: (k: string
   )
 }
 
-/** 子清單（目前只有 solution 的品項卡） */
-function ChildList({ unit, rows }: { unit: Unit; rows: Row[] }) {
-  const child = unit.child!
+/**
+ * 子清單（目前只有 solution 的品項卡）：在母體的編輯頁下方新增、編輯、拖曳排序、刪除。
+ * 編輯走通用編輯頁（`/u/solution-item/{id}`），存完回到這一頁。
+ */
+function ChildList({ title, unit, parentId, rows, onChanged }: {
+  title: string
+  unit: Unit
+  parentId: string
+  rows: Row[]
+  onChanged: () => Promise<void>
+}) {
+  const { can } = useAuth()
+  const canEdit = can(perm(unit, 'edit'))
+  const canDelete = can(perm(unit, 'delete'))
+  const [dragId, setDragId] = useState<string | null>(null)
+  const [dropId, setDropId] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+
+  const onDrop = async (targetId: string) => {
+    if (!dragId || dragId === targetId) return
+    const ids = rows.map((r) => r.id)
+    ids.splice(ids.indexOf(targetId), 0, ...ids.splice(ids.indexOf(dragId), 1))
+    setDragId(null)
+    setDropId(null)
+    try {
+      await api.reorder(unit.code, ids)
+      toast('排序已儲存')
+    } catch (err) {
+      toast(writeFailed(err))
+    }
+    await onChanged()
+  }
+
+  const doDelete = async () => {
+    try {
+      await api.remove(unit.code, [confirmDelete!])
+      toast('已刪除 1 筆')
+    } catch (err) {
+      toast(writeFailed(err))
+    }
+    setConfirmDelete(null)
+    await onChanged()
+  }
+
   return (
     <div className="card">
       <div className="card-h">
-        <h2>{child.title}</h2>
-        <span style={{ marginLeft: 'auto', fontSize: 12.5, color: 'var(--grey-2)' }}>{rows.length} 筆</span>
+        <h2>{title}</h2>
+        <span style={{ marginLeft: 'auto', fontSize: 12.5, color: 'var(--grey-2)' }}>
+          {rows.length} 筆{unit.sortable && canEdit && rows.length > 1 && '，可直接拖曳列首排序'}
+        </span>
+        {canEdit && (
+          <Link className="btn btn-sm btn-primary" style={{ marginLeft: 12 }} to={`/u/${unit.code}/new?parent=${parentId}`}>
+            新增{title}
+          </Link>
+        )}
       </div>
       {rows.length === 0 ? (
         <div className="empty">尚無項目。</div>
@@ -447,31 +520,72 @@ function ChildList({ unit, rows }: { unit: Unit; rows: Row[] }) {
         <table className="list">
           <thead>
             <tr>
-              {child.columns.map((c) => (
+              {unit.sortable && <th style={{ width: 34 }} />}
+              {unit.columns.map((c) => (
                 <th key={c.key} style={c.width ? { width: c.width } : undefined}>
                   {c.label}
                 </th>
               ))}
+              <th style={{ width: canDelete ? 140 : 80 }} />
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id}>
-                {child.columns.map((c) => (
+              <tr
+                key={r.id}
+                className={`${dragId === r.id ? 'dragging' : ''} ${dropId === r.id ? 'drop-target' : ''}`}
+                draggable={unit.sortable && canEdit}
+                onDragStart={() => setDragId(r.id)}
+                onDragOver={(e) => {
+                  e.preventDefault()
+                  setDropId(r.id)
+                }}
+                onDragEnd={() => {
+                  setDragId(null)
+                  setDropId(null)
+                }}
+                onDrop={() => onDrop(r.id)}
+              >
+                {unit.sortable && (
+                  <td className="drag-handle" title="拖曳排序">
+                    ⠿
+                  </td>
+                )}
+                {unit.columns.map((c) => (
                   <td key={c.key}>
-                    {c.render === 'thumb' ? (
-                      <img className="thumb" src={assetUrl(r[c.key])} alt="" />
-                    ) : c.render === 'status' ? (
-                      <Badge kind={r.isPublished ? 'ok' : 'off'}>{publishState(r)}</Badge>
-                    ) : (
-                      String(r.i18n?.zh?.[c.key] ?? r[c.key] ?? '—')
-                    )}
+                    <Cell unit={unit} row={r} colKey={c.key} render={c.render} />
                   </td>
                 ))}
+                <td>
+                  <div className="btn-row">
+                    <Link className="btn btn-sm" to={`/u/${unit.code}/${r.id}`}>
+                      {canEdit ? '編輯' : '檢視'}
+                    </Link>
+                    {canDelete && (
+                      <button className="btn btn-sm btn-danger" onClick={() => setConfirmDelete(r.id)}>
+                        刪除
+                      </button>
+                    )}
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+      )}
+
+      {confirmDelete && (
+        <Modal
+          title={`刪除這張${title}`}
+          confirmLabel="確定刪除"
+          confirmKind="btn-danger"
+          onConfirm={doDelete}
+          onCancel={() => setConfirmDelete(null)}
+        >
+          刪除後會立刻從前台消失。
+          <br />
+          <b>這是真的刪除，資料不會留在資料庫，無法還原</b>（中英文字與圖片一併刪除）。
+        </Modal>
       )}
     </div>
   )

@@ -26,10 +26,11 @@ export const SEO_FIELDS: Field[] = [
     altExempt: 'OG 圖是 meta 標籤，不在頁面上呈現' },
 ]
 
-/** 後台單元，順序即側邊選單順序（docs §2；19 會員／20 訂單已移出範圍）*/
+/** 後台單元，順序即側邊選單順序（docs §2；19 會員／20 訂單已移出範圍）。有 `parent` 的子清單不進選單 */
 export const UNITS: Unit[] = [
   content.homeBanner,
   content.solution,
+  content.solutionItem,
   content.project,
   content.news,
   content.vlog,
@@ -103,13 +104,6 @@ export function validateUnits(): string[] {
             const altField = fields.find((x) => x.key === f.altKey)!
             if (!altField.i18n) problems.push(`${unit.code}.${f.altKey}：Alt 欄位必須中英各一份`)
           }
-        }
-      }
-    }
-    if (unit.child) {
-      for (const f of unit.child.fields) {
-        if (f.type === 'image' && !f.hint) {
-          problems.push(`${unit.code}（子清單）.${f.key}：上傳欄位缺少建議尺寸提示`)
         }
       }
     }

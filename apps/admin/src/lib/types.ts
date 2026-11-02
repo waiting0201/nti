@@ -103,8 +103,13 @@ export type Unit = {
   custom?: boolean
   /** 筆數建議提示，例如 banner 建議 3–5 張 */
   countHint?: { min?: number; max?: number; message: string }
-  /** 子清單（solution 的品項卡） */
-  child?: { title: string; fields: Field[]; columns: ListColumn[] }
+  /** 子清單：在母體的編輯頁下方列出、從那裡新增與編輯（solution 的品項卡）。`unit` 是子清單單元的代號 */
+  child?: { title: string; unit: string }
+  /**
+   * 這個單元是別人的子清單：不出現在側邊選單，清單網址導回母體，從母體的編輯頁進出。
+   * `key` 是 API 列上指向母體的外鍵欄位（mock 一律用 `parentId`）。
+   */
+  parent?: { unit: string; key: string }
 }
 
 /** docs §5.4：上架開關與時間組合出的四種顯示狀態 */

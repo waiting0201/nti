@@ -84,20 +84,35 @@ export const solution: Unit = {
     { key: 'name', label: '方案名稱' },
     ...statusColumns,
   ],
-  child: {
-    title: '品項卡',
-    fields: [
-      { key: 'image', label: '品項圖', type: 'image', required: true, hint: HINT.solutionItem, altKey: 'alt', side: 'neutral' },
-      alt('alt'),
-      { key: 'name', label: '名稱', type: 'text', i18n: true, required: true, side: 'locale', tag: 'h3' },
-      { key: 'description', label: '說明', type: 'textarea', i18n: true, max: 400, side: 'locale' },
-    ],
-    columns: [
-      { key: 'image', label: '品項圖', render: 'thumb', width: '110px' },
-      { key: 'name', label: '名稱' },
-      { key: 'status', label: '狀態', render: 'status', width: '110px' },
-    ],
-  },
+  child: { title: '品項卡', unit: 'solution-item' },
+}
+
+/**
+ * 02 的子清單：方案頁的品項卡。從方案的編輯頁下方新增／編輯，不在側邊選單出現。
+ * 權限沿用 solution.*；後端掛在 `/admin/solution/item`，無上下架時間窗，只有開關。
+ */
+export const solutionItem: Unit = {
+  code: 'solution-item',
+  permUnit: 'solution',
+  parent: { unit: 'solution', key: 'solutionId' },
+  no: '02',
+  title: '方案品項卡',
+  group: '內容',
+  phase: 'P4',
+  frontend: '方案頁的品項卡（圖片、名稱、說明）',
+  sortable: true,
+  hasStatus: true,
+  fields: [
+    { key: 'image', label: '品項圖', type: 'image', required: true, hint: HINT.solutionItem, altKey: 'alt', side: 'neutral' },
+    alt('alt'),
+    { key: 'name', label: '名稱', type: 'text', i18n: true, required: true, side: 'locale', tag: 'h3' },
+    { key: 'description', label: '說明', type: 'textarea', i18n: true, max: 400, side: 'locale' },
+  ],
+  columns: [
+    { key: 'image', label: '品項圖', render: 'thumb', width: '110px' },
+    { key: 'name', label: '名稱' },
+    { key: 'status', label: '狀態', render: 'status', width: '110px' },
+  ],
 }
 
 export const project: Unit = {

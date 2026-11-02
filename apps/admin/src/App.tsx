@@ -22,7 +22,7 @@ if (import.meta.env.DEV) {
  */
 function Landing() {
   const { can } = useAuth()
-  const first = UNITS.find((u) => can(perm(u, 'view')))
+  const first = UNITS.find((u) => !u.parent && can(perm(u, 'view')))
   if (!first) return <Notice kind="danger">你的角色目前沒有任何可用的單元，請聯絡超級管理員。</Notice>
   return <Navigate to={`/u/${first.code}`} replace />
 }
@@ -34,6 +34,8 @@ function UnitRoute() {
   const unit = UNIT_BY_CODE.get(code)
   if (!unit) return <Notice kind="danger">找不到這個單元。</Notice>
   if (!can(perm(unit, 'view'))) return <Notice kind="danger">你的角色沒有檢視這個單元的權限。</Notice>
+  // 子清單沒有自己的清單頁，一律在母體的編輯頁下方操作
+  if (unit.parent) return <Navigate to={`/u/${unit.parent.unit}`} replace />
   if (code === 'setting') return <SettingPage />
   if (code === 'category') return <CategoryPage />
   if (code === 'admin') return <AdminUsersPage />
