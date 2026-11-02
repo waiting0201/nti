@@ -578,6 +578,9 @@ input::placeholder,textarea::placeholder{color:#b0b8b0}
 /* CJK gloss: .16em latin tracking and uppercase do nothing for 印前設備 but wreck
    its rhythm — reset tracking and set it back a step so the English label leads */
 .fe-step .zh{letter-spacing:.02em;text-transform:none;font-weight:700;font-size:12px;color:var(--grey-2)}
+/* The gloss repeats the label in Chinese. On the zh site the label itself is already
+   translated, so the gloss would read "印前設備 印前設備" — drop it there. */
+html[lang^="zh"] .zh{display:none}
 .fe-card h3{font-size:1.12rem;font-weight:800;color:var(--grey);line-height:1.35}
 .fe-card p{font-size:.9rem;color:var(--grey-2);font-weight:500;line-height:1.7;flex:1}
 .fe-specs{list-style:none;display:flex;flex-direction:column;gap:7px;border-top:1px solid var(--line);padding-top:14px;margin-top:2px}
