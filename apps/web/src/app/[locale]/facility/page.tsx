@@ -44,71 +44,72 @@ export default async function Page({ params }: Props) {
         </div></div>
         </div>
       </section>
-      <section className="section tight" id="pre-press"><div className="wrap reveal">
-        <div className="dtitle">Prepress Equipment <span className="zh">印前設備</span></div>
-        <p className="prose">NTI Printing utilizes the world’s most advanced prepress output software, integrated with a CTP (Computer-to-Plate) direct plate-making system. Coupled with a precise plate production control process, this ensures that the printing dots are accurately rendered, achieving faithful color reproduction in the final print.</p>
-        <div className="flist plain mt-s">
-          <p className="fi">In-house CTP system for faster turnaround and reduced transport.</p>
-          <p className="fi">Daily and weekly dot calibration for color precision.</p>
-          <p className="fi">Eco-friendly production that minimizes heavy metals and wastewater.</p>
+      <section className="section tight"><div className="wrap">
+        <div className="fe-grid four">
+          <div className="fe-card reveal" data-d="1" id="pre-press">
+            <div className="fe-img"><img src={mediaUrl("/assets/ref-sol-mid5.webp")} alt="NTI technician handling freshly printed sheets" /></div>
+            <div className="fe-body">
+              <span className="fe-step"><b>01</b>Prepress Equipment <span className="zh">印前設備</span></span>
+              <h3>Direct to plate, in house</h3>
+              <p>NTI Printing utilizes the world&rsquo;s most advanced prepress output software, integrated with a CTP (Computer-to-Plate) direct plate-making system. Coupled with a precise plate production control process, this ensures that the printing dots are accurately rendered, achieving faithful color reproduction in the final print.</p>
+              <ul className="fe-specs">
+                <li>In-house CTP system for faster turnaround and reduced transport.</li>
+                <li>Daily and weekly dot calibration for color precision.</li>
+                <li>Eco-friendly production that minimizes heavy metals and wastewater.</li>
+              </ul>
+              <p className="fe-more"><A href={l("/facility-pre-press")} className="blink">More details &rsaquo;</A></p>
+            </div>
+          </div>
+          <div className="fe-card reveal" data-d="2" id="eco-printing">
+            <div className="fe-img"><img src={mediaUrl("/assets/ref-sol-mid4.webp")} alt="Heidelberg offset press line" /></div>
+            <div className="fe-body">
+              <span className="fe-step"><b>02</b>Environmentally Friendly Printing <span className="zh">環保印刷流程</span></span>
+              <h3>German presses with in-line varnishing &mdash; including a carbon-balanced line</h3>
+              <p>Heidelberg Press varnishing in line, to shorten the lead time and keep good quality at the same time. We also introduce an environmentally friendly system into the printing procedure.</p>
+              <ul className="fe-specs">
+                <li>Heidelberg Speedmaster CD 102-6+LX 6-Colour Coater Press</li>
+                <li>Heidelberg Speedmaster CD 102-5+LX 5-Colour Carbon Balanced Coater Press</li>
+                <li>Heidelberg Speedmaster CD 102-5+LX UV 5-Colour Coater Press</li>
+                <li>Man Roland D-6050 Offenbach Two-Colour Offset Press</li>
+                <li>Heidelberg Image Control System</li>
+                <li>Heidelberg Axis Control Colour Management System</li>
+              </ul>
+              <p className="fe-more"><A href={l("/facility-eco-printing")} className="blink">More details &rsaquo;</A></p>
+            </div>
+          </div>
+          <div className="fe-card reveal" data-d="3" id="post-press">
+            <div className="fe-img"><img src={mediaUrl("/assets/ps-box1.jpg")} alt="Cut and folded box sample" /></div>
+            <div className="fe-body">
+              <span className="fe-step"><b>03</b>Post-Press Processing <span className="zh">印後加工</span></span>
+              <h3>Die-cutting, gluing, window patching and wrapping &mdash; all in-house</h3>
+              <p>NTI Printing uses the most advanced die-cutting machines, automated gluing machines, and heat shrink film equipment to achieve high-efficiency production and deliver high-quality packaging products.</p>
+              <ul className="fe-specs">
+                <li>Automated die-cutting, gluing, window patching, and lamination systems.</li>
+                <li>BOPP film coating eliminates solvent use and meets EU and US eco standards.</li>
+                <li>High-speed shrink wrapping and labeling for efficient, secure finishing.</li>
+              </ul>
+              <p className="fe-more"><A href={l("/facility-post-press")} className="blink">More details &rsaquo;</A></p>
+            </div>
+          </div>
+          <div className="fe-card reveal" data-d="4" id="quality">
+            <div className="fe-img"><img src={mediaUrl("/assets/fac-qc-exact.png")} alt="X-Rite eXact spectrophotometer used for press-side colour measurement" /></div>
+            <div className="fe-body">
+              <span className="fe-step"><b>04</b>Quality Inspection <span className="zh">品質檢驗</span></span>
+              <h3>Quality You Can Measure</h3>
+              <p>NTI conducts strict quality control throughout every production stage &mdash; from materials to finished goods. Each print is tested for accuracy, durability, and consistency using precision tools such as:</p>
+              <ul className="fe-specs">
+                <li>X-Rite i1iO &amp; eXact spectrophotometers &mdash; spectrum colour control testing apparatus.</li>
+                <li>IC Plate II plate checker &mdash; measures percentage dot area and analyzes the data to adjust dot areas.</li>
+                <li>Barcode grade scanner &mdash; all barcodes printed on goods are tested to check barcode grade.</li>
+                <li>Ink rub and gloss testers &mdash; used whenever a customer requests abrasion resistance testing.</li>
+                <li>Temperature &amp; humidity chambers &mdash; simulate high/low temperature conditions.</li>
+                <li>Gloss-Meter &mdash; tests whether the brightness of the paper surface meets requirements.</li>
+                <li>Blister Packing Machine &mdash; tests the strength of the gluing part of the vacuum blister.</li>
+              </ul>
+              <p className="fe-more"><A href={l("/facility-quality")} className="blink">More details &rsaquo;</A></p>
+            </div>
+          </div>
         </div>
-        <div className="dtitle mt-l">Equipment Cards</div>
-        <div className="flist mt-s">
-          <p className="fi"><b>Heidelberg Suprasetter 105 S CTP</b>In-house pre-press and CTP plate: short lead time, reducing the cost of transportation. Dot values controlled every day and dot value correction every week to ensure precise dot value. Environmental performance: reduced heavy metal and sewage during production.</p>
-          <p className="fi"><b>Prinect Color Toolbox</b>Heidelberg Prinect Color Proof Pro (digital color proof), Epson Pro9900 Image setter and ZÜND high-speed die cutting machine. NTI Printing can provide the box sample with imagesetter proof to save the cost and lead time for machine proofing.</p>
-          <p className="fi"><b>Jazzy Light / X-Rite Color Master</b>Ink mixed system can mix up the spot colour precisely the same as the colour swatch book. Standard litho printing production procedure, meeting international printing standard ISO 12647-2.</p>
-        </div>
-        <p className="mt-m"><A href={l("/facility-pre-press")} className="blink">More details &rsaquo;</A></p>
-      </div></section>
-      <section className="section tight" id="eco-printing"><div className="wrap reveal">
-        <div className="dtitle">Environmentally Friendly Printing <span className="zh">環保印刷流程</span></div>
-        <p className="prose">Heidelberg Press varnishing in line, to shorten the lead time and keep good quality at the same time. We also introduce an environmentally friendly system into the printing procedure.</p>
-        <div className="dtitle mt-m">Presses in Use</div>
-        <div className="flist plain cols mt-s">
-          <p className="fi">Heidelberg Speedmaster CD 102-6+LX 6-Colour Coater Press</p>
-          <p className="fi">Heidelberg Speedmaster CD 102-5+LX 5-Colour Carbon Balanced Coater Press</p>
-          <p className="fi">Heidelberg Speedmaster CD 102-5+LX UV 5-Colour Coater Press</p>
-          <p className="fi">Man Roland D-6050 Offenbach Two-Colour Offset Press</p>
-          <p className="fi">Heidelberg Image Control System</p>
-          <p className="fi">Heidelberg Axis Control Colour Management System</p>
-        </div>
-        <p className="mt-m"><A href={l("/facility-eco-printing")} className="blink">More details &rsaquo;</A></p>
-      </div></section>
-      <section className="section tight" id="post-press"><div className="wrap reveal">
-        <div className="dtitle">Post-Press Processing <span className="zh">印後加工</span></div>
-        <p className="prose">NTI Printing uses the most advanced die-cutting machines, automated gluing machines, and heat shrink film equipment to achieve high-efficiency production and deliver high-quality packaging products.</p>
-        <div className="flist plain mt-s">
-          <p className="fi">Automated die-cutting, gluing, window patching, and lamination systems.</p>
-          <p className="fi">BOPP film coating eliminates solvent use and meets EU and US eco standards.</p>
-          <p className="fi">High-speed shrink wrapping and labeling for efficient, secure finishing.</p>
-        </div>
-        <div className="flist mt-s">
-          <p className="fi"><b>Heidelberg Varimatrix 105 Die-Cutter</b>High-performance automatic flat-bed die-cutting with non-stop feeder, German CITO creasing matrix, precise alignment, and clean waste stripping for straight, sturdy creases.</p>
-          <p className="fi"><b>SBL High-Speed Automatic Die-Cutter</b>Non-stop operation across paper sizes from 400 × 370 mm to 1050 × 750 mm, up to 7,500 sheets per hour.</p>
-          <p className="fi"><b>High-Speed Intelligent Laminating Machine</b>BOPP pre-coated film instead of traditional wet lamination — solvent-free, no drying, meeting European and American environmental standards.</p>
-          <p className="fi"><b>Digital Window Patching Machine</b>Servo-controlled alignment, creasing, corner cutting, and splitting in a single pass.</p>
-          <p className="fi"><b>High-Speed Universal Folder-Gluer</b>Up to 200 metres per minute with optional cold or hot glue systems and plasma surface treatment for strong adhesion.</p>
-          <p className="fi"><b>Automatic Heat Shrink Wrap Machine</b>Complete wrapping protects finished goods from dust, moisture, and handling damage — no rope-bundling marks.</p>
-          <p className="fi"><b>Supporting Equipment</b>Automatic labeling machine, automatic box sealing machine, and two DATIEN guillotine cutters.</p>
-        </div>
-        <p className="mt-m"><A href={l("/facility-post-press")} className="blink">More details &rsaquo;</A></p>
-      </div></section>
-      <section className="section tight" id="quality"><div className="wrap reveal">
-        <div className="dtitle">Quality Inspection <span className="zh">品質檢驗</span></div>
-        <h3 className="fac-sub mt-s">Quality You Can Measure</h3>
-        <p className="prose mt-s">NTI conducts strict quality control throughout every production stage &mdash; from materials to finished goods. Each print is tested for accuracy, durability, and consistency using precision tools such as:</p>
-        <div className="flist mt-s">
-          <p className="fi"><b>X-Rite i1iO</b>Automated spectral color measurement for profiling and color control.</p>
-          <p className="fi"><b>X-Rite eXact Spectrophotometer</b>Press-side color measurement with single-click operation — strict color-deviation control with less manual error.</p>
-          <p className="fi"><b>X-Rite IC Plate II</b>Measures plate dot area percentage to verify and adjust dot specifications.</p>
-          <p className="fi"><b>Barcode Grade Scanner</b>Verifies every printed barcode meets grade compliance.</p>
-          <p className="fi"><b>Temperature &amp; Humidity Chamber</b>High/low temperature simulation to catch issues from environmental fluctuation before shipment.</p>
-          <p className="fi"><b>Ink Rub Tester</b>Confirms abrasion resistance of printed surfaces to customer requirements.</p>
-          <p className="fi"><b>Gloss Meter &amp; Cross-Hatch Adhesion Tester</b>Verifies surface brightness and coating adhesion against specification.</p>
-          <p className="fi"><b>Blister Pack Strength Testing</b>Tests gluing strength for vacuum blister packaging components.</p>
-        </div>
-        <p className="prose mt-m">Our goal: every print that leaves NTI meets international standards &mdash; and your expectations.</p>
-        <p className="mt-m"><A href={l("/facility-quality")} className="blink">More details &rsaquo;</A></p>
       </div></section>
       <section className="section tour" id="tour">
         <div className="wrap"><h2 className="sec-title reveal">Factory Tour</h2>

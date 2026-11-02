@@ -596,6 +596,9 @@ html[lang^="zh"] .zh{display:none}
    height collects at the foot of the card, where it reads as padding. */
 .fe-grid.four .fe-card p{flex:0 1 auto}
 .fe-grid.four .fe-body{padding-bottom:26px}
+/* facility: each card links to its detail page. margin-top:auto pins the link to the
+   card foot so the four links line up across a row whatever the spec-list length. */
+.fe-card .fe-more{margin-top:auto;padding-top:4px}
 
 /* ---------- video embed ---------- */
 .video-frame{aspect-ratio:16/9;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);background:#000}

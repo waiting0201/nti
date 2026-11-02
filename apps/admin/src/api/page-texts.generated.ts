@@ -1342,265 +1342,170 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "海德堡 Suprasetter 105 S CTP",
         "kind": "alt",
         "section": "Facilities & Equipment",
-        "count": 3
+        "count": 2
+      },
+      {
+        "en": "NTI technician handling freshly printed sheets",
+        "zh": "NTI 技術人員處理剛印好的紙張",
+        "kind": "alt",
+        "section": "Facilities & Equipment",
+        "count": 1
+      },
+      {
+        "en": "Direct to plate, in house",
+        "zh": "直接製版，自廠輸出",
+        "kind": "text",
+        "tag": "h3",
+        "section": "Facilities & Equipment",
+        "count": 1
       },
       {
         "en": "NTI Printing utilizes the world’s most advanced prepress output software, integrated with a CTP (Computer-to-Plate) direct plate-making system. Coupled with a precise plate production control process, this ensures that the printing dots are accurately rendered, achieving faithful color reproduction in the final print.",
         "zh": "NTI Printing 採用世界最先進的製版輸出軟體，整合 CTP（電腦直接製版）系統，搭配精準的製版控管流程，確保印刷網點準確重現，讓成品色彩忠實還原。",
         "kind": "text",
-        "section": "Prepress Equipment",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "In-house CTP system for faster turnaround and reduced transport.",
         "zh": "自廠 CTP 系統，交期更快、運輸更少。",
         "kind": "text",
-        "section": "Prepress Equipment",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "Daily and weekly dot calibration for color precision.",
         "zh": "每日與每週的網點校正，確保色彩精準。",
         "kind": "text",
-        "section": "Prepress Equipment",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "Eco-friendly production that minimizes heavy metals and wastewater.",
         "zh": "環保生產，將重金屬與廢水降到最低。",
         "kind": "text",
-        "section": "Prepress Equipment",
-        "count": 1
-      },
-      {
-        "en": "Equipment Cards",
-        "zh": "設備卡",
-        "kind": "text",
-        "section": "Equipment Cards",
-        "count": 1
-      },
-      {
-        "en": "In-house pre-press and CTP plate: short lead time, reducing the cost of transportation. Dot values controlled every day and dot value correction every week to ensure precise dot value. Environmental performance: reduced heavy metal and sewage during production.",
-        "zh": "自廠製版與 CTP 直接製版：交期短，降低運輸成本。每日控管網點值、每週進行網點校正，確保網點精準。環境效益：生產過程中的重金屬與廢水都更少。",
-        "kind": "text",
-        "section": "Equipment Cards",
-        "count": 1
-      },
-      {
-        "en": "Prinect Color Toolbox",
-        "zh": "Prinect Color Toolbox",
-        "kind": "text",
-        "section": "Equipment Cards",
-        "count": 1
-      },
-      {
-        "en": "Heidelberg Prinect Color Proof Pro (digital color proof), Epson Pro9900 Image setter and ZÜND high-speed die cutting machine. NTI Printing can provide the box sample with imagesetter proof to save the cost and lead time for machine proofing.",
-        "zh": "海德堡 Prinect Color Proof Pro（數位色彩打樣）、Epson Pro9900 輸出設備與 ZÜND 高速模切機。NTI Printing 可提供搭配樣張的盒樣，省下上機打樣的成本與時間。",
-        "kind": "text",
-        "section": "Equipment Cards",
-        "count": 1
-      },
-      {
-        "en": "Jazzy Light / X-Rite Color Master",
-        "zh": "Jazzy Light／X-Rite Color Master",
-        "kind": "text",
-        "section": "Equipment Cards",
-        "count": 1
-      },
-      {
-        "en": "Ink mixed system can mix up the spot colour precisely the same as the colour swatch book. Standard litho printing production procedure, meeting international printing standard ISO 12647-2.",
-        "zh": "調墨系統能把特別色調得與色票完全一致。標準平版印刷生產程序，符合國際印刷標準 ISO 12647-2。",
-        "kind": "text",
-        "section": "Equipment Cards",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "More details ›",
         "zh": "更多細節 ›",
         "kind": "text",
-        "section": "Equipment Cards",
+        "section": "Facilities & Equipment",
         "count": 5
+      },
+      {
+        "en": "Heidelberg offset press line",
+        "zh": "海德堡平版印刷產線",
+        "kind": "alt",
+        "section": "Facilities & Equipment",
+        "count": 1
+      },
+      {
+        "en": "German presses with in-line varnishing — including a carbon-balanced line",
+        "zh": "具備線上上光的德國印刷機 —— 其中一線為碳平衡機組",
+        "kind": "text",
+        "tag": "h3",
+        "section": "Facilities & Equipment",
+        "count": 1
       },
       {
         "en": "Heidelberg Press varnishing in line, to shorten the lead time and keep good quality at the same time. We also introduce an environmentally friendly system into the printing procedure.",
         "zh": "海德堡印刷機採線上上光，縮短交期同時維持良好品質。我們也在印刷流程中導入環保系統。",
         "kind": "text",
-        "section": "Environmentally Friendly Printing",
-        "count": 1
-      },
-      {
-        "en": "Presses in Use",
-        "zh": "使用中的印刷機",
-        "kind": "text",
-        "section": "Presses in Use",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "Heidelberg Speedmaster CD 102-6+LX 6-Colour Coater Press",
         "zh": "海德堡 Speedmaster CD 102-6+LX 六色上光印刷機",
         "kind": "text",
-        "section": "Presses in Use",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "Heidelberg Speedmaster CD 102-5+LX 5-Colour Carbon Balanced Coater Press",
         "zh": "海德堡 Speedmaster CD 102-5+LX 五色碳平衡上光印刷機",
         "kind": "text",
-        "section": "Presses in Use",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "Heidelberg Speedmaster CD 102-5+LX UV 5-Colour Coater Press",
         "zh": "海德堡 Speedmaster CD 102-5+LX UV 五色上光印刷機",
         "kind": "text",
-        "section": "Presses in Use",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "Man Roland D-6050 Offenbach Two-Colour Offset Press",
         "zh": "Man Roland D-6050 Offenbach 雙色平版印刷機",
         "kind": "text",
-        "section": "Presses in Use",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "Heidelberg Image Control System",
         "zh": "海德堡 Image Control 系統",
         "kind": "text",
-        "section": "Presses in Use",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "Heidelberg Axis Control Colour Management System",
         "zh": "海德堡 Axis Control 色彩管理系統",
         "kind": "text",
-        "section": "Presses in Use",
+        "section": "Facilities & Equipment",
+        "count": 1
+      },
+      {
+        "en": "Cut and folded box sample",
+        "zh": "裁切成型的盒樣",
+        "kind": "alt",
+        "section": "Facilities & Equipment",
+        "count": 1
+      },
+      {
+        "en": "Die-cutting, gluing, window patching and wrapping — all in-house",
+        "zh": "模切、糊盒、貼窗與包膜 —— 全部自廠完成",
+        "kind": "text",
+        "tag": "h3",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "NTI Printing uses the most advanced die-cutting machines, automated gluing machines, and heat shrink film equipment to achieve high-efficiency production and deliver high-quality packaging products.",
         "zh": "NTI Printing 採用最先進的模切機、自動糊盒機與熱收縮膜設備，達成高效率生產，交出高品質的包裝產品。",
         "kind": "text",
-        "section": "Post-Press Processing",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "Automated die-cutting, gluing, window patching, and lamination systems.",
         "zh": "自動化模切、糊盒、貼窗與貼合系統。",
         "kind": "text",
-        "section": "Post-Press Processing",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "BOPP film coating eliminates solvent use and meets EU and US eco standards.",
         "zh": "BOPP 預塗膜免除溶劑使用，符合歐盟與美國環保標準。",
         "kind": "text",
-        "section": "Post-Press Processing",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "High-speed shrink wrapping and labeling for efficient, secure finishing.",
         "zh": "高速收縮包膜與貼標，讓最後加工既有效率又穩妥。",
         "kind": "text",
-        "section": "Post-Press Processing",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
-        "en": "Heidelberg Varimatrix 105 Die-Cutter",
-        "zh": "海德堡 Varimatrix 105 模切機",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "High-performance automatic flat-bed die-cutting with non-stop feeder, German CITO creasing matrix, precise alignment, and clean waste stripping for straight, sturdy creases.",
-        "zh": "高效能自動平壓模切，配備不停機給紙、德國 CITO 壓痕系統、精準對位與乾淨清廢，壓線平直而堅固。",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "SBL High-Speed Automatic Die-Cutter",
-        "zh": "SBL 高速自動模切機",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "Non-stop operation across paper sizes from 400 × 370 mm to 1050 × 750 mm, up to 7,500 sheets per hour.",
-        "zh": "紙張尺寸 400 × 370 mm 至 1050 × 750 mm 不停機作業，每小時最高 7,500 張。",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "High-Speed Intelligent Laminating Machine",
-        "zh": "高速智慧型貼合機",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "BOPP pre-coated film instead of traditional wet lamination — solvent-free, no drying, meeting European and American environmental standards.",
-        "zh": "以 BOPP 預塗膜取代傳統濕式貼合 —— 無溶劑、免烘乾，符合歐美環保標準。",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "Digital Window Patching Machine",
-        "zh": "數位貼窗機",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "Servo-controlled alignment, creasing, corner cutting, and splitting in a single pass.",
-        "zh": "伺服控制的對位、壓痕、切角與分條，一次完成。",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "High-Speed Universal Folder-Gluer",
-        "zh": "高速萬用糊盒機",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "Up to 200 metres per minute with optional cold or hot glue systems and plasma surface treatment for strong adhesion.",
-        "zh": "最高每分鐘 200 公尺，可選配冷膠或熱膠系統，並以電漿表面處理強化黏著。",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "Automatic Heat Shrink Wrap Machine",
-        "zh": "自動熱收縮包裝機",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "Complete wrapping protects finished goods from dust, moisture, and handling damage — no rope-bundling marks.",
-        "zh": "完整包膜保護成品不受灰塵、濕氣與搬運損傷 —— 也不會留下綑繩壓痕。",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "Supporting Equipment",
-        "zh": "輔助設備",
-        "kind": "text",
-        "section": "Post-Press Processing",
-        "count": 1
-      },
-      {
-        "en": "Automatic labeling machine, automatic box sealing machine, and two DATIEN guillotine cutters.",
-        "zh": "自動貼標機、自動封箱機，以及兩台 DATIEN 裁紙機。",
-        "kind": "text",
-        "section": "Post-Press Processing",
+        "en": "X-Rite eXact spectrophotometer used for press-side colour measurement",
+        "zh": "用於機邊色彩量測的 X-Rite eXact 分光光度計",
+        "kind": "alt",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
@@ -1608,133 +1513,63 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "zh": "看得見數據的品質",
         "kind": "text",
         "tag": "h3",
-        "section": "Quality Inspection",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
         "en": "NTI conducts strict quality control throughout every production stage — from materials to finished goods. Each print is tested for accuracy, durability, and consistency using precision tools such as:",
         "zh": "NTI 在每一個生產階段都執行嚴格的品質管控 —— 從材料到成品。每一件印品都以精密儀器檢測準確度、耐久性與一致性，例如：",
         "kind": "text",
-        "section": "Quality Inspection",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
-        "en": "X-Rite i1iO",
-        "zh": null,
+        "en": "X-Rite i1iO & eXact spectrophotometers — spectrum colour control testing apparatus.",
+        "zh": "X-Rite i1iO 與 eXact 分光光度計 —— 光譜色彩控制檢測儀器。",
         "kind": "text",
-        "section": "Quality Inspection",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
-        "en": "Automated spectral color measurement for profiling and color control.",
-        "zh": "自動化光譜色彩量測，用於建檔與色彩控制。",
+        "en": "IC Plate II plate checker — measures percentage dot area and analyzes the data to adjust dot areas.",
+        "zh": "IC Plate II 印版檢測儀 —— 量測網點面積百分比並分析數據以調整網點。",
         "kind": "text",
-        "section": "Quality Inspection",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
-        "en": "X-Rite eXact Spectrophotometer",
-        "zh": "X-Rite eXact 分光光度計",
+        "en": "Barcode grade scanner — all barcodes printed on goods are tested to check barcode grade.",
+        "zh": "條碼等級檢測儀 —— 產品上所有印出的條碼都會檢測條碼等級。",
         "kind": "text",
-        "section": "Quality Inspection",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
-        "en": "Press-side color measurement with single-click operation — strict color-deviation control with less manual error.",
-        "zh": "機邊色彩量測，單鍵操作 —— 嚴格控管色差，減少人為誤差。",
+        "en": "Ink rub and gloss testers — used whenever a customer requests abrasion resistance testing.",
+        "zh": "油墨耐磨與光澤度試驗機 —— 客戶要求耐磨測試時使用。",
         "kind": "text",
-        "section": "Quality Inspection",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
-        "en": "X-Rite IC Plate II",
-        "zh": null,
+        "en": "Temperature & humidity chambers — simulate high/low temperature conditions.",
+        "zh": "恆溫恆濕試驗機 —— 模擬高低溫環境條件。",
         "kind": "text",
-        "section": "Quality Inspection",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
-        "en": "Measures plate dot area percentage to verify and adjust dot specifications.",
-        "zh": "量測印版網點面積百分比，用以驗證與調整網點規格。",
+        "en": "Gloss-Meter — tests whether the brightness of the paper surface meets requirements.",
+        "zh": "光澤度計 —— 檢測紙張表面亮度是否符合要求。",
         "kind": "text",
-        "section": "Quality Inspection",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
-        "en": "Barcode Grade Scanner",
-        "zh": "條碼等級檢測儀",
+        "en": "Blister Packing Machine — tests the strength of the gluing part of the vacuum blister.",
+        "zh": "泡殼包裝試驗機 —— 測試真空泡殼黏合部位的強度。",
         "kind": "text",
-        "section": "Quality Inspection",
-        "count": 1
-      },
-      {
-        "en": "Verifies every printed barcode meets grade compliance.",
-        "zh": "驗證每一個印出的條碼都符合等級規範。",
-        "kind": "text",
-        "section": "Quality Inspection",
-        "count": 1
-      },
-      {
-        "en": "Temperature & Humidity Chamber",
-        "zh": "恆溫恆濕試驗機",
-        "kind": "text",
-        "section": "Quality Inspection",
-        "count": 1
-      },
-      {
-        "en": "High/low temperature simulation to catch issues from environmental fluctuation before shipment.",
-        "zh": "高低溫模擬，在出貨前先攔下環境變化可能造成的問題。",
-        "kind": "text",
-        "section": "Quality Inspection",
-        "count": 1
-      },
-      {
-        "en": "Ink Rub Tester",
-        "zh": "油墨耐磨試驗機",
-        "kind": "text",
-        "section": "Quality Inspection",
-        "count": 1
-      },
-      {
-        "en": "Confirms abrasion resistance of printed surfaces to customer requirements.",
-        "zh": "確認印刷表面的耐磨程度符合客戶要求。",
-        "kind": "text",
-        "section": "Quality Inspection",
-        "count": 1
-      },
-      {
-        "en": "Gloss Meter & Cross-Hatch Adhesion Tester",
-        "zh": "光澤度計與百格附著力試驗機",
-        "kind": "text",
-        "section": "Quality Inspection",
-        "count": 1
-      },
-      {
-        "en": "Verifies surface brightness and coating adhesion against specification.",
-        "zh": "依規格驗證表面亮度與塗層附著力。",
-        "kind": "text",
-        "section": "Quality Inspection",
-        "count": 1
-      },
-      {
-        "en": "Blister Pack Strength Testing",
-        "zh": "泡殼包裝強度測試",
-        "kind": "text",
-        "section": "Quality Inspection",
-        "count": 1
-      },
-      {
-        "en": "Tests gluing strength for vacuum blister packaging components.",
-        "zh": "測試真空泡殼包裝元件的黏合強度。",
-        "kind": "text",
-        "section": "Quality Inspection",
-        "count": 1
-      },
-      {
-        "en": "Our goal: every print that leaves NTI meets international standards — and your expectations.",
-        "zh": "我們的目標：每一件離開 NTI 的印品，都符合國際標準 —— 也符合您的期待。",
-        "kind": "text",
-        "section": "Quality Inspection",
+        "section": "Facilities & Equipment",
         "count": 1
       },
       {
@@ -2728,6 +2563,90 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
+        "en": "NTI Printing headquarters — building exterior",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
+        "en": "NTI Printing headquarters at night",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
+        "en": "Ground-floor lobby",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
+        "en": "Ground-floor lobby reception lounge",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
+        "en": "Ground-floor meeting room",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
+        "en": "Second-floor staff restaurant",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
+        "en": "Second-floor office",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
+        "en": "Second-floor pantry",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
+        "en": "Fourth-floor operations room",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
+        "en": "Second-floor post-press production area",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
+        "en": "Ground-floor paper cutting area",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
+        "en": "Offset press line on the production floor",
+        "zh": null,
+        "kind": "alt",
+        "section": "Factory Tour",
+        "count": 1
+      },
+      {
         "en": "On the floor",
         "zh": "現場",
         "kind": "text",
@@ -3080,285 +2999,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "kind": "text",
         "section": "Industries / Applications",
         "count": 1
-      },
-      {
-        "en": "Facilities & Equipment",
-        "zh": "設備與廠房",
-        "kind": "text",
-        "tag": "h2",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Where Technology Meets Sustainability",
-        "zh": "技術與永續的交會之處",
-        "kind": "text",
-        "tag": "h3",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "NTI Printing integrates advanced pre-press, printing, and post-press systems inside our G7 certified printing plant — a printing factory in Taiwan designed for precision, efficiency and sustainability. We use Heidelberg and Man Roland presses with in-line varnishing and carbon-balanced systems, reducing energy use and emissions.",
-        "zh": "NTI Printing 在通過 G7 認證的印刷廠內整合先進的製版、印刷與印後系統 —— 一座為精準、效率與永續而設計的台灣印刷廠。我們使用具備線上上光與碳平衡系統的海德堡與 Man Roland 印刷機，降低能源使用與排放。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "NTI technician handling freshly printed sheets",
-        "zh": "NTI 技術人員處理剛印好的紙張",
-        "kind": "alt",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Prepress Equipment",
-        "zh": "製版設備",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Direct to plate, in house",
-        "zh": "直接製版，自廠輸出",
-        "kind": "text",
-        "tag": "h3",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "NTI Printing utilizes the world’s most advanced prepress output software, integrated with a CTP (Computer-to-Plate) direct plate-making system. Coupled with a precise plate production control process, this ensures that the printing dots are accurately rendered, achieving faithful color reproduction in the final print.",
-        "zh": "NTI Printing 採用世界最先進的製版輸出軟體，整合 CTP（電腦直接製版）系統，搭配精準的製版控管流程，確保印刷網點準確重現，讓成品色彩忠實還原。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "In-house CTP system for faster turnaround and reduced transport.",
-        "zh": "自廠 CTP 系統，交期更快、運輸更少。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Daily and weekly dot calibration for color precision.",
-        "zh": "每日與每週的網點校正，確保色彩精準。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Eco-friendly production that minimizes heavy metals and wastewater.",
-        "zh": "環保生產，將重金屬與廢水降到最低。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Heidelberg offset press line",
-        "zh": "海德堡平版印刷產線",
-        "kind": "alt",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Environmentally Friendly Printing",
-        "zh": "環保印刷",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "German presses with in-line varnishing — including a carbon-balanced line",
-        "zh": "具備線上上光的德國印刷機 —— 其中一線為碳平衡機組",
-        "kind": "text",
-        "tag": "h3",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Heidelberg Press varnishing in line, to shorten the lead time and keep good quality at the same time. We also introduce an environmentally friendly system into the printing procedure.",
-        "zh": "海德堡印刷機採線上上光，縮短交期同時維持良好品質。我們也在印刷流程中導入環保系統。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Heidelberg Speedmaster CD 102-6+LX 6-Colour Coater Press",
-        "zh": "海德堡 Speedmaster CD 102-6+LX 六色上光印刷機",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Heidelberg Speedmaster CD 102-5+LX 5-Colour Carbon Balanced Coater Press",
-        "zh": "海德堡 Speedmaster CD 102-5+LX 五色碳平衡上光印刷機",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Heidelberg Speedmaster CD 102-5+LX UV 5-Colour Coater Press",
-        "zh": "海德堡 Speedmaster CD 102-5+LX UV 五色上光印刷機",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Man Roland D-6050 Offenbach Two-Colour Offset Press",
-        "zh": "Man Roland D-6050 Offenbach 雙色平版印刷機",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Heidelberg Image Control System",
-        "zh": "海德堡 Image Control 系統",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Heidelberg Axis Control Colour Management System",
-        "zh": "海德堡 Axis Control 色彩管理系統",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Cut and folded box sample",
-        "zh": "裁切成型的盒樣",
-        "kind": "alt",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Post-Press Processing",
-        "zh": "印後加工",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Die-cutting, gluing, window patching and wrapping — all in-house",
-        "zh": "模切、糊盒、貼窗與包膜 —— 全部自廠完成",
-        "kind": "text",
-        "tag": "h3",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "NTI Printing uses the most advanced die-cutting machines, automated gluing machines, and heat shrink film equipment to achieve high-efficiency production and deliver high-quality packaging products.",
-        "zh": "NTI Printing 採用最先進的模切機、自動糊盒機與熱收縮膜設備，達成高效率生產，交出高品質的包裝產品。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Automated die-cutting, gluing, window patching, and lamination systems.",
-        "zh": "自動化模切、糊盒、貼窗與貼合系統。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "BOPP film coating eliminates solvent use and meets EU and US eco standards.",
-        "zh": "BOPP 預塗膜免除溶劑使用，符合歐盟與美國環保標準。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "High-speed shrink wrapping and labeling for efficient, secure finishing.",
-        "zh": "高速收縮包膜與貼標，讓最後加工既有效率又穩妥。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "X-Rite eXact spectrophotometer used for press-side colour measurement",
-        "zh": "用於機邊色彩量測的 X-Rite eXact 分光光度計",
-        "kind": "alt",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Quality Inspection",
-        "zh": "品質檢驗",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Quality You Can Measure",
-        "zh": "看得見數據的品質",
-        "kind": "text",
-        "tag": "h3",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "NTI conducts strict quality control throughout every production stage — from materials to finished goods. Each print is tested for accuracy, durability, and consistency using precision tools such as:",
-        "zh": "NTI 在每一個生產階段都執行嚴格的品質管控 —— 從材料到成品。每一件印品都以精密儀器檢測準確度、耐久性與一致性，例如：",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "X-Rite i1iO & eXact spectrophotometers — spectrum colour control testing apparatus.",
-        "zh": "X-Rite i1iO 與 eXact 分光光度計 —— 光譜色彩控制檢測儀器。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "IC Plate II plate checker — measures percentage dot area and analyzes the data to adjust dot areas.",
-        "zh": "IC Plate II 印版檢測儀 —— 量測網點面積百分比並分析數據以調整網點。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Barcode grade scanner — all barcodes printed on goods are tested to check barcode grade.",
-        "zh": "條碼等級檢測儀 —— 產品上所有印出的條碼都會檢測條碼等級。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Ink rub and gloss testers — used whenever a customer requests abrasion resistance testing.",
-        "zh": "油墨耐磨與光澤度試驗機 —— 客戶要求耐磨測試時使用。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Temperature & humidity chambers — simulate high/low temperature conditions.",
-        "zh": "恆溫恆濕試驗機 —— 模擬高低溫環境條件。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Gloss-Meter — tests whether the brightness of the paper surface meets requirements.",
-        "zh": "光澤度計 —— 檢測紙張表面亮度是否符合要求。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Blister Packing Machine — tests the strength of the gluing part of the vacuum blister.",
-        "zh": "泡殼包裝試驗機 —— 測試真空泡殼黏合部位的強度。",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
-      },
-      {
-        "en": "Explore our facilities & equipment",
-        "zh": "看看我們的設備與廠房",
-        "kind": "text",
-        "section": "Facilities & Equipment",
-        "count": 1
       }
     ]
   },
@@ -3617,41 +3257,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
       {
         "en": "CO2-neutral Heidelberg Speedmaster press line",
         "zh": "碳中和的海德堡 Speedmaster 印刷產線",
-        "kind": "alt",
-        "section": "Eco-Friendly Printing in Taiwan",
-        "count": 1
-      },
-      {
-        "en": "NTI Green Printing",
-        "zh": "NTI 綠色印刷",
-        "kind": "alt",
-        "section": "Eco-Friendly Printing in Taiwan",
-        "count": 1
-      },
-      {
-        "en": "FSC certified",
-        "zh": "FSC 認證",
-        "kind": "alt",
-        "section": "Eco-Friendly Printing in Taiwan",
-        "count": 1
-      },
-      {
-        "en": "LEED Leadership in Energy and Environmental Design",
-        "zh": "LEED 能源與環境設計領導認證",
-        "kind": "alt",
-        "section": "Eco-Friendly Printing in Taiwan",
-        "count": 1
-      },
-      {
-        "en": "Mineral Oil Free",
-        "zh": "無礦物油",
-        "kind": "alt",
-        "section": "Eco-Friendly Printing in Taiwan",
-        "count": 1
-      },
-      {
-        "en": "ESG Environmental, Social, Governance",
-        "zh": "ESG 環境、社會、公司治理",
         "kind": "alt",
         "section": "Eco-Friendly Printing in Taiwan",
         "count": 1
