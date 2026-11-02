@@ -566,6 +566,9 @@ input::placeholder,textarea::placeholder{color:#b0b8b0}
 
 /* ---------- facility & equipment stage cards ---------- */
 .fe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:46px}
+/* cards in their own section right under the explorer: the explorer section's bottom padding is the only gap */
+.section.tight:has(>.wrap>.fe-grid:first-child){padding-top:0}
+.wrap>.fe-grid:first-child{margin-top:0}
 .fe-grid.four{grid-template-columns:repeat(2,1fr)}
 .fe-card{display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--line);overflow:hidden;transition:transform .45s var(--ease),box-shadow .45s}
 .fe-card:hover{transform:translateY(-8px);box-shadow:0 30px 60px -30px rgba(0,63,58,.3)}
