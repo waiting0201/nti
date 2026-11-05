@@ -352,9 +352,6 @@ export function CategoryPage() {
                 <tr key={c.id}>
                   <td>
                     <code style={{ fontSize: 12 }}>{String(c.code)}</code>
-                    <div className="hint" style={{ margin: 0 }}>
-                      建立後不可修改
-                    </div>
                   </td>
                   <td className="row-title">{String(c.i18n?.zh?.name ?? '')}</td>
                   <td>{String(c.i18n?.en?.name ?? '')}</td>
