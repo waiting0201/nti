@@ -210,7 +210,7 @@ mockup 內容（現況部署），設了就改吃 CMS。
   常數與說明集中在 `apps/web/src/lib/careers.ts`。`careers/page.tsx` 與 mockup 那頁保留（要恢復只需拿掉 middleware 那段）。
   後台「職缺」單元目前前台已無出口。
 - mockup 44 頁頁尾同步改（`.faddr` 樣式加在 site.css／globals.css／index.html／home.css）。
-- 驗證：`verify:markup` 43 頁一致＋careers 確認為 404。⬜ 正式庫要跑 `dotnet ef database update`。
+- 驗證：`verify:markup` 43 頁一致＋careers 確認為 404。正式庫不用手動跑 migration：API 部署後啟動時 `MigrateAsync()` 自動套用 `SocialInstagram`。
 
 ### ✅ 依客戶《NTI WEBSITE 調整》改選單與首頁服務流程（2026-10-21）
 
