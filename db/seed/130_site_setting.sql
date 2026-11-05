@@ -24,7 +24,7 @@ GO
         ('company.email',           'Company', 'email',     0, 60),
         ('company.map_embed',       'Company', 'url',       0, 70),
         ('social.facebook',         'Social',  'url',       0, 10),
-        ('social.linkedin',         'Social',  'url',       0, 20),
+        ('social.instagram',        'Social',  'url',       0, 20),
         ('social.youtube',          'Social',  'url',       0, 30),
         ('home.gallery_image',      'Home',    'image',     0, 10),   -- 首頁形象圖帶
         ('home.gallery_alt',        'Home',    'text',      1, 20),

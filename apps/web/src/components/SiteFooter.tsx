@@ -3,7 +3,8 @@ import { A } from './A'
 import { T } from '@/lib/t'
 import { withLocale, type Locale } from '@/lib/i18n'
 import { mediaUrl } from '@/lib/media'
-import { getSettingMap } from '@/lib/site-settings'
+import { getSettingMap, telHref } from '@/lib/site-settings'
+import { CAREERS_104_URL } from '@/lib/careers'
 
 /**
  * 三個社群圖示。路徑與尺寸逐字取自 mockup，只有 `href` 改成吃網站設定。
@@ -16,10 +17,10 @@ const SOCIAL = [
     path: 'M14 9h3V6h-3a4 4 0 0 0-4 4v2H8v3h2v6h3v-6h3l1-3h-4v-2a1 1 0 0 1 1-1Z',
   },
   {
-    key: 'social.linkedin',
-    label: 'LinkedIn',
+    key: 'social.instagram',
+    label: 'Instagram',
     size: 15,
-    path: 'M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5ZM.5 8h4V24h-4V8Zm7.5 0h3.8v2.2h.05c.53-1 1.83-2.2 3.77-2.2 4.03 0 4.78 2.65 4.78 6.1V24h-4v-8.5c0-2-.04-4.6-2.8-4.6-2.8 0-3.23 2.2-3.23 4.45V24H8V8Z',
+    path: 'M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2ZM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0Zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9Z',
   },
   {
     key: 'social.youtube',
@@ -39,6 +40,12 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
    * 所以正式站接上之後這一排會是空的——那是設定的狀態，不是漏渲染。
    */
   const social = settings ? SOCIAL.filter((item) => settings[item.key]) : SOCIAL
+
+  // 公司電話與地址：吃網站設定（後台「公司資訊」），沒接 CMS 時照 mockup／contact 頁的值
+  const phone = settings?.['company.phone'] ?? '+886 6 261 1358'
+  const address =
+    settings?.['company.address']?.replace(/\s*\n\s*/g, ' ') ??
+    'No. 29, Gongye 6th Rd., Annan Dist., Tainan City 709, Taiwan'
 
   return (
     <T locale={locale}>
@@ -75,7 +82,11 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
             <A href={l('/differences')}>About Us</A>{' '}
             <A href={l('/printing-solutions')}>Solutions</A>{' '}
             <A href={l('/printing-projects')}>Projects</A>{' '}
-            <A href={l('/careers')}>Careers</A>{' '}
+            {locale === 'zh' && (
+              <>
+                <a href={CAREERS_104_URL} target="_blank" rel="noopener noreferrer">Careers</a>{' '}
+              </>
+            )}
             <A href={l('/privacy-legal')}>Privacy &amp; Legal</A>
           </div>
           <div className="fcol">
@@ -86,6 +97,8 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
           </div>
           <div className="fcol">
             <span className="ftitle">Get in Touch</span>{' '}
+            <a href={telHref(phone)}>{phone}</a>{' '}
+            <span className="faddr">{address}</span>{' '}
             <A href={l('/get-a-quote')}>Get a Quote</A>{' '}
             <A href={l('/get-a-quote')} className="fcta">
               Start Your Project{' '}

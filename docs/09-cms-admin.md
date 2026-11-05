@@ -357,13 +357,13 @@
 單頁表單，依 `SiteSetting` 的固定 key 清單渲染（[08-database.md §6.3](08-database.md)），分四組：
 
 - **公司資訊**：公司名稱、地址、營業時間（多語）；電話、傳真、Email、Google Map 嵌入碼。
-- **社群**：Facebook／LinkedIn／YouTube 網址（留空則前台不顯示該圖示）。
+- **社群**：Facebook／Instagram／YouTube 網址（2026-11-05 客戶要求以 Instagram 取代 LinkedIn）（留空則前台不顯示該圖示）。
 - **首頁**：形象圖帶圖片 + Alt。
 - **信件**：報價通知收件者、聯絡通知收件者、密件副本（支援多組，逗號分隔，儲存時驗格式）。
 
 > **值從哪來**：種子（EF 的 `HasData`／`db/seed/130_site_setting.sql`）只建 15 個 key、值留 NULL；
 > 專案裡已有依據的 11 個值由 [`db/content/220_site_setting.sql`](../db/content/README.md) 匯入，
-> 客戶不必把公司資訊重打一遍。仍留 NULL 的 4 個是**客戶還沒提供**：傳真、LinkedIn、YouTube、密件副本
+> 客戶不必把公司資訊重打一遍。仍留 NULL 的 4 個是**客戶還沒提供**：傳真、Instagram、YouTube、密件副本
 > （社群留空前台就不顯示該圖示，所以 NULL 是有意義的狀態，不是漏掉）。
 >
 > **前台吃哪些**（2026-09-10 接上）：聯絡頁的地址／電話／Email／營業時間／地圖、footer 的社群圖示、

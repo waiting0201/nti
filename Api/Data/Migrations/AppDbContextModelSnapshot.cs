@@ -4552,7 +4552,7 @@ namespace Nti.Api.Data.Migrations
                         },
                         new
                         {
-                            SettingKey = "social.linkedin",
+                            SettingKey = "social.instagram",
                             GroupName = "Social",
                             IsLocalized = false,
                             SortOrder = 20,

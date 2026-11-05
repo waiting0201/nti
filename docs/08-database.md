@@ -819,7 +819,7 @@ CREATE INDEX IX_NewsletterSubscriber_Status ON dbo.NewsletterSubscriber(Status, 
 |---|---|---|---|
 | Company | `company.name`、`company.address`、`company.hours` | text/multiline | ✓ |
 | Company | `company.phone`、`company.fax`、`company.email`、`company.map_embed` | text/url | — |
-| Social | `social.facebook`、`social.linkedin`、`social.youtube` | url | — |
+| Social | `social.facebook`、`social.instagram`、`social.youtube`（2026-11-05 LinkedIn 改 Instagram） | url | — |
 | Home | `home.gallery_image`、`home.gallery_alt` | image/text | 圖—／alt ✓ |
 | Mail | `mail.quote_notify_to`、`mail.contact_notify_to`、`mail.bcc` | email | — |
 

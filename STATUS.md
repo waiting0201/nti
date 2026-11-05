@@ -142,7 +142,7 @@ contact 頁、`zh.ts` 的三筆 key、Google Maps embed 的查詢字串與 ifram
 | 位置 | 吃哪些 key |
 |---|---|
 | `/contact` 的資訊卡與地圖 | `company.address`／`phone`／`email`／`hours`／`map_embed` |
-| footer 的社群圖示 | `social.facebook`／`linkedin`／`youtube` |
+| footer 的社群圖示 | `social.facebook`／`instagram`／`youtube` |
 | 首頁形象圖帶 | `home.gallery_image`／`gallery_alt` |
 
 規則在 [`lib/site-settings.ts`](apps/web/src/lib/site-settings.ts)：讀不到（沒設 API base、
@@ -198,6 +198,19 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
 清單在該腳本的 `HAND_MAINTAINED`。
+
+### ✅ 頁尾聯絡資訊、社群改 FB／IG／YouTube、人才招募改外連 104（2026-11-05）
+
+- 頁尾 Get in Touch 欄加上**電話與地址**（吃網站設定 `company.phone`／`company.address`，沒接 CMS 時用 contact 頁的值）。
+- 社群圖示改為 **Facebook／Instagram／YouTube**：`social.linkedin` 換成 `social.instagram`
+  （EF migration `SocialInstagram`；LinkedIn 從未填過值）。⬜ **IG、YouTube 網址待客戶提供**——
+  接 CMS 後沿用「填了才顯示」，客戶在後台「網站設定 → 社群」填上前，正式站只會出現 FB。
+- 人才招募：**中文**頁尾連結直接外連 [104 公司頁](https://www.104.com.tw/company/afcnm08?jobsource=index_s_cs)，
+  `/careers` 301 到 104；**英文**移除連結，`/en/careers` 回 404；sitemap 不再列 `/careers`。
+  常數與說明集中在 `apps/web/src/lib/careers.ts`。`careers/page.tsx` 與 mockup 那頁保留（要恢復只需拿掉 middleware 那段）。
+  後台「職缺」單元目前前台已無出口。
+- mockup 44 頁頁尾同步改（`.faddr` 樣式加在 site.css／globals.css／index.html／home.css）。
+- 驗證：`verify:markup` 43 頁一致＋careers 確認為 404。⬜ 正式庫要跑 `dotnet ef database update`。
 
 ### ✅ 依客戶《NTI WEBSITE 調整》改選單與首頁服務流程（2026-10-21）
 
@@ -859,7 +872,7 @@ gh workflow run web.yml -R waiting0201/nti    # variable 是 build-time 內嵌�
 |---|---|---|
 | **中文文案** | 客戶未提供正式文案 | 已用機器翻譯初稿填滿（111 筆內容，`/zh` 可以驗收了），但**上線前需客戶校閱**。公司中文名與董事長姓名沒有依據，刻意保留 `NTI`／「鄭董事長」 |
 | 舊站內容遷移 | 待決策點見 `reference/現有網站盤點與內容遷移.md` | 80 篇文章與 100 個標籤還沒進 CMS，那 170 條舊網址只能先導回首頁（拿不回權重）；缺漏頁面內容同此。**建議向客戶要舊站 Search Console 存取權**，按點擊排序決定哪些文章必須遷移 |
-| 公司傳真、LinkedIn／YouTube | 客戶未提供 | `SiteSetting` 的 `company.fax`、`social.linkedin`、`social.youtube` 仍為 NULL——前台的規則是「填了才顯示」，所以 footer 目前只出現 Facebook 一個圖示。`company.map_embed` 是用**地址字串**查的 Google 地圖網址，客戶自己的商家嵌入碼給了再換 |
+| 公司傳真、Instagram／YouTube | 客戶未提供 | `SiteSetting` 的 `company.fax`、`social.instagram`、`social.youtube` 仍為 NULL——前台的規則是「填了才顯示」，所以 footer 目前只出現 Facebook 一個圖示。`company.map_embed` 是用**地址字串**查的 Google 地圖網址，客戶自己的商家嵌入碼給了再換 |
 | SMTP 帳密 | 客戶未提供寄件帳號（`Smtp__Host`／`Port` 已填 Brevo） | 表單收得到資料，但通知信一律 `Failed` |
 | 正式網域 | 客戶端 DNS | 上線 checklist 卡住 |
 

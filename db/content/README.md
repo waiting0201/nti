@@ -88,7 +88,7 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/220_site_setting.sql
 | key | 為什麼空著 |
 |---|---|
 | `company.fax` | 客戶未提供（[`STATUS.md`](../../STATUS.md) §八） |
-| `social.linkedin`／`youtube` | mockup 的 footer 是 `href="#"`，也沒有其他出處 |
+| `social.instagram`／`youtube` | mockup 的 footer 是 `href="#"`，也沒有其他出處 |
 | `mail.bcc` | 沒有這個需求，客戶要再填 |
 
 寫成空字串會讓後台分不出「客戶清空了」與「從來沒填」，所以一個字都不寫。

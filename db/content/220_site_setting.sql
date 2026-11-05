@@ -9,7 +9,7 @@
    db/seed/130_site_setting.sql（＝ EF 的 HasData）只建 key 與型別、值留 NULL；
    這支補上 mockup 已經有的那些值，客戶才不用把公司資訊重打一遍。
 
-   ⚠ 仍待客戶提供、刻意留 NULL 的 4 個：company.fax、social.linkedin、social.youtube、mail.bcc
+   ⚠ 仍待客戶提供、刻意留 NULL 的 4 個：company.fax、social.instagram、social.youtube、mail.bcc
      （後台對社群網址的提示是「留空則前台不顯示該圖示」，所以留 NULL 是有意義的狀態，
       不是漏掉。）
    ⚠ 中文值是初稿：來源是 apps/web/src/lib/zh.ts，與 200_mockup_content.sql 同一個

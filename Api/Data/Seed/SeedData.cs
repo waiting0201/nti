@@ -271,7 +271,7 @@ internal static class SeedData
         new() { SettingKey = "company.address", GroupName = "Company", ValueType = "multiline", IsLocalized = true, SortOrder = 20 },
         new() { SettingKey = "home.gallery_alt", GroupName = "Home", ValueType = "text", IsLocalized = true, SortOrder = 20 },
         new() { SettingKey = "mail.contact_notify_to", GroupName = "Mail", ValueType = "email", IsLocalized = false, SortOrder = 20 },
-        new() { SettingKey = "social.linkedin", GroupName = "Social", ValueType = "url", IsLocalized = false, SortOrder = 20 },
+        new() { SettingKey = "social.instagram", GroupName = "Social", ValueType = "url", IsLocalized = false, SortOrder = 20 },
         new() { SettingKey = "company.hours", GroupName = "Company", ValueType = "multiline", IsLocalized = true, SortOrder = 30 },
         new() { SettingKey = "mail.bcc", GroupName = "Mail", ValueType = "email", IsLocalized = false, SortOrder = 30 },
         new() { SettingKey = "social.youtube", GroupName = "Social", ValueType = "url", IsLocalized = false, SortOrder = 30 },

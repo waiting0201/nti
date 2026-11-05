@@ -592,7 +592,7 @@ function settings() {
     // Facebook 例外：結構化資料的 sameAs 早就帶著這個網址（取自客戶現有官網）。
     // 那份說「有粉專」、footer 卻一個圖示都不顯示，是同一組事實在兩處講反話。
     'social.facebook': facebook,
-    'social.linkedin': '',
+    'social.instagram': '',
     'social.youtube': '',
     'home.gallery_image': asset(gallery[1]),
     'home.gallery_alt': i18n(decode(gallery[2])),

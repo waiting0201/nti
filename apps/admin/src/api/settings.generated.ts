@@ -25,7 +25,7 @@ export const SETTING_VALUES: Record<string, string | { zh: string; en: string }>
   "company.email": "service@nti-printing.com",
   "company.map_embed": "https://www.google.com/maps?q=No.+29,+Gongye+6th+Rd.,+Annan+Dist.,+Tainan+City+709,+Taiwan&output=embed",
   "social.facebook": "https://www.facebook.com/printingfarm",
-  "social.linkedin": "",
+  "social.instagram": "",
   "social.youtube": "",
   "home.gallery_image": "/assets/ref-home-mid1.webp",
   "home.gallery_alt": {

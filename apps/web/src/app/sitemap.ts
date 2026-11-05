@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { getNews } from '@/lib/api'
 import { localeUrl as url, locales, type Locale } from '@/lib/i18n'
 import { ROUTES } from '@/lib/routes'
+import { RETIRED_ROUTES } from '@/lib/careers'
 
 /**
  * sitemap.xml
@@ -33,6 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = []
 
   for (const path of ROUTES) {
+    if (RETIRED_ROUTES.includes(path)) continue // 已移除／外連的頁（lib/careers.ts）
     for (const locale of locales) {
       entries.push({ url: url(locale, path), alternates: { languages: languages(path) } })
     }

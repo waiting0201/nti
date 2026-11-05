@@ -159,12 +159,27 @@ function applyAccepted(seq, file, part) {
   })
 }
 
+/**
+ * 站上已移除、但 mockup 還留著的頁（src/lib/careers.ts 的 RETIRED_ROUTES）。
+ * `/en/careers` 現在是刻意的 404（中文 301 到 104），比對它沒有意義；改成確認它真的是 404。
+ */
+const RETIRED = new Set(['careers'])
+
 const files = readdirSync(mockupDir).filter((f) => f.endsWith('.html')).sort()
 let failed = 0
+let retired = 0
 
 for (const file of files) {
   const slug = file.replace(/\.html$/, '')
   const url = slug === 'index' ? `${base}/${locale}` : `${base}/${locale}/${slug}`
+  if (RETIRED.has(slug)) {
+    const r = await fetch(url, { redirect: 'manual' })
+    const ok = locale === 'en' ? r.status === 404 : r.status === 301 || r.status === 308
+    console.log(`${ok ? '✓' : '✗'} ${slug.padEnd(44)} 已移除（HTTP ${r.status}）`)
+    if (!ok) failed++
+    retired++
+    continue
+  }
   const res = await fetch(url)
   if (!res.ok) {
     console.log(`✗ ${slug.padEnd(44)} HTTP ${res.status}`)
@@ -215,5 +230,5 @@ for (const file of files) {
   }
 }
 
-console.log(failed ? `\n${failed} 頁有差異` : `\n全部 ${files.length} 頁與 mockup 一致`)
+console.log(failed ? `\n${failed} 頁有差異` : `\n全部 ${files.length - retired} 頁與 mockup 一致（另 ${retired} 頁已移除、確認回應正確）`)
 process.exit(failed ? 1 : 0)
