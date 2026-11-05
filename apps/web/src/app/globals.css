@@ -278,6 +278,9 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .mtable td:first-child{color:var(--grey);font-weight:800;width:30%}
 .mtable td:nth-child(2){width:18%;white-space:nowrap;font-variant-numeric:tabular-nums}
 .mtable td:last-child{color:var(--grey);font-variant-numeric:tabular-nums}
+/* 兩欄版（green-esg 永續目標：目標／時程）：時程是短字，不需要第三欄那種寬度分配 */
+.mtable.cols2 td:first-child{width:60%}
+.mtable.cols2 td:last-child{white-space:nowrap}
 
 /* ---------- industries grid（projects：10 個產業別）----------
    原本是 .flist.plain.cols3 的菱形清單；客戶提供 icon 稿後改成圖示格：
@@ -716,6 +719,7 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
   .mtable tr{display:grid;grid-template-columns:auto 1fr;column-gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
   .mtable td{border:none;padding:0;width:auto!important}
   .mtable td:first-child{grid-column:1/-1;margin-bottom:2px}
+  .mtable.cols2 td:last-child{white-space:normal}
   .prose+.dtitle,.flist+.dtitle,.bullets+.dtitle,.applist+.dtitle,.photorow+.dtitle,.indgrid+.dtitle{padding-top:16px}
   .fab{right:14px;bottom:14px;width:248px}
   .fgrid{grid-template-columns:1fr}

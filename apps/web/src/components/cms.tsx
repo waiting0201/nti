@@ -556,19 +556,21 @@ export function DetailList({ items }: { items: { id: number; title: string; desc
 }
 
 /**
- * 碳效率頁的績效表（mockup 的 `.mtable`）。列的內容已經是該語系的資料，不經過字典
- * （`<T>` 進不了元件內部，跟 DetailList 同理）；表頭是固定字，由呼叫端用 `tr()` 翻好再傳進來。
+ * 後台驅動的資料表（mockup 的 `.mtable`）：碳效率頁績效表（三欄）、ESG 頁永續目標（兩欄）。
+ * 列的內容已經是該語系的資料，不經過字典（`<T>` 進不了元件內部，跟 DetailList 同理）；
+ * 表頭是固定字，由呼叫端用 `tr()` 翻好再傳進來。
  */
-export function MetricTable({ items, head }: {
-  items: { id: number; indicator: string; period: string; result: string }[]
-  head: [string, string, string]
+export function DataTable({ head, rows, className = 'mtable' }: {
+  head: string[]
+  rows: { id: number; cells: string[] }[]
+  className?: string
 }) {
   return (
-    <table className="mtable">
+    <table className={className}>
       <thead><tr>{head.map((h) => <th key={h} scope="col">{h}</th>)}</tr></thead>
       <tbody>
-        {items.map((it) => (
-          <tr key={it.id}><td>{it.indicator}</td><td>{it.period}</td><td>{it.result}</td></tr>
+        {rows.map((r) => (
+          <tr key={r.id}>{r.cells.map((c, i) => <td key={i}>{c}</td>)}</tr>
         ))}
       </tbody>
     </table>

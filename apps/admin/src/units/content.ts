@@ -344,6 +344,33 @@ export const performanceMetric: Unit = {
   ],
 }
 
+/**
+ * 08 的附屬清單：ESG 頁「企業社會責任」上方的「南台彩藝永續目標」表（目標／時程）。
+ * 權限沿用 certification.*，不另開權限碼。
+ */
+export const sustainabilityGoal: Unit = {
+  code: 'sustainability-goal',
+  permUnit: 'certification',
+  no: '08d',
+  title: '永續目標表',
+  group: '內容',
+  phase: 'P4',
+  frontend: 'ESG 與永續目標頁（/green-esg）「企業社會責任」上方的「南台彩藝永續目標」表',
+  note: '一筆＝表格的一列，依排序由上而下顯示、筆數不限；下架的列不顯示，全部下架時整張表（含標題）不顯示。表格標題「南台彩藝永續目標」與表頭「目標／時程」請到「頁面設定與 SEO」的 ESG 頁「頁面文字」修改。',
+  sortable: true,
+  hasStatus: true,
+  fields: [
+    { key: 'goal', label: '目標', type: 'text', i18n: true, required: true, max: 100, side: 'locale', placeholder: 'ISO 50001 能源管理' },
+    { key: 'timeline', label: '時程', type: 'text', i18n: true, required: true, max: 50, side: 'locale', placeholder: '預計 2026',
+      hint: '例：2030、預計 2026、2026 年申請、申請中' },
+  ],
+  columns: [
+    { key: 'goal', label: '目標' },
+    { key: 'timeline', label: '時程', width: '160px' },
+    ...statusColumns,
+  ],
+}
+
 export const client: Unit = {
   code: 'client',
   no: '09',

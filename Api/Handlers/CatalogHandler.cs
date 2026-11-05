@@ -69,6 +69,15 @@ public sealed class CertificationHandler(ICertificationReadService reads)
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
+
+    /// <summary>ESG 頁的「南台彩藝永續目標」表（目標／時程），依排序。</summary>
+    public async Task<IActionResult> GetSustainabilityGoalsAsync(HttpRequest req)
+    {
+        var rows = await reads.GetSustainabilityGoalsAsync(LangResolver.Resolve(req));
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok(rows));
+    }
 }
 
 /// <summary>單元 09 client。</summary>

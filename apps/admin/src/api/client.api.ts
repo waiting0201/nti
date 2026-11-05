@@ -22,11 +22,12 @@ type ApiRow = Record<string, unknown> & {
 /** 報價附件（單筆端點的 `attachments`）。本期不做病毒掃描，沒有 scanStatus。 */
 type ApiAttachment = { id: number; originalName: string; sizeBytes: number }
 
-/** 後台路徑：子清單掛在 `/admin/solution/item`、`/admin/certification/item`、`/admin/certification/metric`，其餘等於單元代號。 */
+/** 後台路徑：子清單掛在 `/admin/solution/item`、`/admin/certification/item`、`/admin/certification/metric`、`/admin/certification/goal`，其餘等於單元代號。 */
 function pathOf(unit: string): string {
   if (unit === 'solution-item') return 'solution/item'
   if (unit === 'certification-item') return 'certification/item'
   if (unit === 'performance-metric') return 'certification/metric'
+  if (unit === 'sustainability-goal') return 'certification/goal'
   return unit
 }
 

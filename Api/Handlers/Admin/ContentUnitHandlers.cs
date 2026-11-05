@@ -125,6 +125,9 @@ public sealed class AdminCertificationItemHandler(AppDbContext db) : AdminConten
 /// <summary>08 的附屬清單：碳效率頁的績效表（路徑 /admin/certification/metric，權限沿用 certification.*）。</summary>
 public sealed class AdminPerformanceMetricHandler(AppDbContext db) : AdminContentHandler<PerformanceMetric, PerformanceMetricI18n>(db);
 
+/// <summary>08 的附屬清單：ESG 頁的永續目標表（路徑 /admin/certification/goal，權限沿用 certification.*）。</summary>
+public sealed class AdminSustainabilityGoalHandler(AppDbContext db) : AdminContentHandler<SustainabilityGoal, SustainabilityGoalI18n>(db);
+
 /// <summary>10 facility。</summary>
 public sealed class AdminFacilityHandler(AppDbContext db) : AdminContentHandler<FacilityItem, FacilityItemI18n>(db);
 

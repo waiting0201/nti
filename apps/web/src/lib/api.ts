@@ -238,6 +238,9 @@ export type CertificationListItem = {
 /** 碳效率頁的績效表（單元 08 附屬清單，2026-11-05 起）：指標／期間／結果都是該語系的字 */
 export type PerformanceMetric = { id: number; indicator: string; period: string; result: string }
 
+/** ESG 頁的「南台彩藝永續目標」表（單元 08 附屬清單，2026-11-05 起）：目標／時程都是該語系的字 */
+export type SustainabilityGoal = { id: number; goal: string; timeline: string }
+
 export type ClientLogo = { id: number; name: string; logoPath: string; linkUrl: string | null }
 
 export type FacilityItem = {
@@ -315,6 +318,8 @@ export const getCertificationItems = (l: Locale) =>
   fetchApi<CertificationListItem[]>(`/certification-items${q(l)}`)
 export const getPerformanceMetrics = (l: Locale) =>
   fetchApi<PerformanceMetric[]>(`/performance-metrics${q(l)}`)
+export const getSustainabilityGoals = (l: Locale) =>
+  fetchApi<SustainabilityGoal[]>(`/sustainability-goals${q(l)}`)
 export const getClients        = (l: Locale) => fetchApi<ClientLogo[]>('/clients')
 export const getJobs           = (l: Locale) => fetchApi<Job[]>(`/careers${q(l)}`)
 

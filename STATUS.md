@@ -199,6 +199,17 @@ mockup 內容（現況部署），設了就改吃 CMS。
 ⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
 清單在該腳本的 `HAND_MAINTAINED`。
 
+### ✅ ESG 頁「企業社會責任」上方加「南台彩藝永續目標」表（2026-11-05）
+
+- `/green-esg` 新增兩欄表（目標／時程），初始 5 列：再生能源 RE60、ISO 50001、ISO 14067、綠色工廠標章、清真認證。
+- 後台新單元 08d「永續目標表」（`sustainability-goal`，API `/admin/certification/goal`），中英分開、可排序／上下架；
+  **權限沿用 `certification.*`**，矩陣不變。全部下架＝整張表（含標題）不顯示。標題與表頭在 15「頁面文字」修改。
+- Schema：EF `SustainabilityGoal`／參考 `0023`（表 +2、FK +1、CHECK +1、索引 +0）。公開端點 `GET /sustainability-goals`。
+- `db/content/360_sustainability_goals.sql`：初始 5 列。中文＝客戶 11-05 清單（「SO 50001」更正為 ISO 50001），
+  **英文是我方翻譯，待客戶確認**。冪等。⬜ 正式庫尚未執行（migration 由 API 啟動時自動套用）。
+- 前台 `MetricTable` 改為通用 `DataTable`（欄數不限），碳效率頁與 ESG 頁共用；CSS 加 `.mtable.cols2`。
+- 驗證：本機 `verify-ef` 全數 PASS；`verify:markup` 全過；接本機 API 實測中英表格、後台新增／下架／刪除、360 重跑不重複；手機寬度無橫向捲動。
+
 ### ✅ 碳效率頁「水資源」下方加績效表（2026-11-05）
 
 - `/green-carbon` 水資源段落下方新增「績效指標」表（指標／期間／結果），客戶可在後台自行更新數字、增減列。

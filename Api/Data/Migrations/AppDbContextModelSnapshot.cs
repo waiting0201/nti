@@ -5265,6 +5265,75 @@ namespace Nti.Api.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Nti.Api.Models.Entities.SustainabilityGoal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(0)")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("SortOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2(0)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SustainabilityGoal", (string)null);
+                });
+
+            modelBuilder.Entity("Nti.Api.Models.Entities.SustainabilityGoalI18n", b =>
+                {
+                    b.Property<int>("SustainabilityGoalId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Lang")
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
+
+                    b.Property<string>("Goal")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Timeline")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("SustainabilityGoalId", "Lang")
+                        .HasName("PK_SustainabilityGoalI18n");
+
+                    b.ToTable("SustainabilityGoalI18n", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_SustainabilityGoalI18n_Lang", "[Lang] IN ('zh','en')");
+                        });
+                });
+
             modelBuilder.Entity("Nti.Api.Models.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -6135,6 +6204,16 @@ namespace Nti.Api.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_SupplierSpecI18n_SupplierSpec");
+                });
+
+            modelBuilder.Entity("Nti.Api.Models.Entities.SustainabilityGoalI18n", b =>
+                {
+                    b.HasOne("Nti.Api.Models.Entities.SustainabilityGoal", null)
+                        .WithMany()
+                        .HasForeignKey("SustainabilityGoalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_SustainabilityGoalI18n_SustainabilityGoal");
                 });
 
             modelBuilder.Entity("Nti.Api.Models.Entities.TagI18n", b =>

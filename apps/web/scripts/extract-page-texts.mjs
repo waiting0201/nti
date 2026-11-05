@@ -95,6 +95,7 @@ const CMS_BLOCKS = {
     /<div class="flist mt-s">[\s\S]*?<\/div>/g,                    // 七個清單：08 的附屬清單（區塊大標仍可覆寫）
   ],
   'green-carbon': [/<tbody>[\s\S]*?<\/tbody>/],                  // 績效表的列：08 附屬清單（標題與表頭仍可覆寫）
+  'green-esg': [/<tbody>[\s\S]*?<\/tbody>/],                     // 永續目標表的列：08 附屬清單（標題與表頭仍可覆寫）
   'facility-pre-press': [between('<div class="pr-grid">', '</div></section>')],
   'facility-eco-printing': [between('<div class="pr-grid">', '</div></section>')],
   'facility-post-press': [between('<div class="pr-grid">', '</div></section>')],

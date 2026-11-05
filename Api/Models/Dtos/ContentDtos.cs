@@ -197,6 +197,15 @@ public sealed class PerformanceMetricDto
     public string Result    { get; set; } = null!;
 }
 
+/// <summary>ESG 頁「南台彩藝永續目標」表的一列（單元 08 附屬清單）。</summary>
+public sealed class SustainabilityGoalDto
+{
+    public int    Id        { get; set; }
+    public int    SortOrder { get; set; }
+    public string Goal      { get; set; } = null!;
+    public string Timeline  { get; set; } = null!;
+}
+
 /// <summary>客戶 logo（後台單元 09）。品牌名不翻譯，<see cref="Name"/> 同時作為 alt。</summary>
 public sealed class ClientLogoDto
 {

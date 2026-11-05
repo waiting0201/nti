@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import { T } from '@/lib/t'
-import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
-import { PageBanner, PageMidBanner } from '@/components/cms'
+import { T, tr } from '@/lib/t'
+import { bannerSrc, getPage, getSustainabilityGoals, midBannerSrc } from '@/lib/api'
+import { DataTable, PageBanner, PageMidBanner } from '@/components/cms'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
@@ -20,6 +20,10 @@ export default async function Page({ params }: Props) {
   const { locale } = await params
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
   const page = await getPage(locale, "green-esg")
+  // 「企業社會責任」上方的永續目標表（單元 08 附屬清單）。沒接 API 是 null → 照 mockup 原文；
+  // 有接 API 但 0 筆 → 整塊不輸出
+  const goals = await getSustainabilityGoals(locale)
+  const head = ["Goal", "Timeline"].map((h) => tr(locale, h, page?.texts))
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
@@ -42,6 +46,23 @@ export default async function Page({ params }: Props) {
           <p className="prose mt-s">As a sustainable packaging manufacturer committed to responsible printing, NTI Printing is aligning its ESG packaging roadmap with the UN Sustainable Development Goals (SDGs) and evaluating Science-Based Targets (SBTi) status.</p>
         </div>
       </div></section>
+      {goals?.length !== 0 && (
+      <section className="section tight"><div className="wrap reveal">
+        <div className="dtitle">NTI Sustainability Goals</div>
+        {goals ? <DataTable className="mtable cols2" head={head} rows={goals.map((g) => ({ id: g.id, cells: [g.goal, g.timeline] }))} /> : (
+        <table className="mtable cols2">
+          <thead><tr><th scope="col">Goal</th><th scope="col">Timeline</th></tr></thead>
+          <tbody>
+            <tr><td>Renewable energy RE60</td><td>2030</td></tr>
+            <tr><td>ISO&nbsp;50001 Energy Management</td><td>Expected 2026</td></tr>
+            <tr><td>ISO&nbsp;14067 Product Carbon Footprint</td><td>Expected 2026</td></tr>
+            <tr><td>Green Factory Label</td><td>Applying in 2026</td></tr>
+            <tr><td>Halal certification</td><td>In progress</td></tr>
+          </tbody>
+        </table>
+        )}
+      </div></section>
+      )}
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Corporate Social Responsibility</div>
         <p className="prose wide">Corporate social responsibility is a continuing commitment to behave ethically and contribute to economic development, while improving the quality of life of the workforce and their families as well as the local community and society at large. NTI encourages its staff to take part in philanthropy, community volunteering and environmental clean-up work &mdash; the CSR programme is an extension of how the company already operates, not a separate initiative.</p>

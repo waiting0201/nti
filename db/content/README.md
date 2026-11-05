@@ -246,6 +246,19 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/300_keep_en_h1.sql
 sqlcmd -S <server> -d NTI -I -b -i db/content/310_cert_detail_list.sql
 ```
 
+## 360_sustainability_goals.sql
+
+`/green-esg`「企業社會責任」上方的「南台彩藝永續目標」表改由資料驅動（2026-11-05）。手寫、冪等；
+**須先套用 EF migration `SustainabilityGoal`**（或參考版 `0023`）：
+
+- 建 5 列 `SustainabilityGoal`（目標／時程）。中文＝客戶 11-05 清單（「SO 50001」更正為 ISO 50001），
+  英文＝我方翻譯（與 `mockup/green-esg.html` 一致），待客戶確認。
+- 表裡已有任何一筆（含後台新增的）就整批不動。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/360_sustainability_goals.sql
+```
+
 ## 350_performance_metrics.sql
 
 `/green-carbon`「水資源」下方的績效表改由資料驅動（2026-11-05）。手寫、冪等；**須先套用 EF migration

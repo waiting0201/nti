@@ -141,6 +141,7 @@ var host = new HostBuilder()
         services.AddScoped<AdminCertificationHandler>();
         services.AddScoped<AdminCertificationItemHandler>();
         services.AddScoped<AdminPerformanceMetricHandler>();
+        services.AddScoped<AdminSustainabilityGoalHandler>();
         services.AddScoped<AdminClientHandler>();
         services.AddScoped<AdminFacilityHandler>();
         services.AddScoped<AdminJobHandler>();

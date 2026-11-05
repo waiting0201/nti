@@ -132,6 +132,9 @@ public sealed partial class AppRouter
             // 08 的附屬清單（碳效率頁績效表）：同上，權限沿用 certification.*
             _ when segments is ["admin", "certification", "metric", ..] =>
                 await Content(adminPerformanceMetrics, req, method, segments[1..]),
+            // 08 的附屬清單（ESG 頁永續目標表）：同上
+            _ when segments is ["admin", "certification", "goal", ..] =>
+                await Content(adminSustainabilityGoals, req, method, segments[1..]),
             _ when segments is ["admin", "certification", ..]     => await Content(adminCertifications, req, method, segments),
             _ when segments is ["admin", "facility", ..]          => await Content(adminFacility, req, method, segments),
             _ when segments is ["admin", "job", ..]               => await Content(adminJobs, req, method, segments),

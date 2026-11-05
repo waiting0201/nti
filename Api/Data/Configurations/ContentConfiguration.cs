@@ -134,6 +134,29 @@ public sealed class PerformanceMetricI18nConfiguration : IEntityTypeConfiguratio
     }
 }
 
+/// <summary>單元 08 的附屬清單：ESG 頁的「南台彩藝永續目標」表（docs/08 §4.8）。</summary>
+public sealed class SustainabilityGoalConfiguration : IEntityTypeConfiguration<SustainabilityGoal>
+{
+    public void Configure(EntityTypeBuilder<SustainabilityGoal> b)
+    {
+        b.ToTable("SustainabilityGoal");
+        b.Property(x => x.SortOrder).HasDefaultValue(0);
+        b.Property(x => x.IsPublished).HasDefaultValue(true);
+        b.Audit();
+        // 同 PerformanceMetric：幾列的小表，不另建索引
+    }
+}
+
+public sealed class SustainabilityGoalI18nConfiguration : IEntityTypeConfiguration<SustainabilityGoalI18n>
+{
+    public void Configure(EntityTypeBuilder<SustainabilityGoalI18n> b)
+    {
+        b.I18nOf<SustainabilityGoalI18n, SustainabilityGoal>(nameof(SustainabilityGoalI18n.SustainabilityGoalId));
+        b.Property(x => x.Goal).HasMaxLength(100);
+        b.Property(x => x.Timeline).HasMaxLength(50);
+    }
+}
+
 /// <summary>單元 09 client（docs/08 §4.8）。無 i18n 側表：品牌名不翻譯。</summary>
 public sealed class ClientLogoConfiguration : IEntityTypeConfiguration<ClientLogo>
 {

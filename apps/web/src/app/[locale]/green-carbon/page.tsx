@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { T, tr } from '@/lib/t'
 import { bannerSrc, getPage, getPerformanceMetrics, midBannerSrc } from '@/lib/api'
-import { MetricTable, PageBanner, PageMidBanner } from '@/components/cms'
+import { DataTable, PageBanner, PageMidBanner } from '@/components/cms'
 import { A } from '@/components/A'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -22,7 +22,7 @@ export default async function Page({ params }: Props) {
   // 「水資源」下方的績效表（單元 08 附屬清單）。沒接 API 是 null → 照 mockup 原文；
   // 有接 API 但 0 筆 → 整塊不輸出（客戶下架全部＝不要這塊）
   const metrics = await getPerformanceMetrics(locale)
-  const head = (["Indicator", "Period", "Result"] as const).map((h) => tr(locale, h, page?.texts)) as [string, string, string]
+  const head = ["Indicator", "Period", "Result"].map((h) => tr(locale, h, page?.texts))
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
@@ -57,7 +57,7 @@ export default async function Page({ params }: Props) {
       {metrics?.length !== 0 && (
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Performance Indicators</div>
-        {metrics ? <MetricTable items={metrics} head={head} /> : (
+        {metrics ? <DataTable head={head} rows={metrics.map((m) => ({ id: m.id, cells: [m.indicator, m.period, m.result] }))} /> : (
         <table className="mtable">
           <thead><tr><th scope="col">Indicator</th><th scope="col">Period</th><th scope="col">Result</th></tr></thead>
           <tbody>

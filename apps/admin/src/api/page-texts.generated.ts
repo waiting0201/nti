@@ -3947,6 +3947,27 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
+        "en": "NTI Sustainability Goals",
+        "zh": "南台彩藝永續目標",
+        "kind": "text",
+        "section": "NTI Sustainability Goals",
+        "count": 1
+      },
+      {
+        "en": "Goal",
+        "zh": "目標",
+        "kind": "text",
+        "section": "NTI Sustainability Goals",
+        "count": 1
+      },
+      {
+        "en": "Timeline",
+        "zh": "時程",
+        "kind": "text",
+        "section": "NTI Sustainability Goals",
+        "count": 1
+      },
+      {
         "en": "Corporate Social Responsibility",
         "zh": "企業社會責任",
         "kind": "text",

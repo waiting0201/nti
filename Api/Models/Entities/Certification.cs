@@ -89,3 +89,28 @@ public sealed class PerformanceMetricI18n : II18n
     public string Period              { get; set; } = null!;   // 期間：2024 年／2026 / 2030／現況
     public string Result              { get; set; } = null!;   // 結果：2,141 公噸 CO₂e（直接 314、能源間接 1,827）
 }
+
+/// <summary>
+/// ESG 頁的「南台彩藝永續目標」表（後台單元 08 的附屬清單，2026-11-05 加）：一列＝目標／時程。
+/// 掛在 /green-esg「企業社會責任」上方；兩欄都分語系。權限沿用 certification.*。
+/// </summary>
+public sealed class SustainabilityGoal : IAuditable
+{
+    public int    Id          { get; set; }
+    public int    SortOrder   { get; set; }
+    public bool   IsPublished { get; set; } = true;
+
+    public DateTime  CreatedAt { get; set; }
+    public int?      CreatedBy { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public int?      UpdatedBy { get; set; }
+    public bool      IsDeleted { get; set; }
+}
+
+public sealed class SustainabilityGoalI18n : II18n
+{
+    public int    SustainabilityGoalId { get; set; }
+    public string Lang                 { get; set; } = null!;
+    public string Goal                 { get; set; } = null!;   // 目標：ISO 50001 能源管理
+    public string Timeline             { get; set; } = null!;   // 時程：預計 2026／申請中
+}

@@ -9,6 +9,7 @@ public interface ICertificationReadService
     Task<IEnumerable<CertificationDto>> GetPublishedAsync(string lang, bool homeOnly = false);
     Task<IEnumerable<CertificationListItemDto>> GetListItemsAsync(string lang);
     Task<IEnumerable<PerformanceMetricDto>> GetPerformanceMetricsAsync(string lang);
+    Task<IEnumerable<SustainabilityGoalDto>> GetSustainabilityGoalsAsync(string lang);
 }
 
 /// <summary>認證／夥伴／獎項（後台單元 08）。首頁 Proof 認證牆與 certifications 頁共用。</summary>
@@ -51,6 +52,15 @@ public sealed class CertificationReadService(IDbConnection db) : ICertificationR
             SELECT t.Id, t.SortOrder, i.Indicator, i.Period, i.Result
             FROM PerformanceMetric t
             INNER JOIN PerformanceMetricI18n i ON i.PerformanceMetricId = t.Id AND i.Lang = @Lang
+            WHERE {Common.Sql.PublicFlag("t")}
+            ORDER BY t.SortOrder, t.Id
+            """, new { Lang = lang });
+
+    public async Task<IEnumerable<SustainabilityGoalDto>> GetSustainabilityGoalsAsync(string lang) =>
+        await db.QueryAsync<SustainabilityGoalDto>($"""
+            SELECT t.Id, t.SortOrder, i.Goal, i.Timeline
+            FROM SustainabilityGoal t
+            INNER JOIN SustainabilityGoalI18n i ON i.SustainabilityGoalId = t.Id AND i.Lang = @Lang
             WHERE {Common.Sql.PublicFlag("t")}
             ORDER BY t.SortOrder, t.Id
             """, new { Lang = lang });

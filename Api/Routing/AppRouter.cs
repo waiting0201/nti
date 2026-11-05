@@ -55,6 +55,7 @@ public sealed partial class AppRouter(
     AdminCertificationHandler    adminCertifications,
     AdminCertificationItemHandler adminCertificationItems,
     AdminPerformanceMetricHandler adminPerformanceMetrics,
+    AdminSustainabilityGoalHandler adminSustainabilityGoals,
     AdminClientHandler           adminClients,
     AdminFacilityHandler         adminFacility,
     AdminJobHandler              adminJobs,

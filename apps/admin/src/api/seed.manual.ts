@@ -92,6 +92,20 @@ export const MANUAL_SEED: Record<string, Row[]> = {
                { indicator: 'Affordable green power', period: 'From 2026', result: '205,000 kWh / year awarded' }) },
   ],
 
+  // ESG 頁永續目標表（08 附屬清單）：與 db/content/360_sustainability_goals.sql 同一份
+  'sustainability-goal': [
+    { id: '1', sortOrder: 10, isPublished: true,
+      i18n: bi({ goal: '再生能源 RE60', timeline: '2030' }, { goal: 'Renewable energy RE60', timeline: '2030' }) },
+    { id: '2', sortOrder: 20, isPublished: true,
+      i18n: bi({ goal: 'ISO 50001 能源管理', timeline: '預計 2026' }, { goal: 'ISO 50001 Energy Management', timeline: 'Expected 2026' }) },
+    { id: '3', sortOrder: 30, isPublished: true,
+      i18n: bi({ goal: 'ISO 14067 產品碳足跡', timeline: '預計 2026' }, { goal: 'ISO 14067 Product Carbon Footprint', timeline: 'Expected 2026' }) },
+    { id: '4', sortOrder: 40, isPublished: true,
+      i18n: bi({ goal: '綠色工廠標章', timeline: '2026 年申請' }, { goal: 'Green Factory Label', timeline: 'Applying in 2026' }) },
+    { id: '5', sortOrder: 50, isPublished: true,
+      i18n: bi({ goal: '清真認證', timeline: '申請中' }, { goal: 'Halal certification', timeline: 'In progress' }) },
+  ],
+
   'supplier-download': [
     {
       id: '1', sortOrder: 10, isPublished: true,

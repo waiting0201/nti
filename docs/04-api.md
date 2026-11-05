@@ -74,7 +74,7 @@
 
 - `GET /content/home`（Banner、Solutions 卡、Proof 認證牆、Clients）
 - `GET /solutions`、`GET /solutions/{slug}`（含品項卡）
-- `GET /projects`（分類篩選）、`GET /facility?group={code}`、`GET /certifications`、`GET /certification-items`、`GET /performance-metrics`、`GET /clients`
+- `GET /projects`（分類篩選）、`GET /facility?group={code}`、`GET /certifications`、`GET /certification-items`、`GET /performance-metrics`、`GET /sustainability-goals`、`GET /clients`
 - `GET /categories?type={CategoryType}`（下拉／篩選選項來源；`type` 值域為 `08-database.md` §4.1 的九種 `CategoryType`）——供 `projects.html` 的分類篩選與 Industries 清單、`get-a-quote` 的產業與材質下拉、`faq` 分組使用
 - `GET /news`、`GET /news/{slug}`、`GET /green-vlog`
   - `GET /news` 另吃 `?tag={slug}`（標籤封存頁用；slug 不分語系，中英同一個值）
@@ -206,6 +206,7 @@
 | 2026-09-09 | Tim（Claude Code） | **後台管理員密碼改為直接指定**：`POST /admin/admin` 新增必填 `password`（至少 6 碼），回應不再帶 `data.initialPassword`；新增 `PUT /admin/admin/{id}/password`（`admin.edit`）重設密碼。兩者都不寄信——啟用信與初始密碼轉交的那套流程整個移除。`Api/openapi.yaml` 已同步 |
 | 2026-09-10 | Tim（Claude Code） | 新增 **`POST /admin/{unit}/upload-file`**（文件：PDF／DOCX／XLSX／ZIP，≤20MB，權限同 `{unit}.edit`）。原本只有一支 `/upload` 且白名單寫死圖片，公告附件與供應商下載檔（docs/09 §3 就寫明收 PDF／XLSX／DOCX／ZIP）接上 API 後會一律被退成 `UPLOAD_TYPE`。不把 zip／docx 併進 `/upload` 的白名單，是因為那會讓圖片欄位也開始收壓縮檔。`Api/openapi.yaml` 已同步 |
 | 2026-09-11 | Tim（Claude Code） | **快取標頭全面改 `no-store`**：前台跟著拿掉 ISR（見 docs/02），留著沒有人遵守的 `s-maxage=300` 只會在哪天中間冒出一層共用快取時，讓「後台改了前台沒變」以無法重現的方式回來 |
+| 2026-11-05 | Tim（Claude Code） | 新增 `GET /sustainability-goals`（ESG 頁永續目標表，每筆 `id`／`sortOrder`／`goal`／`timeline`，依排序）。後台 `/admin/certification/goal` 沿用 `certification.*`，權限矩陣不變。`Api/openapi.yaml` 已同步 |
 
 *最後更新：2026-09-11*
 

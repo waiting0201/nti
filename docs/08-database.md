@@ -98,7 +98,7 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 |----|--------|
 | 共用主檔 | `Category`、`CategoryI18n`、`SiteSetting` |
 | 首頁 | `HomeBanner`、`HomeBannerI18n` |
-| 內容 | `Solution`(+I18n)、`SolutionItem`(+I18n)、`Project`(+I18n)、`News`(+I18n)、`Vlog`(+I18n)、`Faq`(+I18n)、`IndustryTrend`(+I18n)、`Certification`(+I18n)、`CertificationListItem`(+I18n)、`PerformanceMetric`(+I18n)、`ClientLogo`、`FacilityItem`(+I18n)、`JobPosting`(+I18n) |
+| 內容 | `Solution`(+I18n)、`SolutionItem`(+I18n)、`Project`(+I18n)、`News`(+I18n)、`Vlog`(+I18n)、`Faq`(+I18n)、`IndustryTrend`(+I18n)、`Certification`(+I18n)、`CertificationListItem`(+I18n)、`PerformanceMetric`(+I18n)、`SustainabilityGoal`(+I18n)、`ClientLogo`、`FacilityItem`(+I18n)、`JobPosting`(+I18n) |
 | 供應商 | `SupplierNotice`(+I18n)、`SupplierSpec`(+I18n)、`SupplierDownload`(+I18n) |
 | 頁面／SEO | `Page`、`PageI18n`、`PageText`（2026-09-24 新增，頁面文字覆寫）、`Redirect` |
 | 表單 | `QuoteRequest`、`QuoteAttachment`、`ContactMessage` |
@@ -399,6 +399,23 @@ CREATE TABLE dbo.PerformanceMetricI18n (
   Period NVARCHAR(50) NOT NULL,            -- 2024 年（單位中英寫法不同，所以也分語系）
   Result NVARCHAR(200) NOT NULL,           -- 2,141 公噸 CO₂e（直接 314、能源間接 1,827）
   CONSTRAINT PK_PerformanceMetricI18n PRIMARY KEY (PerformanceMetricId, Lang)
+);
+
+-- green-esg「企業社會責任」上方的「南台彩藝永續目標」表：目標／時程（2026-11-05，0023）
+-- 後台是單元 08 的附屬清單（權限沿用 certification.*）。不另建索引
+CREATE TABLE dbo.SustainabilityGoal (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  SortOrder INT NOT NULL DEFAULT 0,
+  IsPublished BIT NOT NULL DEFAULT 1,
+  /* audit */
+);
+
+CREATE TABLE dbo.SustainabilityGoalI18n (
+  SustainabilityGoalId INT NOT NULL REFERENCES dbo.SustainabilityGoal(Id) ON DELETE CASCADE,
+  Lang VARCHAR(5) NOT NULL,
+  Goal NVARCHAR(100) NOT NULL,             -- ISO 50001 能源管理
+  Timeline NVARCHAR(50) NOT NULL,          -- 預計 2026／申請中
+  CONSTRAINT PK_SustainabilityGoalI18n PRIMARY KEY (SustainabilityGoalId, Lang)
 );
 
 -- 客戶 logo 輪播（品牌名不翻譯，無 i18n 表）
@@ -939,6 +956,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-10-25 | Tim（Claude Code） | §4.11：新增 `PageGalleryImage`（工廠導覽英文版的相簿照片，改在單元 15 上傳）。表 +1、外鍵 +1（CASCADE）、CHECK +1、索引 +1。`Category` Facility/tour 停用，原本那幾筆 `FacilityItem` 搬過來後刪除。遷移 `Api/Data/Migrations/*_PageGallery` 與 `db/migrations/0020_page_gallery.sql` 一對一；`verify*.sql` 數字同步 |
 | 2026-10-30 | Tim（Claude Code） | §4.8：`CertificationListItem.Section` 改為七個區塊（management／quality／material／building／membership／award／partner）；standards 併入 quality、gmi 軟刪除。表數與 CHECK 數不變。遷移 `Api/Data/Migrations/*_CertificationListSections` 與 `db/migrations/0021_certification_list_sections.sql` 一對一；`ShowInDetailList` 不再使用 |
 | 2026-11-05 | Tim（Claude Code） | §4.8：新增 `PerformanceMetric`(+I18n)（碳效率頁績效表）。表數 +2、外鍵 +1（CASCADE +1）、CHECK +1、非 PK/UQ 索引 +0。遷移 `Api/Data/Migrations/*_PerformanceMetric` 與 `db/migrations/0022_performance_metric.sql` 一對一；`verify*.sql` 數字同步 |
+| 2026-11-05 | Tim（Claude Code） | §4.8：新增 `SustainabilityGoal`(+I18n)（ESG 頁永續目標表）。表數 +2、外鍵 +1（CASCADE +1）、CHECK +1、非 PK/UQ 索引 +0。遷移 `Api/Data/Migrations/*_SustainabilityGoal` 與 `db/migrations/0023_sustainability_goal.sql` 一對一；`verify*.sql` 數字同步 |
 
 *最後更新：2026-11-05*
 
