@@ -4,7 +4,6 @@ import { T } from '@/lib/t'
 import { withLocale, type Locale } from '@/lib/i18n'
 import { mediaUrl } from '@/lib/media'
 import { getSettingMap, telHref } from '@/lib/site-settings'
-import { CAREERS_104_URL } from '@/lib/careers'
 
 /**
  * 三個社群圖示。路徑與尺寸逐字取自 mockup，只有 `href` 改成吃網站設定。
@@ -84,7 +83,7 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
             <A href={l('/printing-projects')}>Projects</A>{' '}
             {locale === 'zh' && (
               <>
-                <a href={CAREERS_104_URL} target="_blank" rel="noopener noreferrer">Careers</a>{' '}
+                <A href={l('/careers')}>Careers</A>{' '}
               </>
             )}
             <A href={l('/privacy-legal')}>Privacy &amp; Legal</A>

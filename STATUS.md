@@ -216,12 +216,12 @@ mockup 內容（現況部署），設了就改吃 CMS。
 - 社群圖示改為 **Facebook／Instagram／YouTube**：`social.linkedin` 換成 `social.instagram`
   （EF migration `SocialInstagram`；LinkedIn 從未填過值）。⬜ **IG、YouTube 網址待客戶提供**——
   接 CMS 後沿用「填了才顯示」，客戶在後台「網站設定 → 社群」填上前，正式站只會出現 FB。
-- 人才招募：**中文**頁尾連結直接外連 [104 公司頁](https://www.104.com.tw/company/afcnm08?jobsource=index_s_cs)，
-  `/careers` 301 到 104；**英文**移除連結，`/en/careers` 回 404；sitemap 不再列 `/careers`。
-  常數與說明集中在 `apps/web/src/lib/careers.ts`。`careers/page.tsx` 與 mockup 那頁保留（要恢復只需拿掉 middleware 那段）。
-  後台「職缺」單元目前前台已無出口。
+- 人才招募（同日修正）：**中文**保留站內 `/careers` 頁（頁尾連到站內），職缺清單最下方加「更多訊息」
+  外連 [104 公司頁](https://www.104.com.tw/company/afcnm08?jobsource=index_s_cs)；**英文**移除連結、`/en/careers` 回 404；
+  sitemap 與 hreflang 只列中文。常數與說明集中在 `apps/web/src/lib/careers.ts`（`ZH_ONLY_ROUTES`）。
+  （第一版是中文頁尾直接外連 104、`/careers` 301 到 104，客戶隨即改回保留站內頁。）
 - mockup 44 頁頁尾同步改（`.faddr` 樣式加在 site.css／globals.css／index.html／home.css）。
-- 驗證：`verify:markup` 43 頁一致＋careers 確認為 404。正式庫不用手動跑 migration：API 部署後啟動時 `MigrateAsync()` 自動套用 `SocialInstagram`。
+- 驗證：`verify:markup` 43 頁一致＋`/en/careers` 確認為 404。正式庫不用手動跑 migration：API 部署後啟動時 `MigrateAsync()` 自動套用 `SocialInstagram`。
 
 ### ✅ 依客戶《NTI WEBSITE 調整》改選單與首頁服務流程（2026-10-21）
 

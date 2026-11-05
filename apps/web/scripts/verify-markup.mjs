@@ -160,10 +160,11 @@ function applyAccepted(seq, file, part) {
 }
 
 /**
- * 站上已移除、但 mockup 還留著的頁（src/lib/careers.ts 的 RETIRED_ROUTES）。
- * `/en/careers` 現在是刻意的 404（中文 301 到 104），比對它沒有意義；改成確認它真的是 404。
+ * 只有中文版的頁（src/lib/careers.ts 的 ZH_ONLY_ROUTES）。驗收閘跑的是 /en，
+ * 而 `/en/careers` 是刻意的 404，比對它沒有意義；改成確認它真的是 404。
+ * 跑 /zh 時照常比對。
  */
-const RETIRED = new Set(['careers'])
+const RETIRED = new Set(locale === 'en' ? ['careers'] : [])
 
 const files = readdirSync(mockupDir).filter((f) => f.endsWith('.html')).sort()
 let failed = 0
@@ -174,7 +175,7 @@ for (const file of files) {
   const url = slug === 'index' ? `${base}/${locale}` : `${base}/${locale}/${slug}`
   if (RETIRED.has(slug)) {
     const r = await fetch(url, { redirect: 'manual' })
-    const ok = locale === 'en' ? r.status === 404 : r.status === 301 || r.status === 308
+    const ok = r.status === 404
     console.log(`${ok ? '✓' : '✗'} ${slug.padEnd(44)} 已移除（HTTP ${r.status}）`)
     if (!ok) failed++
     retired++

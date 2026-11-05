@@ -172,6 +172,7 @@ export const ZH: Record<string, string> = {
   "Stable orders from international brands": "來自國際品牌的穩定訂單",
   "A real, audited sustainability programme": "真正經過稽核的永續計畫",
   "Open positions": "開放職缺",
+  "More information": "更多訊息",
   "Offset Press Operator — Tainan plant": "平版印刷機操作員 —— 台南廠",
   "Run and maintain sheet-fed offset presses to ISO 12647-2 colour standards. Experience on Heidelberg equipment preferred; we will train the right candidate on our colour management workflow. Shift allowance applies.": "依 ISO 12647-2 色彩標準操作與維護單張平版印刷機。具海德堡設備經驗者尤佳；合適的人選我們會提供色彩管理流程訓練。另有輪班津貼。",
   "Prepress / Colour Management Engineer": "製版／色彩管理工程師",

@@ -4,6 +4,7 @@ import { A } from '@/components/A'
 import { JobList, PageBanner } from '@/components/cms'
 import { bannerSrc, getJobs, getPage } from '@/lib/api'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
+import { CAREERS_104_URL } from '@/lib/careers'
 
 type Props = { params: Promise<{ locale: Locale }> }
 
@@ -47,6 +48,8 @@ export default async function Page({ params }: Props) {
         </div>
         </>
         )}
+        {/* 職缺清單最下方外連 104 公司頁（客戶 2026-11-05）；本頁只有中文版，英文 404 */}
+        <p className="mt-m reveal"><a href={CAREERS_104_URL} target="_blank" rel="noopener noreferrer" className="tour-more">More information<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a></p>
         <div className="faq-cta reveal mt-l">
           <div><h3>Nothing matching your skills?</h3><p>Send us your CV anyway &mdash; we hire ahead of the posting when someone is right.</p></div>
           <A href={l("/contact")} className="btn btn-solid">Contact us</A>

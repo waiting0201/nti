@@ -3,7 +3,7 @@ import { PREFIXLESS_LOCALE, localePath, locales, type Locale } from '@/lib/i18n'
 import { lookupLegacy } from '@/lib/legacy-redirects'
 import { RENAMED_SLUGS } from '@/lib/renamed-slugs'
 import { ROUTES } from '@/lib/routes'
-import { CAREERS_104_URL } from '@/lib/careers'
+import { ZH_ONLY_ROUTES } from '@/lib/careers'
 
 /**
  * 這條（去掉語系前綴的）路徑是不是站上真的有的頁面。
@@ -103,13 +103,10 @@ export function middleware(req: NextRequest) {
   const rest = (prefixed ? pathname.slice(1 + prefixed.length) : pathname).replace(/\/$/, '') || '/'
 
   /*
-   * 人才招募（客戶 2026-11-05 決定）：中文版搬到 104 的公司頁，英文版移除。
-   * 頁尾連結已直接外連 104（SiteFooter.tsx）；這裡接住直接打網址、書籤與搜尋引擎的舊索引。
-   * `careers/page.tsx` 與 `ROUTES` 裡的 `/careers` 留著不刪：mockup 還有那一頁，
-   * 刪了 build-pages 下次產生又會長回來；要恢復時拿掉這段就好。
+   * 只有中文版的頁（lib/careers.ts 的 ZH_ONLY_ROUTES，目前是人才招募）：英文版回 404。
+   * `ROUTES` 與 mockup 裡的 `/careers` 留著不刪——刪了 build-pages 下次產生又會長回來。
    */
-  if (rest === '/careers') {
-    if (current === PREFIXLESS_LOCALE) return NextResponse.redirect(CAREERS_104_URL, 301)
+  if (ZH_ONLY_ROUTES.includes(rest) && current !== 'zh') {
     const notFound = req.nextUrl.clone()
     notFound.pathname = `/${current}/page-not-found`
     return NextResponse.rewrite(notFound, { status: 404 })

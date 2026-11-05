@@ -3,6 +3,7 @@ import { cmsMedia, getPage } from './api'
 import { tr } from './t'
 import { mediaUrl } from './media'
 import { PAGE_KEY_BY_PATH } from './pages'
+import { ZH_ONLY_ROUTES } from './careers'
 
 export const locales = ['en', 'zh'] as const
 export type Locale = (typeof locales)[number]
@@ -121,11 +122,14 @@ export async function pageMetadata(
 
     alternates: {
       canonical,
-      languages: {
-        en: localeUrl('en', path),
-        'zh-Hant': localeUrl('zh', path),
-        'x-default': localeUrl('en', path),
-      },
+      // 只有中文版的頁（lib/careers.ts）不宣告英文版：指向 404 的 hreflang 會讓 Google 整組都不信
+      languages: ZH_ONLY_ROUTES.includes(path)
+        ? { 'zh-Hant': localeUrl('zh', path) }
+        : {
+            en: localeUrl('en', path),
+            'zh-Hant': localeUrl('zh', path),
+            'x-default': localeUrl('en', path),
+          },
     },
   }
 }
