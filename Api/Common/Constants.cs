@@ -371,6 +371,14 @@ public static class PageMidBannerPages
     public static int Of(string pageKey) => Count.TryGetValue(pageKey, out var n) ? n : 0;
 }
 
+/// <summary>EmailLog.MailType 的值域（docs/08 §4.14）。重寄靠它決定要從哪張表重組內容。</summary>
+public static class MailTypes
+{
+    public const string QuoteNotify   = "QuoteNotify";    // 報價 → NTI 內部
+    public const string QuoteConfirm  = "QuoteConfirm";   // 報價 → 填表客戶
+    public const string ContactNotify = "ContactNotify";  // 聯絡 → NTI 內部
+}
+
 /// <summary>報價單狀態（docs/03 §3）。</summary>
 public static class QuoteStatuses
 {

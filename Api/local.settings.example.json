@@ -19,6 +19,8 @@
     "Smtp__User": "REPLACE_WITH_SMTP_USER",
     "Smtp__Password": "REPLACE_WITH_SMTP_PASSWORD",
     "Smtp__From": "REPLACE_WITH_FROM_ADDRESS",
+    "_comment_mail": "Mail__AdminUrl 選填：通知信裡「到後台查看」的網址前綴。Smtp__PickupDirectory 只限本機：設了就不寄信，改寫 .eml 到該資料夾看排版",
+    "Mail__AdminUrl": "http://localhost:3000/admin",
     "Recaptcha__SecretKey": "REPLACE_WITH_RECAPTCHA_SECRET",
     "Recaptcha__MinScore": "0.5",
     "PublishScheduleCron": "0 */5 * * * *",

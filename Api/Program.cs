@@ -77,6 +77,7 @@ var host = new HostBuilder()
         services.AddScoped<AppRouter>();
         services.AddHttpContextAccessor();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IFormMailService, FormMailService>();
         services.AddScoped<IRateLimitService, RateLimitService>();
         services.AddScoped<IQuoteNumberGenerator, QuoteNumberGenerator>();
 

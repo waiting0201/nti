@@ -19,7 +19,7 @@ public sealed class FormHandler(
     AppDbContext           db,
     IQuoteNumberGenerator  quoteNumbers,
     IBlobStorageService    blobs,
-    IEmailService          email,
+    IFormMailService       mails,
     IBotCheckService       botCheck,
     IRateLimitService      rateLimit,
     ILogger<FormHandler>   logger)
@@ -69,7 +69,8 @@ public sealed class FormHandler(
         var attachments = await UploadAttachmentsAsync(files);
 
         await SaveQuoteWithRetryAsync(quote, attachments);
-        await SendQuoteMailsAsync(quote);
+        // 寄信失敗不影響已回 200 的提交（docs/10 §9.4），失敗只留在 EmailLog 等後台重寄
+        await mails.SendQuoteMailsAsync(quote.Id);
 
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(new QuoteCreatedDto { QuoteNo = quote.QuoteNo }));
@@ -108,8 +109,7 @@ public sealed class FormHandler(
         db.ContactMessage.Add(message);
         await db.SaveChangesAsync();
 
-        await email.SendAsync("ContactNotify", NotifyAddress("mail.contact_notify_to"), $"[NTI] 新的聯絡訊息：{message.Name}",
-            $"<p>{System.Net.WebUtility.HtmlEncode(message.Message)}</p>", nameof(ContactMessage), message.Id);
+        await mails.SendContactNotifyAsync(message.Id);
 
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok("Success"));
@@ -262,38 +262,6 @@ public sealed class FormHandler(
             }
         }
     }
-
-    private async Task SendQuoteMailsAsync(QuoteRequest quote)
-    {
-        // 寄信失敗不影響已回 200 的提交（docs/10 §9.4），失敗只留在 EmailLog 等後台重寄
-        await email.SendAsync("QuoteNotify", NotifyAddress("mail.quote_notify_to"), $"[NTI] 新的報價需求 {quote.QuoteNo}",
-            $"<p>{System.Net.WebUtility.HtmlEncode(quote.Company)}／{System.Net.WebUtility.HtmlEncode(quote.FullName)}</p>",
-            nameof(QuoteRequest), quote.Id);
-
-        await email.SendAsync("QuoteConfirm", quote.Email, $"[NTI] 我們已收到您的報價需求 {quote.QuoteNo}",
-            $"<p>單號 {quote.QuoteNo}</p>", nameof(QuoteRequest), quote.Id);
-    }
-
-    /// <summary>
-    /// 表單通知信的收件者。實際位址存在 <c>SiteSetting</c> 的 Mail 群組（前台不外露），
-    /// 兩種表單各有各的 key，由呼叫端指定；讀不到才退回下面的預設。
-    /// <para>
-    /// ⚠ 收件者**一定要走設定**：報價通知原本是寫死的 <c>quote@nti-printing.com</c>，
-    /// 那個位址在整個專案裡沒有出處，而後台的「報價通知收件者」怎麼填都不會被讀到——
-    /// 客戶改了設定、信照樣寄到別處，而且畫面上不會有任何異狀。
-    /// </para>
-    /// <para>
-    /// 退路是聯絡頁公布的信箱（reference/現有網站盤點與內容遷移.md D1）。設定被清空時
-    /// 至少還有人收得到，不會把詢價默默丟掉。
-    /// </para>
-    /// </summary>
-    private const string FallbackRecipient = "service@nti-printing.com";
-
-    private string NotifyAddress(string settingKey) =>
-        db.SiteSetting.AsNoTracking()
-            .Where(x => x.SettingKey == settingKey)
-            .Select(x => x.ValueZh)
-            .FirstOrDefault() is { Length: > 0 } address ? address : FallbackRecipient;
 
     // ── 讀取請求（JSON 或 multipart 皆可）─────────────────────────────────
     private static async Task<T> ReadJsonOrFormAsync<T>(HttpRequest req, Func<IFormCollection, T> bind)

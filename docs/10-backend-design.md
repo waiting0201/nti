@@ -574,6 +574,15 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 
 `POST /quotes`、`POST /contacts` 的業務通知信與客戶確認信，**寄送結果一律寫 `EmailLog`**（成功與失敗都寫）。寄信失敗**不得讓表單提交失敗** —— 表單資料先落庫、回 200，寄信失敗只記 log 並允許後台 `POST /admin/audit/emails/{id}/resend` 重寄。
 
+信件內容由 `FormMailService` 從原始的報價單／聯絡訊息組出（2026-11-05）：
+
+- **內容不存在 `EmailLog`**，重寄時從原始資料重組——表單送出與重寄走同一條路，兩邊寄出去的信一致，`EmailLog` 也不多存一份個資。原始資料已刪除時重寄回 409 `CONFLICT_STATE`。
+- 重寄的收件者：內部通知寄**目前**的收件者設定（通知寄不出去常是收件者填錯，改好再重寄才有意義）；客戶確認信寄回原本的客戶信箱。
+- 內部通知列出客戶填的全部欄位（附件只列檔名與大小，下載仍限超管），`Reply-To` 設為客戶信箱，收件同仁直接回覆就回給客戶。
+- 客戶確認信依填表語系（`SourceLang`）寄中文或英文，頁尾的公司名稱／電話／信箱讀網站設定。
+- 後台設定 `mail.bcc` 有值時，**每封信**都密件副本給它（逗號或分號分隔，格式錯的那組略過並留 log）。
+- 所有使用者輸入一律 `HtmlEncode`；樣式只用 inline style（多數郵件軟體會丟掉 `<style>`）。
+
 ### 9.5 檔案上傳
 
 流程（[`09-cms-admin.md`](09-cms-admin.md) §3 為尺寸與格式權威）：
@@ -651,6 +660,8 @@ Azure SQL 無 Agent Job，排程一律走 Functions Timer。cron 由 app setting
 | `ConnectionStrings__DefaultConnection` | Azure SQL |
 | `Jwt__Secret` / `__Issuer` / `__AudienceAdmin` / `__ExpiryMinutes` / `__RefreshExpiryDays` | §7 |
 | `Smtp__Host` / `__Port` / `__User` / `__Password` / `__From` | 通知信 |
+| `Mail__AdminUrl` | 選填。通知信裡「到後台查看」按鈕的網址前綴（例如 `https://www.nti-printing.com/admin`）；沒設就不放按鈕 |
+| `Smtp__PickupDirectory` | **只限本機**。設了就不連 SMTP，信寫成 `.eml` 放進該資料夾，用來看信件排版；正式環境不得設定 |
 | `BlobStorageConnection` | §9.5，本機為 Azurite |
 | `Recaptcha__SecretKey` / `__MinScore` | §9.6（site key 是前端的，不放這裡） |
 | `PublishScheduleCron` / `OrphanMediaCron` | §9.9 |
@@ -778,5 +789,6 @@ traces | where timestamp > ago(30m)
 
 | 2026-09-10 | Tim（Claude Code） | **§9.9 補即時媒體清除**：編輯者移除或換掉的檔案不再等夜間排程。`AppDbContext.SaveChangesAsync` 從 ChangeTracker 記下「被拿掉引用」的路徑（`*Path` 欄位比對舊值、`*Html` 比對內文的 `<img src>`），`AppRouter` 在後台寫入成功後交給 `IMediaCleaner` 重掃引用並刪檔。孤兒檔排程降為安全網。欄位清單抽成共用的 `MediaReferenceScanner`，兩條路徑各維護一份遲早會分岔。同時修掉 `Normalize` 的一個既有錯誤：內文若存的是代理路由的完整網址（`{apiBase}/api/v1/files/media/…`），原本只比對開頭的寫法剝不掉 `api/v1/`，正規化後與 DB 的相對路徑對不起來——排程開啟刪除後會把還掛在內文裡的圖判成孤兒 |
 | 2026-09-11 | Tim（Claude Code） | **§9.8 快取標頭改為一律 `no-store`**，並移除 `FrontendRevalidator`（前台的 `/api/revalidate` 一起拿掉）。同時更正 §效能那條「API 不承擔每次請求」——前台不快取之後，每個訪客的每一頁都會進 API 與 DB |
+| 2026-11-05 | Tim（Claude Code） | §9.4：通知信內容改由 `FormMailService` 從原始資料組出（完整欄位、Reply-To 客戶、確認信依語系、讀 `mail.bcc` 密件副本）；重寄改為重組原內容（原本只寄出「（重寄）」兩個字）。§12 新增 `Mail__AdminUrl`（選填）與本機用的 `Smtp__PickupDirectory` |
 
-*最後更新：2026-09-11*
+*最後更新：2026-11-05*

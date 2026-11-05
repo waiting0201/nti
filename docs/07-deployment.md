@@ -200,6 +200,7 @@ az functionapp config appsettings set -g $RG -n $APP --settings \
   "BlobStorageConnection=<stntiprod 連線字串>" \
   "Smtp__Host=<...>" "Smtp__Port=587" "Smtp__User=<...>" \
   "Smtp__Password=<...>" "Smtp__From=<...>" \
+  "Mail__AdminUrl=https://<正式網域>/admin" \
   "Recaptcha__SecretKey=<...>" "Recaptcha__MinScore=0.5" \
   "PublishScheduleCron=0 */5 * * * *" \
   "OrphanMediaCron=0 0 4 * * 0"

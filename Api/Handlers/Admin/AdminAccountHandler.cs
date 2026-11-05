@@ -242,7 +242,7 @@ public sealed class AdminPasswordDto
 }
 
 /// <summary>24 audit — 信件紀錄（docs/09 §24）。</summary>
-public sealed class AdminAuditHandler(AppDbContext db, IEmailService email)
+public sealed class AdminAuditHandler(AppDbContext db, IFormMailService mails)
 {
     public async Task<IActionResult> GetEmailsAsync(HttpRequest req)
     {
@@ -263,13 +263,16 @@ public sealed class AdminAuditHandler(AppDbContext db, IEmailService email)
             PagedResult<EmailLog>.From(rows, total, paging.Page, paging.PageSize)));
     }
 
-    /// <summary>重寄（權限 <c>audit.resend</c>）：把內容再送一次到某個信箱。</summary>
+    /// <summary>
+    /// 重寄（權限 <c>audit.resend</c>）：從原始的報價單／聯絡訊息重組內容再寄一次，另寫一筆新的 EmailLog
+    /// （原本那筆保留，重寄次數本身就是稽核資訊）。原始資料已刪除時回 409。
+    /// </summary>
     public async Task<IActionResult> ResendAsync(HttpRequest req, string rawId)
     {
         if (!long.TryParse(rawId, out var id))
             throw AppException.BadRequest(ErrorCodes.ValidationFormat, "id 必須是數字。");
 
-        var result = await email.ResendAsync(id) ?? throw AppException.NotFound("EmailLog");
+        var result = await mails.ResendAsync(id) ?? throw AppException.NotFound("EmailLog");
 
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(result ? "已重寄。" : "重寄失敗，詳見 EmailLog。"));
