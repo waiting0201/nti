@@ -18,6 +18,18 @@ import {
 let categoryCache: Row[] | null = null
 const listeners = new Set<() => void>()
 
+/**
+ * 分類管理新增／改名／停用之後呼叫：清掉快取並讓目前掛著的下拉選單重抓。
+ * 不清的話，在同一個分頁裡切到內容單元，看到的還是改之前的分類清單。
+ */
+export function invalidateCategories() {
+  categoryCache = null
+  api.listAll('category').then((rows) => {
+    categoryCache = rows
+    listeners.forEach((l) => l())
+  })
+}
+
 export function useCategories(type?: string) {
   const [, force] = useState(0)
   useEffect(() => {

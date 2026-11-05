@@ -140,7 +140,7 @@ export async function save(unit: string, row: Row): Promise<Row> {
   const rows = table(unit)
   const i = rows.findIndex((r) => r.id === row.id)
   if (i >= 0) rows[i] = row
-  else rows.push({ ...row, sortOrder: row.sortOrder ?? (rows.length + 1) * 10 })
+  else rows.push({ ...row, sortOrder: typeof row.sortOrder === 'number' ? row.sortOrder : (rows.length + 1) * 10 })
   persist()
   return row
 }
@@ -149,7 +149,8 @@ export async function create(unit: string, row: Omit<Row, 'id'>): Promise<Row> {
   await delay()
   const rows = table(unit)
   const id = String(Date.now())
-  const created: Row = { ...row, id, sortOrder: (rows.length + 1) * 10 }
+  // 呼叫端有給排序就用（分類管理的表單會填）；沒給才排到最後，與後端的預設行為一致
+  const created: Row = { ...row, id, sortOrder: typeof row.sortOrder === 'number' ? row.sortOrder : (rows.length + 1) * 10 }
   rows.push(created)
   persist()
   return created

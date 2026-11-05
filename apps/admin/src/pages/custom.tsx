@@ -4,7 +4,7 @@ import type { Row } from '@/api/types'
 import { SETTING_GROUPS, EMAIL_LOG } from '@/api/seed.manual'
 import { LOCALE_LABEL, LOCALES, type Locale } from '@/lib/types'
 import { Badge, Hint, Modal, Notice, toast } from '@/components/ui'
-import { FieldInput } from '@/components/fields'
+import { FieldInput, invalidateCategories } from '@/components/fields'
 import { useAuth, ROLE_LABEL, type RoleCode } from '@/lib/auth'
 import { ROLE_PERMISSIONS, permissionRowCount, CONTENT_UNITS } from '@/lib/permissions'
 import { countPending, resolvePendingUploads } from '@/lib/pending-uploads'
@@ -179,8 +179,34 @@ const CATEGORY_TYPES: Array<[string, string]> = [
   ['Facility', '設備與廠房'],
   ['SupplierNotice', '供應商公告'],
   ['Industry', '產業別'],
-  ['Material', '報價材質'],
+  // 後端的值域是 QuoteMaterial（Api/Common/Constants.cs 的 CategoryTypes），不是 Material——
+  // 原本寫成 Material，這個分頁永遠是空的
+  ['QuoteMaterial', '報價材質'],
 ]
+
+/**
+ * 新增了也不會出現在前台的型別：它們的前台出口是寫死的，不是讀分類清單。
+ * 這幾種只開放改名稱／排序／啟用，不給新增——建出來的分類沒有地方可以顯示，
+ * 只會讓人以為前台壞了。
+ */
+const FIXED_CATEGORY_TYPES: Record<string, string> = {
+  Facility: '「設備與廠房」的分類對應四個固定子頁（印前／環保印刷／印後／品質），新增的分類前台沒有頁面可以顯示，所以不開放新增；名稱、排序與啟用可以改。',
+  Industry: '報價表單的「產業別」選項目前寫在前台頁面裡，新增的分類不會出現在表單上，所以不開放新增（要加選項屬改版範圍）。',
+  QuoteMaterial: '報價表單的「材質」選項目前寫在前台頁面裡，新增的分類不會出現在表單上，所以不開放新增（要加選項屬改版範圍）。',
+}
+
+/** 代號：小寫英數與連字號，與種子一致（esg、pre-press、food-beverage…）；欄位是 ASCII 40 */
+const CATEGORY_CODE_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+const CATEGORY_NAME_MAX = 80
+
+type CategoryDraft = {
+  id: string | null
+  code: string
+  zh: string
+  en: string
+  sortOrder: string
+  isActive: boolean
+}
 
 export function CategoryPage() {
   const { can } = useAuth()
@@ -190,11 +216,88 @@ export function CategoryPage() {
   const [type, setType] = useState('News')
   const [rows, setRows] = useState<Row[]>([])
   const [confirm, setConfirm] = useState<Row | null>(null)
+  const [draft, setDraft] = useState<CategoryDraft | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
   const load = () => void api.listAll('category').then(setRows)
   useEffect(load, [])
 
+  /** 異動後：重抓本頁，也讓內容單元的分類下拉選單一起更新 */
+  const reload = () => {
+    load()
+    invalidateCategories()
+  }
+
   const shown = rows.filter((r) => r.categoryType === type)
+  const typeLabel = CATEGORY_TYPES.find(([code]) => code === type)?.[1] ?? type
+  const fixedNote = FIXED_CATEGORY_TYPES[type]
+
+  const openNew = () => {
+    const maxSort = shown.reduce((m, r) => Math.max(m, Number(r.sortOrder ?? 0)), 0)
+    setError('')
+    setDraft({ id: null, code: '', zh: '', en: '', sortOrder: String(maxSort + 10), isActive: true })
+  }
+
+  const openEdit = (c: Row) => {
+    setError('')
+    setDraft({
+      id: c.id,
+      code: String(c.code ?? ''),
+      zh: String(c.i18n?.zh?.name ?? ''),
+      en: String(c.i18n?.en?.name ?? ''),
+      sortOrder: String(c.sortOrder ?? 0),
+      isActive: c.isActive !== false,
+    })
+  }
+
+  /** 前端先擋一輪，訊息講得出是哪一欄；後端仍會再驗（同型別代號重複回 409） */
+  const validate = (d: CategoryDraft): string => {
+    if (!d.id) {
+      if (!d.code) return '請填代號。'
+      if (d.code.length > 40) return '代號最多 40 字元。'
+      if (!CATEGORY_CODE_PATTERN.test(d.code)) return '代號只能用小寫英文、數字與連字號（例：green-printing）。'
+      if (shown.some((r) => r.code === d.code)) return `「${typeLabel}」已經有代號 ${d.code} 的分類。`
+    }
+    if (!d.zh.trim() || !d.en.trim()) return '中文與英文名稱都要填——前台兩個語系各顯示自己的名稱。'
+    if (d.zh.trim().length > CATEGORY_NAME_MAX || d.en.trim().length > CATEGORY_NAME_MAX)
+      return `名稱最多 ${CATEGORY_NAME_MAX} 字。`
+    if (!/^\d+$/.test(d.sortOrder.trim())) return '排序請填 0 以上的整數。'
+    return ''
+  }
+
+  const submit = async () => {
+    if (!draft || saving) return
+    const message = validate(draft)
+    if (message) {
+      setError(message)
+      return
+    }
+    const payload = {
+      categoryType: type,
+      code: draft.code,
+      sortOrder: Number(draft.sortOrder),
+      isActive: draft.isActive,
+      i18n: { zh: { name: draft.zh.trim() }, en: { name: draft.en.trim() } },
+    }
+    setSaving(true)
+    try {
+      if (draft.id) {
+        const original = rows.find((r) => r.id === draft.id)
+        await api.save('category', { ...original, ...payload, id: draft.id } as Row)
+        toast('分類已更新')
+      } else {
+        await api.create('category', payload as Omit<Row, 'id'>)
+        toast('分類已新增')
+      }
+      setDraft(null)
+      reload()
+    } catch (err) {
+      setError(err instanceof ApiError || err instanceof Error ? err.message : '儲存失敗，請稍後再試。')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <>
@@ -211,7 +314,18 @@ export function CategoryPage() {
         ))}
       </div>
 
+      {fixedNote && <Notice kind="info">{fixedNote}</Notice>}
+
       <div className="card">
+        <div className="card-h">
+          <h2>{typeLabel}</h2>
+          <span style={{ marginLeft: 'auto' }} />
+          {canEdit && !fixedNote && (
+            <button className="btn btn-primary btn-sm" onClick={openNew}>
+              ＋ 新增分類
+            </button>
+          )}
+        </div>
         <table className="list">
           <thead>
             <tr>
@@ -221,10 +335,17 @@ export function CategoryPage() {
               <th style={{ width: 90 }}>排序</th>
               <th style={{ width: 100 }}>引用筆數</th>
               <th style={{ width: 90 }}>啟用</th>
-              <th style={{ width: 90 }} />
+              <th style={{ width: 150 }} />
             </tr>
           </thead>
           <tbody>
+            {shown.length === 0 && (
+              <tr>
+                <td colSpan={7} className="empty">
+                  這一類還沒有分類。
+                </td>
+              </tr>
+            )}
             {shown.map((c) => {
               const usage = api.categoryUsage(c.id)
               return (
@@ -242,17 +363,19 @@ export function CategoryPage() {
                   <td>
                     <Badge kind={c.isActive === false ? 'off' : 'ok'}>{c.isActive === false ? '停用' : '啟用'}</Badge>
                   </td>
-                  <td>
+                  <td style={{ whiteSpace: 'nowrap' }}>
+                    <button className="btn btn-sm" onClick={() => openEdit(c)}>
+                      {canEdit ? '編輯' : '檢視'}
+                    </button>{' '}
                     <button
                       className="btn btn-sm btn-danger"
                       // 停用是改欄位（category.edit），刪除是刪除（category.delete）——
                       // 兩顆按鈕長在同一個位置，權限也要各認各的
-                      disabled={usage > 0 ? !canEdit : !canDelete}
+                      disabled={usage > 0 ? !canEdit || c.isActive === false : !canDelete}
                       onClick={() => setConfirm(c)}
                     >
                       {usage > 0 ? '停用' : '刪除'}
                     </button>
-
                   </td>
                 </tr>
               )
@@ -260,6 +383,81 @@ export function CategoryPage() {
           </tbody>
         </table>
       </div>
+
+      {draft && (
+        <Modal
+          title={draft.id ? `編輯分類 · ${draft.code}` : `新增分類 · ${typeLabel}`}
+          confirmLabel={saving ? '儲存中…' : draft.id ? '儲存' : '建立'}
+          onCancel={() => setDraft(null)}
+          onConfirm={canEdit ? submit : undefined}
+        >
+          <fieldset disabled={!canEdit || saving} style={{ border: 0, padding: 0 }}>
+            <div className="field">
+              <label>
+                代號 Code{!draft.id && <span className="req">*</span>}
+              </label>
+              {/* 代號建立後唯讀：下游內容表用（型別, 代號）綁著，後端也不收修改 */}
+              <input
+                value={draft.code}
+                disabled={draft.id !== null}
+                maxLength={40}
+                onChange={(e) => setDraft({ ...draft, code: e.target.value.trim().toLowerCase() })}
+                placeholder="green-printing"
+              />
+              <div className="hint">
+                {draft.id
+                  ? '代號建立後不可修改。'
+                  : '小寫英文、數字與連字號；同一類不可重複，建立後不可修改。前台不會顯示代號。'}
+              </div>
+            </div>
+            <div className="field">
+              <label>
+                中文名稱<span className="req">*</span>
+              </label>
+              <input
+                value={draft.zh}
+                maxLength={CATEGORY_NAME_MAX}
+                onChange={(e) => setDraft({ ...draft, zh: e.target.value })}
+              />
+            </div>
+            <div className="field">
+              <label>
+                English<span className="req">*</span>
+              </label>
+              <input
+                value={draft.en}
+                maxLength={CATEGORY_NAME_MAX}
+                onChange={(e) => setDraft({ ...draft, en: e.target.value })}
+              />
+            </div>
+            <div className="field">
+              <label>排序</label>
+              <input
+                type="number"
+                min={0}
+                step={10}
+                value={draft.sortOrder}
+                onChange={(e) => setDraft({ ...draft, sortOrder: e.target.value })}
+              />
+              <div className="hint">數字小的排前面，影響下拉選單與前台分組的順序。</div>
+            </div>
+            <div className="field">
+              <label>啟用</label>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={draft.isActive}
+                  onChange={(e) => setDraft({ ...draft, isActive: e.target.checked })}
+                />
+                <span className="track" />
+                <span style={{ fontSize: 12.5 }}>{draft.isActive ? '啟用' : '停用'}</span>
+              </label>
+              <div className="hint">停用後不會出現在新增內容的下拉選單，既有內容不受影響。</div>
+            </div>
+          </fieldset>
+          {error && <Notice>{error}</Notice>}
+        </Modal>
+      )}
 
       {confirm && (
         <Modal
@@ -277,9 +475,8 @@ export function CategoryPage() {
               toast(err instanceof Error ? err.message : '操作失敗，請稍後再試。')
             }
             setConfirm(null)
-            load()
+            reload()
           }}
-
         >
           {api.categoryUsage(confirm.id) > 0 ? (
             <>
@@ -293,7 +490,6 @@ export function CategoryPage() {
               <b>這是真的刪除，無法還原</b>；要再用同一個代號得重新建立一筆。
             </>
           )}
-
         </Modal>
       )}
     </>
