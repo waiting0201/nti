@@ -30,7 +30,13 @@ export function invalidateCategories() {
   })
 }
 
-export function useCategories(type?: string) {
+/**
+ * 某類的分類清單，預設只回啟用中的（可以拿去掛新內容的）。
+ * `keep`：停用的也要留著——傳 id 時只留那一筆（編輯舊內容時，它目前掛著的分類），
+ * 傳 `true` 時全部留著（清單頁的篩選，要能找出掛在停用分類下的內容）。
+ * 不留的話，下拉選單會因為選中值不在選項裡而顯示「請選擇」，必填就存不了檔。
+ */
+export function useCategories(type?: string, keep?: string | true) {
   const [, force] = useState(0)
   useEffect(() => {
     if (categoryCache) return
@@ -45,7 +51,16 @@ export function useCategories(type?: string) {
     }
   }, [])
   const all = categoryCache ?? []
-  return type ? all.filter((c) => c.categoryType === type && c.isActive !== false) : all
+  if (!type) return all
+  return all.filter(
+    (c) => c.categoryType === type && (c.isActive !== false || keep === true || (keep !== undefined && String(c.id) === keep)),
+  )
+}
+
+/** 下拉選項的顯示名稱：停用的加註，提醒不要再拿它掛新內容 */
+export function categoryOptionLabel(c: Row): string {
+  const name = String(c.i18n?.zh?.name ?? c.id)
+  return c.isActive === false ? `${name}（已停用）` : name
 }
 
 /* ── 標籤快取（給 tags 型欄位用；與分類同一個模式）─────── */
@@ -406,8 +421,8 @@ export function FieldInput({
   onChange: (v: unknown) => void
   error?: string
 }) {
-  const categories = useCategories(field.categoryType)
   const str = typeof value === 'string' ? value : value == null ? '' : String(value)
+  const categories = useCategories(field.categoryType, str || undefined)
   const over = field.max ? str.length > field.max : false
 
   const label = (
@@ -449,7 +464,7 @@ export function FieldInput({
         return (
           <select value={str} onChange={(e) => onChange(e.target.value)}>
             <option value="">請選擇</option>
-            {(field.options ?? categories.map((c) => ({ value: c.id, label: String(c.i18n?.zh?.name ?? c.id) }))).map((o) => (
+            {(field.options ?? categories.map((c) => ({ value: c.id, label: categoryOptionLabel(c) }))).map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
               </option>

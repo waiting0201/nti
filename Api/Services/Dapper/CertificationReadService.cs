@@ -21,9 +21,10 @@ public sealed class CertificationReadService(IDbConnection db) : ICertificationR
                i.Name, i.ShortName, i.Description, i.LogoAlt
         FROM Certification t
         INNER JOIN CertificationI18n i ON i.CertificationId = t.Id AND i.Lang = @Lang
-        LEFT  JOIN Category c ON c.Id = t.CategoryId AND c.IsDeleted = 0
+        LEFT  JOIN Category c ON c.Id = t.CategoryId AND c.IsDeleted = 0 AND c.IsActive = 1
         LEFT  JOIN CategoryI18n ci ON ci.CategoryId = c.Id AND ci.Lang = @Lang
         WHERE {Common.Sql.PublicFlag("t")}
+          AND (t.CategoryId IS NULL OR c.Id IS NOT NULL)  -- 未分組照常顯示；掛在停用／刪除分類下的不顯示
         """;
 
     public async Task<IEnumerable<CertificationDto>> GetPublishedAsync(string lang, bool homeOnly = false)

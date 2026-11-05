@@ -17,7 +17,7 @@ public sealed class ProjectReadService(IDbConnection db) : IProjectReadService
     private const string From = """
         FROM Project p
         INNER JOIN ProjectI18n i ON i.ProjectId = p.Id AND i.Lang = @Lang
-        INNER JOIN Category c ON c.Id = p.CategoryId
+        INNER JOIN Category c ON c.Id = p.CategoryId AND c.IsDeleted = 0 AND c.IsActive = 1
         INNER JOIN CategoryI18n ci ON ci.CategoryId = c.Id AND ci.Lang = @Lang
         """;
 

@@ -6,7 +6,7 @@ import { UNIT_BY_CODE } from '@/units'
 import { perm, publishState, type Locale, type Unit } from '@/lib/types'
 import { useAuth } from '@/lib/auth'
 import { Badge, Modal, Notice, Pager, toast } from '@/components/ui'
-import { categoryName, useCategories } from '@/components/fields'
+import { categoryName, categoryOptionLabel, useCategories } from '@/components/fields'
 import { isComplete } from '@/lib/completeness'
 import { assetUrl } from '@/lib/asset'
 import { LABEL_SOURCE, MENU_LABEL } from '@/lib/menu-labels'
@@ -46,7 +46,7 @@ export function ListPage() {
   // 沒有分類欄位的單元（如 home-banner）不該出現分類篩選；
   // useCategories(undefined) 會回傳全部分類，所以要先看單元有沒有這個欄位
   const categoryType = unit?.fields.find((f) => f.categoryType)?.categoryType
-  const categories = useCategories(categoryType)
+  const categories = useCategories(categoryType, true)
 
   const load = useCallback(async () => {
     if (!unit) return
@@ -225,7 +225,7 @@ export function ListPage() {
               <option value="">全部分類</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {String(c.i18n?.zh?.name ?? c.id)}
+                  {categoryOptionLabel(c)}
                 </option>
               ))}
             </select>

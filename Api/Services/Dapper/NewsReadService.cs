@@ -20,7 +20,7 @@ public sealed class NewsReadService(IDbConnection db) : INewsReadService
     private const string From = """
         FROM News n
         INNER JOIN NewsI18n i ON i.NewsId = n.Id AND i.Lang = @Lang
-        INNER JOIN Category c ON c.Id = n.CategoryId
+        INNER JOIN Category c ON c.Id = n.CategoryId AND c.IsDeleted = 0 AND c.IsActive = 1
         INNER JOIN CategoryI18n ci ON ci.CategoryId = c.Id AND ci.Lang = @Lang
         """;
 
@@ -60,7 +60,7 @@ public sealed class NewsReadService(IDbConnection db) : INewsReadService
                COALESCE(n.OgImagePath, n.CoverImagePath) AS OgImagePath
         FROM News n
         INNER JOIN NewsI18n i ON i.NewsId = n.Id AND i.Lang = @Lang
-        INNER JOIN Category c ON c.Id = n.CategoryId
+        INNER JOIN Category c ON c.Id = n.CategoryId AND c.IsDeleted = 0 AND c.IsActive = 1
         INNER JOIN CategoryI18n ci ON ci.CategoryId = c.Id AND ci.Lang = @Lang
         WHERE {Common.Sql.PublicFilter("n")} AND i.Slug = @Slug;
 

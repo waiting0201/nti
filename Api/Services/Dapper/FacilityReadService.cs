@@ -23,7 +23,7 @@ public sealed class FacilityReadService(IDbConnection db) : IFacilityReadService
                f.ImagePath, f.SortOrder, i.Name, i.Description, i.ImageAlt
         FROM FacilityItem f
         INNER JOIN FacilityItemI18n i ON i.FacilityItemId = f.Id AND i.Lang = @Lang
-        INNER JOIN Category c ON c.Id = f.CategoryId
+        INNER JOIN Category c ON c.Id = f.CategoryId AND c.IsDeleted = 0 AND c.IsActive = 1
         INNER JOIN CategoryI18n ci ON ci.CategoryId = c.Id AND ci.Lang = @Lang
         WHERE {Common.Sql.PublicFlag("f")}
           AND (@GroupCode IS NULL OR c.Code = @GroupCode)

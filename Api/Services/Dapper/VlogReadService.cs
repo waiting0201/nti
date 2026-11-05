@@ -19,7 +19,7 @@ public sealed class VlogReadService(IDbConnection db) : IVlogReadService
                i.Title, i.Description
         FROM Vlog v
         INNER JOIN VlogI18n i ON i.VlogId = v.Id AND i.Lang = @Lang
-        INNER JOIN Category c ON c.Id = v.CategoryId
+        INNER JOIN Category c ON c.Id = v.CategoryId AND c.IsDeleted = 0 AND c.IsActive = 1
         INNER JOIN CategoryI18n ci ON ci.CategoryId = c.Id AND ci.Lang = @Lang
         WHERE {Common.Sql.PublicFilter("v")}
           AND (@CategoryId IS NULL OR v.CategoryId = @CategoryId)

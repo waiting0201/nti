@@ -25,7 +25,7 @@ public sealed class SupplierReadService(IDbConnection db) : ISupplierReadService
     private const string NoticeFrom = """
         FROM SupplierNotice n
         INNER JOIN SupplierNoticeI18n i ON i.SupplierNoticeId = n.Id AND i.Lang = @Lang
-        INNER JOIN Category c ON c.Id = n.CategoryId
+        INNER JOIN Category c ON c.Id = n.CategoryId AND c.IsDeleted = 0 AND c.IsActive = 1
         INNER JOIN CategoryI18n ci ON ci.CategoryId = c.Id AND ci.Lang = @Lang
         """;
 
