@@ -958,6 +958,8 @@ export const ZH: Record<string, string> = {
   "Tailored Printing. Sustainable Design.": "量身訂製的印刷，永續的設計。",
   "NTI provides complete custom packaging boxes and packaging printing solutions, from material recommendation and selection to structural design, printing techniques, finishing, and technical support. We help brands create custom boxes and packaging that perform beautifully, strengthen their brand, and support a more sustainable future.": "NTI 提供完整的客製化包裝盒與包裝印刷解決方案，從材料建議與選用、結構設計、印刷技術、印後加工到技術支援。我們協助品牌打造表現出色、強化品牌，並支持更永續未來的客製盒型與包裝。",
   "Digital CTP technology improves quality while reducing pollution.": "數位 CTP 技術提升品質，同時降低污染。",
+  "Post-Press": "印後加工",
+  "Automated die-cutting, folder-gluing, window patching and laminating, with finishing methods confirmed to each project’s specifications.": "自動模切、糊盒、開窗貼膜與貼合，依專案規格確認加工方式。",
   "Products": "產品",
   "View more projects": "看更多案例",
   "Direct to plate, in house": "直接製版，自廠輸出",

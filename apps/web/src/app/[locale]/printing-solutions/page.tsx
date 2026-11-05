@@ -30,7 +30,7 @@ export default async function Page({ params }: Props) {
         <h1 className="sec-title reveal">Custom Packaging &amp; Printing Solutions</h1>
         <h3 className="fac-sub reveal mt-s">Tailored Printing. Sustainable Design.</h3>
         <p className="prose wide reveal mt-s">NTI provides complete custom packaging boxes and packaging printing solutions, from material recommendation and selection to structural design, printing techniques, finishing, and technical support. We help brands create custom boxes and packaging that perform beautifully, strengthen their brand, and support a more sustainable future.</p>
-        <div className="flist reveal mt-s"><p className="fi"><b>Structural Design</b>Optimized packaging that reduces material use and waste.</p><p className="fi"><b>Pre-Press</b>Digital CTP technology improves quality while reducing pollution.</p><p className="fi"><b>Printing</b>Energy-efficient production with lower waste and emissions.</p></div>
+        <div className="flist reveal mt-s"><p className="fi"><b>Structural Design</b>Optimized packaging that reduces material use and waste.</p><p className="fi"><b>Pre-Press</b>Digital CTP technology improves quality while reducing pollution.</p><p className="fi"><b>Printing</b>Energy-efficient production with lower waste and emissions.</p><p className="fi"><b>Post-Press</b>Automated die-cutting, folder-gluing, window patching and laminating, with finishing methods confirmed to each project&rsquo;s specifications.</p></div>
         <div className="mt-l"><div className="explorer fac-explorer reveal">
           <div className="ex-left">
             <h4 className="ga-h">Products</h4>

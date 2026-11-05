@@ -2808,6 +2808,20 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
+        "en": "Post-Press",
+        "zh": "印後加工",
+        "kind": "text",
+        "section": "Custom Packaging & Printing Solutions",
+        "count": 1
+      },
+      {
+        "en": "Automated die-cutting, folder-gluing, window patching and laminating, with finishing methods confirmed to each project’s specifications.",
+        "zh": "自動模切、糊盒、開窗貼膜與貼合，依專案規格確認加工方式。",
+        "kind": "text",
+        "section": "Custom Packaging & Printing Solutions",
+        "count": 1
+      },
+      {
         "en": "Products",
         "zh": "產品",
         "kind": "text",
