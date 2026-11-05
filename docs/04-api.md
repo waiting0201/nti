@@ -74,7 +74,7 @@
 
 - `GET /content/home`（Banner、Solutions 卡、Proof 認證牆、Clients）
 - `GET /solutions`、`GET /solutions/{slug}`（含品項卡）
-- `GET /projects`（分類篩選）、`GET /facility?group={code}`、`GET /certifications`、`GET /certification-items`、`GET /clients`
+- `GET /projects`（分類篩選）、`GET /facility?group={code}`、`GET /certifications`、`GET /certification-items`、`GET /performance-metrics`、`GET /clients`
 - `GET /categories?type={CategoryType}`（下拉／篩選選項來源；`type` 值域為 `08-database.md` §4.1 的九種 `CategoryType`）——供 `projects.html` 的分類篩選與 Industries 清單、`get-a-quote` 的產業與材質下拉、`faq` 分組使用
 - `GET /news`、`GET /news/{slug}`、`GET /green-vlog`
   - `GET /news` 另吃 `?tag={slug}`（標籤封存頁用；slug 不分語系，中英同一個值）

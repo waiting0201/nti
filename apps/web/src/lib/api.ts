@@ -235,6 +235,9 @@ export type CertificationListItem = {
   description: string | null
 }
 
+/** 碳效率頁的績效表（單元 08 附屬清單，2026-11-05 起）：指標／期間／結果都是該語系的字 */
+export type PerformanceMetric = { id: number; indicator: string; period: string; result: string }
+
 export type ClientLogo = { id: number; name: string; logoPath: string; linkUrl: string | null }
 
 export type FacilityItem = {
@@ -310,6 +313,8 @@ export const getTrends         = (l: Locale) => fetchApi<Trend[]>(`/industry-tre
 export const getCertifications = (l: Locale) => fetchApi<Certification[]>(`/certifications${q(l)}`)
 export const getCertificationItems = (l: Locale) =>
   fetchApi<CertificationListItem[]>(`/certification-items${q(l)}`)
+export const getPerformanceMetrics = (l: Locale) =>
+  fetchApi<PerformanceMetric[]>(`/performance-metrics${q(l)}`)
 export const getClients        = (l: Locale) => fetchApi<ClientLogo[]>('/clients')
 export const getJobs           = (l: Locale) => fetchApi<Job[]>(`/careers${q(l)}`)
 

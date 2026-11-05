@@ -3144,6 +3144,80 @@ namespace Nti.Api.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Nti.Api.Models.Entities.PerformanceMetric", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(0)")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("SortOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2(0)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PerformanceMetric", (string)null);
+                });
+
+            modelBuilder.Entity("Nti.Api.Models.Entities.PerformanceMetricI18n", b =>
+                {
+                    b.Property<int>("PerformanceMetricId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Lang")
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
+
+                    b.Property<string>("Indicator")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Period")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Result")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("PerformanceMetricId", "Lang")
+                        .HasName("PK_PerformanceMetricI18n");
+
+                    b.ToTable("PerformanceMetricI18n", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_PerformanceMetricI18n_Lang", "[Lang] IN ('zh','en')");
+                        });
+                });
+
             modelBuilder.Entity("Nti.Api.Models.Entities.Project", b =>
                 {
                     b.Property<int>("Id")
@@ -5918,6 +5992,16 @@ namespace Nti.Api.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_PageText_Page");
+                });
+
+            modelBuilder.Entity("Nti.Api.Models.Entities.PerformanceMetricI18n", b =>
+                {
+                    b.HasOne("Nti.Api.Models.Entities.PerformanceMetric", null)
+                        .WithMany()
+                        .HasForeignKey("PerformanceMetricId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_PerformanceMetricI18n_PerformanceMetric");
                 });
 
             modelBuilder.Entity("Nti.Api.Models.Entities.Project", b =>

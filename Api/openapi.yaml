@@ -122,6 +122,15 @@ paths:
       responses:
         '200': { $ref: '#/components/responses/Ok' }
 
+  /performance-metrics:
+    get:
+      tags: [前台內容]
+      summary: 碳效率頁的績效表（指標／期間／結果）
+      description: 每筆 { id, sortOrder, indicator, period, result }，皆為該語系的字，依 sortOrder 排序；只回上架中的列。
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
   /clients:
     get:
       tags: [前台內容]

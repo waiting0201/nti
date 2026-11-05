@@ -60,6 +60,15 @@ public sealed class CertificationHandler(ICertificationReadService reads)
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
+
+    /// <summary>碳效率頁的績效表（指標／期間／結果），依排序。</summary>
+    public async Task<IActionResult> GetPerformanceMetricsAsync(HttpRequest req)
+    {
+        var rows = await reads.GetPerformanceMetricsAsync(LangResolver.Resolve(req));
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok(rows));
+    }
 }
 
 /// <summary>單元 09 client。</summary>

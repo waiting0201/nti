@@ -1,0 +1,70 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace Nti.Api.Data.Migrations
+{
+    /// <inheritdoc />
+    public partial class PerformanceMetric : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "PerformanceMetric",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SortOrder = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
+                        .Annotation("Relational:DefaultConstraintName", "DF_PerformanceMetric_SortOrder"),
+                    IsPublished = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                        .Annotation("Relational:DefaultConstraintName", "DF_PerformanceMetric_IsPublished"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: false, defaultValueSql: "SYSUTCDATETIME()")
+                        .Annotation("Relational:DefaultConstraintName", "DF_PerformanceMetric_CreatedAt"),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                        .Annotation("Relational:DefaultConstraintName", "DF_PerformanceMetric_IsDeleted")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PerformanceMetric", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PerformanceMetricI18n",
+                columns: table => new
+                {
+                    PerformanceMetricId = table.Column<int>(type: "int", nullable: false),
+                    Lang = table.Column<string>(type: "varchar(5)", unicode: false, maxLength: 5, nullable: false),
+                    Indicator = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Period = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Result = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PerformanceMetricI18n", x => new { x.PerformanceMetricId, x.Lang });
+                    table.CheckConstraint("CK_PerformanceMetricI18n_Lang", "[Lang] IN ('zh','en')");
+                    table.ForeignKey(
+                        name: "FK_PerformanceMetricI18n_PerformanceMetric",
+                        column: x => x.PerformanceMetricId,
+                        principalTable: "PerformanceMetric",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "PerformanceMetricI18n");
+
+            migrationBuilder.DropTable(
+                name: "PerformanceMetric");
+        }
+    }
+}

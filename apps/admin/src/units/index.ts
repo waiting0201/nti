@@ -38,6 +38,7 @@ export const UNITS: Unit[] = [
   content.trend,
   content.certification,
   content.certificationItem,
+  content.performanceMetric,
   content.client,
   content.facility,
   content.job,

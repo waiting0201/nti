@@ -54,6 +54,8 @@ public class AppDbContext(
     public DbSet<CertificationI18n>    CertificationI18n    => Set<CertificationI18n>();
     public DbSet<CertificationListItem>     CertificationListItem     => Set<CertificationListItem>();
     public DbSet<CertificationListItemI18n> CertificationListItemI18n => Set<CertificationListItemI18n>();
+    public DbSet<PerformanceMetric>         PerformanceMetric         => Set<PerformanceMetric>();
+    public DbSet<PerformanceMetricI18n>     PerformanceMetricI18n     => Set<PerformanceMetricI18n>();
     public DbSet<ClientLogo>           ClientLogo           => Set<ClientLogo>();
     public DbSet<FacilityItem>         FacilityItem         => Set<FacilityItem>();
     public DbSet<FacilityItemI18n>     FacilityItemI18n     => Set<FacilityItemI18n>();

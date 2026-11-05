@@ -8,6 +8,7 @@ public interface ICertificationReadService
 {
     Task<IEnumerable<CertificationDto>> GetPublishedAsync(string lang, bool homeOnly = false);
     Task<IEnumerable<CertificationListItemDto>> GetListItemsAsync(string lang);
+    Task<IEnumerable<PerformanceMetricDto>> GetPerformanceMetricsAsync(string lang);
 }
 
 /// <summary>認證／夥伴／獎項（後台單元 08）。首頁 Proof 認證牆與 certifications 頁共用。</summary>
@@ -43,5 +44,14 @@ public sealed class CertificationReadService(IDbConnection db) : ICertificationR
             INNER JOIN CertificationListItemI18n i ON i.CertificationListItemId = t.Id AND i.Lang = @Lang
             WHERE {Common.Sql.PublicFlag("t")}
             ORDER BY t.Section, t.SortOrder, t.Id
+            """, new { Lang = lang });
+
+    public async Task<IEnumerable<PerformanceMetricDto>> GetPerformanceMetricsAsync(string lang) =>
+        await db.QueryAsync<PerformanceMetricDto>($"""
+            SELECT t.Id, t.SortOrder, i.Indicator, i.Period, i.Result
+            FROM PerformanceMetric t
+            INNER JOIN PerformanceMetricI18n i ON i.PerformanceMetricId = t.Id AND i.Lang = @Lang
+            WHERE {Common.Sql.PublicFlag("t")}
+            ORDER BY t.SortOrder, t.Id
             """, new { Lang = lang });
 }

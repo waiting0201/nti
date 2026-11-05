@@ -199,6 +199,19 @@ mockup 內容（現況部署），設了就改吃 CMS。
 ⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
 清單在該腳本的 `HAND_MAINTAINED`。
 
+### ✅ 碳效率頁「水資源」下方加績效表（2026-11-05）
+
+- `/green-carbon` 水資源段落下方新增「績效指標」表（指標／期間／結果），客戶可在後台自行更新數字、增減列。
+- 後台新單元 08c「碳效率績效表」（`performance-metric`，API `/admin/certification/metric`）：三欄都分中英、
+  可排序／上下架；**權限沿用 `certification.*`**，矩陣 173 列不變。全部下架＝整張表（含標題）不顯示。
+  表格標題與表頭在 15「頁面文字」修改；表格的列已從頁面文字清單移除（`CMS_BLOCKS`）。
+- Schema：EF `PerformanceMetric`／參考 `0022`（表 +2、FK +1、CHECK +1、索引 +0）。公開端點 `GET /performance-metrics`。
+- `db/content/350_performance_metrics.sql`：初始 4 列。中文＝客戶 11-05 給的表；**英文是我方翻譯，待客戶確認**。
+  冪等。⬜ 正式庫尚未執行（migration 由 API 啟動時自動套用）。
+- mockup／`site.css` 加 `.mtable`（桌機三欄表格；≤560px 改成每列一塊：指標一行、期間＋結果在下）。
+- 順手修：`verify-ef.sql` 的 migration 數上一支（SocialInstagram）沒跟著加，這次一起改成 25。
+- 驗證：本機 `verify-ef` 全數 PASS；`verify:markup` 全過；接本機 API 實測中英表格、後台 CRUD／下架／刪除、350 重跑不重複；手機寬度無橫向捲動。
+
 ### ✅ 分類管理可新增／編輯（2026-11-05）
 
 - 後台 22 分類管理：每列加「編輯」（中英名稱、排序、啟用），右上加「＋ 新增分類」（代號＋中英名稱＋排序＋啟用）。

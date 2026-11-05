@@ -3592,24 +3592,52 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
+        "en": "Performance Indicators",
+        "zh": "績效指標",
+        "kind": "text",
+        "section": "Performance Indicators",
+        "count": 1
+      },
+      {
+        "en": "Indicator",
+        "zh": "指標",
+        "kind": "text",
+        "section": "Performance Indicators",
+        "count": 1
+      },
+      {
+        "en": "Period",
+        "zh": "期間",
+        "kind": "text",
+        "section": "Performance Indicators",
+        "count": 1
+      },
+      {
+        "en": "Result",
+        "zh": "結果",
+        "kind": "text",
+        "section": "Performance Indicators",
+        "count": 1
+      },
+      {
         "en": "Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.",
         "zh": "想把這套做法用在您的包裝上？把需求寄給我們，我們會回覆規格與報價。",
         "kind": "text",
-        "section": "Water & solvent",
+        "section": "Performance Indicators",
         "count": 1
       },
       {
         "en": "Get a Quote",
         "zh": "索取報價",
         "kind": "text",
-        "section": "Water & solvent",
+        "section": "Performance Indicators",
         "count": 1
       },
       {
         "en": "Next: ECO Materials",
         "zh": "下一頁：環保材料",
         "kind": "text",
-        "section": "Water & solvent",
+        "section": "Performance Indicators",
         "count": 1
       }
     ]

@@ -62,3 +62,30 @@ public sealed class CertificationListItemI18n : II18n
     public string  Title                   { get; set; } = null!;
     public string? Description             { get; set; }
 }
+
+/// <summary>
+/// 碳效率頁的績效表（後台單元 08 的附屬清單，2026-11-05 加）：一列＝指標／期間／結果。
+/// 掛在 /green-carbon「水資源」段落下方；三欄都分語系（「2024 年」「度／年」這類單位中英寫法不同）。
+/// 跟認證同屬 ESG 揭露，權限沿用 certification.*，不另開權限碼。
+/// </summary>
+public sealed class PerformanceMetric : IAuditable
+{
+    public int    Id          { get; set; }
+    public int    SortOrder   { get; set; }
+    public bool   IsPublished { get; set; } = true;
+
+    public DateTime  CreatedAt { get; set; }
+    public int?      CreatedBy { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public int?      UpdatedBy { get; set; }
+    public bool      IsDeleted { get; set; }
+}
+
+public sealed class PerformanceMetricI18n : II18n
+{
+    public int    PerformanceMetricId { get; set; }
+    public string Lang                { get; set; } = null!;
+    public string Indicator           { get; set; } = null!;   // 指標：溫室氣體總排放
+    public string Period              { get; set; } = null!;   // 期間：2024 年／2026 / 2030／現況
+    public string Result              { get; set; } = null!;   // 結果：2,141 公噸 CO₂e（直接 314、能源間接 1,827）
+}

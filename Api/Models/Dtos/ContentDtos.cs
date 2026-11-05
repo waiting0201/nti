@@ -187,6 +187,16 @@ public sealed class CertificationListItemDto
     public string? Description { get; set; }
 }
 
+/// <summary>碳效率頁績效表的一列（單元 08 附屬清單）。</summary>
+public sealed class PerformanceMetricDto
+{
+    public int    Id        { get; set; }
+    public int    SortOrder { get; set; }
+    public string Indicator { get; set; } = null!;
+    public string Period    { get; set; } = null!;
+    public string Result    { get; set; } = null!;
+}
+
 /// <summary>客戶 logo（後台單元 09）。品牌名不翻譯，<see cref="Name"/> 同時作為 alt。</summary>
 public sealed class ClientLogoDto
 {

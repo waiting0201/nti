@@ -555,6 +555,26 @@ export function DetailList({ items }: { items: { id: number; title: string; desc
   )
 }
 
+/**
+ * 碳效率頁的績效表（mockup 的 `.mtable`）。列的內容已經是該語系的資料，不經過字典
+ * （`<T>` 進不了元件內部，跟 DetailList 同理）；表頭是固定字，由呼叫端用 `tr()` 翻好再傳進來。
+ */
+export function MetricTable({ items, head }: {
+  items: { id: number; indicator: string; period: string; result: string }[]
+  head: [string, string, string]
+}) {
+  return (
+    <table className="mtable">
+      <thead><tr>{head.map((h) => <th key={h} scope="col">{h}</th>)}</tr></thead>
+      <tbody>
+        {items.map((it) => (
+          <tr key={it.id}><td>{it.indicator}</td><td>{it.period}</td><td>{it.result}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
 // ── 09 client ─────────────────────────────────────────────────────────────
 export function ClientLogos({ items }: { items: ClientLogo[] }) {
   return (

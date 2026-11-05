@@ -110,6 +110,30 @@ public sealed class CertificationListItemI18nConfiguration : IEntityTypeConfigur
     }
 }
 
+/// <summary>單元 08 的附屬清單：碳效率頁的績效表（docs/08 §4.8）。只有一張表，不分區塊。</summary>
+public sealed class PerformanceMetricConfiguration : IEntityTypeConfiguration<PerformanceMetric>
+{
+    public void Configure(EntityTypeBuilder<PerformanceMetric> b)
+    {
+        b.ToTable("PerformanceMetric");
+        b.Property(x => x.SortOrder).HasDefaultValue(0);
+        b.Property(x => x.IsPublished).HasDefaultValue(true);
+        b.Audit();
+        // 不另建索引：一頁幾列的小表，全表掃描比多一條索引的維護成本划算（Basic 5 DTU，docs/08 §5）
+    }
+}
+
+public sealed class PerformanceMetricI18nConfiguration : IEntityTypeConfiguration<PerformanceMetricI18n>
+{
+    public void Configure(EntityTypeBuilder<PerformanceMetricI18n> b)
+    {
+        b.I18nOf<PerformanceMetricI18n, PerformanceMetric>(nameof(PerformanceMetricI18n.PerformanceMetricId));
+        b.Property(x => x.Indicator).HasMaxLength(100);
+        b.Property(x => x.Period).HasMaxLength(50);
+        b.Property(x => x.Result).HasMaxLength(200);
+    }
+}
+
 /// <summary>單元 09 client（docs/08 §4.8）。無 i18n 側表：品牌名不翻譯。</summary>
 public sealed class ClientLogoConfiguration : IEntityTypeConfiguration<ClientLogo>
 {

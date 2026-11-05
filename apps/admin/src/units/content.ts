@@ -315,6 +315,35 @@ export const certificationItem: Unit = {
   ],
 }
 
+/**
+ * 08 的附屬清單：碳效率頁「水資源」下方的績效表（指標／期間／結果）。
+ * 跟認證同屬 ESG 揭露，權限沿用 certification.*，不另開權限碼。
+ */
+export const performanceMetric: Unit = {
+  code: 'performance-metric',
+  permUnit: 'certification',
+  no: '08c',
+  title: '碳效率績效表',
+  group: '內容',
+  phase: 'P4',
+  frontend: '碳效率頁（/green-carbon）「水資源」段落下方的績效表',
+  note: '一筆＝表格的一列，依排序由上而下顯示、筆數不限；下架的列不顯示，全部下架時整張表（含標題）不顯示。表格標題「績效指標」與表頭「指標／期間／結果」請到「頁面設定與 SEO」的碳效率頁「頁面文字」修改。',
+  sortable: true,
+  hasStatus: true,
+  fields: [
+    { key: 'indicator', label: '指標', type: 'text', i18n: true, required: true, max: 100, side: 'locale', placeholder: '溫室氣體總排放' },
+    { key: 'period', label: '期間', type: 'text', i18n: true, required: true, max: 50, side: 'locale', placeholder: '2024 年',
+      hint: '例：2024 年、2026 / 2030、現況、2026 年起' },
+    { key: 'result', label: '結果', type: 'text', i18n: true, required: true, max: 200, side: 'locale', placeholder: '2,141 公噸 CO₂e（直接 314、能源間接 1,827）' },
+  ],
+  columns: [
+    { key: 'indicator', label: '指標' },
+    { key: 'period', label: '期間', width: '140px' },
+    { key: 'result', label: '結果' },
+    ...statusColumns,
+  ],
+}
+
 export const client: Unit = {
   code: 'client',
   no: '09',

@@ -246,6 +246,19 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/300_keep_en_h1.sql
 sqlcmd -S <server> -d NTI -I -b -i db/content/310_cert_detail_list.sql
 ```
 
+## 350_performance_metrics.sql
+
+`/green-carbon`「水資源」下方的績效表改由資料驅動（2026-11-05）。手寫、冪等；**須先套用 EF migration
+`PerformanceMetric`**（或參考版 `0022`）：
+
+- 建 4 列 `PerformanceMetric`：溫室氣體總排放／再生能源目標／屋頂太陽光電／平價綠電。
+  中文＝客戶 11-05 給的表格，英文＝我方翻譯（與 `mockup/green-carbon.html` 一致），待客戶確認。
+- 表裡已有任何一筆（含後台新增的）就整批不動。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/350_performance_metrics.sql
+```
+
 ## 340_cert_sections_oct30.sql
 
 認證頁下方清單改為客戶指定的七個區塊（2026-10-30）：管理系統／色彩與印刷品質資格／紙材與油墨／

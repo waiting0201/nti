@@ -98,7 +98,7 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 |----|--------|
 | 共用主檔 | `Category`、`CategoryI18n`、`SiteSetting` |
 | 首頁 | `HomeBanner`、`HomeBannerI18n` |
-| 內容 | `Solution`(+I18n)、`SolutionItem`(+I18n)、`Project`(+I18n)、`News`(+I18n)、`Vlog`(+I18n)、`Faq`(+I18n)、`IndustryTrend`(+I18n)、`Certification`(+I18n)、`CertificationListItem`(+I18n)、`ClientLogo`、`FacilityItem`(+I18n)、`JobPosting`(+I18n) |
+| 內容 | `Solution`(+I18n)、`SolutionItem`(+I18n)、`Project`(+I18n)、`News`(+I18n)、`Vlog`(+I18n)、`Faq`(+I18n)、`IndustryTrend`(+I18n)、`Certification`(+I18n)、`CertificationListItem`(+I18n)、`PerformanceMetric`(+I18n)、`ClientLogo`、`FacilityItem`(+I18n)、`JobPosting`(+I18n) |
 | 供應商 | `SupplierNotice`(+I18n)、`SupplierSpec`(+I18n)、`SupplierDownload`(+I18n) |
 | 頁面／SEO | `Page`、`PageI18n`、`PageText`（2026-09-24 新增，頁面文字覆寫）、`Redirect` |
 | 表單 | `QuoteRequest`、`QuoteAttachment`、`ContactMessage` |
@@ -381,6 +381,24 @@ CREATE TABLE dbo.CertificationListItemI18n (
   Title NVARCHAR(200) NOT NULL,
   Description NVARCHAR(400) NULL,
   CONSTRAINT PK_CertificationListItemI18n PRIMARY KEY (CertificationListItemId, Lang)
+);
+
+-- green-carbon「水資源」下方的績效表：指標／期間／結果（2026-11-05，0022）
+-- 後台是單元 08 的附屬清單（權限沿用 certification.*）。一頁幾列的小表，不另建索引
+CREATE TABLE dbo.PerformanceMetric (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  SortOrder INT NOT NULL DEFAULT 0,
+  IsPublished BIT NOT NULL DEFAULT 1,
+  /* audit */
+);
+
+CREATE TABLE dbo.PerformanceMetricI18n (
+  PerformanceMetricId INT NOT NULL REFERENCES dbo.PerformanceMetric(Id) ON DELETE CASCADE,
+  Lang VARCHAR(5) NOT NULL,
+  Indicator NVARCHAR(100) NOT NULL,        -- 溫室氣體總排放
+  Period NVARCHAR(50) NOT NULL,            -- 2024 年（單位中英寫法不同，所以也分語系）
+  Result NVARCHAR(200) NOT NULL,           -- 2,141 公噸 CO₂e（直接 314、能源間接 1,827）
+  CONSTRAINT PK_PerformanceMetricI18n PRIMARY KEY (PerformanceMetricId, Lang)
 );
 
 -- 客戶 logo 輪播（品牌名不翻譯，無 i18n 表）
@@ -920,6 +938,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-10-25 | Tim（Claude Code） | §4.11：頁面影片分語系——`Page.YoutubeId` 搬到 `PageI18n.YoutubeId`（關於我們中英各一支；工廠導覽只有中文，英文版改為單元 10「參觀」分類的照片輪播）。表數、外鍵、索引不變。遷移 `Api/Data/Migrations/*_PageVideoI18n` 與 `db/migrations/0019_page_video_i18n.sql` 一對一，先搬值再刪欄；`verify*.sql` 數字同步 |
 | 2026-10-25 | Tim（Claude Code） | §4.11：新增 `PageGalleryImage`（工廠導覽英文版的相簿照片，改在單元 15 上傳）。表 +1、外鍵 +1（CASCADE）、CHECK +1、索引 +1。`Category` Facility/tour 停用，原本那幾筆 `FacilityItem` 搬過來後刪除。遷移 `Api/Data/Migrations/*_PageGallery` 與 `db/migrations/0020_page_gallery.sql` 一對一；`verify*.sql` 數字同步 |
 | 2026-10-30 | Tim（Claude Code） | §4.8：`CertificationListItem.Section` 改為七個區塊（management／quality／material／building／membership／award／partner）；standards 併入 quality、gmi 軟刪除。表數與 CHECK 數不變。遷移 `Api/Data/Migrations/*_CertificationListSections` 與 `db/migrations/0021_certification_list_sections.sql` 一對一；`ShowInDetailList` 不再使用 |
+| 2026-11-05 | Tim（Claude Code） | §4.8：新增 `PerformanceMetric`(+I18n)（碳效率頁績效表）。表數 +2、外鍵 +1（CASCADE +1）、CHECK +1、非 PK/UQ 索引 +0。遷移 `Api/Data/Migrations/*_PerformanceMetric` 與 `db/migrations/0022_performance_metric.sql` 一對一；`verify*.sql` 數字同步 |
 
-*最後更新：2026-10-30*
+*最後更新：2026-11-05*
 

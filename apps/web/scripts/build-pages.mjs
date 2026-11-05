@@ -271,6 +271,7 @@ const HAND_MAINTAINED = new Set([
   'facility-pre-press', 'facility-eco-printing', 'facility-post-press', 'facility-quality',
   'colorbox', 'cardboard', 'uv-printing', 'other-printing',   // 品項卡＋h1／副標／介紹
   'privacy-legal',          // 後台內文（HasRichBody）
+  'green-carbon',           // 績效表（08c）
   'differences', 'about-difference', 'about-benefits', 'facility-tour',   // 頁面文字覆寫（about-certifications 已在上面）
 ])
 

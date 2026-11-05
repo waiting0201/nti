@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import { T } from '@/lib/t'
-import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
-import { PageBanner, PageMidBanner } from '@/components/cms'
+import { T, tr } from '@/lib/t'
+import { bannerSrc, getPage, getPerformanceMetrics, midBannerSrc } from '@/lib/api'
+import { MetricTable, PageBanner, PageMidBanner } from '@/components/cms'
 import { A } from '@/components/A'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -19,6 +19,10 @@ export default async function Page({ params }: Props) {
   const { locale } = await params
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
   const page = await getPage(locale, "green-carbon")
+  // 「水資源」下方的績效表（單元 08 附屬清單）。沒接 API 是 null → 照 mockup 原文；
+  // 有接 API 但 0 筆 → 整塊不輸出（客戶下架全部＝不要這塊）
+  const metrics = await getPerformanceMetrics(locale)
+  const head = (["Indicator", "Period", "Result"] as const).map((h) => tr(locale, h, page?.texts)) as [string, string, string]
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
@@ -50,6 +54,22 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Water &amp; solvent</div>
         <p className="prose wide">Waste-oil recovery and wastewater recycling systems run to international environmental standards. Treated water leaves at a COD value of 100&ndash;250&nbsp;mg/L and pH&nbsp;7&ndash;7.8; recovered solvent is separated and reused rather than discarded.</p>
       </div></section>
+      {metrics?.length !== 0 && (
+      <section className="section tight"><div className="wrap reveal">
+        <div className="dtitle">Performance Indicators</div>
+        {metrics ? <MetricTable items={metrics} head={head} /> : (
+        <table className="mtable">
+          <thead><tr><th scope="col">Indicator</th><th scope="col">Period</th><th scope="col">Result</th></tr></thead>
+          <tbody>
+            <tr><td>Total GHG emissions</td><td>2024</td><td>2,141 tCO&#8322;e (Scope&nbsp;1: 314; Scope&nbsp;2: 1,827)</td></tr>
+            <tr><td>Renewable energy target</td><td>2026 / 2030</td><td>RE24 / RE60</td></tr>
+            <tr><td>Rooftop solar PV</td><td>Current</td><td>591.26 kWp</td></tr>
+            <tr><td>Affordable green power</td><td>From 2026</td><td>205,000 kWh / year awarded</td></tr>
+          </tbody>
+        </table>
+        )}
+      </div></section>
+      )}
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>
         <p className="mt-m"><A href={l("/get-a-quote")} className="btn btn-solid">Get a Quote</A></p>

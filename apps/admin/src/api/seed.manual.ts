@@ -76,6 +76,22 @@ export const MANUAL_SEED: Record<string, Row[]> = {
     },
   ],
 
+  // 碳效率頁績效表（08 附屬清單）：與 db/content/350_performance_metrics.sql 同一份
+  'performance-metric': [
+    { id: '1', sortOrder: 10, isPublished: true,
+      i18n: bi({ indicator: '溫室氣體總排放', period: '2024 年', result: '2,141 公噸 CO₂e（直接 314、能源間接 1,827）' },
+               { indicator: 'Total GHG emissions', period: '2024', result: '2,141 tCO₂e (Scope 1: 314; Scope 2: 1,827)' }) },
+    { id: '2', sortOrder: 20, isPublished: true,
+      i18n: bi({ indicator: '再生能源目標', period: '2026 / 2030', result: 'RE24 / RE60' },
+               { indicator: 'Renewable energy target', period: '2026 / 2030', result: 'RE24 / RE60' }) },
+    { id: '3', sortOrder: 30, isPublished: true,
+      i18n: bi({ indicator: '屋頂太陽光電', period: '現況', result: '591.26 kWp' },
+               { indicator: 'Rooftop solar PV', period: 'Current', result: '591.26 kWp' }) },
+    { id: '4', sortOrder: 40, isPublished: true,
+      i18n: bi({ indicator: '平價綠電', period: '2026 年起', result: '得標 205,000 度 / 年' },
+               { indicator: 'Affordable green power', period: 'From 2026', result: '205,000 kWh / year awarded' }) },
+  ],
+
   'supplier-download': [
     {
       id: '1', sortOrder: 10, isPublished: true,

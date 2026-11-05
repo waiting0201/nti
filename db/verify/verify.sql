@@ -24,22 +24,22 @@ DECLARE @r TABLE (
 
 /* ---------- 結構 ---------- */
 INSERT @r (Item, Expected, Actual)
-SELECT N'資料表總數（49 設計 + Newsletter + SchemaVersion）', N'51',
+SELECT N'資料表總數（51 設計 + Newsletter + SchemaVersion）', N'53',
        CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables;
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'*I18n 多語子表數', N'18',
+SELECT N'*I18n 多語子表數', N'19',
        CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables WHERE name LIKE '%I18n';
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'外鍵數', N'36', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
+SELECT N'外鍵數', N'37', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
 
 /* 刪除改真刪之後（docs/10 §8.4），子表的外鍵必須是 CASCADE：17 張 *I18n
    ＋ NewsTag→News ＋ SolutionItem→Solution ＋ QuoteAttachment→QuoteRequest ＋ PageText→Page。
-   （2026-10-22 起 *I18n 為 18 張：多了 CertificationListItemI18n）
+   （2026-10-22 起 *I18n 為 18 張：多了 CertificationListItemI18n；2026-11-05 起 19 張：多了 PerformanceMetricI18n）
    少一條就代表某個單元一按刪除就撞 FK，而那只有實際去刪才會發現。 */
 INSERT @r (Item, Expected, Actual)
-SELECT N'ON DELETE CASCADE 的外鍵數', N'23', CAST(COUNT(*) AS NVARCHAR(20))
+SELECT N'ON DELETE CASCADE 的外鍵數', N'24', CAST(COUNT(*) AS NVARCHAR(20))
 FROM sys.foreign_keys WHERE delete_referential_action_desc = N'CASCADE';
 
 INSERT @r (Item, Expected, Actual)
@@ -63,7 +63,7 @@ SELECT N'匿名（系統命名）約束數', N'0', CAST(SUM(c) AS NVARCHAR(20)) 
 INSERT @r (Item, Expected, Actual)
 SELECT N'內容表缺稽核五欄的張數', N'0', CAST(COUNT(*) AS NVARCHAR(20))
 FROM (VALUES ('AdminUser'),('Category'),('HomeBanner'),('Solution'),('SolutionItem'),
-             ('Project'),('News'),('Vlog'),('Faq'),('IndustryTrend'),('Certification'),('CertificationListItem'),
+             ('Project'),('News'),('Vlog'),('Faq'),('IndustryTrend'),('Certification'),('CertificationListItem'),('PerformanceMetric'),
              ('ClientLogo'),('FacilityItem'),('JobPosting'),('SupplierNotice'),
              ('SupplierSpec'),('SupplierDownload'),('Page'),('PageText'),('Redirect'),
              ('QuoteRequest'),('ContactMessage'),

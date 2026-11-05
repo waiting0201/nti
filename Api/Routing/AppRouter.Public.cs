@@ -25,6 +25,7 @@ public sealed partial class AppRouter
             ("GET",  ["facility"]) or
             ("GET",  ["certifications"]) or
             ("GET",  ["certification-items"]) or
+            ("GET",  ["performance-metrics"]) or
             ("GET",  ["clients"]) or
             ("GET",  ["categories"]) or
             ("GET",  ["news"]) or
@@ -77,6 +78,7 @@ public sealed partial class AppRouter
             ("GET",  ["facility"])                => await facility.GetListAsync(req),
             ("GET",  ["certifications"])          => await certifications.GetListAsync(req),
             ("GET",  ["certification-items"])     => await certifications.GetListItemsAsync(req),
+            ("GET",  ["performance-metrics"])     => await certifications.GetPerformanceMetricsAsync(req),
             ("GET",  ["clients"])                 => await clients.GetListAsync(req),
             ("GET",  ["categories"])              => await categories.GetListAsync(req),
             ("GET",  ["news"])                    => await news.GetListAsync(req),
