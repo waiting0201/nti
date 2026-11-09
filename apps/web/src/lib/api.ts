@@ -227,10 +227,16 @@ export type Certification = {
   lastAuditDate: string | null
 }
 
-/** 認證頁的文字清單（單元 08 附屬清單）：七個固定區塊，順序見 about-certifications/page.tsx */
+/**
+ * 認證頁的文字清單（單元 08b）。區塊＝分類（CertSection，2026-11-09 起）：後端已依
+ * 區塊排序→項目排序排好，sectionTitle 是區塊在該語系的名稱（＝前台大標）；
+ * 停用或刪除的區塊，底下的項目不會回傳。
+ */
 export type CertificationListItem = {
   id: number
-  section: 'management' | 'quality' | 'material' | 'building' | 'membership' | 'award' | 'partner'
+  categoryId: number
+  sectionCode: string
+  sectionTitle: string
   title: string
   description: string | null
 }

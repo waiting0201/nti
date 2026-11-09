@@ -1183,52 +1183,10 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Management Systems",
-        "zh": "管理系統",
-        "kind": "text",
-        "section": "Management Systems",
-        "count": 1
-      },
-      {
-        "en": "Colour & Print Quality Qualifications",
-        "zh": "色彩與印刷品質資格",
-        "kind": "text",
-        "section": "Colour & Print Quality Qualifications",
-        "count": 1
-      },
-      {
         "en": "NTI leadership on the pressroom floor",
         "zh": "NTI 經營團隊於印刷廠區",
         "kind": "alt",
         "section": "Colour & Print Quality Qualifications",
-        "count": 1
-      },
-      {
-        "en": "Paper & Inks",
-        "zh": "紙材與油墨",
-        "kind": "text",
-        "section": "Paper & Inks",
-        "count": 1
-      },
-      {
-        "en": "Green Buildings",
-        "zh": "廠房建築",
-        "kind": "text",
-        "section": "Green Buildings",
-        "count": 1
-      },
-      {
-        "en": "Memberships & Own Marks",
-        "zh": "會員與自有標章",
-        "kind": "text",
-        "section": "Memberships & Own Marks",
-        "count": 1
-      },
-      {
-        "en": "Awards",
-        "zh": "獲獎肯定",
-        "kind": "text",
-        "section": "Awards",
         "count": 1
       },
       {

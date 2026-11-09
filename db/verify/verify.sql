@@ -32,7 +32,7 @@ SELECT N'*I18n 多語子表數', N'20',
        CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.tables WHERE name LIKE '%I18n';
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'外鍵數', N'38', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
+SELECT N'外鍵數（2026-11-09 +1：FK_CertificationListItem_Category）', N'39', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.foreign_keys;
 
 /* 刪除改真刪之後（docs/10 §8.4），子表的外鍵必須是 CASCADE：17 張 *I18n
    ＋ NewsTag→News ＋ SolutionItem→Solution ＋ QuoteAttachment→QuoteRequest ＋ PageText→Page。
@@ -43,7 +43,7 @@ SELECT N'ON DELETE CASCADE 的外鍵數', N'25', CAST(COUNT(*) AS NVARCHAR(20))
 FROM sys.foreign_keys WHERE delete_referential_action_desc = N'CASCADE';
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'Category 型別安全複合外鍵數', N'9', CAST(COUNT(*) AS NVARCHAR(20))
+SELECT N'Category 型別安全複合外鍵數（含 08b 區塊）', N'10', CAST(COUNT(*) AS NVARCHAR(20))
 
 FROM sys.foreign_keys fk
 WHERE fk.referenced_object_id = OBJECT_ID(N'dbo.Category')
@@ -100,18 +100,19 @@ INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'173', CAST
 INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'84', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'68', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'21', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
-INSERT @r (Item, Expected, Actual) SELECT N'Category（不含 Certification：那類的分組由 content/290 與後台管理）', N'41', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category WHERE CategoryType <> 'Certification';
+INSERT @r (Item, Expected, Actual) SELECT N'Category（不含 Certification／CertSection：那兩類由 content/290、migration 與後台管理）', N'41', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category WHERE CategoryType NOT IN ('Certification','CertSection');
+INSERT @r (Item, Expected, Actual) SELECT N'CertSection 原有七個區塊代號（0024）', N'7', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category WHERE CategoryType = 'CertSection' AND Code IN ('management','quality','material','building','membership','award','partner');
 INSERT @r (Item, Expected, Actual) SELECT N'Tag',            N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Tag;
 INSERT @r (Item, Expected, Actual) SELECT N'TagI18n',        N'34', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.TagI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'CategoryI18n（同上）', N'82', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.CategoryI18n i JOIN dbo.Category c ON c.Id = i.CategoryId WHERE c.CategoryType <> 'Certification';
-INSERT @r (Item, Expected, Actual) SELECT N'  └ CategoryType 種類', N'9', CAST(COUNT(DISTINCT CategoryType) AS NVARCHAR(20)) FROM dbo.Category;
+INSERT @r (Item, Expected, Actual) SELECT N'CategoryI18n（同上）', N'82', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.CategoryI18n i JOIN dbo.Category c ON c.Id = i.CategoryId WHERE c.CategoryType NOT IN ('Certification','CertSection');
+INSERT @r (Item, Expected, Actual) SELECT N'  └ CategoryType 種類', N'10', CAST(COUNT(DISTINCT CategoryType) AS NVARCHAR(20)) FROM dbo.Category;
 INSERT @r (Item, Expected, Actual) SELECT N'SiteSetting',    N'15', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SiteSetting;
 INSERT @r (Item, Expected, Actual) SELECT N'Page（固定 28 + 預留 csr）', N'29', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Page;
 INSERT @r (Item, Expected, Actual) SELECT N'PageI18n',       N'58', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.PageI18n;
 INSERT @r (Item, Expected, Actual) SELECT N'  └ HasRichBody=1（privacy-legal、green-csr）', N'2', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Page WHERE HasRichBody = 1;
 INSERT @r (Item, Expected, Actual) SELECT N'Solution（固定 4 筆）', N'4', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Solution;
 INSERT @r (Item, Expected, Actual) SELECT N'SolutionI18n',   N'8',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SolutionI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'SchemaVersion（已套用 migration 數）', N'20', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SchemaVersion;
+INSERT @r (Item, Expected, Actual) SELECT N'SchemaVersion（已套用 migration 數）', N'21', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SchemaVersion;
 
 /* 後台登入識別＝Username（2026-09-06，見 db/migrations/0005）：唯一鍵搬家了 */
 INSERT @r (Item, Expected, Actual)

@@ -254,7 +254,7 @@ export const certification: Unit = {
   hasStatus: true,
   fields: [
     { key: 'categoryId', label: '分組', type: 'select', required: true, categoryType: 'Certification', side: 'neutral',
-      hint: '只影響首頁 Proof 牆：一個分組一張卡，卡片標題就是分組名稱。認證頁不分組' },
+      hint: '只影響首頁 Proof 牆：一個分組一張卡，卡片標題就是分組名稱。在「分類管理 › 認證（首頁 Proof 分組）」維護；認證頁下方清單的區塊是另一套（08b）' },
     { key: 'logo', label: 'Logo', type: 'image', required: true, hint: HINT.certLogo, altKey: 'alt', side: 'neutral' },
     alt('alt', 'Logo 替代文字'),
     { key: 'name', label: '名稱', type: 'text', i18n: true, required: true, side: 'locale' },
@@ -277,20 +277,10 @@ export const certification: Unit = {
   ],
 }
 
-/** 認證頁清單的七個區塊（CertificationListItem.Section），順序即前台由上而下的順序 */
-const CERT_LIST_SECTIONS = [
-  { value: 'management', label: '管理系統' },
-  { value: 'quality', label: '色彩與印刷品質資格' },
-  { value: 'material', label: '紙材與油墨' },
-  { value: 'building', label: '廠房建築' },
-  { value: 'membership', label: '會員與自有標章' },
-  { value: 'award', label: '獲獎記錄' },
-  { value: 'partner', label: '合作夥伴' },
-]
-
 /**
- * 08 的附屬清單：認證頁 logo 牆下方的七個文字清單（管理系統、品質資格、紙材、廠房、標章、獎項、夥伴）。
+ * 08 的附屬清單：認證頁 logo 牆下方的文字清單（管理系統、品質資格、紙材、廠房、標章、獎項、夥伴…）。
  * 沒有 logo、不上 logo 牆與首頁 Proof 牆，所以不放進認證單元。權限沿用 certification.*。
+ * 區塊＝分類 CertSection（2026-11-09 起）：名稱就是前台大標，在「分類管理 › 認證頁清單區塊」新增、改名、排序、停用。
  */
 export const certificationItem: Unit = {
   code: 'certification-item',
@@ -299,18 +289,19 @@ export const certificationItem: Unit = {
   title: '認證頁清單項目',
   group: '內容',
   phase: 'P4',
-  frontend: '品質認證與永續實踐頁：管理系統、色彩與印刷品質資格、紙材與油墨、廠房建築、會員與自有標章、獲獎記錄、合作夥伴七個清單',
-  note: '選好區塊再新增項目，同一區塊依排序顯示、筆數不限；某區塊沒有任何上架項目時整個區塊不顯示。區塊大標請到「頁面文字」修改。',
+  frontend: '品質認證與永續實踐頁 logo 牆下方的清單，依區塊分組（區塊順序與大標見「分類管理 › 認證頁清單區塊」）',
+  note: '選好區塊再新增項目，同一區塊依排序顯示、筆數不限；某區塊沒有任何上架項目時整個區塊不顯示。區塊的大標、先後順序與新增區塊，請到「分類管理 › 認證頁清單區塊」。',
   sortable: true,
   hasStatus: true,
   fields: [
-    { key: 'section', label: '區塊', type: 'select', required: true, options: CERT_LIST_SECTIONS, side: 'neutral' },
+    { key: 'categoryId', label: '區塊', type: 'select', required: true, categoryType: 'CertSection', side: 'neutral',
+      hint: '區塊在「分類管理 › 認證頁清單區塊」維護，名稱就是前台的大標。與「認證（首頁 Proof 分組）」是兩套' },
     { key: 'title', label: '標題', type: 'text', i18n: true, required: true, max: 200, side: 'locale', placeholder: 'Smart Building Award' },
     { key: 'description', label: '說明', type: 'textarea', i18n: true, max: 400, side: 'locale' },
   ],
   columns: [
     { key: 'title', label: '標題' },
-    { key: 'section', label: '區塊', width: '130px' },
+    { key: 'categoryId', label: '區塊', render: 'category', width: '160px' },
     ...statusColumns,
   ],
 }

@@ -88,15 +88,16 @@ public sealed class CertificationListItemConfiguration : IEntityTypeConfiguratio
 {
     public void Configure(EntityTypeBuilder<CertificationListItem> b)
     {
-        b.ToTable("CertificationListItem", t => t.HasCheckConstraint("CK_CertificationListItem_Section",
-            "[Section] IN ('management','quality','material','building','membership','award','partner')"));
-        b.Property(x => x.Section).HasMaxLength(20).IsUnicode(false);
+        b.ToTable("CertificationListItem");
         b.Property(x => x.SortOrder).HasDefaultValue(0);
         b.Property(x => x.IsPublished).HasDefaultValue(true);
         b.Audit();
 
-        b.HasIndex(x => new { x.IsDeleted, x.IsPublished, x.Section, x.SortOrder })
-            .HasDatabaseName("IX_CertificationListItem_Section");
+        // 區塊＝分類（CertSection），2026-11-09 起取代寫死的 Section 字串
+        b.CategoryGuard(CategoryTypes.CertSection, "FK_CertificationListItem_Category");
+
+        b.HasIndex(x => new { x.IsDeleted, x.IsPublished, x.CategoryId, x.SortOrder })
+            .HasDatabaseName("IX_CertificationListItem_Category");
     }
 }
 

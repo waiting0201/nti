@@ -2,7 +2,7 @@ import { Fragment, type ReactNode } from 'react'
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
-import { CertificationWall, DetailList, PageBanner, PageMidBanner } from '@/components/cms'
+import { CertificationWall, DetailSection, PageBanner, PageMidBanner } from '@/components/cms'
 import { JsonLd } from '@/components/JsonLd'
 import { organizationCredentials } from '@/lib/jsonld'
 import { bannerSrc, getCertificationItems, getCertifications, getPage, midBannerSrc, type CertificationListItem } from '@/lib/api'
@@ -11,9 +11,9 @@ import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
 
-// 七個區塊的順序與大標固定（大標中文走 zh.ts，後台「頁面文字」可覆寫）；fallback＝mockup 原文，
-// 沒有 mockup 原文的（合作夥伴）是 null，沒接 API 時不輸出
-const SECTIONS: { key: CertificationListItem['section']; title: string; fallback: ReactNode }[] = [
+// 沒接 API 時的版面＝mockup 原文（驗收閘比對的就是這份）。有接 API 時區塊的大標、順序、
+// 增減全由後台「分類管理」的認證頁區塊（CertSection）決定，這張表不參與。
+const SECTIONS: { key: string; title: string; fallback: ReactNode }[] = [
   { key: 'management', title: "Management Systems", fallback: (
     <div className="flist mt-s"><p className="fi"><b>ISO&nbsp;9001 &mdash; Quality Management System</b>Demonstrates NTI&rsquo;s commitment to consistent quality, continuous improvement, and customer satisfaction.</p><p className="fi"><b>ISO&nbsp;14001 &mdash; Environmental Management</b>Demonstrates NTI&rsquo;s commitment to reducing environmental impact through responsible management across every stage of production and the product lifecycle.</p><p className="fi"><b>ISO&nbsp;45001 &mdash; Occupational Health &amp; Safety Management</b>Certifies NTI&rsquo;s commitment to maintaining a safe, healthy workplace through effective occupational health and safety management.</p></div>
   ) },
@@ -48,10 +48,13 @@ export default async function Page({ params }: Props) {
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
   const page = await getPage(locale, 'about-certifications')
   const certs = await getCertifications(locale)
-  // 下方七個清單（單元 08b）。沒接 API 是 null → 照 mockup 原文；
-  // 有接 API 但某區塊 0 筆 → 那一塊不輸出（客戶刪光獎項＝不要這塊；合作夥伴在填之前也是）
+  // 下方清單（單元 08b）。沒接 API 是 null → 照 mockup 原文；有接 API → 依區塊分類分組，
+  // 0 筆的區塊不會出現（客戶刪光獎項＝不要這塊；新建的區塊在填之前也是）
   const listItems = await getCertificationItems(locale)
-  const section = (key: CertificationListItem['section']) => listItems?.filter((it) => it.section === key) ?? null
+  const groups = listItems ? groupBySection(listItems) : null
+  // 中段橫幅原本在第 2 個區塊之後；區塊不足兩個時接在最後一個之後
+  const bannerAfter = groups ? Math.min(1, groups.length - 1) : 1
+  const midBanner = <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-about-mid1.webp")} alt="NTI leadership on the pressroom floor" />
   const l = withLocale(locale)
   // 沒有任何認證填了證號／日期就是 null，不輸出（沒接 API 時版面驗收閘比對的節點序列不受影響）
   const credentials = certs?.length ? organizationCredentials(certs) : null
@@ -87,20 +90,27 @@ export default async function Page({ params }: Props) {
         <img src={mediaUrl("/assets/cert-esg.png")} alt="ESG Environmental, Social, Governance" />
       </div>
         )}</section>
-      {SECTIONS.map((sec, i) => {
-        const items = section(sec.key)
-        return (
+      {groups ? (
+        <>
+          {groups.map((g, i) => (
+            <Fragment key={g.categoryId}>
+              <DetailSection title={g.title} items={g.items} />
+              {i === bannerAfter && midBanner}
+            </Fragment>
+          ))}
+          {groups.length === 0 && midBanner}
+        </>
+      ) : SECTIONS.map((sec, i) => (
           <Fragment key={sec.key}>
-            {(items ? items.length > 0 : sec.fallback !== null) && (
+            {sec.fallback !== null && (
             <section className="section tight"><div className="wrap reveal">
               <div className="dtitle">{sec.title}</div>
-              {items ? <DetailList items={items} /> : sec.fallback}
+              {sec.fallback}
             </div></section>
             )}
-            {i === 1 && <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-about-mid1.webp")} alt="NTI leadership on the pressroom floor" />}
+            {i === 1 && midBanner}
           </Fragment>
-        )
-      })}
+      ))}
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>
         <p className="mt-m"><A href={l("/get-a-quote")} className="btn btn-solid">Get a Quote</A></p>
@@ -108,4 +118,15 @@ export default async function Page({ params }: Props) {
       </div></section>
     </T>
   )
+}
+
+/** 後端已依「區塊排序 → 項目排序」排好，這裡只照出現順序分組 */
+function groupBySection(items: CertificationListItem[]) {
+  const groups: { categoryId: number; title: string; items: CertificationListItem[] }[] = []
+  for (const it of items) {
+    const last = groups[groups.length - 1]
+    if (last?.categoryId === it.categoryId) last.items.push(it)
+    else groups.push({ categoryId: it.categoryId, title: it.sectionTitle, items: [it] })
+  }
+  return groups
 }

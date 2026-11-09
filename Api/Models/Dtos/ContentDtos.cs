@@ -181,8 +181,10 @@ public sealed class CertificationDto
 public sealed class CertificationListItemDto
 {
     public int     Id          { get; set; }
-    public string  Section     { get; set; } = null!;
-    public int     SortOrder   { get; set; }
+    public int     CategoryId   { get; set; }
+    public string  SectionCode  { get; set; } = null!;   // 區塊分類的代號（management／quality…）
+    public string  SectionTitle { get; set; } = null!;   // 區塊分類該語系的名稱＝前台大標
+    public int     SortOrder    { get; set; }
     public string  Title       { get; set; } = null!;
     public string? Description { get; set; }
 }

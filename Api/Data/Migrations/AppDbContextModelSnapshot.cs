@@ -150,7 +150,7 @@ namespace Nti.Api.Data.Migrations
 
                     b.ToTable("Category", null, t =>
                         {
-                            t.HasCheckConstraint("CK_Category_Type", "[CategoryType] IN ('News','Project','Vlog','Faq','Certification','Facility','SupplierNotice','Industry','QuoteMaterial')");
+                            t.HasCheckConstraint("CK_Category_Type", "[CategoryType] IN ('News','Project','Vlog','Faq','Certification','Facility','SupplierNotice','Industry','QuoteMaterial','CertSection')");
                         });
 
                     b.HasData(
@@ -1275,6 +1275,16 @@ namespace Nti.Api.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CategoryTypeGuard")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasMaxLength(30)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(30)")
+                        .HasComputedColumnSql("CAST('CertSection' AS VARCHAR(30))", true);
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2(0)")
@@ -1291,12 +1301,6 @@ namespace Nti.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("Section")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)");
-
                     b.Property<int>("SortOrder")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -1310,13 +1314,10 @@ namespace Nti.Api.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IsDeleted", "IsPublished", "Section", "SortOrder")
-                        .HasDatabaseName("IX_CertificationListItem_Section");
+                    b.HasIndex("IsDeleted", "IsPublished", "CategoryId", "SortOrder")
+                        .HasDatabaseName("IX_CertificationListItem_Category");
 
-                    b.ToTable("CertificationListItem", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_CertificationListItem_Section", "[Section] IN ('management','quality','material','building','membership','award','partner')");
-                        });
+                    b.ToTable("CertificationListItem", (string)null);
                 });
 
             modelBuilder.Entity("Nti.Api.Models.Entities.CertificationListItemI18n", b =>
@@ -5914,6 +5915,16 @@ namespace Nti.Api.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_CertificationI18n_Certification");
+                });
+
+            modelBuilder.Entity("Nti.Api.Models.Entities.CertificationListItem", b =>
+                {
+                    b.HasOne("Nti.Api.Models.Entities.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId", "CategoryTypeGuard")
+                        .HasPrincipalKey("Id", "CategoryType")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_CertificationListItem_Category");
                 });
 
             modelBuilder.Entity("Nti.Api.Models.Entities.CertificationListItemI18n", b =>

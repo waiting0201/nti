@@ -175,7 +175,10 @@ const CATEGORY_TYPES: Array<[string, string]> = [
   ['Project', '案例實績'],
   ['Vlog', 'Green Vlog'],
   ['Faq', 'FAQ'],
-  ['Certification', '認證・夥伴・獎項'],
+  // 兩種認證相關的分類別再混在一起：Certification 只管 08 logo 的首頁 Proof 牆分組；
+  // CertSection 是 08b 認證頁清單的區塊（2026-11-09 起由分類驅動）
+  ['Certification', '認證（首頁 Proof 分組）'],
+  ['CertSection', '認證頁清單區塊'],
   ['Facility', '設備與廠房'],
   ['SupplierNotice', '供應商公告'],
   ['Industry', '產業別'],
@@ -193,6 +196,14 @@ const FIXED_CATEGORY_TYPES: Record<string, string> = {
   Facility: '「設備與廠房」的分類對應四個固定子頁（印前／環保印刷／印後／品質），新增的分類前台沒有頁面可以顯示，所以不開放新增；名稱、排序與啟用可以改。',
   Industry: '報價表單的「產業別」選項目前寫在前台頁面裡，新增的分類不會出現在表單上，所以不開放新增（要加選項屬改版範圍）。',
   QuoteMaterial: '報價表單的「材質」選項目前寫在前台頁面裡，新增的分類不會出現在表單上，所以不開放新增（要加選項屬改版範圍）。',
+}
+
+/** 只提示、不擋新增：名稱容易和別的下拉選單混淆的型別 */
+const CATEGORY_TYPE_NOTES: Record<string, string> = {
+  Certification:
+    '這裡的分類是「08 認證・夥伴・獎項」（有 logo 的認證）的分組，只決定首頁 Proof 牆分成幾張卡、卡片標題是什麼。認證頁下方清單的區塊請到旁邊的「認證頁清單區塊」。',
+  CertSection:
+    '認證頁 logo 牆下方的清單區塊：名稱就是前台的區塊大標，排序決定由上而下的順序（中段橫幅固定在第 2 個區塊之後）。停用＝整個區塊連同底下項目在前台隱藏；沒有任何上架項目的區塊也不顯示。項目在「08b 認證頁清單項目」新增。',
 }
 
 /** 代號：小寫英數與連字號，與種子一致（esg、pre-press、food-beverage…）；欄位是 ASCII 40 */
@@ -232,6 +243,7 @@ export function CategoryPage() {
   const shown = rows.filter((r) => r.categoryType === type)
   const typeLabel = CATEGORY_TYPES.find(([code]) => code === type)?.[1] ?? type
   const fixedNote = FIXED_CATEGORY_TYPES[type]
+  const typeNote = CATEGORY_TYPE_NOTES[type]
 
   const openNew = () => {
     const maxSort = shown.reduce((m, r) => Math.max(m, Number(r.sortOrder ?? 0)), 0)
@@ -303,7 +315,7 @@ export function CategoryPage() {
     <>
       <div className="page-h">
         <h1>22 · 分類管理</h1>
-        <div className="sub">已被引用的分類不可刪除，只能停用。九種分類共 {rows.length} 筆。</div>
+        <div className="sub">已被引用的分類不可刪除，只能停用。{CATEGORY_TYPES.length} 種分類共 {rows.length} 筆。</div>
       </div>
 
       <div className="locale-tabs" style={{ flexWrap: 'wrap' }}>
@@ -315,6 +327,7 @@ export function CategoryPage() {
       </div>
 
       {fixedNote && <Notice kind="info">{fixedNote}</Notice>}
+      {typeNote && <Notice kind="info">{typeNote}</Notice>}
 
       <div className="card">
         <div className="card-h">

@@ -92,7 +92,7 @@ const CMS_BLOCKS = {
   ],
   'about-certifications': [
     /<section class="section certs reveal">[\s\S]*?<\/section>/,  // 認證 logo 牆（08）
-    /<div class="flist mt-s">[\s\S]*?<\/div>/g,                    // 七個清單：08 的附屬清單（區塊大標仍可覆寫）
+    /<div class="flist mt-s">[\s\S]*?<\/div>/g,                    // 七個清單：08b（區塊大標也改由分類驅動，見 CMS_TEXTS）
   ],
   'green-carbon': [/<tbody>[\s\S]*?<\/tbody>/],                  // 績效表的列：08 附屬清單（標題與表頭仍可覆寫）
   'green-esg': [/<tbody>[\s\S]*?<\/tbody>/],                     // 永續目標表的列：08 附屬清單（標題與表頭仍可覆寫）
@@ -122,6 +122,11 @@ const CMS_TEXTS = {
     'Packaging Paperboard', 'Hang tags, blister cards and backcards for retail walls.',
     'UV Printing', 'Printing on special materials, special varnish, anti-counterfeiting and more.',
     'Other Printing', 'Desk calendars, hand bags, red envelopes, mouse pads and manuals.',
+  ],
+  // 下方清單的區塊大標＝後台「分類管理」認證頁區塊（CertSection）的名稱，2026-11-09 起不在頁面文字改
+  'about-certifications': [
+    'Management Systems', 'Colour & Print Quality Qualifications', 'Paper & Inks', 'Green Buildings',
+    'Memberships & Own Marks', 'Awards', 'Partnerships',
   ],
 }
 

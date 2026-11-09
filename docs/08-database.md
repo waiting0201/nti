@@ -117,14 +117,14 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 -- 統一分類主檔：以 CategoryType 分流，後台為單一「分類管理」單元
 CREATE TABLE dbo.Category (
   Id INT IDENTITY(1,1) PRIMARY KEY,
-  CategoryType VARCHAR(30) NOT NULL,   -- News|Project|Vlog|Faq|Certification|Facility|SupplierNotice|Industry|QuoteMaterial
+  CategoryType VARCHAR(30) NOT NULL,   -- News|Project|Vlog|Faq|Certification|Facility|SupplierNotice|Industry|QuoteMaterial|CertSection（2026-11-09 加，認證頁清單區塊）
   Code VARCHAR(40) NOT NULL,           -- 程式用固定碼，建立後不可改
   SortOrder INT NOT NULL DEFAULT 0,
   IsActive BIT NOT NULL DEFAULT 1,
   /* audit */
   CONSTRAINT UQ_Category_Type_Code UNIQUE (CategoryType, Code),
   CONSTRAINT CK_Category_Type CHECK (CategoryType IN
-    ('News','Project','Vlog','Faq','Certification','Facility','SupplierNotice','Industry','QuoteMaterial'))
+    ('News','Project','Vlog','Faq','Certification','Facility','SupplierNotice','Industry','QuoteMaterial','CertSection'))
 );
 
 CREATE TABLE dbo.CategoryI18n (
@@ -369,7 +369,8 @@ CREATE TABLE dbo.CertificationI18n (
 -- 沒有 logo、不上 logo 牆與首頁 Proof 牆，所以不放進 Certification。後台是單元 08 的附屬清單
 CREATE TABLE dbo.CertificationListItem (
   Id INT IDENTITY(1,1) PRIMARY KEY,
-  Section VARCHAR(20) NOT NULL,            -- CK：management｜quality｜material｜building｜membership｜award｜partner（2026-10-30，0021；原 standards｜gmi｜award）
+  CategoryId INT NOT NULL,                 -- 區塊＝Category（CertSection），型別安全複合 FK FK_CertificationListItem_Category
+                                           -- （2026-11-09，0024；原為 Section VARCHAR(20) 寫死七個值）
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1,
   /* audit */
@@ -786,7 +787,7 @@ CREATE INDEX IX_SupplierNotice_List ON dbo.SupplierNotice(IsDeleted, IsPublished
 -- 列表：上架 + 手動排序
 CREATE INDEX IX_Project_List ON dbo.Project(IsDeleted, IsPublished, SortOrder);
 CREATE INDEX IX_Certification_Home ON dbo.Certification(IsDeleted, IsPublished, ShowOnHome, SortOrder);
-CREATE INDEX IX_CertificationListItem_Section ON dbo.CertificationListItem(IsDeleted, IsPublished, Section, SortOrder);
+CREATE INDEX IX_CertificationListItem_Category ON dbo.CertificationListItem(IsDeleted, IsPublished, CategoryId, SortOrder);  -- 2026-11-09 前為 IX_CertificationListItem_Section
 CREATE INDEX IX_HomeBanner_List ON dbo.HomeBanner(IsDeleted, IsPublished, SortOrder);
 
 -- 分類主檔
@@ -957,6 +958,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-10-30 | Tim（Claude Code） | §4.8：`CertificationListItem.Section` 改為七個區塊（management／quality／material／building／membership／award／partner）；standards 併入 quality、gmi 軟刪除。表數與 CHECK 數不變。遷移 `Api/Data/Migrations/*_CertificationListSections` 與 `db/migrations/0021_certification_list_sections.sql` 一對一；`ShowInDetailList` 不再使用 |
 | 2026-11-05 | Tim（Claude Code） | §4.8：新增 `PerformanceMetric`(+I18n)（碳效率頁績效表）。表數 +2、外鍵 +1（CASCADE +1）、CHECK +1、非 PK/UQ 索引 +0。遷移 `Api/Data/Migrations/*_PerformanceMetric` 與 `db/migrations/0022_performance_metric.sql` 一對一；`verify*.sql` 數字同步 |
 | 2026-11-05 | Tim（Claude Code） | §4.8：新增 `SustainabilityGoal`(+I18n)（ESG 頁永續目標表）。表數 +2、外鍵 +1（CASCADE +1）、CHECK +1、非 PK/UQ 索引 +0。遷移 `Api/Data/Migrations/*_SustainabilityGoal` 與 `db/migrations/0023_sustainability_goal.sql` 一對一；`verify*.sql` 數字同步 |
+| 2026-11-09 | Tim（Claude Code） | §4.1／§4.8：認證頁清單的區塊改由分類驅動。`Category` 加型別 `CertSection`；`CertificationListItem.Section` → `CategoryId`（型別安全複合 FK），建立七個區塊分類（代號沿用原值），名稱取「頁面文字」對大標的覆寫後刪除那些覆寫。外鍵 +1、PERSISTED 計算欄 +1、CHECK −1、索引換名。遷移 `Api/Data/Migrations/*_CertificationListSectionCategory` 與 `db/migrations/0024_certification_list_section_category.sql` 一對一 |
 
-*最後更新：2026-11-05*
+*最後更新：2026-11-09*
 

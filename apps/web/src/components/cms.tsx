@@ -542,6 +542,19 @@ export function CertificationLogos({ items, locale }: { items: Certification[]; 
  * 認證頁的「標題＋說明」清單（mockup 的 `.flist > .fi`）。資料已經是該語系的內容，
  * 不經過 `<T>`——否則標題剛好等於字典裡某個英文 key 時會被換掉。
  */
+/**
+ * 認證頁的一個清單區塊（單元 08b）：大標＝區塊分類的名稱，已是該語系的字——
+ * 放在元件裡就不會被 `<T>` 的字典替換碰到（同 DetailList）。
+ */
+export function DetailSection({ title, items }: { title: string; items: { id: number; title: string; description: string | null }[] }) {
+  return (
+    <section className="section tight"><div className="wrap reveal">
+      <div className="dtitle">{title}</div>
+      <DetailList items={items} />
+    </div></section>
+  )
+}
+
 export function DetailList({ items }: { items: { id: number; title: string; description: string | null }[] }) {
   return (
     <div className="flist mt-s">

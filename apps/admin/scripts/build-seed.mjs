@@ -56,8 +56,22 @@ function categories() {
       i18n: { zh: { name: m[4] }, en: { name: m[5] } },
     })
   }
+  // 認證頁清單的區塊（08b）：不在 db/seed，由 EF migration CertificationListSectionCategory／0024 建立，
+  // 名稱＝前台目前顯示的大標（mockup 原文／zh.ts）
+  for (const [code, sortOrder, en, zh] of CERT_SECTIONS)
+    rows.push({ id: `CertSection:${code}`, categoryType: 'CertSection', code, sortOrder, isActive: true, i18n: { zh: { name: zh }, en: { name: en } } })
   return rows
 }
+
+const CERT_SECTIONS = [
+  ['management', 10, 'Management Systems', '管理系統'],
+  ['quality', 20, 'Colour & Print Quality Qualifications', '色彩與印刷品質資格'],
+  ['material', 30, 'Paper & Inks', '紙材與油墨'],
+  ['building', 40, 'Green Buildings', '廠房建築'],
+  ['membership', 50, 'Memberships & Own Marks', '會員與自有標章'],
+  ['award', 60, 'Awards', '獲獎肯定'],
+  ['partner', 70, 'Partnerships', '合作夥伴'],
+]
 
 /* 有影片的固定頁 → [mockup 檔, 有影片的語系]（與後端 Api/Common/Constants.cs 的 PageVideoPages 一致）。
    影片分語系（PageI18n.YoutubeId）：工廠導覽只有中文版是影片，英文版是相簿——mockup（英文）

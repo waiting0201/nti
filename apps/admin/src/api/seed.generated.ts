@@ -1,6 +1,6 @@
 /* 由 scripts/build-seed.mjs 自 db/seed/*.sql 與 mockup/*.html 產生 —— 請勿手改。
    重新產生：npm run seed
-   筆數：category=44  page=29  solution=4  solution-item=15  home-banner=3  news=12  project=6  faq=8  job=5  trend=5  certification=14  client=6  facility=21  vlog=4  supplier-notice=5  supplier-spec=4  redirect=226 */
+   筆數：category=51  page=29  solution=4  solution-item=15  home-banner=3  news=12  project=6  faq=8  job=5  trend=5  certification=14  client=6  facility=21  vlog=4  supplier-notice=5  supplier-spec=4  redirect=226 */
 import type { Row } from './types'
 
 export const SEED: Record<string, Row[]> = {
@@ -662,6 +662,111 @@ export const SEED: Record<string, Row[]> = {
         },
         "en": {
           "name": "Specialty / metallized"
+        }
+      }
+    },
+    {
+      "id": "CertSection:management",
+      "categoryType": "CertSection",
+      "code": "management",
+      "sortOrder": 10,
+      "isActive": true,
+      "i18n": {
+        "zh": {
+          "name": "管理系統"
+        },
+        "en": {
+          "name": "Management Systems"
+        }
+      }
+    },
+    {
+      "id": "CertSection:quality",
+      "categoryType": "CertSection",
+      "code": "quality",
+      "sortOrder": 20,
+      "isActive": true,
+      "i18n": {
+        "zh": {
+          "name": "色彩與印刷品質資格"
+        },
+        "en": {
+          "name": "Colour & Print Quality Qualifications"
+        }
+      }
+    },
+    {
+      "id": "CertSection:material",
+      "categoryType": "CertSection",
+      "code": "material",
+      "sortOrder": 30,
+      "isActive": true,
+      "i18n": {
+        "zh": {
+          "name": "紙材與油墨"
+        },
+        "en": {
+          "name": "Paper & Inks"
+        }
+      }
+    },
+    {
+      "id": "CertSection:building",
+      "categoryType": "CertSection",
+      "code": "building",
+      "sortOrder": 40,
+      "isActive": true,
+      "i18n": {
+        "zh": {
+          "name": "廠房建築"
+        },
+        "en": {
+          "name": "Green Buildings"
+        }
+      }
+    },
+    {
+      "id": "CertSection:membership",
+      "categoryType": "CertSection",
+      "code": "membership",
+      "sortOrder": 50,
+      "isActive": true,
+      "i18n": {
+        "zh": {
+          "name": "會員與自有標章"
+        },
+        "en": {
+          "name": "Memberships & Own Marks"
+        }
+      }
+    },
+    {
+      "id": "CertSection:award",
+      "categoryType": "CertSection",
+      "code": "award",
+      "sortOrder": 60,
+      "isActive": true,
+      "i18n": {
+        "zh": {
+          "name": "獲獎肯定"
+        },
+        "en": {
+          "name": "Awards"
+        }
+      }
+    },
+    {
+      "id": "CertSection:partner",
+      "categoryType": "CertSection",
+      "code": "partner",
+      "sortOrder": 70,
+      "isActive": true,
+      "i18n": {
+        "zh": {
+          "name": "合作夥伴"
+        },
+        "en": {
+          "name": "Partnerships"
         }
       }
     }

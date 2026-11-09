@@ -2,6 +2,8 @@
    340_cert_sections_oct30.sql  —  認證頁改為客戶指定的七個區塊（2026-10-30）
    -----------------------------------------------------------------------------
    須先套用 EF migration CertificationListSections（standards → quality、gmi 軟刪除）。
+   2026-11-09 起區塊改由分類（CategoryType = 'CertSection'）驅動：下方的區塊代號＝分類代號，
+   寫入時對成 CategoryId。須先套用 EF migration CertificationListSectionCategory。
 
    /about-certifications 下方清單改為七個區塊，全由 CertificationListItem 驅動
    （Certification.ShowInDetailList 從此不再使用）：
@@ -28,8 +30,10 @@ GO
 BEGIN TRAN;
 
 /* ── 1. 清單項目 ── */
-IF EXISTS (SELECT 1 FROM dbo.CertificationListItem
-           WHERE Section IN ('management','material','building','membership','partner'))
+IF EXISTS (SELECT 1 FROM dbo.CertificationListItem t
+           JOIN dbo.Category c ON c.Id = t.CategoryId
+           WHERE c.CategoryType = 'CertSection'
+             AND c.Code IN ('management','material','building','membership','partner'))
     PRINT N'新區塊已有項目（含已刪除），清單不動';
 ELSE
 BEGIN
@@ -99,13 +103,15 @@ BEGIN
     DELETE s FROM @items s
     WHERE EXISTS (SELECT 1 FROM dbo.CertificationListItem t
                   JOIN dbo.CertificationListItemI18n e ON e.CertificationListItemId = t.Id AND e.Lang = 'en'
-                  WHERE t.Section = s.Section AND t.IsDeleted = 0 AND e.Title = s.EnTitle);
+                  JOIN dbo.Category c ON c.Id = t.CategoryId AND c.CategoryType = 'CertSection'
+                  WHERE c.Code = s.Section AND t.IsDeleted = 0 AND e.Title = s.EnTitle);
 
     DECLARE @map TABLE (Id INT, Section VARCHAR(20), SortOrder INT);
 
     MERGE dbo.CertificationListItem AS t
-    USING @items AS s ON 1 = 0
-    WHEN NOT MATCHED THEN INSERT (Section, SortOrder) VALUES (s.Section, s.SortOrder)
+    USING (SELECT s.*, c.Id AS CategoryId FROM @items s
+           JOIN dbo.Category c ON c.CategoryType = 'CertSection' AND c.Code = s.Section) AS s ON 1 = 0
+    WHEN NOT MATCHED THEN INSERT (CategoryId, SortOrder) VALUES (s.CategoryId, s.SortOrder)
     OUTPUT inserted.Id, s.Section, s.SortOrder INTO @map;
 
     INSERT dbo.CertificationListItemI18n (CertificationListItemId, Lang, Title, Description)
@@ -119,7 +125,8 @@ BEGIN
     UPDATE t SET t.IsDeleted = 1, t.UpdatedAt = SYSUTCDATETIME()
     FROM dbo.CertificationListItem t
     JOIN dbo.CertificationListItemI18n e ON e.CertificationListItemId = t.Id AND e.Lang = 'en'
-    WHERE t.Section = 'quality' AND t.IsDeleted = 0 AND e.Title = N'ISO 12647-2';
+    JOIN dbo.Category c ON c.Id = t.CategoryId AND c.CategoryType = 'CertSection'
+    WHERE c.Code = 'quality' AND t.IsDeleted = 0 AND e.Title = N'ISO 12647-2';
     PRINT CONCAT(N'ISO 12647-2 下架 ', @@ROWCOUNT, N' 筆');
 END
 

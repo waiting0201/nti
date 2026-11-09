@@ -40,11 +40,15 @@ public sealed class CertificationReadService(IDbConnection db) : ICertificationR
 
     public async Task<IEnumerable<CertificationListItemDto>> GetListItemsAsync(string lang) =>
         await db.QueryAsync<CertificationListItemDto>($"""
-            SELECT t.Id, t.Section, t.SortOrder, i.Title, i.Description
+            SELECT t.Id, t.CategoryId, c.Code AS SectionCode, ci.Name AS SectionTitle,
+                   t.SortOrder, i.Title, i.Description
             FROM CertificationListItem t
             INNER JOIN CertificationListItemI18n i ON i.CertificationListItemId = t.Id AND i.Lang = @Lang
+            -- 區塊停用／刪除＝整塊不顯示（與其他單元的「分類停用＝前台隱藏」一致）
+            INNER JOIN Category c ON c.Id = t.CategoryId AND c.IsDeleted = 0 AND c.IsActive = 1
+            INNER JOIN CategoryI18n ci ON ci.CategoryId = c.Id AND ci.Lang = @Lang
             WHERE {Common.Sql.PublicFlag("t")}
-            ORDER BY t.Section, t.SortOrder, t.Id
+            ORDER BY c.SortOrder, c.Id, t.SortOrder, t.Id
             """, new { Lang = lang });
 
     public async Task<IEnumerable<PerformanceMetricDto>> GetPerformanceMetricsAsync(string lang) =>

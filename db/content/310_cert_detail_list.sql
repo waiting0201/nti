@@ -15,6 +15,11 @@
      - ShowInDetailList：已經有任何一筆認證勾了就不動（尊重後台的選擇）
      - 認證說明：只補空的
 
+   2026-11-09 起區塊改由分類（CategoryType = 'CertSection'）驅動，這支改成以分類代號寫入
+   CategoryId：standards 對到 quality（同 EF migration CertificationListSections 的搬法），
+   gmi 不再建立（那批在 10-30 已併進 quality 的 GMI 說明、原列軟刪除）。
+   須先套用 EF migration CertificationListSectionCategory。
+
    ⚠ 這支不處理既有的「頁面文字」中文覆寫。那些覆寫若把區塊大標改成別的意思
      （例：GMI 區塊大標改成「紙材與油墨」），改由資料驅動後會跟底下的清單對不上，
      需在後台「頁面文字」清掉或改回。
@@ -57,15 +62,22 @@ INSERT @items VALUES
    N'智慧建築獎',
    N'第7屆APEC ESCI（Energy Smart Communities Initiative）最佳實務獎「智慧建築」類別金獎。');
 
+-- 2026-10-30 的區塊調整：standards 併入 quality；gmi 改寫進 quality 的 GMI 說明（340），這裡不建
+UPDATE @items SET Section = 'quality' WHERE Section = 'standards';
+DELETE @items WHERE Section = 'gmi';
+
 -- 已有內容的區塊整塊跳過（後台新增或刪過的都算）
 DELETE i FROM @items i
-WHERE EXISTS (SELECT 1 FROM dbo.CertificationListItem t WHERE t.Section = i.Section AND t.IsDeleted = 0);
+WHERE EXISTS (SELECT 1 FROM dbo.CertificationListItem t
+              JOIN dbo.Category c ON c.Id = t.CategoryId
+              WHERE c.CategoryType = 'CertSection' AND c.Code = i.Section AND t.IsDeleted = 0);
 
 DECLARE @map TABLE (Id INT, Section VARCHAR(20), SortOrder INT);
 
 MERGE dbo.CertificationListItem AS t
-USING @items AS s ON 1 = 0
-WHEN NOT MATCHED THEN INSERT (Section, SortOrder) VALUES (s.Section, s.SortOrder)
+USING (SELECT s.*, c.Id AS CategoryId FROM @items s
+       JOIN dbo.Category c ON c.CategoryType = 'CertSection' AND c.Code = s.Section) AS s ON 1 = 0
+WHEN NOT MATCHED THEN INSERT (CategoryId, SortOrder) VALUES (s.CategoryId, s.SortOrder)
 OUTPUT inserted.Id, s.Section, s.SortOrder INTO @map;
 
 INSERT dbo.CertificationListItemI18n (CertificationListItemId, Lang, Title, Description)

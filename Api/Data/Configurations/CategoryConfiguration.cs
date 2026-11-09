@@ -11,7 +11,7 @@ public sealed class CategoryConfiguration : IEntityTypeConfiguration<Category>
     public void Configure(EntityTypeBuilder<Category> b)
     {
         b.ToTable("Category", t => t.HasCheckConstraint("CK_Category_Type",
-            "[CategoryType] IN ('News','Project','Vlog','Faq','Certification','Facility','SupplierNotice','Industry','QuoteMaterial')"));
+            "[CategoryType] IN ('News','Project','Vlog','Faq','Certification','Facility','SupplierNotice','Industry','QuoteMaterial','CertSection')"));
 
         b.Property(x => x.CategoryType).Ascii(30);
         b.Property(x => x.Code).Ascii(40);
