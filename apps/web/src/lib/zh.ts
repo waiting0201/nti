@@ -61,7 +61,7 @@ export const ZH: Record<string, string> = {
   "Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.": "想把這套做法用在您的包裝上？把需求寄給我們，我們會回覆規格與報價。",
   "Get a Quote": "索取報價",
   "Next: Certifications, Partnerships & Awards": "下一頁：品質認證與永續實踐",
-  "The Courage to Print Green — sustainable packaging printing from Tainan, Taiwan.": "勇於印綠 —— 來自台灣台南的永續包裝印刷。",
+  "The Courage to Print Green — sustainable packaging printing from Tainan, Taiwan.": "The Courage to Print Green —— 來自台灣台南的永續包裝印刷。",
   "Company": "公司",
   "Careers": "人才招募",
   "Privacy & Legal": "隱私權與法律聲明",
