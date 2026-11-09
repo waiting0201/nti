@@ -12,7 +12,7 @@ import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 type Props = { params: Promise<{ locale: Locale }> }
 
 // 沒接 API 時的版面＝mockup 原文（驗收閘比對的就是這份）。有接 API 時區塊的大標、順序、
-// 增減全由後台「分類管理」的認證頁區塊（CertSection）決定，這張表不參與。
+// 增減全由後台「分類管理 › 認證分類」（與首頁 Proof 分組共用）決定，這張表不參與。
 const SECTIONS: { key: string; title: string; fallback: ReactNode }[] = [
   { key: 'management', title: "Management Systems", fallback: (
     <div className="flist mt-s"><p className="fi"><b>ISO&nbsp;9001 &mdash; Quality Management System</b>Demonstrates NTI&rsquo;s commitment to consistent quality, continuous improvement, and customer satisfaction.</p><p className="fi"><b>ISO&nbsp;14001 &mdash; Environmental Management</b>Demonstrates NTI&rsquo;s commitment to reducing environmental impact through responsible management across every stage of production and the product lifecycle.</p><p className="fi"><b>ISO&nbsp;45001 &mdash; Occupational Health &amp; Safety Management</b>Certifies NTI&rsquo;s commitment to maintaining a safe, healthy workplace through effective occupational health and safety management.</p></div>

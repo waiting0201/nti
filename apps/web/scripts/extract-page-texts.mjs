@@ -123,7 +123,7 @@ const CMS_TEXTS = {
     'UV Printing', 'Printing on special materials, special varnish, anti-counterfeiting and more.',
     'Other Printing', 'Desk calendars, hand bags, red envelopes, mouse pads and manuals.',
   ],
-  // 下方清單的區塊大標＝後台「分類管理」認證頁區塊（CertSection）的名稱，2026-11-09 起不在頁面文字改
+  // 下方清單的區塊大標＝後台「分類管理 › 認證分類」的名稱，2026-11-09 起不在頁面文字改
   'about-certifications': [
     'Management Systems', 'Colour & Print Quality Qualifications', 'Paper & Inks', 'Green Buildings',
     'Memberships & Own Marks', 'Awards', 'Partnerships',

@@ -157,7 +157,6 @@ public static class RoleCodes
 public static class CategoryTypes
 {
     public const string Certification  = "Certification";
-    public const string CertSection    = "CertSection";     // 認證頁清單的區塊（08b），2026-11-09 加
     public const string Facility       = "Facility";
     public const string Faq            = "Faq";
     public const string Industry       = "Industry";
@@ -169,7 +168,7 @@ public static class CategoryTypes
 
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
     {
-        Certification, CertSection, Facility, Faq, Industry, News,
+        Certification, Facility, Faq, Industry, News,
         Project, QuoteMaterial, SupplierNotice, Vlog,
     };
 }

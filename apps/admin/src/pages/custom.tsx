@@ -175,10 +175,8 @@ const CATEGORY_TYPES: Array<[string, string]> = [
   ['Project', '案例實績'],
   ['Vlog', 'Green Vlog'],
   ['Faq', 'FAQ'],
-  // 兩種認證相關的分類別再混在一起：Certification 只管 08 logo 的首頁 Proof 牆分組；
-  // CertSection 是 08b 認證頁清單的區塊（2026-11-09 起由分類驅動）
-  ['Certification', '認證（首頁 Proof 分組）'],
-  ['CertSection', '認證頁清單區塊'],
+  // 08 的 logo 與 08b 的文字清單共用（2026-11-09）：首頁 Proof 牆的分卡＝認證頁的區塊
+  ['Certification', '認證分類'],
   ['Facility', '設備與廠房'],
   ['SupplierNotice', '供應商公告'],
   ['Industry', '產業別'],
@@ -201,9 +199,7 @@ const FIXED_CATEGORY_TYPES: Record<string, string> = {
 /** 只提示、不擋新增：名稱容易和別的下拉選單混淆的型別 */
 const CATEGORY_TYPE_NOTES: Record<string, string> = {
   Certification:
-    '這裡的分類是「08 認證・夥伴・獎項」（有 logo 的認證）的分組，只決定首頁 Proof 牆分成幾張卡、卡片標題是什麼。認證頁下方清單的區塊請到旁邊的「認證頁清單區塊」。',
-  CertSection:
-    '認證頁 logo 牆下方的清單區塊：名稱就是前台的區塊大標，排序決定由上而下的順序（中段橫幅固定在第 2 個區塊之後）。停用＝整個區塊連同底下項目在前台隱藏；沒有任何上架項目的區塊也不顯示。項目在「08b 認證頁清單項目」新增。',
+    '同一套分類用在兩個地方：首頁 Proof 牆（08 有 logo 的認證，一個分類一張卡）與認證頁下方的清單（08b 文字項目，一個分類一個區塊）。名稱就是卡片標題與區塊大標，排序決定先後（認證頁的中段橫幅固定在第 2 個區塊之後）。某個分類在那個地方沒有內容就不顯示——例如「獲獎紀錄」沒有 logo，就只出現在認證頁。停用＝兩邊都隱藏。',
 }
 
 /** 代號：小寫英數與連字號，與種子一致（esg、pre-press、food-beverage…）；欄位是 ASCII 40 */
@@ -315,7 +311,7 @@ export function CategoryPage() {
     <>
       <div className="page-h">
         <h1>22 · 分類管理</h1>
-        <div className="sub">已被引用的分類不可刪除，只能停用。{CATEGORY_TYPES.length} 種分類共 {rows.length} 筆。</div>
+        <div className="sub">已被引用的分類不可刪除，只能停用。九種分類共 {rows.length} 筆。</div>
       </div>
 
       <div className="locale-tabs" style={{ flexWrap: 'wrap' }}>

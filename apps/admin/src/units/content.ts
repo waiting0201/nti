@@ -254,7 +254,7 @@ export const certification: Unit = {
   hasStatus: true,
   fields: [
     { key: 'categoryId', label: '分組', type: 'select', required: true, categoryType: 'Certification', side: 'neutral',
-      hint: '只影響首頁 Proof 牆：一個分組一張卡，卡片標題就是分組名稱。在「分類管理 › 認證（首頁 Proof 分組）」維護；認證頁下方清單的區塊是另一套（08b）' },
+      hint: '首頁 Proof 牆一個分組一張卡，卡片標題就是分組名稱。分組在「分類管理 › 認證分類」維護，與 08b 認證頁清單的區塊共用' },
     { key: 'logo', label: 'Logo', type: 'image', required: true, hint: HINT.certLogo, altKey: 'alt', side: 'neutral' },
     alt('alt', 'Logo 替代文字'),
     { key: 'name', label: '名稱', type: 'text', i18n: true, required: true, side: 'locale' },
@@ -280,7 +280,7 @@ export const certification: Unit = {
 /**
  * 08 的附屬清單：認證頁 logo 牆下方的文字清單（管理系統、品質資格、紙材、廠房、標章、獎項、夥伴…）。
  * 沒有 logo、不上 logo 牆與首頁 Proof 牆，所以不放進認證單元。權限沿用 certification.*。
- * 區塊＝分類 CertSection（2026-11-09 起）：名稱就是前台大標，在「分類管理 › 認證頁清單區塊」新增、改名、排序、停用。
+ * 區塊＝認證分類（2026-11-09 起，與 08 的首頁 Proof 分組同一套）：名稱就是前台大標，在「分類管理 › 認證分類」維護。
  */
 export const certificationItem: Unit = {
   code: 'certification-item',
@@ -289,13 +289,13 @@ export const certificationItem: Unit = {
   title: '認證頁清單項目',
   group: '內容',
   phase: 'P4',
-  frontend: '品質認證與永續實踐頁 logo 牆下方的清單，依區塊分組（區塊順序與大標見「分類管理 › 認證頁清單區塊」）',
-  note: '選好區塊再新增項目，同一區塊依排序顯示、筆數不限；某區塊沒有任何上架項目時整個區塊不顯示。區塊的大標、先後順序與新增區塊，請到「分類管理 › 認證頁清單區塊」。',
+  frontend: '品質認證與永續實踐頁 logo 牆下方的清單，依區塊分組（區塊順序與大標見「分類管理 › 認證分類」）',
+  note: '選好區塊再新增項目，同一區塊依排序顯示、筆數不限；某區塊沒有任何上架項目時整個區塊不顯示。區塊的大標、先後順序與新增區塊，請到「分類管理 › 認證分類」（與 08 首頁 Proof 分組共用）。',
   sortable: true,
   hasStatus: true,
   fields: [
-    { key: 'categoryId', label: '區塊', type: 'select', required: true, categoryType: 'CertSection', side: 'neutral',
-      hint: '區塊在「分類管理 › 認證頁清單區塊」維護，名稱就是前台的大標。與「認證（首頁 Proof 分組）」是兩套' },
+    { key: 'categoryId', label: '區塊', type: 'select', required: true, categoryType: 'Certification', side: 'neutral',
+      hint: '與 08 的首頁 Proof 分組是同一套「認證分類」，名稱就是前台的區塊大標' },
     { key: 'title', label: '標題', type: 'text', i18n: true, required: true, max: 200, side: 'locale', placeholder: 'Smart Building Award' },
     { key: 'description', label: '說明', type: 'textarea', i18n: true, max: 400, side: 'locale' },
   ],

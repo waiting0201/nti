@@ -15,10 +15,8 @@
      - ShowInDetailList：已經有任何一筆認證勾了就不動（尊重後台的選擇）
      - 認證說明：只補空的
 
-   2026-11-09 起區塊改由分類（CategoryType = 'CertSection'）驅動，這支改成以分類代號寫入
-   CategoryId：standards 對到 quality（同 EF migration CertificationListSections 的搬法），
-   gmi 不再建立（那批在 10-30 已併進 quality 的 GMI 說明、原列軟刪除）。
-   須先套用 EF migration CertificationListSectionCategory。
+   2026-11-09 起這支只處理認證的 ShowInDetailList 與說明；清單項目（含原本的 G7、兩筆獎項）
+   移到 340，因為區塊改由認證分類驅動後，standards／gmi 這些代號已對不到任何分類。
 
    ⚠ 這支不處理既有的「頁面文字」中文覆寫。那些覆寫若把區塊大標改成別的意思
      （例：GMI 區塊大標改成「紙材與油墨」），改由資料驅動後會跟底下的清單對不上，
@@ -30,63 +28,8 @@ GO
 
 BEGIN TRAN;
 
-DECLARE @items TABLE (
-    Section VARCHAR(20), SortOrder INT,
-    EnTitle NVARCHAR(200), EnDesc NVARCHAR(400),
-    ZhTitle NVARCHAR(200), ZhDesc NVARCHAR(400)
-);
-
-INSERT @items VALUES
- ('standards', 10, N'G7 Master Colorspace',
-   N'Developed by Idealliance, a globally recognized colour calibration methodology based on ISO 12647-2, ensuring consistent, accurate colour reproduction across every print run.',
-   N'G7 Master Colorspace',
-   N'由Idealliance開發、以ISO 12647-2為基礎的全球公認色彩校正方法，確保每一次印刷都能呈現一致且精準的色彩重現。'),
- ('standards', 20, N'ISO 12647-2',
-   N'The standard litho production procedure our colour management runs to, with spot colours matched to swatch under controlled viewing conditions.',
-   N'ISO 12647-2',
-   N'我們色彩管理所遵循的標準平版印刷程序，特別色在受控觀察條件下與色票比對。'),
-
- ('gmi', 10, N'Target', N'The retailer that commissioned the GMI audit programme.', N'Target', N'委託建立 GMI 稽核制度的零售通路。'),
- ('gmi', 20, N'Walgreens', N'Approved packaging supplier.', N'Walgreens', N'認可的包裝供應商。'),
- ('gmi', 30, N'Lowe’s', N'Approved packaging supplier.', N'Lowe’s', N'認可的包裝供應商。'),
- ('gmi', 40, N'The Home Depot (THD)', N'Approved packaging supplier.', N'The Home Depot (THD)', N'認可的包裝供應商。'),
- ('gmi', 50, N'Academy Sports + Outdoors', N'Approved packaging supplier.', N'Academy Sports + Outdoors', N'認可的包裝供應商。'),
- ('gmi', 60, N'CVS pharmacy', N'Approved packaging supplier.', N'CVS pharmacy', N'認可的包裝供應商。'),
-
- ('award', 10, N'Outstanding Business Award',
-   N'The 13th National Brand Yushan Award for Outstanding Business Award.',
-   N'傑出企業獎',
-   N'第13屆國家品牌玉山獎傑出企業獎。'),
- ('award', 20, N'Smart Building Award',
-   N'Gold Award in the ‘Smart Buildings’ category at the 7th APEC ESCI (Energy Smart Communities Initiative) Best Practices Awards Program.',
-   N'智慧建築獎',
-   N'第7屆APEC ESCI（Energy Smart Communities Initiative）最佳實務獎「智慧建築」類別金獎。');
-
--- 2026-10-30 的區塊調整：standards 併入 quality；gmi 改寫進 quality 的 GMI 說明（340），這裡不建
-UPDATE @items SET Section = 'quality' WHERE Section = 'standards';
-DELETE @items WHERE Section = 'gmi';
-
--- 已有內容的區塊整塊跳過（後台新增或刪過的都算）
-DELETE i FROM @items i
-WHERE EXISTS (SELECT 1 FROM dbo.CertificationListItem t
-              JOIN dbo.Category c ON c.Id = t.CategoryId
-              WHERE c.CategoryType = 'CertSection' AND c.Code = i.Section AND t.IsDeleted = 0);
-
-DECLARE @map TABLE (Id INT, Section VARCHAR(20), SortOrder INT);
-
-MERGE dbo.CertificationListItem AS t
-USING (SELECT s.*, c.Id AS CategoryId FROM @items s
-       JOIN dbo.Category c ON c.CategoryType = 'CertSection' AND c.Code = s.Section) AS s ON 1 = 0
-WHEN NOT MATCHED THEN INSERT (CategoryId, SortOrder) VALUES (s.CategoryId, s.SortOrder)
-OUTPUT inserted.Id, s.Section, s.SortOrder INTO @map;
-
-INSERT dbo.CertificationListItemI18n (CertificationListItemId, Lang, Title, Description)
-SELECT m.Id, 'en', s.EnTitle, s.EnDesc FROM @map m JOIN @items s ON s.Section = m.Section AND s.SortOrder = m.SortOrder
-UNION ALL
-SELECT m.Id, 'zh', s.ZhTitle, s.ZhDesc FROM @map m JOIN @items s ON s.Section = m.Section AND s.SortOrder = m.SortOrder;
-
-DECLARE @added INT = (SELECT COUNT(*) FROM @map);
-PRINT CONCAT(N'清單項目新增 ', @added, N' 筆');
+/* 清單項目已移到 340（2026-11-09）：區塊改由認證分類驅動、代號與分類對不上之後，
+   這裡原本寫入的 G7、ISO 12647-2 與兩筆獎項，改由 340 在清單整張是空的時候一次建好。 */
 
 /* ── 管理系統與環境認證：勾選要列在說明清單的認證 ── */
 DECLARE @certs TABLE (Pattern NVARCHAR(60), EnDesc NVARCHAR(400), ZhDesc NVARCHAR(400));

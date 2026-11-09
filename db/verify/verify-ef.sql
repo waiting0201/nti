@@ -51,7 +51,7 @@ SELECT N'ON DELETE CASCADE 的外鍵數', N'25', CAST(COUNT(*) AS NVARCHAR(20))
 FROM sys.foreign_keys WHERE delete_referential_action_desc = N'CASCADE';
 
 INSERT @r (Item, Expected, Actual)
-SELECT N'Category 型別安全複合外鍵數（含 08b 區塊）', N'10', CAST(COUNT(*) AS NVARCHAR(20))
+SELECT N'Category 型別安全複合外鍵數（含 08b 區塊→認證分類）', N'10', CAST(COUNT(*) AS NVARCHAR(20))
 
 FROM sys.foreign_keys fk
 WHERE fk.referenced_object_id = OBJECT_ID(N'dbo.Category')
@@ -73,7 +73,7 @@ SELECT N'匿名（系統命名）約束數', N'0', CAST(SUM(c) AS NVARCHAR(20)) 
 ) x;
 
 /* CHECK 約束 = 20 個 *I18n 的 Lang 值域 + PageText 的 Lang 值域 + 10 個狀態／型別值域
-   （2026-11-09 CertificationListItem.Section 的值域拿掉：區塊改由分類 CertSection 驅動，靠複合外鍵守型別） */
+   （2026-11-09 CertificationListItem.Section 的值域拿掉：區塊改由認證分類驅動，靠複合外鍵守型別） */
 INSERT @r (Item, Expected, Actual)
 SELECT N'CHECK 約束數', N'32', CAST(COUNT(*) AS NVARCHAR(20)) FROM sys.check_constraints;
 
@@ -132,11 +132,10 @@ INSERT @r (Item, Expected, Actual) SELECT N'RolePermission 合計', N'173', CAST
 INSERT @r (Item, Expected, Actual) SELECT N'  └ SuperAdmin', N'84', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'SuperAdmin';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Editor',     N'68', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Editor';
 INSERT @r (Item, Expected, Actual) SELECT N'  └ Viewer',     N'21', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.RolePermission p JOIN dbo.Role r ON r.Id = p.RoleId WHERE r.Code = 'Viewer';
-INSERT @r (Item, Expected, Actual) SELECT N'Category（不含 Certification／CertSection：那兩類由 content/290、migration 與後台管理）', N'41', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category WHERE CategoryType NOT IN ('Certification','CertSection');
-INSERT @r (Item, Expected, Actual) SELECT N'CertSection 原有七個區塊代號（migration CertificationListSectionCategory）', N'7', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category WHERE CategoryType = 'CertSection' AND Code IN ('management','quality','material','building','membership','award','partner');
+INSERT @r (Item, Expected, Actual) SELECT N'Category（不含 Certification：認證分類由 content/290、migration 與後台管理）', N'41', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Category WHERE CategoryType <> 'Certification';
 INSERT @r (Item, Expected, Actual) SELECT N'Tag',            N'17', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Tag;
 INSERT @r (Item, Expected, Actual) SELECT N'TagI18n',        N'34', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.TagI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'CategoryI18n（同上）', N'82', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.CategoryI18n i JOIN dbo.Category c ON c.Id = i.CategoryId WHERE c.CategoryType NOT IN ('Certification','CertSection');
+INSERT @r (Item, Expected, Actual) SELECT N'CategoryI18n（同上）', N'82', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.CategoryI18n i JOIN dbo.Category c ON c.Id = i.CategoryId WHERE c.CategoryType <> 'Certification';
 INSERT @r (Item, Expected, Actual) SELECT N'SiteSetting',    N'15', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SiteSetting;
 INSERT @r (Item, Expected, Actual) SELECT N'Page（固定 28 + 預留 csr）', N'29', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.Page;
 INSERT @r (Item, Expected, Actual) SELECT N'PageI18n',       N'58', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.PageI18n;
@@ -151,7 +150,7 @@ INSERT @r (Item, Expected, Actual) SELECT N'Solution（固定 4 筆）', N'4', C
    green-csr 的 noindex 斷言把關（同一個機制，而 green-csr 是種子的一部分，
    不會被內容匯入改動）。 */
 INSERT @r (Item, Expected, Actual) SELECT N'SolutionI18n',   N'8',  CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.SolutionI18n;
-INSERT @r (Item, Expected, Actual) SELECT N'已套用的 Migration 數', N'27', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.__EFMigrationsHistory;
+INSERT @r (Item, Expected, Actual) SELECT N'已套用的 Migration 數', N'28', CAST(COUNT(*) AS NVARCHAR(20)) FROM dbo.__EFMigrationsHistory;
 
 /* ---------- 輸出 ---------- */
 SELECT Item AS [檢查項], Expected AS [預期], Actual AS [實際],

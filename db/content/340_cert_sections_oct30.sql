@@ -2,8 +2,10 @@
    340_cert_sections_oct30.sql  —  認證頁改為客戶指定的七個區塊（2026-10-30）
    -----------------------------------------------------------------------------
    須先套用 EF migration CertificationListSections（standards → quality、gmi 軟刪除）。
-   2026-11-09 起區塊改由分類（CategoryType = 'CertSection'）驅動：下方的區塊代號＝分類代號，
-   寫入時對成 CategoryId。須先套用 EF migration CertificationListSectionCategory。
+   2026-11-09 起區塊＝認證分類（與首頁 Proof 分組同一套，見 EF migration
+   MergeCertSectionIntoCertification）：下方的區塊代號對到代號 section-{代號} 的認證分類，
+   或中文名稱等於預設大標的認證分類；對不到的區塊略過。原本在 310 的 G7 與兩筆獎項也併到這裡。
+   清單整張有任何一列就整段不動（正式庫早已有內容，這段只給全新建庫用）。
 
    /about-certifications 下方清單改為七個區塊，全由 CertificationListItem 驅動
    （Certification.ShowInDetailList 從此不再使用）：
@@ -30,11 +32,8 @@ GO
 BEGIN TRAN;
 
 /* ── 1. 清單項目 ── */
-IF EXISTS (SELECT 1 FROM dbo.CertificationListItem t
-           JOIN dbo.Category c ON c.Id = t.CategoryId
-           WHERE c.CategoryType = 'CertSection'
-             AND c.Code IN ('management','material','building','membership','partner'))
-    PRINT N'新區塊已有項目（含已刪除），清單不動';
+IF EXISTS (SELECT 1 FROM dbo.CertificationListItem)
+    PRINT N'清單已有項目，不動';
 ELSE
 BEGIN
     DECLARE @items TABLE (
@@ -57,6 +56,10 @@ BEGIN
        N'ISO 45001職業安全衛生管理系統',
        N'證明南台彩藝致力於透過有效的職業健康與安全管理，維持安全健康的工作環境。'),
 
+     ('quality', 10, N'G7 Master Colorspace',
+       N'Developed by Idealliance, a globally recognized colour calibration methodology based on ISO 12647-2, ensuring consistent, accurate colour reproduction across every print run.',
+       N'G7 Master Colorspace',
+       N'由Idealliance開發、以ISO 12647-2為基礎的全球公認色彩校正方法，確保每一次印刷都能呈現一致且精準的色彩重現。'),
      ('quality', 20, N'GMI Professional Printing Certification',
        N'GMI (Graphic Measures International) verifies packaging suppliers for leading global retailers. NTI has passed GMI certification for Target, Walgreens, Lowe’s, The Home Depot, Academy Sports + Outdoors, and CVS Pharmacy.',
        N'GMI 認證',
@@ -89,7 +92,6 @@ BEGIN
        N'南台彩藝綠色印刷標章',
        N'南台彩藝自行建立的標章（非第三方國際認證），客戶符合使用條件時可印於包裝上，作為環保印刷製程的證明。'),
 
-     -- 既有兩筆獎項（310 的 SortOrder 10、20）排到後面，新的兩筆排前面
      ('award', 1, N'National Sustainable Development Award',
        N'Presented by Taiwan’s National Council for Sustainable Development, recognizing NTI’s years of work on ESG and low-carbon production.',
        N'國家永續發展獎',
@@ -97,20 +99,35 @@ BEGIN
      ('award', 2, N'Global Views ESG Award 2026',
        N'Outstanding Project award in the Low-Carbon Operations, SME category, at the 22nd Global Views ESG Corporate Sustainability Awards.',
        N'2026遠見ESG企業永續獎',
-       N'第22屆遠見ESG企業永續獎，中小企業組「低碳營運」傑出方案獎。');
+       N'第22屆遠見ESG企業永續獎，中小企業組「低碳營運」傑出方案獎。'),
+     ('award', 10, N'Outstanding Business Award',
+       N'The 13th National Brand Yushan Award for Outstanding Business Award.',
+       N'傑出企業獎',
+       N'第13屆國家品牌玉山獎傑出企業獎。'),
+     ('award', 20, N'Smart Building Award',
+       N'Gold Award in the ‘Smart Buildings’ category at the 7th APEC ESCI (Energy Smart Communities Initiative) Best Practices Awards Program.',
+       N'智慧建築獎',
+       N'第7屆APEC ESCI（Energy Smart Communities Initiative）最佳實務獎「智慧建築」類別金獎。');
 
-    -- quality／award 已有的同名項目不重複加（以英文標題比對）
-    DELETE s FROM @items s
-    WHERE EXISTS (SELECT 1 FROM dbo.CertificationListItem t
-                  JOIN dbo.CertificationListItemI18n e ON e.CertificationListItemId = t.Id AND e.Lang = 'en'
-                  JOIN dbo.Category c ON c.Id = t.CategoryId AND c.CategoryType = 'CertSection'
-                  WHERE c.Code = s.Section AND t.IsDeleted = 0 AND e.Title = s.EnTitle);
+    -- 區塊代號 → 認證分類：代號 section-{代號}（合併 migration 新建的），或中文名稱＝預設大標（併進既有 Proof 分組的）
+    DECLARE @sec TABLE (Section VARCHAR(20), DefaultZh NVARCHAR(80));
+    INSERT @sec VALUES ('management', N'管理系統'), ('quality', N'色彩與印刷品質資格'), ('material', N'紙材與油墨'),
+                       ('building', N'廠房建築'), ('membership', N'會員與自有標章'), ('award', N'獲獎肯定'), ('partner', N'合作夥伴');
+    DECLARE @cat TABLE (Section VARCHAR(20), CategoryId INT);
+    INSERT @cat
+    SELECT x.Section,
+           COALESCE((SELECT c.Id FROM dbo.Category c
+                     WHERE c.CategoryType = 'Certification' AND c.IsDeleted = 0 AND c.Code = 'section-' + x.Section),
+                    (SELECT TOP 1 c.Id FROM dbo.Category c JOIN dbo.CategoryI18n i ON i.CategoryId = c.Id AND i.Lang = 'zh'
+                     WHERE c.CategoryType = 'Certification' AND c.IsDeleted = 0 AND i.Name = x.DefaultZh ORDER BY c.Id))
+    FROM @sec x;
+    SELECT Section AS [對不到認證分類、略過的區塊] FROM @cat WHERE CategoryId IS NULL;
 
     DECLARE @map TABLE (Id INT, Section VARCHAR(20), SortOrder INT);
 
     MERGE dbo.CertificationListItem AS t
-    USING (SELECT s.*, c.Id AS CategoryId FROM @items s
-           JOIN dbo.Category c ON c.CategoryType = 'CertSection' AND c.Code = s.Section) AS s ON 1 = 0
+    USING (SELECT s.*, k.CategoryId FROM @items s
+           JOIN @cat k ON k.Section = s.Section AND k.CategoryId IS NOT NULL) AS s ON 1 = 0
     WHEN NOT MATCHED THEN INSERT (CategoryId, SortOrder) VALUES (s.CategoryId, s.SortOrder)
     OUTPUT inserted.Id, s.Section, s.SortOrder INTO @map;
 
@@ -121,13 +138,6 @@ BEGIN
     DECLARE @added INT = (SELECT COUNT(*) FROM @map);
     PRINT CONCAT(N'清單項目新增 ', @added, N' 筆');
 
-    -- ISO 12647-2 已寫進 G7 的說明，不再單列（客戶指定色彩與印刷品質資格為 G7＋GMI 兩項）
-    UPDATE t SET t.IsDeleted = 1, t.UpdatedAt = SYSUTCDATETIME()
-    FROM dbo.CertificationListItem t
-    JOIN dbo.CertificationListItemI18n e ON e.CertificationListItemId = t.Id AND e.Lang = 'en'
-    JOIN dbo.Category c ON c.Id = t.CategoryId AND c.CategoryType = 'CertSection'
-    WHERE c.Code = 'quality' AND t.IsDeleted = 0 AND e.Title = N'ISO 12647-2';
-    PRINT CONCAT(N'ISO 12647-2 下架 ', @@ROWCOUNT, N' 筆');
 END
 
 /* ── 2. 頁面文字：還原客戶為了「新增區塊」誤填的中文覆寫 ──

@@ -93,8 +93,8 @@ public sealed class CertificationListItemConfiguration : IEntityTypeConfiguratio
         b.Property(x => x.IsPublished).HasDefaultValue(true);
         b.Audit();
 
-        // 區塊＝分類（CertSection），2026-11-09 起取代寫死的 Section 字串
-        b.CategoryGuard(CategoryTypes.CertSection, "FK_CertificationListItem_Category");
+        // 區塊＝認證分類（與 08 的 logo 共用同一套 Certification 分類），2026-11-09 起取代寫死的 Section 字串
+        b.CategoryGuard(CategoryTypes.Certification, "FK_CertificationListItem_Category");
 
         b.HasIndex(x => new { x.IsDeleted, x.IsPublished, x.CategoryId, x.SortOrder })
             .HasDatabaseName("IX_CertificationListItem_Category");

@@ -150,7 +150,7 @@ namespace Nti.Api.Data.Migrations
 
                     b.ToTable("Category", null, t =>
                         {
-                            t.HasCheckConstraint("CK_Category_Type", "[CategoryType] IN ('News','Project','Vlog','Faq','Certification','Facility','SupplierNotice','Industry','QuoteMaterial','CertSection')");
+                            t.HasCheckConstraint("CK_Category_Type", "[CategoryType] IN ('News','Project','Vlog','Faq','Certification','Facility','SupplierNotice','Industry','QuoteMaterial')");
                         });
 
                     b.HasData(
@@ -1283,7 +1283,7 @@ namespace Nti.Api.Data.Migrations
                         .HasMaxLength(30)
                         .IsUnicode(false)
                         .HasColumnType("varchar(30)")
-                        .HasComputedColumnSql("CAST('CertSection' AS VARCHAR(30))", true);
+                        .HasComputedColumnSql("CAST('Certification' AS VARCHAR(30))", true);
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()

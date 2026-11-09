@@ -666,10 +666,10 @@ export const SEED: Record<string, Row[]> = {
       }
     },
     {
-      "id": "CertSection:management",
-      "categoryType": "CertSection",
-      "code": "management",
-      "sortOrder": 10,
+      "id": "Certification:section-management",
+      "categoryType": "Certification",
+      "code": "section-management",
+      "sortOrder": 110,
       "isActive": true,
       "i18n": {
         "zh": {
@@ -681,10 +681,10 @@ export const SEED: Record<string, Row[]> = {
       }
     },
     {
-      "id": "CertSection:quality",
-      "categoryType": "CertSection",
-      "code": "quality",
-      "sortOrder": 20,
+      "id": "Certification:section-quality",
+      "categoryType": "Certification",
+      "code": "section-quality",
+      "sortOrder": 120,
       "isActive": true,
       "i18n": {
         "zh": {
@@ -696,10 +696,10 @@ export const SEED: Record<string, Row[]> = {
       }
     },
     {
-      "id": "CertSection:material",
-      "categoryType": "CertSection",
-      "code": "material",
-      "sortOrder": 30,
+      "id": "Certification:section-material",
+      "categoryType": "Certification",
+      "code": "section-material",
+      "sortOrder": 130,
       "isActive": true,
       "i18n": {
         "zh": {
@@ -711,10 +711,10 @@ export const SEED: Record<string, Row[]> = {
       }
     },
     {
-      "id": "CertSection:building",
-      "categoryType": "CertSection",
-      "code": "building",
-      "sortOrder": 40,
+      "id": "Certification:section-building",
+      "categoryType": "Certification",
+      "code": "section-building",
+      "sortOrder": 140,
       "isActive": true,
       "i18n": {
         "zh": {
@@ -726,10 +726,10 @@ export const SEED: Record<string, Row[]> = {
       }
     },
     {
-      "id": "CertSection:membership",
-      "categoryType": "CertSection",
-      "code": "membership",
-      "sortOrder": 50,
+      "id": "Certification:section-membership",
+      "categoryType": "Certification",
+      "code": "section-membership",
+      "sortOrder": 150,
       "isActive": true,
       "i18n": {
         "zh": {
@@ -741,10 +741,10 @@ export const SEED: Record<string, Row[]> = {
       }
     },
     {
-      "id": "CertSection:award",
-      "categoryType": "CertSection",
-      "code": "award",
-      "sortOrder": 60,
+      "id": "Certification:section-award",
+      "categoryType": "Certification",
+      "code": "section-award",
+      "sortOrder": 160,
       "isActive": true,
       "i18n": {
         "zh": {
@@ -756,10 +756,10 @@ export const SEED: Record<string, Row[]> = {
       }
     },
     {
-      "id": "CertSection:partner",
-      "categoryType": "CertSection",
-      "code": "partner",
-      "sortOrder": 70,
+      "id": "Certification:section-partner",
+      "categoryType": "Certification",
+      "code": "section-partner",
+      "sortOrder": 170,
       "isActive": true,
       "i18n": {
         "zh": {

@@ -117,14 +117,14 @@ CanonicalUrl NVARCHAR(300) NULL, OgTitle NVARCHAR(90) NULL, OgDescription NVARCH
 -- 統一分類主檔：以 CategoryType 分流，後台為單一「分類管理」單元
 CREATE TABLE dbo.Category (
   Id INT IDENTITY(1,1) PRIMARY KEY,
-  CategoryType VARCHAR(30) NOT NULL,   -- News|Project|Vlog|Faq|Certification|Facility|SupplierNotice|Industry|QuoteMaterial|CertSection（2026-11-09 加，認證頁清單區塊）
+  CategoryType VARCHAR(30) NOT NULL,   -- News|Project|Vlog|Faq|Certification|Facility|SupplierNotice|Industry|QuoteMaterial（CertSection 於 2026-11-09 加入又併回 Certification）
   Code VARCHAR(40) NOT NULL,           -- 程式用固定碼，建立後不可改
   SortOrder INT NOT NULL DEFAULT 0,
   IsActive BIT NOT NULL DEFAULT 1,
   /* audit */
   CONSTRAINT UQ_Category_Type_Code UNIQUE (CategoryType, Code),
   CONSTRAINT CK_Category_Type CHECK (CategoryType IN
-    ('News','Project','Vlog','Faq','Certification','Facility','SupplierNotice','Industry','QuoteMaterial','CertSection'))
+    ('News','Project','Vlog','Faq','Certification','Facility','SupplierNotice','Industry','QuoteMaterial'))
 );
 
 CREATE TABLE dbo.CategoryI18n (
@@ -369,8 +369,8 @@ CREATE TABLE dbo.CertificationI18n (
 -- 沒有 logo、不上 logo 牆與首頁 Proof 牆，所以不放進 Certification。後台是單元 08 的附屬清單
 CREATE TABLE dbo.CertificationListItem (
   Id INT IDENTITY(1,1) PRIMARY KEY,
-  CategoryId INT NOT NULL,                 -- 區塊＝Category（CertSection），型別安全複合 FK FK_CertificationListItem_Category
-                                           -- （2026-11-09，0024；原為 Section VARCHAR(20) 寫死七個值）
+  CategoryId INT NOT NULL,                 -- 區塊＝Category（Certification，與 08 的首頁 Proof 分組同一套），型別安全複合 FK
+                                           -- FK_CertificationListItem_Category（2026-11-09，0024＋0025；原為 Section VARCHAR(20) 寫死七個值）
   SortOrder INT NOT NULL DEFAULT 0,
   IsPublished BIT NOT NULL DEFAULT 1,
   /* audit */
@@ -959,6 +959,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-11-05 | Tim（Claude Code） | §4.8：新增 `PerformanceMetric`(+I18n)（碳效率頁績效表）。表數 +2、外鍵 +1（CASCADE +1）、CHECK +1、非 PK/UQ 索引 +0。遷移 `Api/Data/Migrations/*_PerformanceMetric` 與 `db/migrations/0022_performance_metric.sql` 一對一；`verify*.sql` 數字同步 |
 | 2026-11-05 | Tim（Claude Code） | §4.8：新增 `SustainabilityGoal`(+I18n)（ESG 頁永續目標表）。表數 +2、外鍵 +1（CASCADE +1）、CHECK +1、非 PK/UQ 索引 +0。遷移 `Api/Data/Migrations/*_SustainabilityGoal` 與 `db/migrations/0023_sustainability_goal.sql` 一對一；`verify*.sql` 數字同步 |
 | 2026-11-09 | Tim（Claude Code） | §4.1／§4.8：認證頁清單的區塊改由分類驅動。`Category` 加型別 `CertSection`；`CertificationListItem.Section` → `CategoryId`（型別安全複合 FK），建立七個區塊分類（代號沿用原值），名稱取「頁面文字」對大標的覆寫後刪除那些覆寫。外鍵 +1、PERSISTED 計算欄 +1、CHECK −1、索引換名。遷移 `Api/Data/Migrations/*_CertificationListSectionCategory` 與 `db/migrations/0024_certification_list_section_category.sql` 一對一 |
+| 2026-11-09 | Tim（Claude Code） | §4.1／§4.8：同日把 `CertSection` 併回 `Certification`——08 的 logo 與 08b 的清單共用認證分類（首頁 Proof 牆只顯示有 logo 的分類、認證頁只顯示有清單項目的分類）。依名稱對到既有分類，對不到的新建（代號 `section-*`）。結構數字與合併前相同（外鍵、計算欄改指 Certification；CK_Category_Type 回到九種）。遷移 `*_MergeCertSectionIntoCertification` 與 `db/migrations/0025_merge_cert_section_into_certification.sql` 一對一 |
 
 *最後更新：2026-11-09*
 

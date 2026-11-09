@@ -41,14 +41,15 @@ public sealed class CertificationI18n : II18n
 /// 認證頁的文字清單項目（後台單元 08 的附屬清單，2026-10-22 加；2026-10-30 起改為客戶指定的七個區塊）。
 /// 這些不是認證——沒有 logo，也不該出現在 logo 牆與首頁 Proof 牆，所以不放進 <see cref="Certification"/>。
 /// <para>
-/// 2026-11-09 起區塊改由分類表驅動（<c>CategoryType = 'CertSection'</c>）：區塊的名稱（＝前台大標）、
-/// 順序、啟用都在後台「分類管理」維護，可以新增區塊。原本寫死的 <c>Section</c> 字串欄已移除。
+/// 2026-11-09 起區塊＝認證分類（<c>CategoryType = 'Certification'</c>，與 <see cref="Certification"/> 的
+/// 首頁 Proof 分組是同一套）：名稱（＝前台大標）、順序、啟用都在後台「分類管理」維護。
+/// 原本寫死的 <c>Section</c> 字串欄已移除。
 /// </para>
 /// </summary>
 public sealed class CertificationListItem : IAuditable
 {
     public int    Id          { get; set; }
-    public int    CategoryId  { get; set; }             // 區塊：Category（CertSection），必填
+    public int    CategoryId  { get; set; }             // 區塊：Category（Certification），必填
     public int    SortOrder   { get; set; }
     public bool   IsPublished { get; set; } = true;
 

@@ -56,10 +56,10 @@ function categories() {
       i18n: { zh: { name: m[4] }, en: { name: m[5] } },
     })
   }
-  // 認證頁清單的區塊（08b）：不在 db/seed，由 EF migration CertificationListSectionCategory／0024 建立，
+  // 認證頁清單的區塊（08b）＝認證分類：不在 db/seed，由 EF migration 建立（全新建庫時代號為 section-*），
   // 名稱＝前台目前顯示的大標（mockup 原文／zh.ts）
   for (const [code, sortOrder, en, zh] of CERT_SECTIONS)
-    rows.push({ id: `CertSection:${code}`, categoryType: 'CertSection', code, sortOrder, isActive: true, i18n: { zh: { name: zh }, en: { name: en } } })
+    rows.push({ id: `Certification:section-${code}`, categoryType: 'Certification', code: `section-${code}`, sortOrder: 100 + sortOrder, isActive: true, i18n: { zh: { name: zh }, en: { name: en } } })
   return rows
 }
 
