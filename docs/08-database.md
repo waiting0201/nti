@@ -360,7 +360,7 @@ CREATE TABLE dbo.CertificationI18n (
   Lang VARCHAR(5) NOT NULL,
   Name NVARCHAR(120) NOT NULL,
   ShortName NVARCHAR(60) NULL,             -- 首頁 Proof 牆的簡稱，空的用 Name（2026-10-21，0015）
-  Description NVARCHAR(400) NULL,
+  Description NVARCHAR(1000) NULL,         -- 2026-11-10 由 400 放寬（0026）
   LogoAlt NVARCHAR(200) NOT NULL,
   CONSTRAINT PK_CertificationI18n PRIMARY KEY (CertificationId, Lang)
 );

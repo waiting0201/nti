@@ -1241,8 +1241,8 @@ namespace Nti.Api.Data.Migrations
                         .HasColumnType("varchar(5)");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("LogoAlt")
                         .IsRequired()

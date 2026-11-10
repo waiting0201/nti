@@ -78,7 +78,7 @@ public sealed class CertificationI18nConfiguration : IEntityTypeConfiguration<Ce
         b.I18nOf<CertificationI18n, Certification>(nameof(CertificationI18n.CertificationId));
         b.Property(x => x.Name).HasMaxLength(120);
         b.Property(x => x.ShortName).HasMaxLength(60);
-        b.Property(x => x.Description).HasMaxLength(400);
+        b.Property(x => x.Description).HasMaxLength(1000);   // 2026-11-10 由 400 放寬：客戶的說明超過 400 字
         b.Property(x => x.LogoAlt).HasMaxLength(200);
     }
 }
