@@ -421,6 +421,8 @@ public sealed class AdminCategoryHandler(AppDbContext db)
                              .Select(x => x.CategoryId!.Value));
         await AddAsync(db.Certification.Where(x => !x.IsDeleted && x.CategoryId != null && ids.Contains(x.CategoryId.Value))
                              .Select(x => x.CategoryId!.Value));
+        await AddAsync(db.Certification.Where(x => !x.IsDeleted && x.PageCategoryId != null && ids.Contains(x.PageCategoryId.Value))
+                             .Select(x => x.PageCategoryId!.Value));
         await AddAsync(db.CertificationListItem.Where(x => !x.IsDeleted && ids.Contains(x.CategoryId)).Select(x => x.CategoryId));
         await AddAsync(db.QuoteRequest.Where(x => !x.IsDeleted && x.IndustryCategoryId != null && ids.Contains(x.IndustryCategoryId.Value))
                              .Select(x => x.IndustryCategoryId!.Value));
@@ -435,7 +437,7 @@ public sealed class AdminCategoryHandler(AppDbContext db)
         || await db.Project.AnyAsync(x => x.CategoryId == id && !x.IsDeleted)
         || await db.Vlog.AnyAsync(x => x.CategoryId == id && !x.IsDeleted)
         || await db.Faq.AnyAsync(x => x.CategoryId == id && !x.IsDeleted)
-        || await db.Certification.AnyAsync(x => x.CategoryId == id && !x.IsDeleted)
+        || await db.Certification.AnyAsync(x => (x.CategoryId == id || x.PageCategoryId == id) && !x.IsDeleted)
         || await db.CertificationListItem.AnyAsync(x => x.CategoryId == id && !x.IsDeleted)
         || await db.FacilityItem.AnyAsync(x => x.CategoryId == id && !x.IsDeleted)
         || await db.SupplierNotice.AnyAsync(x => x.CategoryId == id && !x.IsDeleted)

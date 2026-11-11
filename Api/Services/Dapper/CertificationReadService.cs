@@ -18,6 +18,7 @@ public sealed class CertificationReadService(IDbConnection db) : ICertificationR
     /// <summary>分類可為 NULL（未分組），故 Category 走 LEFT JOIN；i18n 主體仍是 INNER JOIN。</summary>
     private static readonly string BaseSql = $"""
         SELECT t.Id, t.CategoryId, c.Code AS CategoryCode, ci.Name AS CategoryName,
+               pc.Code AS PageCategoryCode, pci.Name AS PageCategoryName,
                t.LogoPath, t.LinkUrl, t.ShowOnHome, t.ShowInDetailList, t.SortOrder,
                t.CertificateNo, t.CertifiedDate, t.LastAuditDate,
                i.Name, i.ShortName, i.Description, i.LogoAlt
@@ -25,6 +26,9 @@ public sealed class CertificationReadService(IDbConnection db) : ICertificationR
         INNER JOIN CertificationI18n i ON i.CertificationId = t.Id AND i.Lang = @Lang
         LEFT  JOIN Category c ON c.Id = t.CategoryId AND c.IsDeleted = 0 AND c.IsActive = 1
         LEFT  JOIN CategoryI18n ci ON ci.CategoryId = c.Id AND ci.Lang = @Lang
+        -- 認證頁區塊：空的或區塊停用＝前台沿用首頁分組（PageCategoryCode 回 NULL）
+        LEFT  JOIN Category pc ON pc.Id = t.PageCategoryId AND pc.IsDeleted = 0 AND pc.IsActive = 1
+        LEFT  JOIN CategoryI18n pci ON pci.CategoryId = pc.Id AND pci.Lang = @Lang
         WHERE {Common.Sql.PublicFlag("t")}
           AND (t.CategoryId IS NULL OR c.Id IS NOT NULL)  -- 未分組照常顯示；掛在停用／刪除分類下的不顯示
         """;

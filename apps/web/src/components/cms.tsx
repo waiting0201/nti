@@ -335,6 +335,56 @@ export function CertificationWall({ items, locale }: { items: Certification[]; l
   )
 }
 
+/**
+ * 認證頁「分類大標 → 文字清單 → 該分類的 logo」一組一組往下排（客戶 2026-11-11 截圖）。
+ * 文字清單（08b）與 logo（08）共用同一套認證分類，以分類代號對齊；
+ * 只有清單或只有 logo 的分類也照樣成組，缺的那半不輸出。
+ */
+export type CertSectionGroup = {
+  code: string
+  title: string
+  list: { id: number; title: string; description: string | null }[]
+  logos: Certification[]
+}
+
+export function mergeCertSections(
+  list: { categoryId: number; sectionCode: string; sectionTitle: string; id: number; title: string; description: string | null }[],
+  certs: Certification[],
+): CertSectionGroup[] {
+  const groups: CertSectionGroup[] = []
+  for (const it of list) {
+    let g = groups.find((x) => x.code === it.sectionCode)
+    if (!g) groups.push((g = { code: it.sectionCode, title: it.sectionTitle, list: [], logos: [] }))
+    g.list.push({ id: it.id, title: it.title, description: it.description })
+  }
+  // 兩邊都已依分類排序排好：只有 logo 的分類插在前一個 logo 分類之後，維持分類順序
+  let prev = -1
+  for (const c of certs) {
+    // 後台 08 的「認證頁區塊」；沒選就沿用首頁 Proof 分組
+    const code = c.pageCategoryCode ?? c.categoryCode ?? '_other'
+    let idx = groups.findIndex((x) => x.code === code)
+    if (idx < 0) {
+      idx = prev + 1
+      groups.splice(idx, 0, { code, title: (c.pageCategoryCode ? c.pageCategoryName : c.categoryName) ?? 'Other', list: [], logos: [] })
+    }
+    groups[idx].logos.push(c)
+    prev = idx
+  }
+  return groups
+}
+
+export function CertSection({ group, locale }: { group: CertSectionGroup; locale: Locale }) {
+  return (
+    <section className="section tight"><div className="wrap reveal">
+      <div className="dtitle">{group.title}</div>
+      {group.list.length > 0 && <DetailList items={group.list} />}
+      {group.logos.length > 0 && (
+        <div className="cert-group mt-m"><CertificationGrid items={group.logos} locale={locale} className="certgrid start" /></div>
+      )}
+    </div></section>
+  )
+}
+
 function CertificationGrid({ items, locale, className }: { items: Certification[]; locale: Locale; className: string }) {
   return (
     <div className={className}>

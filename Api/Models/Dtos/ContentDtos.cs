@@ -163,6 +163,9 @@ public sealed class CertificationDto
     public int?    CategoryId   { get; set; }
     public string? CategoryCode { get; set; }
     public string? CategoryName { get; set; }
+    /// <summary>認證頁區塊（2026-11-11 起）；NULL＝沿用 Category</summary>
+    public string? PageCategoryCode { get; set; }
+    public string? PageCategoryName { get; set; }
     public string  LogoPath     { get; set; } = null!;
     public string? LinkUrl      { get; set; }
     public bool    ShowOnHome   { get; set; }

@@ -211,6 +211,9 @@ export type Certification = {
   id: number
   categoryCode: string | null
   categoryName: string | null
+  /** 認證頁的區塊（2026-11-11 起）；null＝沿用 category（首頁 Proof 分組） */
+  pageCategoryCode?: string | null
+  pageCategoryName?: string | null
   logoPath: string
   linkUrl: string | null
   showOnHome: boolean

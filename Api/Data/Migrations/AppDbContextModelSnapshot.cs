@@ -1203,6 +1203,9 @@ namespace Nti.Api.Data.Migrations
                         .HasMaxLength(260)
                         .HasColumnType("nvarchar(260)");
 
+                    b.Property<int?>("PageCategoryId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("ShowInDetailList")
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
@@ -5913,6 +5916,13 @@ namespace Nti.Api.Data.Migrations
                         .HasPrincipalKey("Id", "CategoryType")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_Certification_Category");
+
+                    b.HasOne("Nti.Api.Models.Entities.Category", null)
+                        .WithMany()
+                        .HasForeignKey("PageCategoryId", "CategoryTypeGuard")
+                        .HasPrincipalKey("Id", "CategoryType")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_Certification_PageCategory");
                 });
 
             modelBuilder.Entity("Nti.Api.Models.Entities.CertificationI18n", b =>

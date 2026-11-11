@@ -246,6 +246,17 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/300_keep_en_h1.sql
 sqlcmd -S <server> -d NTI -I -b -i db/content/310_cert_detail_list.sql
 ```
 
+## 370_cert_page_section.sql
+
+認證 logo 的「認證頁區塊」初始值（2026-11-11）。**須先套用 EF migration `CertPageSection`**（或參考版 `0028`）：
+
+- 同一個關鍵字（ISO 9001、G7、GMI、FSC、Sedex、LEED…）同時出現在認證英文名稱與某個 08b 清單項目標題 → logo 放到該清單項目的區塊。不寫死分類代號。
+- 只補 `PageCategoryId` 還是 NULL 的；對不到的維持 NULL（前台沿用首頁分組）。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/370_cert_page_section.sql
+```
+
 ## 360_sustainability_goals.sql
 
 `/green-esg`「企業社會責任」上方的「南台彩藝永續目標」表改由資料驅動（2026-11-05）。手寫、冪等；

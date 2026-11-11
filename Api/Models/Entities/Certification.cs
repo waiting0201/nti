@@ -4,7 +4,10 @@ namespace Nti.Api.Models.Entities;
 public sealed class Certification : IAuditable
 {
     public int     Id          { get; set; }
-    public int?    CategoryId  { get; set; }
+    public int?    CategoryId  { get; set; }            // 首頁 Proof 牆的分組
+    // 認證頁的區塊（同一套認證分類）：logo 排在該區塊文字清單的下方。2026-11-11 加；
+    // 空的＝沿用 CategoryId。與首頁分組分開，是因為首頁三張卡、認證頁七個區塊，粒度不同
+    public int?    PageCategoryId { get; set; }
     public string  LogoPath    { get; set; } = null!;   // 去背 PNG／SVG
     public string? LinkUrl     { get; set; }
     public bool    ShowOnHome  { get; set; } = true;

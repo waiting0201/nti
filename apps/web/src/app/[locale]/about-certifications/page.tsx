@@ -2,10 +2,10 @@ import { Fragment, type ReactNode } from 'react'
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
-import { CertificationWall, DetailSection, PageBanner, PageMidBanner } from '@/components/cms'
+import { CertSection, CertificationWall, PageBanner, PageMidBanner, mergeCertSections } from '@/components/cms'
 import { JsonLd } from '@/components/JsonLd'
 import { organizationCredentials } from '@/lib/jsonld'
-import { bannerSrc, getCertificationItems, getCertifications, getPage, midBannerSrc, type CertificationListItem } from '@/lib/api'
+import { bannerSrc, getCertificationItems, getCertifications, getPage, midBannerSrc } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -48,10 +48,10 @@ export default async function Page({ params }: Props) {
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
   const page = await getPage(locale, 'about-certifications')
   const certs = await getCertifications(locale)
-  // 下方清單（單元 08b）。沒接 API 是 null → 照 mockup 原文；有接 API → 依區塊分類分組，
-  // 0 筆的區塊不會出現（客戶刪光獎項＝不要這塊；新建的區塊在填之前也是）
+  // 下方清單（單元 08b）。沒接 API 是 null → 照 mockup 原文；有接 API → 每個認證分類一組：
+  // 大標 → 文字清單 → 該分類的 logo（客戶 2026-11-11）。清單與 logo 都沒有的分類不會出現
   const listItems = await getCertificationItems(locale)
-  const groups = listItems ? groupBySection(listItems) : null
+  const groups = listItems ? mergeCertSections(listItems, certs ?? []) : null
   // 中段橫幅原本在第 2 個區塊之後；區塊不足兩個時接在最後一個之後
   const bannerAfter = groups ? Math.min(1, groups.length - 1) : 1
   const midBanner = <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-about-mid1.webp")} alt="NTI leadership on the pressroom floor" />
@@ -76,6 +76,7 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Certifications</div>
         <p className="prose wide">NTI has built its reputation on printing quality, and our clients hold us to it. We keep applying for further certification so that every customer gets the same assurance of product quality &mdash; audited by an outside body rather than asserted by us. Alongside the international standards below, we developed the NTI Green Printing Certificate, a mark our clients can display on their packaging as proof of an eco-conscious process.</p>
       </div></section>
+      {groups ? (credentials && <JsonLd data={credentials} />) : (
       <section className="section certs reveal">{certs?.length ? (
           <>
           <CertificationWall items={certs} locale={locale} />
@@ -90,11 +91,12 @@ export default async function Page({ params }: Props) {
         <img src={mediaUrl("/assets/cert-esg.png")} alt="ESG Environmental, Social, Governance" />
       </div>
         )}</section>
+      )}
       {groups ? (
         <>
           {groups.map((g, i) => (
-            <Fragment key={g.categoryId}>
-              <DetailSection title={g.title} items={g.items} />
+            <Fragment key={g.code}>
+              <CertSection group={g} locale={locale} />
               {i === bannerAfter && midBanner}
             </Fragment>
           ))}
@@ -118,15 +120,4 @@ export default async function Page({ params }: Props) {
       </div></section>
     </T>
   )
-}
-
-/** 後端已依「區塊排序 → 項目排序」排好，這裡只照出現順序分組 */
-function groupBySection(items: CertificationListItem[]) {
-  const groups: { categoryId: number; title: string; items: CertificationListItem[] }[] = []
-  for (const it of items) {
-    const last = groups[groups.length - 1]
-    if (last?.categoryId === it.categoryId) last.items.push(it)
-    else groups.push({ categoryId: it.categoryId, title: it.sectionTitle, items: [it] })
-  }
-  return groups
 }

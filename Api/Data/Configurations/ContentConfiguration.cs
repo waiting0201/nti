@@ -65,6 +65,8 @@ public sealed class CertificationConfiguration : IEntityTypeConfiguration<Certif
         b.Audit();
 
         b.CategoryGuard(CategoryTypes.Certification, "FK_Certification_Category");
+        // 認證頁區塊：同一套認證分類，共用同一個 guard 計算欄
+        b.CategoryGuard(CategoryTypes.Certification, "FK_Certification_PageCategory", idColumn: nameof(Certification.PageCategoryId));
 
         b.HasIndex(x => new { x.IsDeleted, x.IsPublished, x.ShowOnHome, x.SortOrder })
             .HasDatabaseName("IX_Certification_Home");

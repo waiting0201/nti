@@ -148,6 +148,7 @@ NTI/
   db/tools/sqlcmd.sh NTI < db/content/340_cert_sections_oct30.sql    # 客戶 10-30 認證頁改七個清單區塊＋還原誤填的頁面文字
   db/tools/sqlcmd.sh NTI < db/content/350_performance_metrics.sql    # 碳效率頁「水資源」下方的績效表：初始 4 列
   db/tools/sqlcmd.sh NTI < db/content/360_sustainability_goals.sql   # ESG 頁「企業社會責任」上方的永續目標表：初始 5 列
+  db/tools/sqlcmd.sh NTI < db/content/370_cert_page_section.sql      # 認證 logo 的「認證頁區塊」：依名稱對到 08b 清單的區塊
   db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql             # 應輸出「全數 PASS」
   ```
 

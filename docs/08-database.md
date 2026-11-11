@@ -342,7 +342,8 @@ CREATE TABLE dbo.IndustryTrendI18n (
 -- 首頁 Proof 認證牆（14 枚）＋ about-certifications 頁共用
 CREATE TABLE dbo.Certification (
   Id INT IDENTITY(1,1) PRIMARY KEY,
-  CategoryId INT NULL REFERENCES dbo.Category(Id),       -- CategoryType='Certification'（認證/夥伴/獎項）
+  CategoryId INT NULL REFERENCES dbo.Category(Id),       -- CategoryType='Certification'：首頁 Proof 牆的分組
+  PageCategoryId INT NULL REFERENCES dbo.Category(Id),   -- 同一套認證分類：認證頁的區塊，logo 排在該區塊清單下方；NULL＝沿用 CategoryId（2026-11-11，0028）
   LogoPath NVARCHAR(260) NOT NULL,         -- 去背 PNG／SVG
   LinkUrl NVARCHAR(300) NULL,
   ShowOnHome BIT NOT NULL DEFAULT 1,       -- 是否列入首頁 Proof 牆
@@ -961,6 +962,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-11-05 | Tim（Claude Code） | §4.8：新增 `SustainabilityGoal`(+I18n)（ESG 頁永續目標表）。表數 +2、外鍵 +1（CASCADE +1）、CHECK +1、非 PK/UQ 索引 +0。遷移 `Api/Data/Migrations/*_SustainabilityGoal` 與 `db/migrations/0023_sustainability_goal.sql` 一對一；`verify*.sql` 數字同步 |
 | 2026-11-09 | Tim（Claude Code） | §4.1／§4.8：認證頁清單的區塊改由分類驅動。`Category` 加型別 `CertSection`；`CertificationListItem.Section` → `CategoryId`（型別安全複合 FK），建立七個區塊分類（代號沿用原值），名稱取「頁面文字」對大標的覆寫後刪除那些覆寫。外鍵 +1、PERSISTED 計算欄 +1、CHECK −1、索引換名。遷移 `Api/Data/Migrations/*_CertificationListSectionCategory` 與 `db/migrations/0024_certification_list_section_category.sql` 一對一 |
 | 2026-11-09 | Tim（Claude Code） | §4.1／§4.8：同日把 `CertSection` 併回 `Certification`——08 的 logo 與 08b 的清單共用認證分類（首頁 Proof 牆只顯示有 logo 的分類、認證頁只顯示有清單項目的分類）。依名稱對到既有分類，對不到的新建（代號 `section-*`）。結構數字與合併前相同（外鍵、計算欄改指 Certification；CK_Category_Type 回到九種）。遷移 `*_MergeCertSectionIntoCertification` 與 `db/migrations/0025_merge_cert_section_into_certification.sql` 一對一 |
+| 2026-11-11 | Tim（Claude Code） | §4.8：`Certification.PageCategoryId`——客戶要認證頁排成「區塊大標 → 文字清單 → 該區塊的 logo」，首頁三張卡與認證頁七區塊粒度不同，另開一欄（共用 `CategoryTypeGuard`）。外鍵 +1（`FK_Certification_PageCategory`，Category 型別安全複合外鍵 10 → 11）。遷移 `*_CertPageSection` 與 `db/migrations/0028_cert_page_section.sql` 一對一；初始值 `db/content/370_cert_page_section.sql` |
 
-*最後更新：2026-11-09*
+*最後更新：2026-11-11*
 
