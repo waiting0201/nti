@@ -73,7 +73,6 @@ export default async function Page({ params }: Props) {
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">Already audited by the buyers you sell to</div>
         <p className="prose wide">NTI has passed GMI certification &mdash; the packaging-supplier audit programme commissioned by Target &mdash; for Target, Walgreens, Lowe&rsquo;s, The Home Depot, Academy Sports&nbsp;+&nbsp;Outdoors and CVS pharmacy. If you sell into those channels, the supplier check has already been done.</p>
-        <p className="mt-m"><A href={l("/about-certifications")} className="blink">View certifications, partnerships &amp; awards</A></p>
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>

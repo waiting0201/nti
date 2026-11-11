@@ -66,13 +66,13 @@ GO
 UPDATE dbo.Solution SET CoverImagePath = N'assets/prod-box-gluing.jpg', IsPublished = 1 WHERE Code = N'boxes';
 UPDATE dbo.SolutionI18n SET Name = N'彩盒包裝', H1 = N'客製化彩盒包裝', CoverAlt = N'NTI 客製化彩盒包裝', Slug = N'color-box-packaging', SeoTitle = N'客製化彩盒包裝'
 WHERE SolutionId = (SELECT Id FROM dbo.Solution WHERE Code = N'boxes') AND Lang = 'zh';
-UPDATE dbo.SolutionI18n SET Name = N'Color Box Packaging', H1 = N'Custom Color Box Packaging', CoverAlt = N'Custom color box packaging by NTI', Slug = N'color-box-packaging', SeoTitle = N'Custom Color Box Packaging'
+UPDATE dbo.SolutionI18n SET Name = N'Color Box', H1 = N'Custom Color Box Packaging', CoverAlt = N'Custom color box packaging by NTI', Slug = N'color-box-packaging', SeoTitle = N'Custom Color Box Packaging'
 WHERE SolutionId = (SELECT Id FROM dbo.Solution WHERE Code = N'boxes') AND Lang = 'en';
 
 UPDATE dbo.Solution SET CoverImagePath = N'assets/prod-card-hangtag.jpg', IsPublished = 1 WHERE Code = N'cardboard';
 UPDATE dbo.SolutionI18n SET Name = N'包裝紙板', H1 = N'客製化包裝紙板', CoverAlt = N'NTI 客製化包裝紙板', Slug = N'packaging-paperboard', SeoTitle = N'客製化包裝紙板'
 WHERE SolutionId = (SELECT Id FROM dbo.Solution WHERE Code = N'cardboard') AND Lang = 'zh';
-UPDATE dbo.SolutionI18n SET Name = N'Packaging Paperboard', H1 = N'Custom Packaging Paperboard', CoverAlt = N'Custom packaging paperboard by NTI', Slug = N'packaging-paperboard', SeoTitle = N'Custom Packaging Paperboard'
+UPDATE dbo.SolutionI18n SET Name = N'Paperboard', H1 = N'Custom Packaging Paperboard', CoverAlt = N'Custom packaging paperboard by NTI', Slug = N'packaging-paperboard', SeoTitle = N'Custom Packaging Paperboard'
 WHERE SolutionId = (SELECT Id FROM dbo.Solution WHERE Code = N'cardboard') AND Lang = 'en';
 
 UPDATE dbo.Solution SET CoverImagePath = N'assets/prod-uv-print.jpg', IsPublished = 1 WHERE Code = N'uv';
@@ -84,7 +84,7 @@ WHERE SolutionId = (SELECT Id FROM dbo.Solution WHERE Code = N'uv') AND Lang = '
 UPDATE dbo.Solution SET CoverImagePath = N'assets/prod-other-bag.jpg', IsPublished = 1 WHERE Code = N'other';
 UPDATE dbo.SolutionI18n SET Name = N'其他印刷', H1 = N'其他印刷服務', CoverAlt = N'NTI 其他印刷服務', Slug = N'other-printing', SeoTitle = N'其他印刷服務'
 WHERE SolutionId = (SELECT Id FROM dbo.Solution WHERE Code = N'other') AND Lang = 'zh';
-UPDATE dbo.SolutionI18n SET Name = N'Other Printing', H1 = N'Other Printing Services', CoverAlt = N'Other printing services by NTI', Slug = N'other-printing', SeoTitle = N'Other Printing Services'
+UPDATE dbo.SolutionI18n SET Name = N'Other', H1 = N'Other Printing Services', CoverAlt = N'Other printing services by NTI', Slug = N'other-printing', SeoTitle = N'Other Printing Services'
 WHERE SolutionId = (SELECT Id FROM dbo.Solution WHERE Code = N'other') AND Lang = 'en';
 
 GO

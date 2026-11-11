@@ -4667,6 +4667,14 @@ namespace Nti.Api.Data.Migrations
                         },
                         new
                         {
+                            SettingKey = "social.linkedin",
+                            GroupName = "Social",
+                            IsLocalized = false,
+                            SortOrder = 40,
+                            ValueType = "url"
+                        },
+                        new
+                        {
                             SettingKey = "company.fax",
                             GroupName = "Company",
                             IsLocalized = false,
@@ -4873,7 +4881,7 @@ namespace Nti.Api.Data.Migrations
                             Lang = "en",
                             CoverAlt = "Custom color box packaging by NTI",
                             H1 = "Custom Color Box Packaging",
-                            Name = "Color Box Packaging",
+                            Name = "Color Box",
                             Slug = "color-box-packaging"
                         },
                         new
@@ -4891,7 +4899,7 @@ namespace Nti.Api.Data.Migrations
                             Lang = "en",
                             CoverAlt = "Custom packaging paperboard by NTI",
                             H1 = "Custom Packaging Paperboard",
-                            Name = "Packaging Paperboard",
+                            Name = "Paperboard",
                             Slug = "packaging-paperboard"
                         },
                         new
@@ -4927,7 +4935,7 @@ namespace Nti.Api.Data.Migrations
                             Lang = "en",
                             CoverAlt = "Other printing services by NTI",
                             H1 = "Other Printing Services",
-                            Name = "Other Printing",
+                            Name = "Other",
                             Slug = "other-printing"
                         },
                         new

@@ -1124,6 +1124,10 @@ export const SEED: Record<string, Row[]> = {
       "path": "/{lang}/projects",
       "hasRichBody": false,
       "isIndexable": true,
+      "hasBanner": true,
+      "banner": "/assets/ref-sol-projects.webp",
+      "midBannerCount": 1,
+      "midBanner1": "/assets/ref-home-mid1.webp",
       "sortOrder": 13,
       "i18n": {
         "zh": {
@@ -1506,7 +1510,7 @@ export const SEED: Record<string, Row[]> = {
         },
         "en": {
           "slug": "color-box-packaging",
-          "name": "Color Box Packaging",
+          "name": "Color Box",
           "h1": "Custom Color Box Packaging",
           "coverAlt": "Custom color box packaging by NTI",
           "seoTitle": "Custom Color Box Packaging",
@@ -1531,7 +1535,7 @@ export const SEED: Record<string, Row[]> = {
         },
         "en": {
           "slug": "packaging-paperboard",
-          "name": "Packaging Paperboard",
+          "name": "Paperboard",
           "h1": "Custom Packaging Paperboard",
           "coverAlt": "Custom packaging paperboard by NTI",
           "seoTitle": "Custom Packaging Paperboard",
@@ -1581,7 +1585,7 @@ export const SEED: Record<string, Row[]> = {
         },
         "en": {
           "slug": "other-printing",
-          "name": "Other Printing",
+          "name": "Other",
           "h1": "Other Printing Services",
           "coverAlt": "Other printing services by NTI",
           "seoTitle": "Other Printing Services",

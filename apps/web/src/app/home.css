@@ -212,10 +212,10 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
   padding:clamp(26px,2.8vw,34px);display:flex;flex-direction:column;transition:border-color .3s;
 }
 .proof-card:hover{border-color:var(--leaf)}
-.proof-ic{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto}
-.proof-ic--quality{background:color-mix(in srgb,var(--brand) 16%,#fff);color:var(--brand-d)}
-.proof-ic--eco{background:color-mix(in srgb,var(--brand) 16%,#fff);color:var(--brand-d)}
-.proof-ic--safety{background:color-mix(in srgb,var(--brand) 16%,#fff);color:var(--brand-d)}
+.proof-ic{display:block;flex:0 0 auto;line-height:0;color:var(--brand-d)}
+/* 客戶 2026-11-11：拿掉淡綠圓底、線稿放大。svg 標記上寫死 22px，這裡用 CSS 蓋過；
+   線寬一起調細，否則放大後筆畫跟著變粗 */
+.proof-ic svg{width:40px;height:40px;stroke-width:1.5}
 .proof-card h3{margin-top:18px;font-weight:800;font-size:clamp(1.14rem,1.5vw,1.3rem);letter-spacing:-.01em;color:var(--deep)}
 .proof-card>p{margin-top:8px;font-size:.92rem;font-weight:500;line-height:1.65;color:var(--grey-2)}
 .proof-logos{display:flex;flex-wrap:wrap;align-items:center;align-content:center;flex:1;gap:16px clamp(16px,2vw,26px);padding-top:clamp(18px,2.2vw,24px);border-top:1px solid var(--line)}
@@ -242,7 +242,7 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 .brands{padding:clamp(56px,7vw,88px) 0;text-align:center}
 /* lead sits under .sec-h, so it must not compete with it — dropped from 1.35/700
    grey to a proper deck weight with a centred measure */
-.brands .lead{max-width:58ch;margin:0 auto;font-size:clamp(1rem,1.25vw,1.12rem);font-weight:500;color:var(--grey-2);line-height:1.8;text-wrap:pretty}
+.brands .lead{max-width:calc(clamp(1.06rem,1.55vw,1.35rem) * 42);margin:0 auto;font-size:clamp(1rem,1.25vw,1.12rem);font-weight:500;color:var(--grey-2);line-height:1.8;text-wrap:pretty}
 .brands .more{display:inline-block;margin-top:18px;color:var(--green);font-weight:800;font-size:.9rem;border-bottom:2px solid transparent;transition:border-color .2s}
 .brands .more:hover{border-color:var(--green)}
 .carousel{margin-top:42px;padding-bottom:46px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}

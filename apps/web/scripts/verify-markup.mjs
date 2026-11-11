@@ -126,12 +126,14 @@ function chromeParts(html) {
   const fabStart = html.indexOf('<div class="fab')
   const fabEnd = html.indexOf('</button>', html.indexOf('class="fab-reopen'))
   const fab = fabStart < 0 ? '' : html.slice(fabStart, fabEnd + 9)
-  // 語系切換在正式站是真的：選單指向 /en /zh（mockup 是 href="#" 佔位），
-  // 按鈕的旗標與文字也隨當前語系變動。這兩處是刻意的差異，排除比對。
+  // 語系切換在正式站是真的：連到另一個語系的同一頁（mockup 是 href="#" 佔位），
+  // 旗標與文字也隨當前語系變動。這是刻意的差異，排除比對。
+  // （2026-11-11 前是按鈕＋下拉選單，舊寫法一併認得）
   const dropLang = (s) =>
     s
       .replace(/<div class="lang-menu">[\s\S]*?<\/div>/, '')
       .replace(/<button class="lang-btn"[\s\S]*?<\/button>/, '')
+      .replace(/<a\b[^>]*class="lang-btn"[^>]*>[\s\S]*?<\/a>/, '')
   return { header: dropLang(header), footer, fab }
 }
 

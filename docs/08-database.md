@@ -535,8 +535,8 @@ CREATE TABLE dbo.Page (
   HasRichBody BIT NOT NULL DEFAULT 0,      -- 只有 privacy-legal = 1
   OgImagePath NVARCHAR(260) NULL,          -- OG 分享圖
   IsIndexable BIT NOT NULL DEFAULT 1,      -- 0 → noindex
-  BannerImagePath NVARCHAR(260) NULL,      -- 頂部橫幅圖，只有 PageBannerPages 的 20 頁用（2026-10-08）
-  MidBanner1ImagePath NVARCHAR(260) NULL,  -- 中段橫幅圖 1～4，依頁面由上而下；張數見 PageMidBannerPages（11 頁、17 張，2026-10-25）
+  BannerImagePath NVARCHAR(260) NULL,      -- 頂部橫幅圖，只有 PageBannerPages 的 21 頁用（2026-10-08；2026-11-11 加 projects）
+  MidBanner1ImagePath NVARCHAR(260) NULL,  -- 中段橫幅圖 1～4，依頁面由上而下；張數見 PageMidBannerPages（12 頁、18 張，2026-10-25；2026-11-11 加 projects）
   MidBanner2ImagePath NVARCHAR(260) NULL,
   MidBanner3ImagePath NVARCHAR(260) NULL,
   MidBanner4ImagePath NVARCHAR(260) NULL,
@@ -855,7 +855,7 @@ CREATE INDEX IX_NewsletterSubscriber_Status ON dbo.NewsletterSubscriber(Status, 
 |---|---|---|---|
 | Company | `company.name`、`company.address`、`company.hours` | text/multiline | ✓ |
 | Company | `company.phone`、`company.fax`、`company.email`、`company.map_embed` | text/url | — |
-| Social | `social.facebook`、`social.instagram`、`social.youtube`（2026-11-05 LinkedIn 改 Instagram） | url | — |
+| Social | `social.facebook`、`social.instagram`、`social.youtube`、`social.linkedin`（2026-11-05 LinkedIn 改 Instagram；2026-11-11 客戶要求加回 LinkedIn） | url | — |
 | Home | `home.gallery_image`、`home.gallery_alt` | image/text | 圖—／alt ✓ |
 | Mail | `mail.quote_notify_to`、`mail.contact_notify_to`、`mail.bcc` | email | — |
 
@@ -952,6 +952,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-09-09 | Tim（Claude Code） | **全站刪除改為真刪**（§2.3 改寫）：`IsDeleted` 欄位保留但不再被寫入。子表的外鍵改 `ON DELETE CASCADE`（17 張 `*I18n`＋`SolutionItem`＋`QuoteAttachment`，加上原有的 `NewsTag` 共 20 條）；「被引用」的關聯（`Category`／`Tag`／`QuoteRequest → Solution`）維持 `Restrict`。權限矩陣 170 → 173 列（新增 `page.delete`／`quote.delete`／`contact.delete`，僅 SuperAdmin，81 → 84）。遷移 `Api/Data/Migrations/20260909135945_HardDeleteCascades` 與 `db/migrations/0009_hard_delete_cascades.sql` 一對一，並一次清掉既有的軟刪列 |
 | 2026-10-22 | Tim（Claude Code） | §4.8：`about-certifications` 下方四個清單改由資料驅動。新增 `CertificationListItem`(+I18n)（色彩標準／GMI 通路／獎項）與 `Certification.ShowInDetailList`。表數 +2、外鍵 +1（CASCADE +1）、CHECK +2、非 PK/UQ 索引 +1。遷移 `Api/Data/Migrations/*_CertificationListItem` 與 `db/migrations/0016_certification_list_item.sql` 一對一；`verify*.sql` 數字同步 |
 | 2026-10-25 | Tim（Claude Code） | §4.11：`Page` 加 `MidBanner1ImagePath`～`MidBanner4ImagePath`（頁面中段的大圖改由後台維護，張數由 `PageMidBannerPages` 決定）。表數、外鍵、索引不變。遷移 `Api/Data/Migrations/*_PageMidBanner` 與 `db/migrations/0017_page_mid_banner.sql` 一對一，一次性補上 mockup 目前那幾張；`verify*.sql` 數字同步 |
+| 2026-11-11 | Tim（Claude Code） | 客戶修改清單（EF `ClientRevisionsNov11`／參考 0027，schema 不變）：`social.linkedin` 加回（設定 15 → 16）；方案英文 Name 改短名（Color Box／Paperboard／Other）；`projects` 加入 PageBannerPages 與 PageMidBannerPages（1 張），預設補 mockup 圖。 |
 | 2026-10-25 | Tim（Claude Code） | §4.11：`PageMidBannerPages` 補上漏掉的 `solutions`（Projects 圖）與 `facility`（Factory Tour 全幅照）各 1 張（9 → 11 頁、15 → 17 張），schema 不變。遷移 `Api/Data/Migrations/*_PageMidBannerFacilitySolutions` 與 `db/migrations/0018_page_mid_banner_facility_solutions.sql` 一對一，只補 NULL；`verify*.sql` 數字同步 |
 | 2026-10-25 | Tim（Claude Code） | §4.11：頁面影片分語系——`Page.YoutubeId` 搬到 `PageI18n.YoutubeId`（關於我們中英各一支；工廠導覽只有中文，英文版改為單元 10「參觀」分類的照片輪播）。表數、外鍵、索引不變。遷移 `Api/Data/Migrations/*_PageVideoI18n` 與 `db/migrations/0019_page_video_i18n.sql` 一對一，先搬值再刪欄；`verify*.sql` 數字同步 |
 | 2026-10-25 | Tim（Claude Code） | §4.11：新增 `PageGalleryImage`（工廠導覽英文版的相簿照片，改在單元 15 上傳）。表 +1、外鍵 +1（CASCADE）、CHECK +1、索引 +1。`Category` Facility/tour 停用，原本那幾筆 `FacilityItem` 搬過來後刪除。遷移 `Api/Data/Migrations/*_PageGallery` 與 `db/migrations/0020_page_gallery.sql` 一對一；`verify*.sql` 數字同步 |

@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
-import { bannerSrc, getPage, midBannerSrc } from '@/lib/api'
+import { bannerSrc, cmsMedia, getPage, getSolutionByCode, midBannerSrc } from '@/lib/api'
 import { PageBanner, PageMidBanner } from '@/components/cms'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
-import { ProductShowcase } from '@/components/behaviors/ProductShowcase'
+import { ProductShowcase, type ShowcaseItem } from '@/components/behaviors/ProductShowcase'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -22,6 +22,16 @@ export default async function Page({ params }: Props) {
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
   const page = await getPage(locale, "solutions")
   const l = withLocale(locale)
+  // Products 輪播：圖／名稱／說明取自後台「02 解決方案 › 品項卡」（與四個產品頁同一份）。
+  // 沒接 API、或某個方案一張品項卡都沒有時，該方案照 mockup 寫死的內容（ProductShowcase 的 SETS）
+  const codes = ['boxes', 'cardboard', 'uv', 'other'] as const
+  const solutions = await Promise.all(codes.map((c) => getSolutionByCode(locale, c)))
+  const cmsSets: Partial<Record<string, ShowcaseItem[]>> = {}
+  codes.forEach((c, i) => {
+    const items = solutions[i]?.items ?? []
+    if (items.length) cmsSets[c] = items.map((it) => ({ src: cmsMedia(it.imagePath), name: it.name, cap: it.description ?? '' }))
+  })
+  const first = cmsSets.boxes?.[0]
   return (
     <T locale={locale} overrides={page?.texts}>
       <PageBanner src={bannerSrc(page, "/assets/ref-sol-banner.webp")} alt="NTI custom printed packaging solutions" />
@@ -46,11 +56,11 @@ export default async function Page({ params }: Props) {
           <div className="ps-mediawrap">
             <div className="ex-media">
               <button className="ex-arrow" id="psPrev" aria-label="Previous"><svg width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="m15 18-6-6 6-6" /></svg></button>
-              <div className="ex-frame ps-frame"><img id="psImg" src={mediaUrl("/assets/prod-box-gluing.jpg")} alt="Gluing box" /></div>
+              <div className="ex-frame ps-frame"><img id="psImg" src={first ? first.src : mediaUrl("/assets/prod-box-gluing.jpg")} alt={first ? first.name : "Gluing box"} /></div>
               <button className="ex-arrow" id="psNext" aria-label="Next"><svg width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="m9 18 6-6-6-6" /></svg></button>
             </div>
-            <p className="fac-cap" id="psName">Gluing Box <span className="fac-count">1 / 6</span></p>
-            <p className="ps-cap" id="psCap">The most common box type — top and bottom open, easy to assemble, and suited to lighter products.</p>
+            <p className="fac-cap" id="psName">{first ? first.name : "Gluing Box"} <span className="fac-count">1 / {cmsSets.boxes?.length ?? 6}</span></p>
+            <p className="ps-cap" id="psCap">{first ? first.cap : "The most common box type — top and bottom open, easy to assemble, and suited to lighter products."}</p>
           </div>
         </div></div>
       </div></section>
@@ -67,7 +77,7 @@ export default async function Page({ params }: Props) {
         <p className="mt-m reveal"><A href={l("/printing-projects")} className="tour-more">View more projects<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg></A></p>
       </div>
       </section>
-      <ProductShowcase />
+      <ProductShowcase cms={cmsSets} />
     </T>
   )
 }

@@ -34,7 +34,7 @@ export default async function Page({ params }: Props) {
         </div>
       </div></section>
       <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-green-mid2.webp")} alt="FSC and NTI Green Printing marks on eco-friendly packaging" />
-      <section className="section"><div className="wrap">
+      <section className="section snug"><div className="wrap">
         <div className="ga-block reveal">
           <h3 className="ga-h">Carbon Efficiency / Carbon Neutral Printing</h3>
           <p className="prose">NTI Printing is committed to measurable carbon neutral printing and low carbon packaging production in Taiwan. We track our carbon footprint across printing cycles, invest in energy-efficient machines and adopt digital workflows that cut waste. Through the 4&nbsp;Rs &mdash; Reduce, Reuse, Recover, Recycle &mdash; we lower raw-material use and emissions while maintaining premium print standards.</p>
@@ -42,7 +42,7 @@ export default async function Page({ params }: Props) {
         </div>
       </div></section>
       <PageMidBanner src={midBannerSrc(page, 2, "/assets/ref-green-mid3.webp")} alt="Recovered paper and print waste sorted for recycling" />
-      <section className="section"><div className="wrap">
+      <section className="section snug"><div className="wrap">
         <div className="ga-block reveal">
           <h3 className="ga-h">ECO Materials / Sustainable Printing Materials</h3>
           <p className="prose">Our commitment to sustainable packaging materials begins with the materials we choose and the technology we invest in. From FSC paper printing and low-VOC eco friendly printing ink to RoHS-compliant materials, solvent recovery, and advanced wastewater recycling systems, every step of our production process is designed to reduce environmental impact. Combined with energy-efficient presses and finishing equipment, we deliver exceptional print quality while minimizing waste, emissions, and resource consumption.</p>
@@ -50,7 +50,7 @@ export default async function Page({ params }: Props) {
         </div>
       </div></section>
       <PageMidBanner src={midBannerSrc(page, 3, "/assets/ref-green-mid1.webp")} alt="Low-VOC eco-inks used on NTI's presses" />
-      <section className="section"><div className="wrap">
+      <section className="section snug"><div className="wrap">
         <div className="ga-block reveal">
           <h3 className="ga-h">ESG &amp; Future Goals / ESG Printing Commitment</h3>
           <p className="prose">At NTI Printing, ESG begins with people. We believe a safe, clean, modern, and comfortable workplace is fundamental to building a sustainable business. Our fully air-conditioned offices and production facility, together with staff amenities including a restaurant, library, dormitories, and shared spaces, reflect our commitment to the wellbeing of both our local and international employees.</p>

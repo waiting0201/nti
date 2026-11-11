@@ -115,6 +115,7 @@ const BANNER_PAGES = {
   'green-materials': 'green-materials.html', 'green-esg': 'green-esg.html',
   insights: 'insights.html', 'news-list': 'news.html',
   'industry-trends': 'printing-trends.html', careers: 'careers.html',
+  projects: 'printing-projects.html',
 }
 
 function pageBanner(pageKey) {
@@ -135,7 +136,7 @@ const MID_BANNER_PAGES = {
   facility: ['facility.html', 1], solutions: ['printing-solutions.html', 1],
   'facility-tour': ['facility-tour.html', 2], 'sustainability-hub': ['green-advantage.html', 4],
   'green-our-advantage': ['green-our-advantage.html', 1], 'green-carbon': ['green-carbon.html', 1],
-  'green-esg': ['green-esg.html', 1],
+  'green-esg': ['green-esg.html', 1], projects: ['printing-projects.html', 1],
 }
 
 function pageMidBanners(pageKey) {
@@ -598,7 +599,7 @@ function settings() {
     'company.address': i18n(address),
     'company.hours': i18n(hours),
     'company.phone': phone,
-    // 傳真、LinkedIn、YouTube、密件副本：mockup 沒有（footer 的社群是 href="#"），客戶也還沒給。
+    // 傳真、YouTube、LinkedIn、密件副本：mockup 沒有（footer 的社群是 href="#"），客戶也還沒給。
     // 留空是有意義的狀態——後台的提示寫「留空則前台不顯示該圖示」，編一個假值反而會上線。
     'company.fax': '',
     'company.email': mail,
@@ -608,6 +609,7 @@ function settings() {
     'social.facebook': facebook,
     'social.instagram': '',
     'social.youtube': '',
+    'social.linkedin': '',
     'home.gallery_image': asset(gallery[1]),
     'home.gallery_alt': i18n(decode(gallery[2])),
     // 表單通知信的收件者：reference/現有網站盤點與內容遷移.md D1 決議正式站寄

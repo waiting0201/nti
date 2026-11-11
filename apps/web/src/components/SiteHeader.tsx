@@ -55,6 +55,7 @@ const MENU: MenuItem[] = [
         label: <>Certifications, Partnerships &amp; Awards</>,
       },
       { key: 'facility', href: '/facility', label: <>Facilities &amp; Equipment</> },
+      { key: 'facility-tour', href: '/facility-tour', label: 'Factory Tour' },
     ],
   },
   {
@@ -62,10 +63,10 @@ const MENU: MenuItem[] = [
     href: '/printing-solutions',
     label: 'Solutions',
     sub: [
-      { key: 'colorbox', href: '/colorbox', label: 'Color Box Packaging' },
-      { key: 'cardboard', href: '/cardboard', label: 'Packaging Paperboard' },
+      { key: 'colorbox', href: '/colorbox', label: 'Color Box' },
+      { key: 'cardboard', href: '/cardboard', label: 'Paperboard' },
       { key: 'uv-printing', href: '/uv-printing', label: 'UV Printing' },
-      { key: 'other-printing', href: '/other-printing', label: 'Other Printing' },
+      { key: 'other-printing', href: '/other-printing', label: 'Other' },
     ],
   },
   {
@@ -106,7 +107,6 @@ export function SiteHeader() {
 
   const other: Locale = locale === 'en' ? 'zh' : 'en'
   const otherHref = localePath(other, path)
-  const selfHref = localePath(locale, path)
 
   return (
     <T locale={locale}>
@@ -138,21 +138,12 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="htools">
+          {/* 語系鈕＝直接切到另一個語系（客戶 2026-11-11）：英文版顯示「中文」、中文版顯示「EN」 */}
           <div className="lang">
-            <button className="lang-btn" aria-haspopup="true" aria-expanded="false">
-              {locale === 'en' ? <FlagEN /> : <FlagZH />}
-              {locale === 'en' ? 'EN' : '中文'} <Caret />
-            </button>
-            <div className="lang-menu">
-              <A href={locale === 'en' ? selfHref : otherHref} className={locale === 'en' ? 'active' : undefined}>
-                <FlagEN />
-                English
-              </A>
-              <A href={locale === 'zh' ? selfHref : otherHref} className={locale === 'zh' ? 'active' : undefined}>
-                <FlagZH />
-                中文
-              </A>
-            </div>
+            <A href={otherHref} className="lang-btn" lang={other === 'zh' ? 'zh-Hant' : 'en'}>
+              {other === 'en' ? <FlagEN /> : <FlagZH />}
+              {other === 'en' ? 'EN' : '中文'}
+            </A>
           </div>
           <button className="burger" aria-label="Menu">
             <span></span>

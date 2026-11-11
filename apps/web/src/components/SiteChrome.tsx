@@ -78,9 +78,10 @@ export function SiteChrome() {
     })
 
     // language dropdown: click to toggle (touch-friendly)
+    // 2026-11-11 起語系鈕是直接切換的連結、沒有下拉；只有還有 .lang-menu 時才接這段
     const lang = document.querySelector('.lang')
     const langBtn = document.querySelector('.lang-btn')
-    if (lang && langBtn) {
+    if (lang && langBtn && lang.querySelector('.lang-menu')) {
       const toggle = () => {
         const open = lang.classList.toggle('open')
         langBtn.setAttribute('aria-expanded', String(open))

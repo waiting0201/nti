@@ -273,6 +273,7 @@ export const SETTING_GROUPS: Array<{ title: string; fields: SettingField[] }> = 
       { key: 'social.facebook', label: 'Facebook 網址', type: 'url', hint: '留空則前台不顯示該圖示' },
       { key: 'social.instagram', label: 'Instagram 網址', type: 'url', hint: '留空則前台不顯示該圖示' },
       { key: 'social.youtube', label: 'YouTube 網址', type: 'url', hint: '留空則前台不顯示該圖示' },
+      { key: 'social.linkedin', label: 'LinkedIn 網址', type: 'url', hint: '留空則前台不顯示該圖示' },
     ],
   },
   {

@@ -276,6 +276,7 @@ internal static class SeedData
         new() { SettingKey = "mail.bcc", GroupName = "Mail", ValueType = "email", IsLocalized = false, SortOrder = 30 },
         new() { SettingKey = "social.youtube", GroupName = "Social", ValueType = "url", IsLocalized = false, SortOrder = 30 },
         new() { SettingKey = "company.phone", GroupName = "Company", ValueType = "text", IsLocalized = false, SortOrder = 40 },
+        new() { SettingKey = "social.linkedin", GroupName = "Social", ValueType = "url", IsLocalized = false, SortOrder = 40 },   // 客戶 2026-11-11 加回
         new() { SettingKey = "company.fax", GroupName = "Company", ValueType = "text", IsLocalized = false, SortOrder = 50 },
         new() { SettingKey = "company.email", GroupName = "Company", ValueType = "email", IsLocalized = false, SortOrder = 60 },
         new() { SettingKey = "company.map_embed", GroupName = "Company", ValueType = "url", IsLocalized = false, SortOrder = 70 },
@@ -398,7 +399,7 @@ internal static class SeedData
         new()
         {
             SolutionId = 1, Lang = "en",
-            Name = "Color Box Packaging", H1 = "Custom Color Box Packaging",
+            Name = "Color Box", H1 = "Custom Color Box Packaging",   // Name 客戶 2026-11-11 改短名（英文）
             CoverAlt = "Custom color box packaging by NTI", Slug = "color-box-packaging",
         },
         new()
@@ -410,7 +411,7 @@ internal static class SeedData
         new()
         {
             SolutionId = 2, Lang = "en",
-            Name = "Packaging Paperboard", H1 = "Custom Packaging Paperboard",
+            Name = "Paperboard", H1 = "Custom Packaging Paperboard",
             CoverAlt = "Custom packaging paperboard by NTI", Slug = "packaging-paperboard",
         },
         new()
@@ -434,7 +435,7 @@ internal static class SeedData
         new()
         {
             SolutionId = 4, Lang = "en",
-            Name = "Other Printing", H1 = "Other Printing Services",
+            Name = "Other", H1 = "Other Printing Services",
             CoverAlt = "Other printing services by NTI", Slug = "other-printing",
         },
         new()

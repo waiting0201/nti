@@ -273,7 +273,7 @@ export function TrendSections({ items }: { items: Trend[] }) {
   return (
     <>
       {items.map((t) => (
-        <section key={t.id} className="section tight">
+        <section key={t.id} className="section tight snug">
           <div className="wrap reveal">
             <div className="dtitle">{t.title}</div>
             <div dangerouslySetInnerHTML={{ __html: t.bodyHtml }} />
@@ -298,9 +298,46 @@ export function credentialLine(c: Certification, locale: Locale): string | null 
   return parts.length ? parts.join(' · ') : null
 }
 
+/**
+ * 依後台「認證分類」分組，照 API 回來的順序（分類排序 → 認證排序）。
+ * 分類名稱少於兩種（還沒跑 290、或全部同一類）回 `null`，呼叫端照舊平鋪。
+ */
+function groupByCertCategory(items: Certification[]) {
+  if (new Set(items.map((c) => c.categoryName).filter(Boolean)).size < 2) return null
+  const groups: { name: string; code: string | null; items: Certification[] }[] = []
+  for (const c of items) {
+    const name = c.categoryName ?? 'Other'
+    const g = groups.find((x) => x.name === name)
+    if (g) g.items.push(c)
+    else groups.push({ name, code: c.categoryCode, items: [c] })
+  }
+  return groups
+}
+
+/**
+ * 認證頁的 logo 牆。客戶 2026-11-11：依分類分組排列（與首頁 Proof 同一套四類），
+ * logo 統一放進同尺寸外框（`.cert-group .certgrid img`，見 site.css）。
+ */
 export function CertificationWall({ items, locale }: { items: Certification[]; locale: Locale }) {
+  const groups = groupByCertCategory(items)
+  if (!groups) return <CertificationGrid items={items} locale={locale} className="wrap certgrid" />
   return (
-    <div className="wrap certgrid">
+    <T locale={locale}>
+      <div className="wrap cert-groups">
+        {groups.map((g) => (
+          <div key={g.name} className="cert-group">
+            <h2 className="cert-group-h">{g.name}</h2>
+            <CertificationGrid items={g.items} locale={locale} className="certgrid" />
+          </div>
+        ))}
+      </div>
+    </T>
+  )
+}
+
+function CertificationGrid({ items, locale, className }: { items: Certification[]; locale: Locale; className: string }) {
+  return (
+    <div className={className}>
       {items.map((c) => {
         const logo = c.linkUrl ? (
           <A href={c.linkUrl} target="_blank" rel="noopener">
@@ -384,18 +421,29 @@ export function HeroSlides({ items, locale }: { items: Banner[]; locale: Locale 
 }
 
 // 首頁 Proof 三張分類卡：品質管理／環境永續／社會責任·安全。
-type ProofCategory = 'quality' | 'eco' | 'safety' | 'other'
+type ProofCategory = 'quality' | 'eco' | 'safety' | 'building' | 'other'
 
 const PROOF_CATEGORY_META: Record<ProofCategory, { title: string; iconClass: string }> = {
   quality: { title: 'Quality Management', iconClass: 'proof-ic--quality' },
   eco: { title: 'Environmental Sustainability', iconClass: 'proof-ic--eco' },
   safety: { title: 'Social Responsibility & Safety', iconClass: 'proof-ic--safety' },
+  building: { title: 'Green Building', iconClass: 'proof-ic--eco' },
   other: { title: 'Other Certifications', iconClass: 'proof-ic--quality' },
 }
 
-// 分組代碼 → 卡片圖示：db/content/290 建的三個分組沿用這三個代碼；後台新增的其他分組用 other 的圖示。
-const isProofCategory = (code: string | null): code is ProofCategory =>
-  code === 'quality' || code === 'eco' || code === 'safety'
+// 分組 → 卡片圖示。後台沒有選圖示的欄位，而客戶自建的分類代碼是 section-* 這種沒有語意的值，
+// 所以先看分類名稱（中英都認），對不上再看 290 建的三個代碼，都不是才用 other 的通用圖示。
+// 客戶 2026-11-11：「環境管理與溫室氣體盤查」「雙綠建築認證」原本都落到 other（打勾），要換成專屬圖示。
+const PROOF_KEYWORDS: [ProofCategory, RegExp][] = [
+  ['building', /building|leed|eewh|建築/i],
+  ['eco', /environment|ghg|carbon|climate|sustainab|環境|溫室|碳|永續/i],
+  ['safety', /supply|social|safety|responsib|complian|供應|責任|安全|合規/i],
+  ['quality', /quality|colou?r|品質|色彩|色彩管理/i],
+]
+function proofKind(code: string | null, name: string): ProofCategory {
+  for (const [kind, re] of PROOF_KEYWORDS) if (re.test(name)) return kind
+  return code === 'quality' || code === 'eco' || code === 'safety' ? code : 'other'
+}
 
 // 還沒跑 290、14 張認證都在同一個分類時的備援：
 // 依檔名對照品質／環境／社會責任三類。對不上的一律進 other，不能讓認證憑空消失。
@@ -447,6 +495,16 @@ const PROOF_ICONS: Record<ProofCategory, React.ReactNode> = {
       <path d="m9 12 2 2 4-4.5" />
     </svg>
   ),
+  building: (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2.5 21h19" />
+      <path d="M4.5 21V9.5L10 6v15" />
+      <path d="M10 21V11h7v10" />
+      <path d="M7 11.5v.01M7 14.5v.01M7 17.5v.01M13.5 14v.01M13.5 17.5v.01" />
+      <path d="M15.5 7.5C15.5 4.4 17.6 2.5 21 2.5c0 3.4-1.9 5.5-5 5.5" />
+      <path d="M15.5 8 18.5 5" />
+    </svg>
+  ),
   other: (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="8" />
@@ -484,8 +542,7 @@ export function CertificationLogos({ items, locale }: { items: Certification[]; 
       byName.get(key)!.push(c)
     }
     groups = order.map((name) => {
-      const code = codeOf.get(name) ?? null
-      const kind: ProofCategory = isProofCategory(code) ? code : 'other'
+      const kind = proofKind(codeOf.get(name) ?? null, name)
       return {
         key: name,
         title: name,

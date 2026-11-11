@@ -336,6 +336,7 @@ public static class PageBannerPages
         PageKeys.FacilityQuality, PageKeys.FacilityTour, PageKeys.Solutions, PageKeys.SustainabilityHub,
         PageKeys.GreenOurAdvantage, PageKeys.GreenCarbon, PageKeys.GreenMaterials, PageKeys.GreenEsg,
         PageKeys.Insights, PageKeys.NewsList, PageKeys.IndustryTrends, PageKeys.Careers,
+        PageKeys.Projects,   // 客戶 2026-11-11 新增
     ], StringComparer.Ordinal);
 }
 
@@ -366,6 +367,7 @@ public static class PageMidBannerPages
         [PageKeys.GreenOurAdvantage]   = 1,
         [PageKeys.GreenCarbon]         = 1,
         [PageKeys.GreenEsg]            = 1,
+        [PageKeys.Projects]            = 1,   // 產業圖示下方那張（客戶 2026-11-11 新增）
     };
 
     public static int Of(string pageKey) => Count.TryGetValue(pageKey, out var n) ? n : 0;

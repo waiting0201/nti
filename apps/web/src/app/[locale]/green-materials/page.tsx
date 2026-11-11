@@ -41,7 +41,7 @@ export default async function Page({ params }: Props) {
         </div>
         <div className="flist mt-s"><p className="fi"><b>RoHS-Compliant Throughout</b>Every material, ink and solvent used in production passes RoHS inspection standards.</p><p className="fi"><b>Eco-Friendly Ink</b>Ink systems formulated to under 1&#37; VOC, used with sewage treatment and solvent recovery on site.</p><p className="fi"><b>FSC&trade; Chain of Custody</b>Ink, varnish, lotions and solvents comply with RoHS and REACH; substrates carry FSC&trade; certified chain of custody from mill to finished carton.</p><p className="fi"><b>Solvent-Free Lamination</b>BOPP pre-coated film replaces traditional wet lamination &mdash; no solvent, no drying oven, no emissions.</p><p className="fi"><b>Waste Oil &amp; Water Recovery</b>Waste-oil recovery equipment and a wastewater recycling system, both meeting international environmental protection standards.</p></div>
       </div></section>
-      <section className="section tight"><div className="wrap reveal">
+      <section className="section tight snug"><div className="wrap reveal">
         <div className="dtitle">Integrated Green Production</div>
         <p className="prose wide">Our integrated production process improves efficiency while reducing environmental impact. By utilizing Computer-to-Plate (CTP) technology, we eliminate traditional plate-making processes, reducing heavy metal contamination, wastewater, material waste, and overall carbon emissions.</p>
         <div className="dtitle mt-l">Printing</div>
@@ -51,12 +51,12 @@ export default async function Page({ params }: Props) {
         <div className="dtitle mt-l">Sewage Treatment</div>
         <p className="prose wide">Environmental responsibility extends beyond the printing press. NTI operates advanced wastewater treatment and recycling systems for both production and domestic water, ensuring discharged water consistently meets strict environmental standards. Together with our renewable solar energy infrastructure and ongoing carbon footprint reduction initiatives, we continue to build a cleaner and more sustainable future.</p>
       </div></section>
-      <section className="section tight"><div className="wrap reveal">
+      <section className="section tight snug"><div className="wrap reveal">
         <div className="dtitle">Mono-material by default</div>
         <p className="prose wide">Where a structure allows it, we redesign to a single recyclable material rather than a laminate &mdash; keeping shelf impact while making the pack straightforward for consumers to recycle.</p>
         <p className="mt-m"><A href={l("/printing-projects")} className="blink">See a mono-material redesign</A></p>
       </div></section>
-      <section className="section tight"><div className="wrap reveal">
+      <section className="section tight snug"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>
         <p className="mt-m"><A href={l("/get-a-quote")} className="btn btn-solid">Get a Quote</A></p>
         <p className="mt-m reveal"><A href={l("/green-esg")} className="blink">Next: ESG &amp; Future Goals</A></p>

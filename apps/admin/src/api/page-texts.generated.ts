@@ -1065,13 +1065,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "View certifications, partnerships & awards",
-        "zh": "查看認證、夥伴與獲獎",
-        "kind": "text",
-        "section": "Already audited by the buyers you sell to",
-        "count": 1
-      },
-      {
         "en": "Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.",
         "zh": "想把這套做法用在您的包裝上？把需求寄給我們，我們會回覆規格與報價。",
         "kind": "text",
@@ -2978,6 +2971,13 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
     "mockup": "printing-projects.html",
     "items": [
       {
+        "en": "Range of NTI sustainably printed product packaging",
+        "zh": "NTI 永續印刷的多款產品包裝",
+        "kind": "alt",
+        "section": "頁首",
+        "count": 1
+      },
+      {
         "en": "Home",
         "zh": "首頁",
         "kind": "text",
@@ -3080,6 +3080,13 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Home & Lifestyle",
         "zh": "居家與生活",
         "kind": "text",
+        "section": "Industries / Applications",
+        "count": 1
+      },
+      {
+        "en": "A showcase of NTI's printed packaging work",
+        "zh": "NTI 包裝印刷作品集",
+        "kind": "alt",
         "section": "Industries / Applications",
         "count": 1
       },
@@ -4097,27 +4104,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "en": "Coastal clean-up activity that keeps waste out of the ocean and raises awareness of marine debris in the community.",
         "zh": "海岸淨灘活動，減少流入海洋的廢棄物，也提升社區對海洋廢棄物的意識。",
         "kind": "text",
-        "section": "Contribution to the Community",
-        "count": 1
-      },
-      {
-        "en": "NTI Green Printing",
-        "zh": "NTI 綠色印刷",
-        "kind": "alt",
-        "section": "Contribution to the Community",
-        "count": 1
-      },
-      {
-        "en": "FSC certified",
-        "zh": "FSC 認證",
-        "kind": "alt",
-        "section": "Contribution to the Community",
-        "count": 1
-      },
-      {
-        "en": "ESG Environmental, Social, Governance",
-        "zh": "ESG 環境、社會、公司治理",
-        "kind": "alt",
         "section": "Contribution to the Community",
         "count": 1
       },

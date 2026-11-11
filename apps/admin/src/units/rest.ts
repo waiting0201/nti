@@ -91,10 +91,10 @@ export const page: Unit = {
     // 分語系，只在有影片的頁面與語系分頁出現（後端 PageVideoPages：關於我們中英、工廠導覽只有中文）。
     // 存的是影片 ID，與 05 Green Vlog 同一種欄位
     { key: 'youtubeId', label: '頁面影片', type: 'youtube', i18n: true, side: 'locale', hint: '貼上 YouTube 影片網址即可；留空則顯示預設的公司影片｜中英文各自設定' },
-    // 只在頂部有橫幅大圖的 20 頁出現（後端 PageBannerPages）。替代文字不另開欄位：它在「頁面文字」裡
+    // 只在頂部有橫幅大圖的 21 頁出現（後端 PageBannerPages）。替代文字不另開欄位：它在「頁面文字」裡
     { key: 'banner', label: '頂部橫幅', type: 'image', side: 'neutral', hint: '建議 **2400×450px**（16:3）｜JPG／WebP｜≤300KB｜前台裁成 16:3（手機 2:1），主體請放中間｜替代文字請到下方「頁面文字」修改',
       altExempt: '替代文字在「頁面文字」裡逐語系修改，不另開欄位' },
-    // 頁面中段的大圖，依頁面由上而下；只顯示該頁有的張數（後端 PageMidBannerPages，11 頁、最多 4 張）
+    // 頁面中段的大圖，依頁面由上而下；只顯示該頁有的張數（後端 PageMidBannerPages，12 頁、最多 4 張）
     ...[1, 2, 3, 4].map((n): Field => ({
       key: `midBanner${n}`, label: `中段橫幅 ${n}`, type: 'image', side: 'neutral',
       hint: `建議 **2400×830px**（約 3:1）｜JPG／WebP｜≤300KB｜前台不裁切，依原圖比例整張顯示（工廠總覽頁那張例外：裁成固定高度，主體請放中間）｜頁面由上而下第 ${n} 張｜清空則前台不顯示這張｜替代文字請到下方「頁面文字」修改`,

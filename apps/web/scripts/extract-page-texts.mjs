@@ -104,7 +104,7 @@ const CMS_BLOCKS = {
   'news-list': [between('<a href="news-global-views-esg-award.html" class="news-feature', '</div></section>')],
   'green-vlog': [between('<div class="video-frame reveal mt-l">', '</div></section>')],
   'faq': [between('<nav class="faq-nav', '<div class="faq-cta')],
-  'industry-trends': [/<section class="section tight"><div class="wrap reveal">\s*<div class="dtitle">Regulation is setting the pace[\s\S]*$/],
+  'industry-trends': [/<section class="section tight(?: snug)?"><div class="wrap reveal">\s*<div class="dtitle">Regulation is setting the pace[\s\S]*$/],
   'careers': [between('<div class="faq-list wide reveal mt-s">', '<div class="faq-cta reveal mt-l">')],
   'supplier-area': [
     between('<a href="#" class="notice">', '<h2 class="sa-h mt">'),
@@ -118,10 +118,10 @@ const CMS_BLOCKS = {
  */
 const CMS_TEXTS = {
   'home': [
-    'Color Box Packaging', 'Multiple box-types: besides folding box, we also provide customize box structure design.',
-    'Packaging Paperboard', 'Hang tags, blister cards and backcards for retail walls.',
+    'Color Box', 'Multiple box-types: besides folding box, we also provide customize box structure design.',
+    'Paperboard', 'Hang tags, blister cards and backcards for retail walls.',
     'UV Printing', 'Printing on special materials, special varnish, anti-counterfeiting and more.',
-    'Other Printing', 'Desk calendars, hand bags, red envelopes, mouse pads and manuals.',
+    'Other', 'Desk calendars, hand bags, red envelopes, mouse pads and manuals.',
   ],
   // 下方清單的區塊大標＝後台「分類管理 › 認證分類」的名稱，2026-11-09 起不在頁面文字改
   'about-certifications': [

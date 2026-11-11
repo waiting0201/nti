@@ -5,7 +5,7 @@
 :root{
   --green:#6FA044;        /* PSD primary grass green */
   --green-d:#5C8736;
-  --green-title:#74A93E;  /* section / product titles */
+  --green-title:#8FB954;  /* section / product titles — 客戶 2026-11-11：分頁標題統一 Pantone 367C 淺綠（原 #74A93E） */
   --brand:#88B300;        /* NTI brand green (Brand Deck s3) — large icons & accents */
   --brand-d:#6E8F00;      /* darker brand green — small icons / icons on tints */
   --leaf:#8FB954;         /* CIS lime */
@@ -121,6 +121,10 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
 /* sub-page masthead: crumb + title + sibling tabs, sits tight above the body */
 .section.subhead{padding-bottom:clamp(6px,1vw,12px)}
 header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
+/* 客戶 2026-11-11：文字區塊一段接一段時（中段橫幅沒放圖），兩個 section 的上下留白會疊成一大塊。
+   .snug 的 section 緊接在另一個 section 後面時不再加上方留白，間距只剩前一段的下方留白；
+   前面是橫幅圖（.fac-banner）時不受影響 */
+.section+.section.snug{padding-top:0}
 /* Heading ladder — four steps, each separated by size AND weight AND colour so a
    long title, a long deck and a long paragraph never read as one grey mass:
    eyebrow (.72/800/green) → title (2.9/800/green) → deck (1.24/600/grey) → prose (1.1/500/grey-2) */
@@ -171,7 +175,7 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .ex-arrow:hover{border-color:var(--brand-d);color:var(--brand-d);transform:scale(1.06)}
 
 /* detail bullets */
-.dtitle{font-weight:800;color:var(--grey);font-size:clamp(1.08rem,1.4vw,1.24rem);line-height:1.4;letter-spacing:-.012em;margin-bottom:14px;text-wrap:balance}
+.dtitle{font-weight:800;color:var(--green-title);font-size:clamp(1.08rem,1.4vw,1.24rem);line-height:1.4;letter-spacing:-.012em;margin-bottom:14px;text-wrap:balance}
 /* CJK inside an English small-cap-ish heading: drop the latin tracking, step the
    weight/colour back so "Pre-Press Equipment 印前設備" reads as label + gloss */
 .dtitle .zh{font-weight:700;font-size:.9em;color:var(--grey-2);margin-left:.3em;letter-spacing:.02em}
@@ -305,7 +309,7 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .ps-cap{color:var(--grey-2);font-weight:500;line-height:1.6;font-size:clamp(.95rem,1.1vw,1.05rem)}
 
 /* green advantage stacked text block (per PSD) */
-.ga-block .ga-h{color:var(--grey);font-weight:800;font-size:clamp(1.02rem,1.3vw,1.16rem);line-height:1.5;margin-top:clamp(28px,3.2vw,42px)}
+.ga-block .ga-h{color:var(--green-title);font-weight:800;font-size:clamp(1.02rem,1.3vw,1.16rem);line-height:1.5;margin-top:clamp(28px,3.2vw,42px)}
 .ga-block .ga-h:first-child{margin-top:0}
 /* 同 .prose：撐滿容器 */
 .ga-block .prose{max-width:none;margin-top:12px}
@@ -315,6 +319,12 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .certgrid{display:flex;align-items:center;justify-content:center;gap:clamp(40px,8vw,110px);flex-wrap:wrap}
 .certgrid img{height:clamp(58px,8vw,90px);width:auto;opacity:.9}
 .certgrid img.big{height:clamp(74px,10vw,116px)}
+/* 認證頁：logo 依「認證分類」分組（與首頁 Proof 同一套分類），每張 logo 放進同一個外框等比縮放，
+   寬的字標（Sedex）不會撐大、方形章不會顯小（客戶 2026-11-11） */
+.cert-groups{display:grid;gap:clamp(40px,5vw,64px)}
+.cert-group-h{font-weight:800;color:var(--green-title);font-size:clamp(1.02rem,1.3vw,1.16rem);line-height:1.4;text-align:center;margin-bottom:clamp(18px,2.2vw,26px);text-wrap:balance}
+.cert-group .certgrid{gap:clamp(28px,4.4vw,60px);align-items:flex-start}
+.cert-group .certgrid img{width:clamp(92px,9.6vw,124px);height:clamp(72px,7.4vw,96px);object-fit:contain}
 
 /* full-bleed image band */
 .fullbleed{line-height:0}
@@ -334,6 +344,8 @@ header+.fac-banner img{aspect-ratio:16/3;object-fit:cover;max-height:calc(100vh 
 .fac-list a::before{display:none}
 .fac-list.tight a{padding-top:4px;padding-bottom:4px}
 .fac-list a:hover{color:var(--green);padding-left:2px}
+/* .ex-list 的 active 會內縮 10px（左側色條的位置）；這裡色條已隱藏，內縮只會讓第一項對不齊（客戶 2026-11-11） */
+.fac-list a.active{padding-left:2px}
 .fac-frame{aspect-ratio:1/1}
 .ex-stack{flex:1;min-width:0;display:flex;flex-direction:column}
 .fac-cap{margin-top:12px;text-align:center;color:var(--grey);font-weight:700;font-size:.95rem}

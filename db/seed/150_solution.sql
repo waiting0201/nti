@@ -23,11 +23,11 @@ DECLARE @src TABLE (Id INT, Code VARCHAR(30), SortOrder INT, Slug NVARCHAR(160),
 
 INSERT @src VALUES
  (1,'boxes',     10, N'color-box-packaging',
-    N'彩盒包裝',   N'Color Box Packaging',
+    N'彩盒包裝',   N'Color Box',
     N'客製化彩盒包裝', N'Custom Color Box Packaging',
     N'NTI 客製化彩盒包裝成品',   N'Custom color box packaging by NTI'),
  (2,'cardboard', 20, N'packaging-paperboard',
-    N'包裝紙板',   N'Packaging Paperboard',
+    N'包裝紙板',   N'Paperboard',
     N'客製化包裝紙板', N'Custom Packaging Paperboard',
     N'NTI 客製化包裝紙板成品',   N'Custom packaging paperboard by NTI'),
  (3,'uv',        30, N'uv-printing',
@@ -35,7 +35,7 @@ INSERT @src VALUES
     N'環保 UV 印刷',   N'Eco-Friendly UV Printing',
     N'NTI 環保 UV 印刷成品',     N'Eco-friendly UV printing by NTI'),
  (4,'other',     40, N'other-printing',
-    N'其他印刷',   N'Other Printing',
+    N'其他印刷',   N'Other',
     N'其他印刷服務',   N'Other Printing Services',
     N'NTI 其他印刷服務成品',     N'Other printing services by NTI');
 

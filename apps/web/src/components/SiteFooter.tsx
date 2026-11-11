@@ -6,7 +6,7 @@ import { mediaUrl } from '@/lib/media'
 import { getSettingMap, telHref } from '@/lib/site-settings'
 
 /**
- * 三個社群圖示。路徑與尺寸逐字取自 mockup，只有 `href` 改成吃網站設定。
+ * 四個社群圖示。路徑與尺寸逐字取自 mockup，只有 `href` 改成吃網站設定。
  */
 const SOCIAL = [
   {
@@ -26,6 +26,13 @@ const SOCIAL = [
     label: 'YouTube',
     size: 17,
     path: 'M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12c0 2 .17 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.33-1.9.5-3.8.5-5.8s-.17-3.9-.5-5.8ZM9.6 15.6V8.4L15.8 12l-6.2 3.6Z',
+  },
+  {
+    // 客戶 2026-11-11 加回 LinkedIn（排在 YouTube 後面）
+    key: 'social.linkedin',
+    label: 'LinkedIn',
+    size: 15,
+    path: 'M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.5h4V21H3V9.5Zm6.5 0h3.8v1.6h.06c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1V21h-4v-5.2c0-1.24-.02-2.84-1.73-2.84-1.73 0-2 1.35-2 2.75V21h-4V9.5Z',
   },
 ] as const
 
@@ -80,13 +87,13 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
             <span className="ftitle">Company</span>{' '}
             <A href={l('/differences')}>About Us</A>{' '}
             <A href={l('/printing-solutions')}>Solutions</A>{' '}
-            <A href={l('/printing-projects')}>Projects</A>{' '}
+            <A href={l('/printing-projects')}>Projects</A>
             {locale === 'zh' && (
               <>
-                <A href={l('/careers')}>Careers</A>{' '}
+                {' '}
+                <A href={l('/careers')}>Careers</A>
               </>
             )}
-            <A href={l('/privacy-legal')}>Privacy &amp; Legal</A>
           </div>
           <div className="fcol">
             <span className="ftitle">Supplier Area</span>{' '}
@@ -98,9 +105,9 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
             <span className="ftitle">Get in Touch</span>{' '}
             <a href={telHref(phone)}>{phone}</a>{' '}
             <span className="faddr">{address}</span>{' '}
-            <A href={l('/get-a-quote')}>Get a Quote</A>{' '}
+            <A href={l('/contact')}>Contact</A>{' '}
             <A href={l('/get-a-quote')} className="fcta">
-              Start Your Project{' '}
+              Get a Quote{' '}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>

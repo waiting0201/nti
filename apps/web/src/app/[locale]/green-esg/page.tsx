@@ -3,7 +3,6 @@ import { T, tr } from '@/lib/t'
 import { bannerSrc, getPage, getSustainabilityGoals, midBannerSrc } from '@/lib/api'
 import { DataTable, PageBanner, PageMidBanner } from '@/components/cms'
 import { A } from '@/components/A'
-import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
 type Props = { params: Promise<{ locale: Locale }> }
@@ -82,11 +81,6 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Contribution to the Community</div>
         <p className="prose wide">NTI takes part in public-welfare and environmental-protection activities, pushing community development forward and carrying out its mission through practical work rather than statements.</p>
         <div className="flist mt-s"><p className="fi"><b>Charity Bazaar</b>Charity events held through the year, with proceeds donated to related public-interest groups.</p><p className="fi"><b>Beach Cleanup</b>Coastal clean-up activity that keeps waste out of the ocean and raises awareness of marine debris in the community.</p></div>
-      </div></section>
-      <section className="section certs reveal"><div className="wrap certgrid">
-        <img src={mediaUrl("/assets/cert-green.png")} alt="NTI Green Printing" />
-        <img src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" className="big" />
-        <img src={mediaUrl("/assets/cert-esg.png")} alt="ESG Environmental, Social, Governance" />
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <p className="prose">Want this applied to your packaging? Send us the brief and we will come back with a spec and a quote.</p>

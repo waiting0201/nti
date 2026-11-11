@@ -270,6 +270,7 @@ const HAND_MAINTAINED = new Set([
   'supplier-area',          // 公告／規範／下載
   'facility-pre-press', 'facility-eco-printing', 'facility-post-press', 'facility-quality',
   'colorbox', 'cardboard', 'uv-printing', 'other-printing',   // 品項卡＋h1／副標／介紹
+  'printing-solutions',     // Products 輪播吃 02 品項卡（2026-11-11）
   'privacy-legal',          // 後台內文（HasRichBody）
   'green-carbon',           // 績效表（08c）
   'green-esg',              // 永續目標表（08d）

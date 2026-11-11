@@ -105,14 +105,14 @@ export default async function Page({ params }: Props) {
           <div className="prod-grid">
             <article className="pcard reveal" data-d="1">
               <div className="ph"><img loading="lazy" src={mediaUrl("/assets/hp-prod-boxes.png")} alt="Paper box printing" /></div>
-              <h3>{sol('boxes')?.name || "Color Box Packaging"}</h3>
+              <h3>{sol('boxes')?.name || "Color Box"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Customize package</div>
               <p>{sol('boxes')?.summary || "Multiple box-types: besides folding box, we also provide customize box structure design."}</p>
               <A href={l("/colorbox")} className="btn btn-out">More details &raquo;</A>
             </article>
             <article className="pcard reveal" data-d="2">
               <div className="ph"><img loading="lazy" src={mediaUrl("/assets/hp-prod-cardboard.webp")} alt="Packaging paperboard printing" /></div>
-              <h3>{sol('cardboard')?.name || "Packaging Paperboard"}</h3>
+              <h3>{sol('cardboard')?.name || "Paperboard"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Various packaging paperboards</div>
               <p>{sol('cardboard')?.summary || "Hang tags, blister cards and backcards for retail walls."}</p>
               <A href={l("/cardboard")} className="btn btn-out">More details &raquo;</A>
@@ -126,7 +126,7 @@ export default async function Page({ params }: Props) {
             </article>
             <article className="pcard reveal" data-d="3">
               <div className="ph"><img loading="lazy" src={mediaUrl("/assets/hp-prod-other.webp")} alt="Other printing — hand bags, calendars, manuals" /></div>
-              <h3>{sol('other')?.name || "Other Printing"}</h3>
+              <h3>{sol('other')?.name || "Other"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Beyond the box</div>
               <p>{sol('other')?.summary || "Desk calendars, hand bags, red envelopes, mouse pads and manuals."}</p>
               <A href={l("/other-printing")} className="btn btn-out">More details &raquo;</A>

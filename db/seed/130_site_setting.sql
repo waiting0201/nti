@@ -26,6 +26,7 @@ GO
         ('social.facebook',         'Social',  'url',       0, 10),
         ('social.instagram',        'Social',  'url',       0, 20),
         ('social.youtube',          'Social',  'url',       0, 30),
+        ('social.linkedin',         'Social',  'url',       0, 40),   -- 客戶 2026-11-11 加回
         ('home.gallery_image',      'Home',    'image',     0, 10),   -- 首頁形象圖帶
         ('home.gallery_alt',        'Home',    'text',      1, 20),
         ('mail.quote_notify_to',    'Mail',    'email',     0, 10),   -- 逗號分隔多組，儲存時驗格式

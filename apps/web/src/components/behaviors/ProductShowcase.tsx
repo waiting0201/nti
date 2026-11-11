@@ -4,11 +4,15 @@ import { usePathname } from 'next/navigation'
 import { splitLocale } from '@/lib/i18n'
 import { tr } from '@/lib/t-client'
 
-type Item = { src: string; name: string; cap: string }
+export type ShowcaseItem = { src: string; name: string; cap: string }
+type Item = ShowcaseItem
 type Set = { apps: string; items: Item[] }
 
-/** solutions.html 的產品分類幻燈片（資料與行為皆自 mockup 原樣移植） */
-export function ProductShowcase() {
+/**
+ * solutions.html 的產品分類幻燈片（資料與行為皆自 mockup 原樣移植）。
+ * `cms`：後台「02 解決方案 › 品項卡」的內容，有的方案就取代下面寫死的 items（Applications 那行仍照 mockup）。
+ */
+export function ProductShowcase({ cms = {} }: { cms?: Partial<Record<string, ShowcaseItem[]>> }) {
   const { locale } = splitLocale(usePathname() ?? '/')
   useEffect(() => {
   const SETS: Record<string, Set> = {
@@ -32,6 +36,7 @@ export function ProductShowcase() {
       {src:'/assets/prod-other-mousepad.webp',name:'Mouse Pads',cap:'UV-printed for color saturation and long-lasting fade resistance.'},
       {src:'/assets/prod-other-manual.png',name:'Instructions & Catalogs',cap:'Product manuals and catalogs — functions, usage, instructions, and precautions.'}]}
   };
+  for (const [code, items] of Object.entries(cms)) if (items?.length && SETS[code]) SETS[code].items = items
 
     const psImg = document.getElementById('psImg') as HTMLImageElement | null
     const psName = document.getElementById('psName')
@@ -81,6 +86,6 @@ export function ProductShowcase() {
       psPrev?.removeEventListener('click', onPrev)
       psNext?.removeEventListener('click', onNext)
     }
-  }, [locale])
+  }, [locale, cms])
   return null
 }

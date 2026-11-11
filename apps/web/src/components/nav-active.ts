@@ -12,7 +12,7 @@ export const NAV_ACTIVE: Record<string, [string, string?]> = {
   'facility-eco-printing': ['differences', 'facility'],
   'facility-post-press': ['differences', 'facility'],
   'facility-quality': ['differences', 'facility'],
-  'facility-tour': ['differences', 'facility'],
+  'facility-tour': ['differences', 'facility-tour'],
   'printing-solutions': ['printing-solutions'],
   'colorbox': ['printing-solutions', 'colorbox'],
   'cardboard': ['printing-solutions', 'cardboard'],
