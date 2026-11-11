@@ -268,6 +268,9 @@ tr.drop-target td { box-shadow: inset 0 2px 0 var(--green); }
 .richtext .rt-body { min-height: 180px; padding: 12px 14px; outline: none; }
 .richtext .rt-body:focus { box-shadow: inset 0 0 0 2px rgba(143, 185, 84, 0.18); }
 .richtext .rt-body p { margin: 0 0 10px; }
+.richtext .rt-body img { max-width: 100%; cursor: pointer; }
+/* 沒填 alt 的圖片：紅框提醒，點一下可補 */
+.richtext .rt-body img:not([alt]), .richtext .rt-body img[alt=""] { outline: 2px dashed #d9534f; outline-offset: 2px; }
 .richtext .rt-body h3 { font-size: 15px; margin: 14px 0 6px; }
 .richtext .rt-body h4 { font-size: 13.5px; margin: 12px 0 6px; }
 .richtext .rt-body ul, .richtext .rt-body ol { margin: 0 0 10px 20px; }

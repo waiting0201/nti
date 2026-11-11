@@ -446,6 +446,7 @@
 白名單標籤：`p h3 h4 strong em ul ol li a blockquote img figure figcaption br`。
 禁止：`script iframe style` 與行內 `style`（YouTube 影片一律走 `vlog` 單元的欄位，不從編輯器貼 iframe）。
 貼上 Word／網頁內容時自動清除樣式。伺服器端二次 sanitize，不信任前端。
+插入圖片時接著要求填替代文字（`alt`）；內文裡的圖片點一下可改 alt，沒填 alt 的圖以紅色虛線框提醒（2026-11-11 加）。
 
 ### 5.6 SEO 欄位組（`page`／`news`／`solution`）
 網址代稱 Slug、SEO 標題（70 字提示）、搜尋摘要 Meta Description（180 字提示）、指定標準網址 Canonical、社群分享標題／描述／圖片。

@@ -126,6 +126,9 @@ export function sanitizeHtml(html: string): string {
   return root.innerHTML
 }
 
+const escapeAttr = (s: string) =>
+  s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
 function RichText({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const ref = useRef<HTMLDivElement>(null)
 
@@ -168,7 +171,10 @@ function RichText({ value, onChange }: { value: string; onChange: (v: string) =>
           title="插入圖片"
           onClick={() => {
             const url = prompt('圖片網址（正式站由上傳產生）')
-            if (url) exec('insertImage', url)
+            if (!url) return
+            // execCommand('insertImage') 不能帶 alt，改插入整段 <img>；值要跳脫，免得 alt 裡的引號破壞標籤
+            const alt = prompt('圖片替代文字 alt（描述圖片內容，供 SEO 與螢幕閱讀器使用）') ?? ''
+            exec('insertHTML', `<img src="${escapeAttr(url)}" alt="${escapeAttr(alt.trim())}">`)
           }}
         >
           圖片
@@ -181,6 +187,15 @@ function RichText({ value, onChange }: { value: string; onChange: (v: string) =>
         suppressContentEditableWarning
         onInput={emit}
         onBlur={emit}
+        onClick={(e) => {
+          // 點內文裡的圖片可以改 alt（舊內容插入時沒填 alt 的，也從這裡補）
+          const img = e.target as HTMLElement
+          if (img.tagName !== 'IMG') return
+          const alt = prompt('圖片替代文字 alt', img.getAttribute('alt') ?? '')
+          if (alt === null) return
+          img.setAttribute('alt', alt.trim())
+          emit()
+        }}
         onPaste={(e) => {
           // 貼上 Word／網頁內容時自動清除樣式（docs §5.5）
           e.preventDefault()
