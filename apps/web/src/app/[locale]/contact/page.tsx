@@ -38,6 +38,8 @@ export default async function Page({ params }: Props) {
   const phone = settings?.['company.phone']
   const email = settings?.['company.email']
   const hours = settings?.['company.hours']
+  // 傳真（後台 21）：mockup 沒有這一行，有填才接在信箱下面
+  const fax = settings?.['company.fax']
   // 後台可能貼整段 <iframe>（Google 的「嵌入地圖」就是給整段），認不出來就落回下面寫死的那張
   const map = mapEmbedSrc(settings?.['company.map_embed'])
 
@@ -54,7 +56,7 @@ export default async function Page({ params }: Props) {
             </div>
             <div className="info-card">
               <span className="info-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8.1 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z" /></svg></span>
-              <div><h3>Phone &amp; Email</h3><p><A href={phone ? telHref(phone) : "tel:+88662611358"}>{phone ?? '+886 6 261 1358'}</A><br /><A href={`mailto:${email ?? 'service@nti-printing.com'}`}>{email ?? 'service@nti-printing.com'}</A></p></div>
+              <div><h3>Phone &amp; Email</h3><p><A href={phone ? telHref(phone) : "tel:+88662611358"}>{phone ?? '+886 6 261 1358'}</A><br /><A href={`mailto:${email ?? 'service@nti-printing.com'}`}>{email ?? 'service@nti-printing.com'}</A>{fax && <><br />{locale === 'zh' ? '傳真' : 'Fax'} {fax}</>}</p></div>
             </div>
             <div className="info-card">
               <span className="info-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg></span>

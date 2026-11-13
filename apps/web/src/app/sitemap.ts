@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
-import { getNews } from '@/lib/api'
+import { getNews, getPageIndexability, hasApi } from '@/lib/api'
+import { PAGE_KEY_BY_PATH } from '@/lib/pages'
 import { localeUrl as url, locales, type Locale } from '@/lib/i18n'
 import { ROUTES } from '@/lib/routes'
 import { ZH_ONLY_ROUTES } from '@/lib/careers'
@@ -33,7 +34,14 @@ const languages = (path: string) => ({
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = []
 
+  // 後台 15 把「允許索引」關掉的固定頁：頁面帶 noindex，sitemap 也不列——
+  // 兩邊講反話的話 Search Console 會報衝突（與下面標籤頁不列是同一個理由）。沒接 API 時全列
+  const noindex = new Set((await getPageIndexability())?.filter((p) => !p.isIndexable).map((p) => p.pageKey))
+
   for (const path of ROUTES) {
+    if (noindex.has(PAGE_KEY_BY_PATH[path])) continue
+    // 接了 CMS 時，mockup 的 12 篇示範消息會 301 到 `/news/{slug}`（見 middleware）——轉址的來源不該列在 sitemap
+    if (hasApi && path.startsWith('/news-')) continue
     if (ZH_ONLY_ROUTES.includes(path)) {
       // 只有中文版的頁（lib/careers.ts）：只列中文、hreflang 只帶自己
       entries.push({ url: url('zh', path), alternates: { languages: { [langKey('zh')]: url('zh', path) } } })

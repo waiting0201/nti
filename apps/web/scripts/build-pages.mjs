@@ -257,6 +257,12 @@ function extract(html) {
  *
  * 要重新從 mockup 產生某一頁，先把它從這份清單移除，產完再手動接回 CMS。
  */
+/**
+ * 會在瀏覽器端用寫死的清單重畫文字的行為元件：要把後台「頁面文字」的覆寫傳進去，
+ * 否則覆寫只在剛載入時看得到，一互動就變回原文（2026-11-13 稽核 A8）。
+ */
+const OVERRIDE_AWARE = new Set(['FacilityExplorer'])
+
 const HAND_MAINTAINED = new Set([
   'index',                  // Hero／認證牆／客戶 logo
   'news',                   // 消息列表
@@ -363,7 +369,7 @@ for (const file of files) {
   const tOpen = pageKey ? '<T locale={locale} overrides={page?.texts}>' : '<T locale={locale}>'
   const localeLine = ctx.usesLocale ? '  const l = withLocale(locale)\n' : ''
   const behaviorTags = behaviors.length
-    ? behaviors.map(([name]) => '      <' + name + ' />').join('\n') + '\n'
+    ? behaviors.map(([name]) => '      <' + name + (OVERRIDE_AWARE.has(name) && pageKey ? ' overrides={page?.texts}' : '') + ' />').join('\n') + '\n'
     : ''
 
   const src = `${imports}

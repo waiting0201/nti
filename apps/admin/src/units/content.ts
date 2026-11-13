@@ -62,7 +62,7 @@ export const solution: Unit = {
   group: '內容',
   phase: 'P4',
   frontend: '解決方案列表、四個方案頁、首頁「印刷解決方案」四張卡',
-  note: '固定 4 筆，不可新增（新增方案屬改版範圍）；刪除只給超管，且已有報價引用的方案刪不掉。品項卡為子清單，可自由增刪。',
+  note: '固定 4 筆，不可新增（新增方案屬改版範圍）；下架的方案，前台的方案頁、選單項目、首頁卡片與 Solutions 頁的分頁都不顯示；刪除只給超管，且已有報價引用的方案刪不掉。品項卡為子清單，可自由增刪。',
 
   fixedRows: true,
   sortable: true,
@@ -72,7 +72,7 @@ export const solution: Unit = {
     { key: 'code', label: '代號 Code', type: 'readonly', side: 'neutral', hint: 'boxes／cardboard／uv／other' },
     { key: 'cover', label: '方案封面', type: 'image', required: true, hint: HINT.solutionCover, altKey: 'coverAlt', side: 'neutral' },
     alt('coverAlt', '封面替代文字'),
-    { key: 'name', label: '方案名稱', type: 'text', i18n: true, required: true, side: 'locale', hint: '選單與卡片標題',
+    { key: 'name', label: '方案名稱', type: 'text', i18n: true, required: true, side: 'locale', hint: '頁首選單與首頁方案卡的標題',
       tag: 'h3', tagNote: '首頁方案卡的標題是 <h3>（選單裡是一般文字）' },
     { key: 'h1', label: '頁面標題 H1', type: 'text', i18n: true, required: true, side: 'locale', tag: 'h1' },
     { key: 'summary', label: '短述', type: 'textarea', i18n: true, max: 300, side: 'locale', hint: '首頁／列表卡片用' },
@@ -122,6 +122,7 @@ export const project: Unit = {
   group: '內容',
   phase: 'P4',
   frontend: '實績案例 案例卡（可依分類篩選）',
+  note: '目前前台的 Projects 頁依 2026-10 的決定不顯示「案例分享」，這裡的內容暫時不會出現在網站上；之後要恢復顯示需另行調整前台。',
   sortable: true,
   hasStatus: true,
   fields: [
@@ -148,7 +149,7 @@ export const news: Unit = {
   title: '最新消息 News',
   group: '內容',
   phase: 'P4',
-  frontend: '最新消息 列表與詳細頁；洞察頁精選',
+  frontend: '最新消息 列表與詳細頁',
   hasStatus: true,
   hasSeo: true,
   fields: [
@@ -160,7 +161,7 @@ export const news: Unit = {
       tag: 'h1', tagNote: '詳細頁的大標是 <h1>；消息列表裡最新那篇（大卡）是 <h2>、其餘是 <h3>' },
     { key: 'summary', label: '摘要', type: 'textarea', i18n: true, required: true, max: 500, side: 'locale', hint: '列表卡片 + 詳細頁導言' },
     { key: 'body', label: '內文', type: 'richtext', i18n: true, required: true, side: 'locale', hint: `內文插圖${HINT.newsInline}` },
-    { key: 'featured', label: '上首頁／精選', type: 'switch', side: 'neutral' },
+    { key: 'featured', label: '精選（置頂）', type: 'switch', side: 'neutral', hint: '開啟後排在最新消息列表的最前面；排第一的那篇就是列表上方的大卡' },
     // 標籤不分語系（slug 共用、名稱才分中英），所以是 neutral 側的欄位。
     // 標籤本身在單元 25 維護，這裡只挑既有的。
     { key: 'tags', label: '標籤', type: 'tags', side: 'neutral',
@@ -193,7 +194,7 @@ export const vlog: Unit = {
     { key: 'thumbOverride', label: '縮圖覆蓋', type: 'image', hint: HINT.vlogThumb, side: 'neutral',
       altExempt: '縮圖緊鄰影片標題，前台以 alt="" 呈現' },
     { key: 'title', label: '標題', type: 'text', i18n: true, required: true, side: 'locale', tag: 'h3' },
-    { key: 'description', label: '說明', type: 'textarea', i18n: true, side: 'locale' },
+    { key: 'description', label: '說明', type: 'textarea', i18n: true, side: 'locale', hint: '主打影片的說明顯示在播放器下方；其餘影片的說明在點開播放時顯示（建議兩行以內）' },
     { key: 'isHero', label: '設為頁面主打影片', type: 'switch', side: 'neutral', hint: '全站僅一支；開啟新的會自動關閉舊的' },
   ],
   columns: [
@@ -380,7 +381,7 @@ export const client: Unit = {
     { key: 'name', label: '名稱', type: 'text', required: true, side: 'neutral', hint: '同時作為圖片的替代文字，品牌名不翻譯' },
     { key: 'logo', label: 'Logo', type: 'image', required: true, hint: HINT.clientLogo, side: 'neutral',
       altExempt: '客戶 logo 以品牌名稱作為 alt（docs/09 單元 09）' },
-    { key: 'linkUrl', label: '連結', type: 'url', side: 'neutral' },
+    { key: 'linkUrl', label: '連結', type: 'url', side: 'neutral', hint: '有填的話，首頁輪播上的這個 logo 可以點，另開視窗到這個網址' },
   ],
   columns: [
     { key: 'logo', label: 'Logo', render: 'thumb', width: '110px' },
@@ -426,7 +427,7 @@ export const job: Unit = {
   hasStatus: true,
   fields: [
     { key: 'title', label: '職稱', type: 'text', i18n: true, required: true, max: 160, side: 'locale' },
-    { key: 'location', label: '地點', type: 'text', i18n: true, side: 'locale' },
+    { key: 'location', label: '地點', type: 'text', i18n: true, side: 'locale', hint: '會接在職稱後面顯示（例：印前工程師 —— 台南廠）；職稱裡已經寫了同樣的地點就不重複' },
     { key: 'body', label: '說明', type: 'richtext', i18n: true, required: true, side: 'locale' },
   ],
   columns: [

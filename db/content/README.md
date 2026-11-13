@@ -349,3 +349,12 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/380_factory_gallery_zh.sql
 sqlcmd -S <server> -d NTI -I -b -i db/content/290_cert_proof_groups.sql
 ```
 
+## 390_solution_cover_home.sql
+
+後台 02「方案封面」真的接上首頁方案卡之後（2026-11-13），封面的預設值要是首頁原本那四張
+（`assets/hp-prod-*`）。只改還是預設值的封面（種子佔位路徑、或 200 帶的品項照），客戶上傳過的不動。
+冪等。**正式庫在部署新版前台之前跑**；晚跑只是首頁四張卡暫時顯示品項照。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/390_solution_cover_home.sql
+```

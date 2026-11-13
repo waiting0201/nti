@@ -120,7 +120,7 @@ export default async function Page({ params }: Props) {
           <p className="mt-m reveal"><A href={l("/facility-tour")} className="blink">More details &rsaquo;</A></p></div>
         <PageMidBanner src={midBannerSrc(page, 1, "/assets/fac-tour-main.webp")} alt="Inside the NTI factory floor — palletised packaging stock and clean production aisles" as="div" className="fullbleed tour-photo reveal mt-m" />
       </section>
-      <FacilityExplorer />
+      <FacilityExplorer overrides={page?.texts} />
     </T>
   )
 }

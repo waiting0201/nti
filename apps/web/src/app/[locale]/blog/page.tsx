@@ -32,15 +32,16 @@ export default async function Page({ params }: Props) {
         {vlogs?.length ? (
           <>
           <VlogGrid items={vlogs} />
-          {/* 只有頂部那支是在本頁播的（主打影片，API 已排在第一）；其餘是連去 YouTube 的縮圖卡。
-              說明不給 Vlog 的 description——畫面上沒顯示它，改用 YouTube 那端的 */}
+          {/* 只有頂部那支是在本頁播的（主打影片，API 已排在第一）；其餘是縮圖卡（點了在燈箱播）。
+              說明用後台 05 填的那段——它現在顯示在播放器下方；沒填才用 YouTube 那端的 */}
           <VideoJsonLd
             id={vlogs[0].youtubeId}
             name={vlogs[0].title}
+            description={vlogs[0].description}
             thumbnailUrl={vlogs[0].thumbOverridePath ? cmsMedia(vlogs[0].thumbOverridePath) : null}
           />
           </>
-        ) : (
+        ) : vlogs ? null : (
         <>
         <div className="video-frame reveal mt-l">
           <iframe src="https://www.youtube.com/embed/plgjH8Jw8pE" title="The Perfect Partner for Packaging Printing — NTI Printing" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>

@@ -139,13 +139,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Paper box printing",
-        "zh": "紙盒印刷",
-        "kind": "alt",
-        "section": "Printing Solutions",
-        "count": 1
-      },
-      {
         "en": "Customize package",
         "zh": "客製化包裝",
         "kind": "text",
@@ -160,23 +153,9 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 4
       },
       {
-        "en": "Packaging paperboard printing",
-        "zh": "包裝紙板印刷",
-        "kind": "alt",
-        "section": "Printing Solutions",
-        "count": 1
-      },
-      {
         "en": "Various packaging paperboards",
         "zh": "多樣的包裝紙板",
         "kind": "text",
-        "section": "Printing Solutions",
-        "count": 1
-      },
-      {
-        "en": "UV printing",
-        "zh": "UV 印刷",
-        "kind": "alt",
         "section": "Printing Solutions",
         "count": 1
       },
@@ -188,23 +167,9 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Other printing — hand bags, calendars, manuals",
-        "zh": "其他印刷 —— 手提袋、月曆、說明書",
-        "kind": "alt",
-        "section": "Printing Solutions",
-        "count": 1
-      },
-      {
         "en": "Beyond the box",
         "zh": "不只是盒子",
         "kind": "text",
-        "section": "Printing Solutions",
-        "count": 1
-      },
-      {
-        "en": "A showcase of NTI's printed packaging work",
-        "zh": "NTI 包裝印刷作品集",
-        "kind": "alt",
         "section": "Printing Solutions",
         "count": 1
       },
@@ -2824,27 +2789,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "Gluing box",
-        "zh": "糊盒",
-        "kind": "alt",
-        "section": "Custom Packaging & Printing Solutions",
-        "count": 1
-      },
-      {
-        "en": "Gluing Box",
-        "zh": "糊盒",
-        "kind": "text",
-        "section": "Custom Packaging & Printing Solutions",
-        "count": 1
-      },
-      {
-        "en": "The most common box type — top and bottom open, easy to assemble, and suited to lighter products.",
-        "zh": "最常見的盒型 —— 上下開口、容易組裝，適合較輕的產品。",
-        "kind": "text",
-        "section": "Custom Packaging & Printing Solutions",
-        "count": 1
-      },
-      {
         "en": "Projects",
         "zh": "實績案例",
         "kind": "text",
@@ -4655,13 +4599,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "No. 29, Gongye 6th Rd., Annan Dist., Tainan City 709, Taiwan",
-        "zh": "709 臺南市安南區媽祖宮里工業六路29號",
-        "kind": "text",
-        "section": "Contact Us",
-        "count": 1
-      },
-      {
         "en": "Phone & Email",
         "zh": "電話與電子郵件",
         "kind": "text",
@@ -4670,24 +4607,10 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "service@nti-printing.com",
-        "zh": null,
-        "kind": "text",
-        "section": "Contact Us",
-        "count": 1
-      },
-      {
         "en": "Business Hours",
         "zh": "營業時間",
         "kind": "text",
         "tag": "h3",
-        "section": "Contact Us",
-        "count": 1
-      },
-      {
-        "en": "Mon–Fri 08:30–17:30 (GMT+8)",
-        "zh": "週一至週五 08:30–17:30（GMT+8）",
-        "kind": "text",
         "section": "Contact Us",
         "count": 1
       },

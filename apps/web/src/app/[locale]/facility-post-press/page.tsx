@@ -46,7 +46,7 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Equipment</div>
         {equipment?.length ? (
           <FacilityGrid items={equipment} />
-        ) : (
+        ) : equipment ? null : (
         <div className="pr-grid">
           <article className="pr-card reveal">
             <div className="pr-img"><img src={mediaUrl("/assets/fac-post-diecut.jpg")} alt="Heidelberg Varimatrix 105" loading="lazy" /></div>

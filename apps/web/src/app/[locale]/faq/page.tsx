@@ -46,7 +46,7 @@ export default async function Page({ params }: Props) {
           {/* 與上面渲染的是同一份問答；只在接了 CMS 時發，沒接 API 的輸出要與 mockup 逐字相同 */}
           <JsonLd data={faqPage(faqs)} />
           </>
-        ) : (
+        ) : faqs ? null : (
         <div className="faq-layout">
           <nav className="faq-nav reveal" id="faqNav" aria-label="FAQ categories">
             <button className="active" data-c="All">All questions</button>{' '}

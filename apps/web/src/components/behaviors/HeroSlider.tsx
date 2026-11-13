@@ -16,6 +16,11 @@ export function HeroSlider() {
     // 第 2 張起的 Banner 只帶 data-src（components/cms.tsx 的 HeroSlides），頁面 load 完才下載，
     // 不跟第一張（LCP）搶頻寬
     const loadRest = () =>
+      // 手機圖的 <source> 要先補，否則 img 一拿到 src 就會先下載桌機那張
+      hero.querySelectorAll<HTMLSourceElement>('source[data-srcset]').forEach((src) => {
+        src.srcset = src.dataset.srcset!
+        src.removeAttribute('data-srcset')
+      })
       hero.querySelectorAll<HTMLImageElement>('img[data-src]').forEach((img) => {
         img.src = img.dataset.src!
         img.removeAttribute('data-src')

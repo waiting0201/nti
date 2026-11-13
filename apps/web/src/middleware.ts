@@ -5,6 +5,62 @@ import { RENAMED_SLUGS } from '@/lib/renamed-slugs'
 import { ROUTES } from '@/lib/routes'
 import { ZH_ONLY_ROUTES } from '@/lib/careers'
 
+/** 與 lib/api.ts 同一個來源；middleware 跑在 Edge runtime，不引那個檔（它帶著 react 的 cache()） */
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE ?? '').replace(/\/$/, '')
+
+/** 路徑整理成 `Redirect.FromPath` 的寫法：解碼、小寫、不帶結尾斜線（與 lookupLegacy 相同） */
+function redirectKey(pathname: string): string {
+  const trimmed = pathname.replace(/\/+$/, '') || '/'
+  try {
+    return decodeURIComponent(trimmed).toLowerCase()
+  } catch {
+    return trimmed.toLowerCase()
+  }
+}
+
+type CmsRedirect = { toPath: string; statusCode: number }
+
+/**
+ * 問後台的轉址表（單元 16，`GET /redirects/lookup`）。
+ *
+ * 回傳三種：
+ * - 物件：有一條啟用中的對照 → 照它轉（API 同時把命中次數加一）
+ * - `null`：資料庫明確說沒有（沒建、已停用或已刪除）→ **不轉**，內建的舊站對照表也不救
+ * - `undefined`：沒接 API、逾時或失敗 → 呼叫端退回內建的舊站對照表
+ *
+ * 「接上了就以資料庫為準」是刻意的：內建表若在查不到時補位，後台停用或刪掉的轉址
+ * 會繼續生效，等於那個單元改了沒用（2026-11-13 稽核 A1）。代價是正式庫必須先匯入
+ * `db/content/210_legacy_redirects.sql`，否則舊站網址會整批 404。
+ *
+ * **不是每個請求都查**：只有「內建表認得的舊站網址」與「對不到任何路由、即將回 404」
+ * 兩種情況才打，站上真的有的頁面不經過這裡——所以後台不能拿它把一個現存的頁面轉走。
+ */
+async function lookupCmsRedirect(pathname: string): Promise<CmsRedirect | null | undefined> {
+  if (!API_BASE) return undefined
+  try {
+    const res = await fetch(`${API_BASE}/redirects/lookup?path=${encodeURIComponent(redirectKey(pathname))}`, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(1500),
+    })
+    if (!res.ok) return undefined
+    const body = (await res.json()) as { success: boolean; data: CmsRedirect | null }
+    return body.success ? body.data : undefined
+  } catch {
+    return undefined
+  }
+}
+
+/** 轉到後台填的落點：站內路徑換 pathname，完整網址（https://…）原樣轉出去 */
+function redirectTo(req: NextRequest, hit: CmsRedirect) {
+  const status = hit.statusCode === 302 || hit.statusCode === 308 ? hit.statusCode : 301
+  if (/^https?:\/\//i.test(hit.toPath)) return NextResponse.redirect(hit.toPath, status)
+  const url = req.nextUrl.clone()
+  const [path, query = ''] = hit.toPath.split('?')
+  url.pathname = path
+  url.search = query ? `?${query}` : ''
+  return NextResponse.redirect(url, status)
+}
+
 /**
  * 這條（去掉語系前綴的）路徑是不是站上真的有的頁面。
  *
@@ -25,7 +81,7 @@ function isKnownRoute(path: string): boolean {
   return clean === '/' || ROUTES.includes(clean) || clean.startsWith('/news/')
 }
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   /*
@@ -72,9 +128,15 @@ export function middleware(req: NextRequest) {
    */
   const legacy = lookupLegacy(pathname)
   if (legacy) {
-    const url = req.nextUrl.clone()
-    url.pathname = legacy
-    return NextResponse.redirect(url, 301)
+    // 接了 CMS 就以後台的轉址表為準（可改落點、改 302、停用、刪除）；問不到才用內建的這一條
+    const cms = await lookupCmsRedirect(pathname)
+    if (cms) return redirectTo(req, cms)
+    if (cms === undefined) {
+      const url = req.nextUrl.clone()
+      url.pathname = legacy
+      return NextResponse.redirect(url, 301)
+    }
+    // cms === null：後台把這條停用或刪掉了 → 不轉，往下當一般路徑處理（多半是 404）
   }
 
   /*
@@ -112,6 +174,20 @@ export function middleware(req: NextRequest) {
     return NextResponse.rewrite(notFound, { status: 404 })
   }
 
+  /*
+   * mockup 的 12 篇示範消息（`/news-*`，寫死在前台的靜態頁）：接了 CMS 之後 301 到同一篇的
+   * CMS 版 `/news/{slug}`。那 12 篇已由 `db/content/200_mockup_content.sql` 匯進後台
+   * （英文 slug＝檔名去掉 `news-`，中文再加 `-zh`），兩個網址並存的話，後台改稿或下架的只有
+   * CMS 那一份，寫死的這一份照樣在線上、也在 sitemap 裡。
+   * 後台之後改了 slug 或把文章下架：前者由消息頁自己的「舊 slug → 新 slug」接住，後者就是 404——
+   * 下架的文章本來就不該看得到。沒接 CMS 時不轉，這 12 頁仍是消息列表的落點。
+   */
+  if (API_BASE && rest.startsWith('/news-') && ROUTES.includes(rest)) {
+    const url = req.nextUrl.clone()
+    url.pathname = localePath(current, `/news/${rest.slice('/news-'.length)}${current === 'zh' ? '-zh' : ''}`)
+    return NextResponse.redirect(url, 301)
+  }
+
   /** 新站自己改過名的頁（見 lib/renamed-slugs.ts）：301 到新網址，錨點由瀏覽器保留 */
   const renamed = RENAMED_SLUGS[rest]
   if (renamed) {
@@ -131,6 +207,10 @@ export function middleware(req: NextRequest) {
    * rewrite 不會重跑 middleware，不會遞迴。
    */
   if (!isKnownRoute(rest)) {
+    // 回 404 之前先問後台：客戶自己新增的轉址（不在內建舊站表裡的）靠這一條生效
+    const cms = legacy ? null : await lookupCmsRedirect(pathname)
+    if (cms) return redirectTo(req, cms)
+
     const notFound = req.nextUrl.clone()
     notFound.pathname = `/${current}/page-not-found`
     return NextResponse.rewrite(notFound, { status: 404 })

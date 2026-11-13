@@ -36,8 +36,8 @@ export default async function Page({ params }: Props) {
       <section className="section tight"><div className="wrap">
         <div className="dtitle reveal">Open positions</div>
         {jobs?.length ? (
-          <JobList items={jobs} />
-        ) : (
+          <JobList items={jobs} locale={locale} />
+        ) : jobs ? null : (
         <>
         <div className="faq-list wide reveal mt-s">
           <details className="faq" open><summary><span>Offset Press Operator &mdash; Tainan plant</span></summary><p>Run and maintain sheet-fed offset presses to ISO&nbsp;12647-2 colour standards. Experience on Heidelberg equipment preferred; we will train the right candidate on our colour management workflow. Shift allowance applies.</p></details>

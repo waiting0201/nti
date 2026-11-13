@@ -42,7 +42,9 @@ public sealed partial class AppRouter
             ("GET",  ["supplier", "specs"]) or
             ("GET",  ["supplier", "downloads"]) or
             ("POST", ["supplier", "downloads", _, "hit"]) or
+            ("GET",  ["pages"]) or
             ("GET",  ["pages", _]) or
+            ("GET",  ["redirects", "lookup"]) or
             ("GET",  ["site-settings"]) or
 
             // Blob 代理。只開 media 容器——報價附件另有帶授權的路徑（見 FileHandler）
@@ -101,7 +103,10 @@ public sealed partial class AppRouter
             ("POST", ["supplier", "downloads", var id, "hit"]) => await supplier.HitDownloadAsync(req, id),
 
             // ── 頁面 SEO 與全站設定 ───────────────────────────────────────
+            ("GET",  ["pages"])                   => await pages.GetIndexabilityAsync(req),
             ("GET",  ["pages", var pageKey])      => await pages.GetByKeyAsync(req, pageKey),
+            // 單元 16 轉址：前台 middleware 在「舊站網址」與「對不到路由」時查（見 apps/web/src/middleware.ts）
+            ("GET",  ["redirects", "lookup"])     => await pages.LookupRedirectAsync(req),
             ("GET",  ["site-settings"])           => await settings.GetPublicAsync(req),
             ("GET",  ["files", "media", .. var mediaPath]) => await files.GetMediaAsync(req, string.Join("/", mediaPath)),
 

@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { SolutionIntro, SolutionItems } from '@/components/cms'
-import { getSolutionByCode } from '@/lib/api'
+import { getSolutionByCode, isPlaceholderMedia } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -10,17 +11,22 @@ type Props = { params: Promise<{ locale: Locale }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
-  // SEO 來自方案本身（SolutionI18n，docs/08 §6.4），不是固定頁；後台沒填就用 mockup 的值
-  const seo = (await getSolutionByCode(locale, 'cardboard'))?.seo
+  // SEO 來自方案本身（SolutionI18n，docs/08 §6.4），不是固定頁；後台沒填就用 mockup 的值。
+  // 整組都交給 pageMetadata：canonical、社群標題／描述／分享圖也是後台 02 的欄位（分享圖沒傳就沿用封面）
+  const solution = await getSolutionByCode(locale, 'cardboard')
+  const seo = solution ? { ...solution.seo, ogImagePath: isPlaceholderMedia(solution.seo.ogImagePath) ? null : solution.seo.ogImagePath } : null
   return pageMetadata(locale, "/cardboard", {
-    title: seo?.seoTitle || "Packaging Paperboard — NTI Printing",
-    description: seo?.seoDescription || "Custom cardboard packaging and printed cardboard boxes for retail and industrial use, including paper hang tags, blister back cards and multi-panel tags.",
+    title: "Packaging Paperboard — NTI Printing",
+    description: "Custom cardboard packaging and printed cardboard boxes for retail and industrial use, including paper hang tags, blister back cards and multi-panel tags.",
+    seo,
   })
 }
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
   const solution = await getSolutionByCode(locale, 'cardboard')
+  // 後台把這個方案下架了：這一頁不存在。（沒接 API 時是 null，照 mockup 渲染）
+  if (solution === false) notFound()
   const l = withLocale(locale)
   return (
     <T locale={locale}>
@@ -28,7 +34,7 @@ export default async function Page({ params }: Props) {
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/printing-solutions")}>Solutions</A><span>&rsaquo;</span><b>Packaging Paperboard</b></div>
         <h1 className="sec-title reveal">{solution?.h1 || "Packaging Paperboard"}</h1>
         <div className="sec-sub reveal">Paper hang tags &amp; backcards for blister packages.</div>
-        {solution?.introHtml ? <SolutionIntro html={solution.introHtml} /> : (<>
+        {solution ? (solution.introHtml ? <SolutionIntro html={solution.introHtml} /> : null) : (<>
         <p className="prose wide reveal mt-s">NTI Printing produces custom cardboard packaging and printed cardboard boxes for retail, industrial, and consumer applications, including:</p>
         </>)}
         <nav className="pr-tabs reveal" aria-label="Product categories">
@@ -39,7 +45,7 @@ export default async function Page({ params }: Props) {
         </nav>
         {solution?.items.length ? (
           <SolutionItems items={solution.items} />
-        ) : (
+        ) : solution ? null : (
         <div className="pr-grid">
           <article className="pr-card reveal">
             <div className="pr-img"><img src={mediaUrl("/assets/prod-card-hangtag.jpg")} alt="Paper Hang Tags &amp; Blister Back Cards" loading="lazy" /></div>

@@ -122,6 +122,21 @@ const CMS_TEXTS = {
     'Paperboard', 'Hang tags, blister cards and backcards for retail walls.',
     'UV Printing', 'Printing on special materials, special varnish, anti-counterfeiting and more.',
     'Other', 'Desk calendars, hand bags, red envelopes, mouse pads and manuals.',
+    // 方案卡的圖片 alt 吃 02 的「封面替代文字」；形象圖的 alt 吃網站設定的 home.gallery_alt
+    'Paper box printing', 'Packaging paperboard printing', 'UV printing',
+    'Other printing — hand bags, calendars, manuals',
+    "A showcase of NTI's printed packaging work",
+  ],
+  // 聯絡頁的地址／信箱／營業時間吃的是「網站設定」（單元 21），在頁面文字裡改不會生效（2026-11-13 稽核 A7）
+  'contact': [
+    'No. 29, Gongye 6th Rd., Annan Dist., Tainan City 709, Taiwan',
+    'service@nti-printing.com',
+    'Mon–Fri 08:30–17:30 (GMT+8)',
+  ],
+  // Solutions 頁輪播一開始那一張（名稱／說明／圖片 alt）來自 02 的品項卡
+  'solutions': [
+    'Gluing Box', 'Gluing box',
+    'The most common box type — top and bottom open, easy to assemble, and suited to lighter products.',
   ],
   // 下方清單的區塊大標＝後台「分類管理 › 認證分類」的名稱，2026-11-09 起不在頁面文字改
   'about-certifications': [

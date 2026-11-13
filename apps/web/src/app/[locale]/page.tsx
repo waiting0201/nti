@@ -3,7 +3,7 @@ import { preload } from 'react-dom'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { CertificationLogos, ClientLogos, HeroSlides } from '@/components/cms'
-import { cmsMedia, getHome, getPage } from '@/lib/api'
+import { cmsMedia, getHome, getPage, isPlaceholderMedia } from '@/lib/api'
 import { getSettingMap } from '@/lib/site-settings'
 import { mediaUrl } from '@/lib/media'
 import { HeroSlider } from '@/components/behaviors/HeroSlider'
@@ -27,19 +27,34 @@ export default async function Page({ params }: Props) {
   const [home, settings, page] = await Promise.all([getHome(locale), getSettingMap(locale), getPage(locale, 'home')])
   const l = withLocale(locale)
   const gallery = settings?.['home.gallery_image']
-  // 「印刷解決方案」四張卡：標題與短述來自後台 02（name／summary），圖與副標照 mockup
+  // 「印刷解決方案」四張卡：標題、短述、封面與封面替代文字來自後台 02；副標照 mockup。
+  // 接了 CMS 而方案已下架 → 那張卡不顯示（`shown`）；沒接 CMS（home 是 null）四張都照 mockup
   const sol = (code: string) => home?.solutions.find((s) => s.code === code)
+  const shown = (code: string) => !home || Boolean(sol(code))
+  // 封面還是種子的佔位路徑（檔案不存在）就沿用 mockup 那張
+  const cover = (code: string, fallback: string) => {
+    const path = sol(code)?.coverImagePath
+    return isPlaceholderMedia(path) ? mediaUrl(fallback) : cmsMedia(path)
+  }
+  const coverAlt = (code: string, fallback: string) =>
+    (!isPlaceholderMedia(sol(code)?.coverImagePath) && sol(code)?.coverAlt) || fallback
+  // 客戶輪播的無障礙標籤跟著後台的客戶名單走；沒接 CMS 照 mockup 那六家
+  const clientNames = home?.clients.map((c) => c.name)
   // 第一張 Banner 是 LCP：在 <head> 先 preload，不必等 HTML 解析到 <img> 才開始下載
   // 沒傳圖的 Banner 不上輪播；接了 API 卻一張都沒有時，整個 hero 不顯示（沒接 API 才照 mockup 那三張）
   const banners = home?.banners.filter((b) => b.imagePath)
   const lcp = banners?.[0]?.imagePath
-  if (lcp) preload(cmsMedia(lcp), { as: 'image', fetchPriority: 'high' })
+  // 第一張有手機圖時不 preload：手機會白抓一張用不到的桌機圖（<img fetchPriority="high"> 仍會優先下載對的那張）
+  if (lcp && !banners?.[0]?.imagePathMobile) preload(cmsMedia(lcp), { as: 'image', fetchPriority: 'high' })
+  // 任何一張 Banner 傳了手機圖（後台 01，4:5）→ 手機上 hero 改成 4:5（home.css 的 .hero--mobile）；
+  // 沒傳手機圖的那幾張沿用桌機圖、置中裁切
+  const heroClass = banners?.some((b) => b.imagePathMobile) ? 'hero hero--mobile' : 'hero'
   return (
     <T locale={locale} overrides={page?.texts}>
 
       {/* ============ HERO ============ */}
       {(!banners || banners.length > 0) && (
-      <section className="hero" id="hero" aria-label="Featured highlights">
+      <section className={heroClass} id="hero" aria-label="Featured highlights">
         {banners?.length ? (
           <HeroSlides items={banners} locale={locale} />
         ) : (
@@ -103,34 +118,42 @@ export default async function Page({ params }: Props) {
         <div className="wrap">
           <h2 className="sec-h reveal">Printing Solutions</h2>
           <div className="prod-grid">
+            {shown('boxes') && (
             <article className="pcard reveal" data-d="1">
-              <div className="ph"><img loading="lazy" src={mediaUrl("/assets/hp-prod-boxes.png")} alt="Paper box printing" /></div>
+              <div className="ph"><img loading="lazy" src={cover('boxes', "/assets/hp-prod-boxes.png")} alt={coverAlt('boxes', "Paper box printing")} /></div>
               <h3>{sol('boxes')?.name || "Color Box"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Customize package</div>
               <p>{sol('boxes')?.summary || "Multiple box-types: besides folding box, we also provide customize box structure design."}</p>
               <A href={l("/colorbox")} className="btn btn-out">More details &raquo;</A>
             </article>
+            )}
+            {shown('cardboard') && (
             <article className="pcard reveal" data-d="2">
-              <div className="ph"><img loading="lazy" src={mediaUrl("/assets/hp-prod-cardboard.webp")} alt="Packaging paperboard printing" /></div>
+              <div className="ph"><img loading="lazy" src={cover('cardboard', "/assets/hp-prod-cardboard.webp")} alt={coverAlt('cardboard', "Packaging paperboard printing")} /></div>
               <h3>{sol('cardboard')?.name || "Paperboard"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Various packaging paperboards</div>
               <p>{sol('cardboard')?.summary || "Hang tags, blister cards and backcards for retail walls."}</p>
               <A href={l("/cardboard")} className="btn btn-out">More details &raquo;</A>
             </article>
+            )}
+            {shown('uv') && (
             <article className="pcard reveal" data-d="3">
-              <div className="ph"><img loading="lazy" src={mediaUrl("/assets/hp-prod-uv.webp")} alt="UV printing" /></div>
+              <div className="ph"><img loading="lazy" src={cover('uv', "/assets/hp-prod-uv.webp")} alt={coverAlt('uv', "UV printing")} /></div>
               <h3>{sol('uv')?.name || "UV Printing"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Special printing</div>
               <p>{sol('uv')?.summary || "Printing on special materials, special varnish, anti-counterfeiting and more."}</p>
               <A href={l("/uv-printing")} className="btn btn-out">More details &raquo;</A>
             </article>
+            )}
+            {shown('other') && (
             <article className="pcard reveal" data-d="3">
-              <div className="ph"><img loading="lazy" src={mediaUrl("/assets/hp-prod-other.webp")} alt="Other printing — hand bags, calendars, manuals" /></div>
+              <div className="ph"><img loading="lazy" src={cover('other', "/assets/hp-prod-other.webp")} alt={coverAlt('other', "Other printing — hand bags, calendars, manuals")} /></div>
               <h3>{sol('other')?.name || "Other"}</h3>
               <div className="st"><span className="ch">&rsaquo;</span> Beyond the box</div>
               <p>{sol('other')?.summary || "Desk calendars, hand bags, red envelopes, mouse pads and manuals."}</p>
               <A href={l("/other-printing")} className="btn btn-out">More details &raquo;</A>
             </article>
+            )}
           </div>
         </div>
       </section>
@@ -180,6 +203,8 @@ export default async function Page({ params }: Props) {
       </section>
 
       {/* ============ PROOF ============ */}
+      {/* 接了 CMS 而首頁沒有任何上架的認證：整個區塊不顯示（不退回 mockup 的示範卡） */}
+      {(!home || home.certifications.length > 0) && (
       <section className="proof" id="proof">
         <div className="wrap">
           <h2 className="sec-h tight reveal">Proof</h2>
@@ -188,7 +213,7 @@ export default async function Page({ params }: Props) {
             <div className="cert-wall reveal" data-d="1">
               <CertificationLogos items={home.certifications} locale={locale} />
             </div>
-          ) : (
+          ) : home ? null : (
           <div className="cert-wall reveal" data-d="1">
             <article className="proof-card">
               <span className="proof-ic proof-ic--quality" aria-hidden="true">
@@ -235,13 +260,15 @@ export default async function Page({ params }: Props) {
           )}
         </div>
       </section>
+      )}
 
       {/* ============ BRANDS ============ */}
+      {(!home || home.clients.length > 0) && (
       <section className="brands" id="brands">
         <div className="wrap">
           <h2 className="sec-h tight reveal">Our Clients</h2>
           <p className="lead reveal">Trusted by leading domestic and international brands.</p>
-          <div className="carousel reveal" data-d="1" aria-label="Trusted by Target, CVS pharmacy, Walgreens, Lowe&rsquo;s, Academy Sports + Outdoors, and The Home Depot">
+          <div className="carousel reveal" data-d="1" aria-label={clientNames ? (locale === 'zh' ? `合作客戶：${clientNames.join('、')}` : `Trusted by ${clientNames.join(', ')}`) : "Trusted by Target, CVS pharmacy, Walgreens, Lowe\u2019s, Academy Sports + Outdoors, and The Home Depot"}>
             <div className="logo-track">
               {home?.clients.length ? (
                 <>
@@ -249,10 +276,10 @@ export default async function Page({ params }: Props) {
                     <ClientLogos items={home.clients} />
                   </div>
                   <div className="logo-set" aria-hidden="true">
-                    <ClientLogos items={home.clients} />
+                    <ClientLogos items={home.clients} duplicate />
                   </div>
                 </>
-              ) : (
+              ) : home ? null : (
               <>
               <div className="logo-set">
                 <img loading="lazy" src={mediaUrl("/assets/client-target.png")} alt="Target" />
@@ -276,6 +303,7 @@ export default async function Page({ params }: Props) {
           </div>
         </div>
       </section>
+      )}
 
       {/* ============ FOOTER ============ */}
       <HeroSlider />

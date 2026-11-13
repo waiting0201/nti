@@ -27,11 +27,22 @@ export default async function Page({ params }: Props) {
   const codes = ['boxes', 'cardboard', 'uv', 'other'] as const
   const solutions = await Promise.all(codes.map((c) => getSolutionByCode(locale, c)))
   const cmsSets: Partial<Record<string, ShowcaseItem[]>> = {}
+  // 接了 CMS 而方案已下架、或一張上架的品項卡都沒有：那個分頁不顯示（不退回 mockup 的示範品項）。
+  // 沒接 API（null）才照 ProductShowcase 裡寫死的 SETS
+  const hidden: string[] = []
   codes.forEach((c, i) => {
-    const items = solutions[i]?.items ?? []
+    const solution = solutions[i]
+    if (solution === null) return
+    const items = solution ? solution.items : []
     if (items.length) cmsSets[c] = items.map((it) => ({ src: cmsMedia(it.imagePath), name: it.name, cap: it.description ?? '' }))
+    else hidden.push(c)
   })
-  const first = cmsSets.boxes?.[0]
+  const visible = codes.filter((c) => !hidden.includes(c))
+  // 一開始顯示的是第一個看得到的分頁；它不是 boxes 時（boxes 被下架）由 ProductShowcase 掛載後補上 Applications 那行
+  const firstCode = visible[0]
+  const first = firstCode ? cmsSets[firstCode]?.[0] : undefined
+  const firstCount = firstCode ? cmsSets[firstCode]?.length : undefined
+  const tab = (code: string) => (code === firstCode ? 'active' : undefined)
   return (
     <T locale={locale} overrides={page?.texts}>
       <PageBanner src={bannerSrc(page, "/assets/ref-sol-banner.webp")} alt="NTI custom printed packaging solutions" />
@@ -41,14 +52,15 @@ export default async function Page({ params }: Props) {
         <h3 className="fac-sub reveal mt-s">Tailored Printing. Sustainable Design.</h3>
         <p className="prose wide reveal mt-s">NTI provides complete custom packaging boxes and packaging printing solutions, from material recommendation and selection to structural design, printing techniques, finishing, and technical support. We help brands create custom boxes and packaging that perform beautifully, strengthen their brand, and support a more sustainable future.</p>
         <div className="flist reveal mt-s"><p className="fi"><b>Structural Design</b>Optimized packaging that reduces material use and waste.</p><p className="fi"><b>Pre-Press</b>Digital CTP technology improves quality while reducing pollution.</p><p className="fi"><b>Printing</b>Energy-efficient production with lower waste and emissions.</p><p className="fi"><b>Post-Press</b>Automated die-cutting, folder-gluing, window patching and laminating, with finishing methods confirmed to each project&rsquo;s specifications.</p></div>
+        {visible.length > 0 && (
         <div className="mt-l"><div className="explorer fac-explorer reveal">
           <div className="ex-left">
             <h4 className="ga-h">Products</h4>
             <div className="ex-list fac-list tight">
-              <A href="#" className="active" data-set="boxes">Color Box Packaging</A>{' '}
-              <A href="#" data-set="cardboard">Packaging Paperboard</A>{' '}
-              <A href="#" data-set="uv">UV Printing</A>{' '}
-              <A href="#" data-set="other">Other Printing</A>
+              {visible.includes('boxes') && <><A href="#" className={tab('boxes')} data-set="boxes">Color Box Packaging</A>{' '}</>}
+              {visible.includes('cardboard') && <><A href="#" className={tab('cardboard')} data-set="cardboard">Packaging Paperboard</A>{' '}</>}
+              {visible.includes('uv') && <><A href="#" className={tab('uv')} data-set="uv">UV Printing</A>{' '}</>}
+              {visible.includes('other') && <A href="#" className={tab('other')} data-set="other">Other Printing</A>}
             </div>
             <h4 className="ga-h ps-applications">Applications</h4>
             <p className="ps-apps-text" id="psApps">Food | Electronics | Beauty | Medical | Luxury | Consumer Goods</p>
@@ -59,10 +71,11 @@ export default async function Page({ params }: Props) {
               <div className="ex-frame ps-frame"><img id="psImg" src={first ? first.src : mediaUrl("/assets/prod-box-gluing.jpg")} alt={first ? first.name : "Gluing box"} /></div>
               <button className="ex-arrow" id="psNext" aria-label="Next"><svg width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="m9 18 6-6-6-6" /></svg></button>
             </div>
-            <p className="fac-cap" id="psName">{first ? first.name : "Gluing Box"} <span className="fac-count">1 / {cmsSets.boxes?.length ?? 6}</span></p>
+            <p className="fac-cap" id="psName">{first ? first.name : "Gluing Box"} <span className="fac-count">1 / {firstCount ?? 6}</span></p>
             <p className="ps-cap" id="psCap">{first ? first.cap : "The most common box type — top and bottom open, easy to assemble, and suited to lighter products."}</p>
           </div>
         </div></div>
+        )}
       </div></section>
       <section className="section"><div className="wrap">
         <h2 className="sec-title reveal">Projects</h2>
@@ -77,7 +90,7 @@ export default async function Page({ params }: Props) {
         <p className="mt-m reveal"><A href={l("/printing-projects")} className="tour-more">View more projects<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg></A></p>
       </div>
       </section>
-      <ProductShowcase cms={cmsSets} />
+      <ProductShowcase cms={cmsSets} overrides={page?.texts} />
     </T>
   )
 }

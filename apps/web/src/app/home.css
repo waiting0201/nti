@@ -341,3 +341,7 @@ footer a:hover{color:var(--leaf)}
 html[lang^="zh"] .intro h1{font-weight:500;letter-spacing:.01em;line-height:1.35}
 html[lang^="zh"] .sec-h{font-weight:500;letter-spacing:.01em;line-height:1.4}
 html[lang^="zh"] .pcard h3{font-weight:600;letter-spacing:.01em}
+
+/* CMS：首頁 Banner 有傳「手機圖」（4:5）時，手機上的 hero 跟著改成 4:5。
+   mockup 沒有手機專用圖，這個 class 只會出現在接了後台、且有手機圖的時候（app/[locale]/page.tsx） */
+@media(max-width:600px){.hero.hero--mobile{aspect-ratio:4/5}}

@@ -7,7 +7,11 @@ import { tr } from '@/lib/t-client'
 type Item = { src: string; cap: string; fit?: string }
 
 /** facility.html 的設備分類幻燈片（資料與行為皆自 mockup 原樣移植） */
-export function FacilityExplorer() {
+/**
+ * `overrides`：後台單元 15「頁面文字」的覆寫（`page.texts`）。切換時這裡會用寫死的清單重畫說明，
+ * 不帶覆寫的話後台改過的字一按就變回原文（2026-11-13 稽核 A8）。
+ */
+export function FacilityExplorer({ overrides }: { overrides?: Record<string, string> }) {
   const { locale } = splitLocale(usePathname() ?? '/')
   useEffect(() => {
   const SETS: Record<string, Item[]> = {
@@ -56,7 +60,7 @@ export function FacilityExplorer() {
       const s = list[curIdx]
       facImg!.src = s.src
       facImg!.style.objectFit = s.fit || 'cover'
-      facCap!.innerHTML = tr(locale, s.cap) + ' <span class="fac-count">' + (curIdx + 1) + ' / ' + list.length + '</span>'
+      facCap!.innerHTML = tr(locale, s.cap, overrides) + ' <span class="fac-count">' + (curIdx + 1) + ' / ' + list.length + '</span>'
       facImg!.alt = facCap!.textContent ?? ''
     }
     const tabHandlers = facTabs.map((a) => {
@@ -87,6 +91,6 @@ export function FacilityExplorer() {
       facPrev?.removeEventListener('click', onPrev)
       facNext?.removeEventListener('click', onNext)
     }
-  }, [locale])
+  }, [locale, overrides])
   return null
 }

@@ -98,12 +98,39 @@ const MENU: MenuItem[] = [
   },
 ]
 
-export function SiteHeader() {
+/** 選單項目 → 方案代號（後台單元 02 的 Code） */
+const SOLUTION_CODE: Record<string, string> = {
+  colorbox: 'boxes',
+  cardboard: 'cardboard',
+  'uv-printing': 'uv',
+  'other-printing': 'other',
+}
+
+/**
+ * `solutions`：後台 02 已上架的方案（代號＋該語系的名稱），由 layout 取好傳進來。
+ * 有傳就用後台的「方案名稱」當 Solutions 下拉的字、下架的方案不列；
+ * `null`／沒傳（沒接 CMS 或取用失敗）照 mockup 寫死的四項。
+ */
+export function SiteHeader({ solutions }: { solutions?: { code: string; name: string }[] | null }) {
   const pathname = usePathname() ?? '/'
   const { locale, path } = splitLocale(pathname)
   const l = withLocale(locale)
   const slug = path.replace(/^\/|\/$/g, '')
   const [activeTop, activeSub] = NAV_ACTIVE[slug] ?? []
+
+  const menu = !solutions
+    ? MENU
+    : MENU.map((mi) =>
+        mi.key !== 'printing-solutions' || !mi.sub
+          ? mi
+          : {
+              ...mi,
+              sub: mi.sub.flatMap((s) => {
+                const match = solutions.find((x) => x.code === SOLUTION_CODE[s.key])
+                return match ? [{ ...s, label: match.name || s.label }] : []
+              }),
+            },
+      )
 
   const other: Locale = locale === 'en' ? 'zh' : 'en'
   const otherHref = localePath(other, path)
@@ -116,12 +143,12 @@ export function SiteHeader() {
           <img className="logo-img" src={mediaUrl('/assets/logo.svg')} alt="NTI Printing" />
         </A>
         <nav className="menu">
-          {MENU.map((mi) => (
+          {menu.map((mi) => (
             <div className="mi" key={mi.key}>
               <A href={l(mi.href)} className={mi.key === activeTop ? 'active' : undefined}>
-                {mi.sub ? <>{mi.label} <Caret /></> : mi.label}
+                {mi.sub && mi.sub.length > 0 ? <>{mi.label} <Caret /></> : mi.label}
               </A>
-              {mi.sub && (
+              {mi.sub && mi.sub.length > 0 && (
               <div className="sub-menu">
                 {/* mockup 的下拉項之間有換行空白，會渲染成一個空格 —— 原樣保留 */}
                 {mi.sub.map((s, i) => (

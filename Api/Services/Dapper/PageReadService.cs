@@ -8,7 +8,19 @@ namespace Nti.Api.Services.Dapper;
 public interface IPageReadService
 {
     Task<PageDto?> GetByKeyAsync(string lang, string pageKey);
+
+    /// <summary>全部固定頁的索引開關（給前台 sitemap 排除 noindex 的頁）。</summary>
+    Task<IEnumerable<PageIndexability>> GetIndexabilityAsync();
+
+    /// <summary>查一條轉址（後台單元 16）並累加命中次數；沒有啟用中的對照回 null。</summary>
+    Task<RedirectHit?> LookupRedirectAsync(string fromPath);
 }
+
+/// <summary>固定頁的代號與「允許索引」開關。</summary>
+public sealed record PageIndexability(string PageKey, bool IsIndexable);
+
+/// <summary>一條啟用中的轉址：落點與狀態碼（301／302／308）。</summary>
+public sealed record RedirectHit(string ToPath, short StatusCode);
 
 /// <summary>固定頁的 SEO（後台單元 15）。29 筆固定頁不可增刪，key 值域見 Common.PageKeys。</summary>
 public sealed class PageReadService(IDbConnection db) : IPageReadService
@@ -38,6 +50,21 @@ public sealed class PageReadService(IDbConnection db) : IPageReadService
         WHERE gp.PageKey = @PageKey AND g.Lang = @Lang
         ORDER BY g.SortOrder, g.Id;
         """;
+
+    /// <summary>
+    /// 前台 middleware 查轉址用（<c>GET /redirects/lookup</c>）。查到就順手把 <c>HitCount</c> 加一——
+    /// 一句 UPDATE … OUTPUT 做完，不多一次往返。<c>FromPath</c> 存的是小寫、不帶結尾斜線、未編碼的路徑
+    /// （AdminRedirectHandler.Normalize），呼叫端要先整理成同一種寫法。
+    /// </summary>
+    public async Task<IEnumerable<PageIndexability>> GetIndexabilityAsync() =>
+        await db.QueryAsync<PageIndexability>("SELECT PageKey, IsIndexable FROM Page WHERE IsDeleted = 0 ORDER BY Id;");
+
+    public async Task<RedirectHit?> LookupRedirectAsync(string fromPath) =>
+        await db.QuerySingleOrDefaultAsync<RedirectHit>("""
+            UPDATE Redirect SET HitCount = HitCount + 1
+            OUTPUT inserted.ToPath, inserted.StatusCode
+            WHERE FromPath = @From AND IsActive = 1 AND IsDeleted = 0;
+            """, new { From = fromPath });
 
     public async Task<PageDto?> GetByKeyAsync(string lang, string pageKey)
     {

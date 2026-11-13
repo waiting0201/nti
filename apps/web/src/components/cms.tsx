@@ -205,6 +205,8 @@ export function VlogGrid({ items }: { items: Vlog[] }) {
           />
         </div>
       )}
+      {/* 後台 05 的「說明」：主打影片的顯示在播放器下方，其餘的在燈箱裡（VlogPlayer 從 data-desc 讀） */}
+      {main?.description && <p className="prose wide reveal mt-s">{main.description}</p>}
       <div className="vl-grid">
         {rest.map((v) => (
           <A
@@ -213,6 +215,7 @@ export function VlogGrid({ items }: { items: Vlog[] }) {
             href={`https://www.youtube.com/watch?v=${v.youtubeId}`}
             target="_blank"
             rel="noopener"
+            data-desc={v.description || undefined}
           >
             <span className="vl-thumb">
               <img src={thumb(v)} alt="" loading="lazy" />
@@ -459,10 +462,30 @@ export function HeroSlides({ items, locale }: { items: Banner[]; locale: Locale 
             （瀏覽器認定它們在視窗內），所以先不給 src：HeroSlider 等頁面 load 完才補上，
             第一次換頁在 5.5 秒後，來得及。沒有 JS 時輪播本來就不會動，只看得到第一張。
           */}
-          {i === 0 ? (
-            <img src={cmsMedia(b.imagePath)} alt={b.imageAlt} fetchPriority="high" />
+          {/*
+            手機圖（後台 01「手機圖」，4:5）：有傳就在 ≤600px 換成它，沒傳沿用桌機圖。
+            <picture> 設 display:contents，`.hero .slide img` 的滿版樣式才照樣套得到 img。
+            延後載入的那幾張，source 也只先帶 data-srcset（HeroSlider 一起補）。
+          */}
+          {!b.imagePathMobile ? (
+            i === 0 ? (
+              <img src={cmsMedia(b.imagePath)} alt={b.imageAlt} fetchPriority="high" />
+            ) : (
+              <img data-src={cmsMedia(b.imagePath)} alt={b.imageAlt} />
+            )
           ) : (
-            <img data-src={cmsMedia(b.imagePath)} alt={b.imageAlt} />
+            <picture style={{ display: 'contents' }}>
+              {i === 0 ? (
+                <source media="(max-width:600px)" srcSet={cmsMedia(b.imagePathMobile)} />
+              ) : (
+                <source media="(max-width:600px)" data-srcset={cmsMedia(b.imagePathMobile)} />
+              )}
+              {i === 0 ? (
+                <img src={cmsMedia(b.imagePath)} alt={b.imageAlt} fetchPriority="high" />
+              ) : (
+                <img data-src={cmsMedia(b.imagePath)} alt={b.imageAlt} />
+              )}
+            </picture>
           )}
         </A>
       ))}
@@ -698,12 +721,23 @@ export function DataTable({ head, rows, className = 'mtable' }: {
 }
 
 // ── 09 client ─────────────────────────────────────────────────────────────
-export function ClientLogos({ items }: { items: ClientLogo[] }) {
+/**
+ * `duplicate`：輪播為了無縫循環放的第二份（外層 aria-hidden），連結不該再被 Tab 到一次。
+ * 有填「連結」（後台 09）的 logo 才包成連結；沒填就照 mockup 只放圖。
+ */
+export function ClientLogos({ items, duplicate = false }: { items: ClientLogo[]; duplicate?: boolean }) {
   return (
     <>
-      {items.map((c) => (
-        <img key={c.id} src={cmsMedia(c.logoPath)} alt={c.name} loading="lazy" />
-      ))}
+      {items.map((c) => {
+        const img = <img src={cmsMedia(c.logoPath)} alt={c.name} loading="lazy" />
+        return c.linkUrl ? (
+          <a key={c.id} href={c.linkUrl} target="_blank" rel="noopener noreferrer" tabIndex={duplicate ? -1 : undefined}>
+            {img}
+          </a>
+        ) : (
+          <Fragment key={c.id}>{img}</Fragment>
+        )
+      })}
     </>
   )
 }
@@ -728,13 +762,16 @@ export function FacilityGrid({ items }: { items: FacilityItem[] }) {
 }
 
 // ── 11 job ────────────────────────────────────────────────────────────────
-export function JobList({ items }: { items: Job[] }) {
+export function JobList({ items, locale }: { items: Job[]; locale: Locale }) {
+  // 後台 11 的「地點」接在職稱後面（mockup 的寫法：`Offset Press Operator — Tainan plant`）；
+  // 職稱裡已經寫了同一個地點就不重複
+  const heading = (j: Job) =>
+    j.location && !j.title.includes(j.location) ? `${j.title}${locale === 'zh' ? ' —— ' : ' — '}${j.location}` : j.title
   return (
     <div className="faq-list wide reveal mt-s">
       {items.map((j, i) => (
         <details key={j.id} className="faq" open={i === 0}>
-          {/* 地點不自動接在標題後：mockup 只有部分職缺標題帶地點，要顯示就寫進標題 */}
-          <summary><span>{j.title}</span></summary>
+          <summary><span>{heading(j)}</span></summary>
           <div dangerouslySetInnerHTML={{ __html: j.descriptionHtml }} />
         </details>
       ))}
@@ -743,16 +780,42 @@ export function JobList({ items }: { items: Job[] }) {
 }
 
 // ── 12／13／14 供應商專區 ─────────────────────────────────────────────────
-export function SupplierNotices({ items }: { items: SupplierNotice[] }) {
+/**
+ * 公告列。mockup 是一排連結；後台 12 的「內文」（必填）原本沒有地方顯示，只有附件能點。
+ * 現在：有內文的公告改成可展開的 <details>，內文在列的下方，附件變成內文底下的下載連結；
+ * 沒有內文的維持原樣（有附件連附件，沒有就是不可點的一列）。
+ * 展開區的樣式就地寫——site.css 是 mockup 的原檔，mockup 沒有這個元素。
+ */
+export function SupplierNotices({ items, locale }: { items: SupplierNotice[]; locale: Locale }) {
+  const row = (n: SupplierNotice) => (
+    <>
+      <span className="nd">{dot(n.noticeDate)}</span>
+      <span className="nt">{n.categoryName}</span>
+      <span className="ns">{n.title}</span>
+    </>
+  )
   return (
     <div>
-      {items.map((n) => (
-        <A key={n.id} href={n.attachmentPath ? cmsMedia(n.attachmentPath) : '#'} className="notice">
-          <span className="nd">{dot(n.noticeDate)}</span>
-          <span className="nt">{n.categoryName}</span>
-          <span className="ns">{n.title}</span>
-        </A>
-      ))}
+      {items.map((n) =>
+        n.bodyHtml?.trim() ? (
+          <details key={n.id}>
+            <summary className="notice" style={{ cursor: 'pointer', listStyle: 'none' }}>{row(n)}</summary>
+            <div style={{ padding: '14px 6px 20px', borderBottom: '1px solid var(--line)', fontSize: '.9rem', lineHeight: 1.7 }}>
+              {/* BodyHtml 是後台富文本編輯器產生的，不是使用者輸入 */}
+              <div dangerouslySetInnerHTML={{ __html: n.bodyHtml }} />
+              {n.attachmentPath && (
+                <p style={{ marginTop: 10 }}>
+                  <A href={cmsMedia(n.attachmentPath)} className="tour-more">{locale === 'zh' ? '下載附件' : 'Download attachment'}</A>
+                </p>
+              )}
+            </div>
+          </details>
+        ) : n.attachmentPath ? (
+          <A key={n.id} href={cmsMedia(n.attachmentPath)} className="notice">{row(n)}</A>
+        ) : (
+          <div key={n.id} className="notice">{row(n)}</div>
+        ),
+      )}
     </div>
   )
 }
@@ -777,7 +840,8 @@ export function SupplierDownloads({ items }: { items: SupplierDownload[] }) {
   return (
     <div className="dl-list">
       {items.map((d) => (
-        <A key={d.id} href={cmsMedia(d.filePath)} className="dl-item">
+        // data-hit：DownloadHit（behaviors）點擊時回報一次下載，後台 14 的「下載次數」才會動
+        <A key={d.id} href={cmsMedia(d.filePath)} className="dl-item" data-hit={d.id}>
           <span className="dl-type">{d.fileExt.toUpperCase()}</span>
           <span className="dl-name">{d.name}</span>
           <span className="dl-size">{size(d.fileSizeBytes)}</span>

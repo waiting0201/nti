@@ -12,7 +12,15 @@ type Set = { apps: string; items: Item[] }
  * solutions.html 的產品分類幻燈片（資料與行為皆自 mockup 原樣移植）。
  * `cms`：後台「02 解決方案 › 品項卡」的內容，有的方案就取代下面寫死的 items（Applications 那行仍照 mockup）。
  */
-export function ProductShowcase({ cms = {} }: { cms?: Partial<Record<string, ShowcaseItem[]>> }) {
+/**
+ * `overrides`：後台單元 15「頁面文字」的覆寫（`page.texts`）。這個元件切換時會用下面寫死的清單重畫
+ * 名稱／說明／Applications，不帶覆寫的話，後台改過的字一按左右鍵就變回原文（2026-11-13 稽核 A8）。
+ * 後台品項卡的名稱與說明已經是該語系的內容，不經過字典也不經過覆寫。
+ */
+export function ProductShowcase({ cms = {}, overrides }: {
+  cms?: Partial<Record<string, ShowcaseItem[]>>
+  overrides?: Record<string, string>
+}) {
   const { locale } = splitLocale(usePathname() ?? '/')
   useEffect(() => {
   const SETS: Record<string, Set> = {
@@ -36,7 +44,9 @@ export function ProductShowcase({ cms = {} }: { cms?: Partial<Record<string, Sho
       {src:'/assets/prod-other-mousepad.webp',name:'Mouse Pads',cap:'UV-printed for color saturation and long-lasting fade resistance.'},
       {src:'/assets/prod-other-manual.png',name:'Instructions & Catalogs',cap:'Product manuals and catalogs — functions, usage, instructions, and precautions.'}]}
   };
-  for (const [code, items] of Object.entries(cms)) if (items?.length && SETS[code]) SETS[code].items = items
+  const fromCms = new Set<string>()
+  for (const [code, items] of Object.entries(cms)) if (items?.length && SETS[code]) { SETS[code].items = items; fromCms.add(code) }
+  const text = (s: string) => tr(locale, s, overrides)
 
     const psImg = document.getElementById('psImg') as HTMLImageElement | null
     const psName = document.getElementById('psName')
@@ -47,17 +57,23 @@ export function ProductShowcase({ cms = {} }: { cms?: Partial<Record<string, Sho
     const psNext = document.getElementById('psNext')
     if (!psImg || !psName || !psCap || !psApps) return
 
-    let curSet = 'boxes'
+    // 起始分頁＝伺服器標成 active 的那一個（boxes 被下架時不是第一個）
+    const initial = psTabs.find((a) => a.classList.contains('active'))?.dataset.set
+    let curSet = initial && SETS[initial] ? initial : 'boxes'
     let curIdx = 0
     function psShow() {
       const set = SETS[curSet]
       const s = set.items[curIdx]
       psImg!.src = s.src
-      psName!.innerHTML = tr(locale, s.name) + ' <span class="fac-count">' + (curIdx + 1) + ' / ' + set.items.length + '</span>'
-      psCap!.textContent = tr(locale, s.cap)
-      psApps!.textContent = tr(locale, set.apps)
+      const own = fromCms.has(curSet)
+      psName!.textContent = own ? s.name : text(s.name)
+      psName!.insertAdjacentHTML('beforeend', ' <span class="fac-count">' + (curIdx + 1) + ' / ' + set.items.length + '</span>')
+      psCap!.textContent = own ? s.cap : text(s.cap)
+      psApps!.textContent = text(set.apps)
       psImg!.alt = psName!.textContent ?? ''
     }
+    // 伺服器先畫的是第一個分頁的第一張，但 Applications 那行固定是 boxes 的；起始分頁不是 boxes 時補畫一次
+    if (curSet !== 'boxes') psShow()
     const tabHandlers = psTabs.map((a) => {
       const h = (e: Event) => {
         e.preventDefault()
@@ -86,6 +102,6 @@ export function ProductShowcase({ cms = {} }: { cms?: Partial<Record<string, Sho
       psPrev?.removeEventListener('click', onPrev)
       psNext?.removeEventListener('click', onNext)
     }
-  }, [locale, cms])
+  }, [locale, cms, overrides])
   return null
 }

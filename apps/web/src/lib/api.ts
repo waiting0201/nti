@@ -289,23 +289,38 @@ export type Category = { id: number; categoryType: string; code: string; name: s
 export type SiteSetting = { settingKey: string; groupName: string; valueType: string; value: string | null }
 
 export const getHome           = (l: Locale) => fetchApi<HomeContent>(`/content/home${q(l)}`)
-export const getSolutions      = (l: Locale) => fetchApi<SolutionCard[]>(`/solutions${q(l)}`)
+// `cache()`：layout（頁首選單的方案名稱）與頁面本體（方案頁、Solutions 輪播）同一個請求都要這份清單
+export const getSolutions      = cache((l: Locale) => fetchApi<SolutionCard[]>(`/solutions${q(l)}`))
 export const getSolution       = (l: Locale, slug: string) => fetchApi<SolutionDetail>(`/solutions/${slug}${q(l)}`)
 
 /**
  * 以固定代號取方案（`boxes`／`cardboard`／`uv`／`other`）。
  *
- * 前台的 `/products-{code}` 四頁是照代號來的，但 API 的詳細頁吃 slug——
+ * 前台的四個方案頁是照代號來的，但 API 的詳細頁吃 slug——
  * slug 是可翻譯欄位（中英可不同），代號才是穩定的。先查清單再取詳細，
  * 所以這四頁每次渲染會打兩支端點——沒有快取之後那是兩趟真的網路往返。
  *
+ * 回傳三種，呼叫端要分開處理（2026-11-13 稽核 C：以前兩種「沒有」混在一起，後台把方案下架，
+ * 前台卻退回 mockup 寫死的那一頁）：
+ * - 物件：已上架的方案
+ * - `false`：接上了 CMS，但這個方案已下架（或不存在）→ 方案頁 404、首頁卡片與選單項目不顯示
+ * - `null`：沒接 API 或這次取用失敗 → 照 mockup 寫死的內容
+ *
  * `cache()`：`generateMetadata`（SEO）與頁面本體都要它，同一個請求內只打一輪。
  */
-export const getSolutionByCode = cache(async (locale: Locale, code: string) => {
+export const getSolutionByCode = cache(async (locale: Locale, code: string): Promise<SolutionDetail | false | null> => {
   const list = await getSolutions(locale)
-  const match = list?.find((s) => s.code === code)
-  return match ? await getSolution(locale, match.slug) : null
+  if (!list) return null
+  const match = list.find((s) => s.code === code)
+  if (!match) return false
+  return await getSolution(locale, match.slug)
 })
+
+/**
+ * 種子給方案封面的佔位路徑（`solutions/_placeholder.webp`，檔案並不存在）。
+ * 還是這個值就當成沒有封面，沿用 mockup 的圖——不能把一張 404 的圖送上首頁或 og:image。
+ */
+export const isPlaceholderMedia = (path: string | null | undefined) => !path || path.includes('_placeholder')
 export const getProjects       = (l: Locale) => fetchApi<Project[]>(`/projects${q(l)}`)
 export const getNews           = (l: Locale) => fetchApi<NewsCard[]>(`/news${q(l)}`)
 export const getNewsItem       = (l: Locale, slug: string) => fetchApi<NewsDetail>(`/news/${slug}${q(l)}`)
@@ -342,8 +357,12 @@ export const getSupplierDownloads = (l: Locale) => fetchApi<SupplierDownload[]>(
 export const getCategories = (l: Locale, type: string) =>
   fetchApi<Category[]>(`/categories${q(l, `&type=${type}`)}`)
 
-export const getSiteSettings = (l: Locale) =>
-  fetchApi<SiteSetting[]>(`/site-settings${q(l)}`)
+// `cache()`：頁尾、聯絡頁、layout 的結構化資料同一個請求都要網站設定，只打一次
+/** 29 筆固定頁的索引開關（後台 15「允許索引」），給 sitemap 用：關掉索引的頁不該列在 sitemap */
+export const getPageIndexability = () => fetchApi<{ pageKey: string; isIndexable: boolean }[]>('/pages')
+
+export const getSiteSettings = cache((l: Locale) =>
+  fetchApi<SiteSetting[]>(`/site-settings${q(l)}`))
 
 /**
  * CMS 上傳的圖片存的是 Blob 相對路徑，而 media 容器是 private——

@@ -45,7 +45,7 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Measurement &amp; Test Equipment</div>
         {equipment?.length ? (
           <FacilityGrid items={equipment} />
-        ) : (
+        ) : equipment ? null : (
         <div className="pr-grid">
           <article className="pr-card reveal">
             <div className="pr-img"><img src={mediaUrl("/assets/fac-qc-i1io.png")} alt="X-Rite i1iO" loading="lazy" /></div>

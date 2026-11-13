@@ -22,7 +22,7 @@ export const supplierNotice: Unit = {
     { key: 'categoryId', label: '分類', type: 'select', required: true, categoryType: 'SupplierNotice', side: 'neutral' },
     { key: 'noticeDate', label: '公告日期', type: 'date', required: true, side: 'neutral' },
     { key: 'title', label: '標題', type: 'text', i18n: true, required: true, side: 'locale' },
-    { key: 'body', label: '內文', type: 'richtext', i18n: true, required: true, side: 'locale' },
+    { key: 'body', label: '內文', type: 'richtext', i18n: true, required: true, side: 'locale', hint: '前台點公告那一列會展開顯示；附件會變成內文下方的下載連結' },
     { key: 'attachment', label: '公告附件', type: 'file', hint: HINT.noticeAttachment, side: 'neutral' },
   ],
   columns: [
@@ -123,7 +123,7 @@ export const redirect: Unit = {
   group: '頁面／SEO',
   phase: 'P8',
   frontend: '全站網址轉址',
-  note: '支援 CSV 匯入匯出（舊站 46 頁 + 80 篇文章的對照表）。儲存時會擋下轉過去又再轉一次、或繞回自己的設定。',
+  note: '支援 CSV 匯入匯出（舊站 46 頁 + 80 篇文章的對照表）。儲存時會擋下轉過去又再轉一次、或繞回自己的設定。只對「網站上已經不存在的網址」生效：目前還在的頁面不能用這裡轉走。',
   fields: [
     { key: 'fromPath', label: '舊網址', type: 'text', required: true, side: 'neutral', placeholder: '/old-page', hint: '不可重複，一律小寫' },
     { key: 'toPath', label: '轉到新網址', type: 'text', required: true, side: 'neutral', placeholder: '/en/news' },

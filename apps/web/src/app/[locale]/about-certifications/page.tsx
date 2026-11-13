@@ -82,7 +82,7 @@ export default async function Page({ params }: Props) {
           <CertificationWall items={certs} locale={locale} />
           {credentials && <JsonLd data={credentials} />}
           </>
-        ) : (
+        ) : certs ? null : (
         <div className="wrap certgrid">
         <img src={mediaUrl("/assets/cert-green.png")} alt="NTI Green Printing" />
         <img src={mediaUrl("/assets/cert-fsc.png")} alt="FSC certified" className="big" />

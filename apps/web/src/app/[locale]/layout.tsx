@@ -8,7 +8,9 @@ import { JsonLd } from '@/components/JsonLd'
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd'
 import { LocalBusinessJsonLd } from '@/components/LocalBusinessJsonLd'
 import { htmlLang, isLocale, locales, siteUrl } from '@/lib/i18n'
-import { siteGraph } from '@/lib/jsonld'
+import { localBusiness, siteGraph } from '@/lib/jsonld'
+import { getSolutions } from '@/lib/api'
+import { getSettingMap } from '@/lib/site-settings'
 import '../globals.css'
 
 const FONTS_CSS =
@@ -42,6 +44,11 @@ export default async function LocaleLayout({
   const { locale } = await params
   if (!isLocale(locale)) notFound()
 
+  // 全站共用的兩份後台資料（都包了 cache()，頁面本體再要一次不會多打）：
+  // 網站設定 → 結構化資料的電話／信箱／地址／社群；方案清單 → 頁首 Solutions 下拉的名稱。
+  // 沒接 API 時兩者都是 null，照 mockup 寫死的值
+  const [settings, solutions] = await Promise.all([getSettingMap(locale), getSolutions(locale)])
+
   return (
     <html lang={htmlLang[locale]}>
       <head>
@@ -61,7 +68,7 @@ export default async function LocaleLayout({
         </noscript>
       </head>
       <body>
-        <SiteHeader />
+        <SiteHeader solutions={solutions?.map((x) => ({ code: x.code, name: x.name })) ?? null} />
         {children}
         <SiteFooter locale={locale} />
         <FloatingPanel locale={locale} />
@@ -72,9 +79,9 @@ export default async function LocaleLayout({
           結構化資料放在 body 末端（footer 之後）—— 版面驗收閘比對的是
           `</header>` 到 `<footer>` 之間，那個區間不能多出節點。見 components/JsonLd.tsx
         */}
-        <JsonLd data={siteGraph(locale)} />
+        <JsonLd data={siteGraph(locale, settings)} />
         <BreadcrumbJsonLd />
-        <LocalBusinessJsonLd />
+        <LocalBusinessJsonLd data={localBusiness(locale, settings)} />
       </body>
     </html>
   )

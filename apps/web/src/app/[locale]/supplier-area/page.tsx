@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { SupplierDownloads, SupplierNotices, SupplierSpecs } from '@/components/cms'
+import { DownloadHit } from '@/components/behaviors/DownloadHit'
 import { getPage, getSupplierDownloads, getSupplierNotices, getSupplierSpecs } from '@/lib/api'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -35,8 +36,8 @@ export default async function Page({ params }: Props) {
           <div className="reveal">
             <h2 className="sa-h">Supplier Announcements</h2>
             {notices?.length ? (
-              <SupplierNotices items={notices} />
-            ) : (
+              <SupplierNotices items={notices} locale={locale} />
+            ) : notices ? null : (
             <div>
             <A href="#" className="notice"><span className="nd">2026.06.20</span><span className="nt">Policy</span><span className="ns">Updated incoming board moisture tolerance — effective August 1</span></A>{' '}
             <A href="#" className="notice"><span className="nd">2026.05.30</span><span className="nt">ESG</span><span className="ns">Carbon data request: 2026 H1 upstream footprint submission opens</span></A>{' '}
@@ -48,7 +49,7 @@ export default async function Page({ params }: Props) {
             <h2 className="sa-h mt">Specifications &amp; Requirements</h2>
             {specs?.length ? (
               <SupplierSpecs items={specs} />
-            ) : (
+            ) : specs ? null : (
             <div className="spec-grid">
             <div className="spec"><h3>Board &amp; Paper Specifications</h3><p>Grammage tolerance, moisture range, FSC™ documentation and pallet requirements.</p></div>
             <div className="spec"><h3>Ink &amp; Coating Requirements</h3><p>Low-VOC thresholds, food-contact compliance certificates and batch COA format.</p></div>
@@ -61,7 +62,7 @@ export default async function Page({ params }: Props) {
             <h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8FB954" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" /></svg>Download Area</h2>
             {downloads?.length ? (
               <SupplierDownloads items={downloads} />
-            ) : (
+            ) : downloads ? null : (
             <div className="dl-list">
               <A href="#" className="dl-item"><span className="dl-type">PDF</span><span className="dl-name">Supplier Handbook 2026 (EN)</span><span className="dl-size">2.4 MB</span></A>{' '}
               <A href="#" className="dl-item"><span className="dl-type">PDF</span><span className="dl-name">Incoming Material Quality Standard</span><span className="dl-size">1.1 MB</span></A>{' '}
@@ -74,6 +75,8 @@ export default async function Page({ params }: Props) {
           </div>
         </div>
       </div></section>
+      {/* 下載計數：只在接了 CMS、下載清單來自後台時掛（mockup 的示範連結沒有 id 可回報） */}
+      {downloads && <DownloadHit />}
     </T>
   )
 }

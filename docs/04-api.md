@@ -90,6 +90,10 @@
 - `GET /pages/{pageKey}`（**29 個**固定頁的 SEO 欄位；`HasRichBody = 1` 者另含 `bodyHtml` —— `privacy-legal` 與預留的 `green-csr`；
   另含 `texts`：頁面文字覆寫，英文原文 → 該語系的字，沒改過就是 `{}`，見 [09 §7.1](09-cms-admin.md)）
 - `GET /site-settings`（公司資訊與社群連結；信件收件者等內部設定不外露）
+- `GET /pages`（每個固定頁的 `pageKey` 與 `isIndexable`；前台 sitemap 用來排除關掉索引的頁）
+- `GET /redirects/lookup?path=/old-page`（單元 16 轉址，前台 middleware 專用）：有啟用中的對照回
+  `{ toPath, statusCode }` 並把 `HitCount` 加一；沒有回 **200 + `data: null`**（不是 404——middleware 要分得出
+  「資料庫說沒有」與「API 沒回應」，後者才退回前台內建的舊站對照表）。`path` 要先解碼、轉小寫、去結尾斜線
 - 每筆內容回傳 **SEO 欄位**：`title/metaDescription/h1/canonical/og/slug/imageAlt/hreflang`。
 
 ### 3.2 表單（公開寫入）
@@ -216,3 +220,5 @@
 | 2026-10-22 | Tim（Claude Code） | 新增 `GET /certification-items`（認證頁的色彩標準／GMI 通路／獎項，每筆 `section`／`title`／`description`）；`GET /certifications` 每筆多回 `showInDetailList`。後台 `/admin/certification/item`（CRUD／排序／上下架）沿用 `certification.*`，權限矩陣不變。`Api/openapi.yaml` 已同步 |
 | 2026-10-30 | Tim（Claude Code） | `GET /certification-items` 的 `section` 改為 `management`／`quality`／`material`／`building`／`membership`／`award`／`partner`（認證頁七個區塊）；`/certifications` 的 `showInDetailList` 保留但前台不再使用。`Api/openapi.yaml` 已同步 |
 | 2026-11-09 | Tim（Claude Code） | `GET /certification-items` 每筆的 `section` 改為 `categoryId`／`sectionCode`／`sectionTitle`（區塊＝認證分類 `Certification`，與 `/certifications` 的分組同一套），排序改為區塊排序→項目排序，停用區塊不回傳。後台 `/admin/certification/item` 的欄位 `section` → `categoryId`（同日一度開了 `CertSection` 型別，已併回）。`Api/openapi.yaml` 已同步 |
+| 2026-11-13 | Tim（Claude Code） | 新增 `GET /redirects/lookup`：前台 middleware 改讀後台的轉址表（單元 16），接上 CMS 後以資料庫為準，內建的舊站對照表只在 API 沒回應時備援。命中即累加 `HitCount` |
+| 2026-11-13 | Tim（Claude Code） | 新增 `GET /pages`（固定頁的索引開關清單，sitemap 用）。`POST /supplier/downloads/{id}/hit` 前台開始實際呼叫（之前只有端點、沒有呼叫端） |

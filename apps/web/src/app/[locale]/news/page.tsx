@@ -20,7 +20,10 @@ export default async function Page({ params }: Props) {
   const { locale } = await params
   // 後台「頁面文字」的覆寫（單元 15）；沒接 API 或沒改過就是 undefined，照 mockup 原文
   const page = await getPage(locale, 'news-list')
-  const news = await getNews(locale)
+  // 後台 04 的「精選」＝置頂：精選的排最前面（第一篇就是上方的大卡），其餘維持 API 的發佈日順序。
+  // Array.prototype.sort 是穩定排序，同一組裡的先後不變
+  const fetched = await getNews(locale)
+  const news = fetched && [...fetched].sort((a, b) => Number(b.isFeaturedHome) - Number(a.isFeaturedHome))
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
@@ -31,7 +34,7 @@ export default async function Page({ params }: Props) {
         <div className="sec-sub reveal">Stay connected with NTI Printing&rsquo;s latest green printing innovations, sustainable packaging initiatives, company news, and industry achievements.</div>
         {news?.length ? (
           <NewsList items={news} locale={locale} />
-        ) : (
+        ) : news ? null : (
         <>
         <A href={l("/news-global-views-esg-award")} className="news-feature reveal mt-l">
           <div className="nf-img"><img src={mediaUrl("/assets/news/global-views-esg-award.jpg")} alt="NTI wins a 2026 Global Views ESG Award for low-carbon operations" /></div>

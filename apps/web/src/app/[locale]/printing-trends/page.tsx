@@ -32,7 +32,7 @@ export default async function Page({ params }: Props) {
       </div></section>
       {trends?.length ? (
         <TrendSections items={trends} />
-      ) : (
+      ) : trends ? null : (
       <>
       <section className="section tight snug"><div className="wrap reveal">
         <div className="dtitle">Regulation is setting the pace</div>

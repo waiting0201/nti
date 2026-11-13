@@ -49,7 +49,75 @@ const ADDRESS: Record<Locale, Record<string, string>> = {
   },
 }
 
-export function organization(locale: Locale) {
+/**
+ * 後台「網站設定」（單元 21）的值，`getSettingMap()` 的回傳：
+ * `null`／`undefined`＝沒接 CMS（用下面寫死的預設）；物件＝接上了，缺的 key 是客戶清空的 → 那個屬性不發。
+ * 結構化資料必須跟畫面同一份來源：客戶在後台改了電話，頁尾與聯絡頁會變，這裡也要跟著變
+ * （2026-11-13 稽核 A2；在那之前這裡全是寫死的）。
+ */
+type Settings = Record<string, string> | null | undefined
+
+/** 與種子（`db/content/220_site_setting.sql`）相同的預設值；設定還是這個值時沿用上面拆好欄位的 ADDRESS */
+const DEFAULT_ADDRESS: Record<Locale, string> = {
+  en: 'No. 29, Gongye 6th Rd., Annan Dist., Tainan City 709, Taiwan',
+  zh: '709 臺南市安南區媽祖宮里工業六路29號',
+}
+const squash = (s: string) => s.replace(/\s+/g, ' ').trim()
+
+/** `+886 6 261 1358` → `+886-6-261-1358`（schema.org 建議的寫法；預設值轉出來與原本寫死的逐字相同） */
+function telephone(settings: Settings): string | undefined {
+  if (!settings) return '+886-6-261-1358'
+  const phone = settings['company.phone']
+  return phone ? squash(phone).replace(/ /g, '-') : undefined
+}
+
+const email = (settings: Settings) => (settings ? settings['company.email'] : 'service@nti-printing.com')
+
+/** 地址是否仍是預設的台南廠址（是的話才敢用拆好欄位的 ADDRESS 與寫死的地圖連結） */
+const isDefaultAddress = (locale: Locale, settings: Settings) =>
+  !settings || squash(settings['company.address'] ?? '') === DEFAULT_ADDRESS[locale]
+
+/**
+ * 地址。後台只有一個自由文字欄位，改過之後我們拆不回 街／區／市／郵遞區號，
+ * 所以整段放進 `streetAddress`（Google 接受），不猜欄位。清空了就不發。
+ */
+function postalAddress(locale: Locale, settings: Settings) {
+  if (isDefaultAddress(locale, settings)) return { '@type': 'PostalAddress', ...ADDRESS[locale] }
+  const address = settings?.['company.address']
+  return address ? { '@type': 'PostalAddress', streetAddress: squash(address), addressCountry: 'TW' } : undefined
+}
+
+/** 社群連結＝後台填了網址的那幾個（與頁尾圖示同一份）；沒接 CMS 時是客戶的 Facebook 粉專 */
+function sameAs(settings: Settings): string[] | undefined {
+  if (!settings) return ['https://www.facebook.com/printingfarm']
+  const links = ['social.facebook', 'social.instagram', 'social.youtube', 'social.linkedin']
+    .map((k) => settings[k])
+    .filter(Boolean)
+  return links.length ? links : undefined
+}
+
+/**
+ * 營業時間。後台是自由文字（`Mon–Fri 08:30–17:30 (GMT+8)`／`週一至週五 08:30–17:30（GMT+8）`），
+ * 只有看得懂「週一到週五＋一組起迄時間」才發；看不懂就不發——寧缺勿編。
+ */
+function openingHours(settings: Settings) {
+  const text = settings ? settings['company.hours'] : 'Mon–Fri 08:30–17:30'
+  if (!text) return undefined
+  const time = /(\d{1,2}):(\d{2})\s*[–—\-~～至到]\s*(\d{1,2}):(\d{2})/.exec(text)
+  const weekdays = /mon\w*\s*(?:[–—\-~]|to)\s*fri|[週周]一\s*[至到~～–—\-]\s*[週周]五|星期一\s*[至到~～–—\-]\s*星期五/i.test(text)
+  if (!time || !weekdays) return undefined
+  const hhmm = (h: string, m: string) => `${h.padStart(2, '0')}:${m}`
+  return [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: hhmm(time[1], time[2]),
+      closes: hhmm(time[3], time[4]),
+    },
+  ]
+}
+
+export function organization(locale: Locale, settings?: Settings) {
   return {
     '@type': 'Organization',
     '@id': ORG_ID,
@@ -58,11 +126,11 @@ export function organization(locale: Locale) {
     alternateName: '南台彩藝',
     url: localeUrl(locale, '/'),
     logo: absolute(mediaUrl('/assets/logo.svg')),
-    telephone: '+886-6-261-1358',
-    email: 'service@nti-printing.com',
+    telephone: telephone(settings),
+    email: email(settings),
     foundingDate: '1968',
-    address: { '@type': 'PostalAddress', ...ADDRESS[locale] },
-    sameAs: ['https://www.facebook.com/printingfarm'],
+    address: postalAddress(locale, settings),
+    sameAs: sameAs(settings),
   }
 }
 
@@ -90,7 +158,7 @@ export const LOCAL_BUSINESS_PATHS = new Set(['/contact'])
 const MAP_URL =
   'https://www.google.com/maps?q=No.+29,+Gongye+6th+Rd.,+Annan+Dist.,+Tainan+City+709,+Taiwan'
 
-export function localBusiness(locale: Locale) {
+export function localBusiness(locale: Locale, settings?: Settings) {
   return {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -98,26 +166,20 @@ export function localBusiness(locale: Locale) {
     name: locale === 'zh' ? '南台彩藝' : 'NTI Printing',
     url: localeUrl(locale, '/contact'),
     image: absolute(mediaUrl('/assets/logo.svg')),
-    telephone: '+886-6-261-1358',
-    email: 'service@nti-printing.com',
-    address: { '@type': 'PostalAddress', ...ADDRESS[locale] },
-    hasMap: MAP_URL,
-    openingHoursSpecification: [
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        opens: '08:30',
-        closes: '17:30',
-      },
-    ],
+    telephone: telephone(settings),
+    email: email(settings),
+    address: postalAddress(locale, settings),
+    // 地圖連結是照預設廠址寫的；客戶改了地址就不發，免得指到舊地點
+    hasMap: isDefaultAddress(locale, settings) ? MAP_URL : undefined,
+    openingHoursSpecification: openingHours(settings),
     parentOrganization: { '@id': ORG_ID },
   }
 }
 
 /** 全站共用的那兩個節點，包成一張 graph 一次輸出 */
-export const siteGraph = (locale: Locale) => ({
+export const siteGraph = (locale: Locale, settings?: Settings) => ({
   '@context': 'https://schema.org',
-  '@graph': [organization(locale), website(locale)],
+  '@graph': [organization(locale, settings), website(locale)],
 })
 
 type CredentialInput = {

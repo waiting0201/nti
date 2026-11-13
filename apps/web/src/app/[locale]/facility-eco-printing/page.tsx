@@ -47,7 +47,7 @@ export default async function Page({ params }: Props) {
         <div className="dtitle">Equipment</div>
         {equipment?.length ? (
           <FacilityGrid items={equipment} />
-        ) : (
+        ) : equipment ? null : (
         <div className="pr-grid">
           <article className="pr-card reveal">
             <div className="pr-img"><img src={mediaUrl("/assets/fac-eco-press.webp")} alt="Heidelberg Speedmaster CD-102" loading="lazy" /></div>

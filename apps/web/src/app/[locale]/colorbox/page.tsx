@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { SolutionIntro, SolutionItems } from '@/components/cms'
-import { getSolutionByCode } from '@/lib/api'
+import { getSolutionByCode, isPlaceholderMedia } from '@/lib/api'
 import { mediaUrl } from '@/lib/media'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -10,17 +11,22 @@ type Props = { params: Promise<{ locale: Locale }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
-  // SEO 來自方案本身（SolutionI18n，docs/08 §6.4），不是固定頁；後台沒填就用 mockup 的值
-  const seo = (await getSolutionByCode(locale, 'boxes'))?.seo
+  // SEO 來自方案本身（SolutionI18n，docs/08 §6.4），不是固定頁；後台沒填就用 mockup 的值。
+  // 整組都交給 pageMetadata：canonical、社群標題／描述／分享圖也是後台 02 的欄位（分享圖沒傳就沿用封面）
+  const solution = await getSolutionByCode(locale, 'boxes')
+  const seo = solution ? { ...solution.seo, ogImagePath: isPlaceholderMedia(solution.seo.ogImagePath) ? null : solution.seo.ogImagePath } : null
   return pageMetadata(locale, "/colorbox", {
-    title: seo?.seoTitle || "Custom Color Box Packaging — NTI Printing",
-    description: seo?.seoDescription || "Custom color box packaging from NTI: tuck-top, reinforced-bottom, rigid and specialty structures, printed and finished to retail standard in Taiwan.",
+    title: "Custom Color Box Packaging — NTI Printing",
+    description: "Custom color box packaging from NTI: tuck-top, reinforced-bottom, rigid and specialty structures, printed and finished to retail standard in Taiwan.",
+    seo,
   })
 }
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
   const solution = await getSolutionByCode(locale, 'boxes')
+  // 後台把這個方案下架了：這一頁不存在。（沒接 API 時是 null，照 mockup 渲染）
+  if (solution === false) notFound()
   const l = withLocale(locale)
   return (
     <T locale={locale}>
@@ -28,7 +34,7 @@ export default async function Page({ params }: Props) {
         <div className="crumb reveal"><A href={l("/")}>Home</A><span>&rsaquo;</span><A href={l("/printing-solutions")}>Solutions</A><span>&rsaquo;</span><b>Color Box Packaging</b></div>
         <h1 className="sec-title reveal">{solution?.h1 || "Custom Color Box Packaging"}</h1>
         <div className="sec-sub reveal">Package material printing with structure design, inside and out.</div>
-        {solution?.introHtml ? <SolutionIntro html={solution.introHtml} /> : (<>
+        {solution ? (solution.introHtml ? <SolutionIntro html={solution.introHtml} /> : null) : (<>
         <p className="prose wide reveal mt-s">Explore NTI&rsquo;s full range of custom color box packaging and color box printing options below:</p>
         </>)}
         <nav className="pr-tabs reveal" aria-label="Product categories">
@@ -39,7 +45,7 @@ export default async function Page({ params }: Props) {
         </nav>
         {solution?.items.length ? (
           <SolutionItems items={solution.items} />
-        ) : (
+        ) : solution ? null : (
         <div className="pr-grid">
           <article className="pr-card reveal">
             <div className="pr-img"><img src={mediaUrl("/assets/prod-box-gluing.jpg")} alt="Gluing Box" loading="lazy" /></div>

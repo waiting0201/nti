@@ -115,7 +115,8 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
           </div>
         </div>
         <div className="fbot">
-          <span>© 2026 NTI Printing Co., Ltd.</span>{' '}
+          {/* 公司名稱吃網站設定（後台 21「公司名稱」，分語系）；沒接 CMS 或沒填照 mockup */}
+          <span>{settings?.['company.name'] ? `© 2026 ${settings['company.name']}` : '© 2026 NTI Printing Co., Ltd.'}</span>{' '}
           <span className="sp"></span>{' '}
           <A href={l('/privacy-legal')}>Privacy &amp; Legal</A>
         </div>

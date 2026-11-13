@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { cmsMedia, getPage } from './api'
+import { cmsMedia, getPage, type Seo } from './api'
 import { tr } from './t'
 import { mediaUrl } from './media'
 import { PAGE_KEY_BY_PATH } from './pages'
@@ -80,19 +80,28 @@ const DEFAULT_OG_IMAGE = (() => {
 export async function pageMetadata(
   locale: Locale,
   path: string,
-  meta: { title: string; description?: string },
+  meta: {
+    title: string
+    description?: string
+    /**
+     * 不是固定頁的路由（四個方案頁）自己帶 SEO 進來——那幾頁的 SEO 在方案單元 02，不在單元 15。
+     * 給了就取代固定頁那一份；`ogImagePath` 請先濾掉佔位圖（`isPlaceholderMedia`）。
+     */
+    seo?: Partial<Seo> | null
+  },
 ): Promise<Metadata> {
   const cms = await cmsSeo(locale, path)
+  const seo = meta.seo ?? cms?.seo
 
   // 後台沒填就用各頁寫死的英文，並在 /zh 換成字典裡的中文（見 lib/t.tsx）
-  const title       = cms?.seo.seoTitle       || tr(locale, meta.title)
-  const description = cms?.seo.seoDescription || (meta.description && tr(locale, meta.description))
-  const canonical   = cms?.seo.canonicalUrl   || localeUrl(locale, path)
+  const title       = seo?.seoTitle       || tr(locale, meta.title)
+  const description = seo?.seoDescription || (meta.description && tr(locale, meta.description))
+  const canonical   = seo?.canonicalUrl   || localeUrl(locale, path)
 
   // OG 與 Twitter 兩組共用同一份標題／描述／圖，避免兩邊漂移
-  const ogTitle = cms?.seo.ogTitle || title
-  const ogDescription = cms?.seo.ogDescription || description
-  const image = cms?.seo.ogImagePath ? cmsMedia(cms.seo.ogImagePath) : DEFAULT_OG_IMAGE
+  const ogTitle = seo?.ogTitle || title
+  const ogDescription = seo?.ogDescription || description
+  const image = seo?.ogImagePath ? cmsMedia(seo.ogImagePath) : DEFAULT_OG_IMAGE
 
   return {
     title,

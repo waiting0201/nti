@@ -1,7 +1,7 @@
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-type Clip = { id: string; title: string; card: HTMLAnchorElement }
+type Clip = { id: string; title: string; desc: string; card: HTMLAnchorElement }
 
 const idOf = (href: string) => {
   const id = new URL(href).searchParams.get('v')
@@ -34,7 +34,7 @@ export function VlogPlayer() {
     if (!grid) return
     const list = [...grid.querySelectorAll<HTMLAnchorElement>('a.vl-card')].flatMap((card) => {
       const id = idOf(card.href)
-      return id ? [{ id, title: card.querySelector('h3')?.textContent ?? '', card }] : []
+      return id ? [{ id, title: card.querySelector('h3')?.textContent ?? '', desc: card.dataset.desc ?? '', card }] : []
     })
     setClips(list)
 
@@ -94,6 +94,12 @@ export function VlogPlayer() {
           <button className="lb-btn lb-prev" aria-label="Previous" onClick={() => go(-1)}>&lsaquo;</button>
           <button className="lb-btn lb-next" aria-label="Next" onClick={() => go(1)}>&rsaquo;</button>
         </>
+      )}
+      {/* 後台 05 的「說明」（卡片的 data-desc）：有填才顯示，疊在張數上方；樣式就地寫（mockup 沒有這個元素） */}
+      {clip.desc && (
+        <p style={{ position: 'absolute', left: 0, right: 0, bottom: 40, padding: '0 76px', textAlign: 'center', color: 'rgba(255,255,255,.85)', fontSize: '.9rem', lineHeight: 1.5, maxHeight: '3em', overflow: 'hidden', pointerEvents: 'none' }}>
+          {clip.desc}
+        </p>
       )}
       <p className="lb-count">{`${open + 1} / ${n}`}</p>
     </div>
