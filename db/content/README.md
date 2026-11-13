@@ -322,6 +322,17 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/320_projects_hide_cases.sql
 sqlcmd -S <server> -d NTI -I -b -i db/content/330_factory_gallery_oldsite.sql
 ```
 
+## 380_factory_gallery_zh.sql
+
+工廠導覽中文版也放相簿（2026-11-13，影片下方，版面與英文版相同）。相簿分語系存，這支替中文帶入與英文版
+相同的 12 張（`mockup/assets/fac-gallery-01～12.webp`），替代文字為中文（**初稿，待客戶校閱**）。
+**只在中文相簿一張都沒有時才匯入**，客戶在後台放過就不碰；一次性匯入，上線後不要再跑
+（客戶若把中文相簿清空，重跑會把 12 張放回來）。須先部署含 `PageGalleryPages` 中文語系的 API。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/380_factory_gallery_zh.sql
+```
+
 ## 290_cert_proof_groups.sql
 
 首頁 Proof 牆「品質管理／環境永續／社會責任與安全」三張卡改由後台 08 的「分組」驅動（2026-10-21）。

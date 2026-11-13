@@ -26,6 +26,12 @@ const MOCKUP_PHOTOS: TourPhoto[] = [
   { src: mediaUrl("/assets/fac-gallery-12.webp"), alt: "Offset press line on the production floor" },
 ]
 
+/** 沒接 API 時中文版用的替代文字（同一批 12 張，順序與上面一致；db/content/380 匯入的也是這一組） */
+const MOCKUP_ALTS_ZH = [
+  "NTI 總部大樓外觀", "NTI 總部大樓夜景", "一樓大廳", "一樓大廳接待區", "一樓會議室", "二樓員工餐廳",
+  "二樓辦公室", "二樓茶水間", "四樓作業室", "二樓印後加工區", "一樓裁紙區", "生產線上的平版印刷機",
+]
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   return pageMetadata(locale, "/facility-tour", {
@@ -40,11 +46,13 @@ export default async function Page({ params }: Props) {
   const page = await getPage(locale, 'facility-tour')
   // 頁面影片（單元 15 該頁的「頁面影片」），只有中文版顯示；沒接 API 或沒填就是 mockup 那支
   const video = youtubeEmbedSrc(page?.youtubeId, "https://www.youtube.com/embed/vECuYIiFSSM")
-  // 英文版的相簿（單元 15 該頁英文分頁的「相簿照片」）；中文版是影片。
-  // 沒接 API → mockup 那三張；接了 API 但後台一張都沒放 → 空陣列，整塊不顯示
+  // 相簿（單元 15 該頁各語系分頁的「相簿照片」，中英各一組）；中文版放在影片下方（2026-11-13）。
+  // 沒接 API → mockup 那 12 張；接了 API 但後台該語系一張都沒放 → 空陣列，整塊不顯示
   const photos = page
     ? (page.galleryImages ?? []).map((g) => ({ src: cmsMedia(g.imagePath), alt: g.imageAlt }))
-    : MOCKUP_PHOTOS
+    : locale === 'zh'
+      ? MOCKUP_PHOTOS.map((p, i) => ({ ...p, alt: MOCKUP_ALTS_ZH[i] ?? p.alt }))
+      : MOCKUP_PHOTOS
   const l = withLocale(locale)
   return (
     <T locale={locale} overrides={page?.texts}>
@@ -71,7 +79,8 @@ export default async function Page({ params }: Props) {
         {/* 只在接了 CMS 時發：沒接 API 的輸出要與 mockup 逐字相同（verify:markup） */}
         {page && <VideoJsonLd id={video.slice(video.lastIndexOf('/') + 1)} />}
         </>
-        ) : photos.length > 0 && <TourGallery photos={photos} />}
+        ) : null}
+        {photos.length > 0 && <TourGallery photos={photos} />}
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         <div className="dtitle">On the floor</div>

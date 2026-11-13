@@ -101,7 +101,7 @@ export const page: Unit = {
       altExempt: '替代文字在「頁面文字」裡逐語系修改，不另開欄位',
     })),
     { key: 'body', label: '頁面內容', type: 'richtext', i18n: true, side: 'locale', hint: '只有少數可自行編輯內文的頁面才有這個欄位' },
-    // 只在有相簿的頁面與語系出現（後端 PageGalleryPages：目前只有工廠導覽的英文，中文版是影片）。
+    // 只在有相簿的頁面與語系出現（後端 PageGalleryPages：目前只有工廠導覽，中英各一組；中文版排在影片下方）。
     // 值存在列的頂層 gallery[lang]，每張自帶替代文字，所以不另開 Alt 欄位
     { key: 'gallery', label: '相簿照片', type: 'gallery', i18n: true, side: 'locale',
       hint: '建議 **長邊 1600px 的橫式照**｜JPG／WebP｜≤500KB｜前台一排四張縮圖（裁成 4:3，主體請放中間），點了開燈箱看原圖｜可一次選多張，依順序排列；每張都要填替代文字｜一張都沒有時前台不顯示這一區',

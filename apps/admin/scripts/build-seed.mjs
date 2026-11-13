@@ -88,18 +88,30 @@ function pageVideo(pageKey) {
 }
 
 /* 有相簿照片的固定頁 → [mockup 檔, 語系]（與後端 Api/Common/Constants.cs 的 PageGalleryPages 一致）。
-   目前只有工廠導覽的英文版；mockup（英文）裡就是那個相簿（#tourGallery 的 .tg-item）。
-   正式資料庫的值由 EF migration PageGallery 從原本單元 10「參觀」分類搬入；這裡只給 demo 用。 */
-const GALLERY_PAGES = { 'facility-tour': ['facility-tour.html', 'en'] }
+   目前只有工廠導覽；mockup（英文）裡就是那個相簿（#tourGallery 的 .tg-item）。
+   中文版（2026-11-13 起，影片下方）用同一批照片，替代文字換成 GALLERY_ALTS_ZH（順序與 mockup 一致）。
+   正式資料庫的值由 EF migration PageGallery 與 db/content/330、380 帶入；這裡只給 demo 用。 */
+const GALLERY_PAGES = { 'facility-tour': ['facility-tour.html', ['zh', 'en']] }
+const GALLERY_ALTS_ZH = {
+  'facility-tour': [
+    'NTI 總部大樓外觀', 'NTI 總部大樓夜景', '一樓大廳', '一樓大廳接待區', '一樓會議室', '二樓員工餐廳',
+    '二樓辦公室', '二樓茶水間', '四樓作業室', '二樓印後加工區', '一樓裁紙區', '生產線上的平版印刷機',
+  ],
+}
 
 function pageGallery(pageKey) {
-  const [file, lang] = GALLERY_PAGES[pageKey] ?? []
+  const [file, langs] = GALLERY_PAGES[pageKey] ?? []
   if (!file) return {}
   const frame = /<div class="tour-gallery[^"]*" id="tourGallery">([\s\S]*?)<\/div>/.exec(readMockup(file))?.[1]
   if (!frame) throw new Error(`抽不出 ${file} 的相簿——mockup 的版面改了，請改 pageGallery() 的規則`)
   const items = [...frame.matchAll(/<img\b[^>]*?\ssrc="(assets\/[^"]+)"[^>]*?\salt="([^"]*)"/g)]
     .map((m) => ({ imagePath: asset(m[1]), imageAlt: decode(m[2]) }))
-  return { galleryLangs: [lang], gallery: { [lang]: items } }
+  const zhAlts = GALLERY_ALTS_ZH[pageKey] ?? []
+  const byLang = {
+    en: items,
+    zh: items.map((it, i) => ({ ...it, imageAlt: zhAlts[i] ?? it.imageAlt })),
+  }
+  return { galleryLangs: langs, gallery: Object.fromEntries(langs.map((lang) => [lang, byLang[lang]])) }
 }
 
 /* 頂部有橫幅大圖的固定頁 → mockup 檔（與後端 Api/Common/Constants.cs 的 PageBannerPages 一致）。

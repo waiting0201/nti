@@ -45,8 +45,8 @@ public sealed class PageI18n : II18n
 /// <summary>
 /// 固定頁某語系的相簿照片（後台單元 15 該語系分頁的「相簿照片」，2026-10-25）。
 /// <para>
-/// 只開放 <see cref="Common.PageGalleryPages"/> 列出的頁與語系——目前只有工廠導覽的英文版
-/// （中文版是影片）。存檔時整組替換；沒有列就是後台一張都沒放，前台那一區不顯示。
+/// 只開放 <see cref="Common.PageGalleryPages"/> 列出的頁與語系——目前只有工廠導覽
+/// （英文版是相簿；中文版是影片，2026-11-13 起影片下方也有相簿）。存檔時整組替換；沒有列就是後台一張都沒放，前台那一區不顯示。
 /// </para>
 /// </summary>
 public sealed class PageGalleryImage

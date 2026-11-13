@@ -149,6 +149,7 @@ NTI/
   db/tools/sqlcmd.sh NTI < db/content/350_performance_metrics.sql    # 碳效率頁「水資源」下方的績效表：初始 4 列
   db/tools/sqlcmd.sh NTI < db/content/360_sustainability_goals.sql   # ESG 頁「企業社會責任」上方的永續目標表：初始 5 列
   db/tools/sqlcmd.sh NTI < db/content/370_cert_page_section.sql      # 認證 logo 的「認證頁區塊」：依名稱對到 08b 清單的區塊
+  db/tools/sqlcmd.sh NTI < db/content/380_factory_gallery_zh.sql     # 工廠導覽中文版影片下方的相簿：帶入與英文版相同的 12 張（中文替代文字）
   db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql             # 應輸出「全數 PASS」
   ```
 

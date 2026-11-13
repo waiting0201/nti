@@ -4,9 +4,9 @@ import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 export type TourPhoto = { src: string; alt: string }
 
 /**
- * facility-tour.html 的工廠相簿（只在英文版出現；中文版是影片）：一排四張縮圖，點了開燈箱，
+ * facility-tour.html 的工廠相簿（英文版在導言下方；中文版在影片下方）：一排四張縮圖，點了開燈箱，
  * 可左右切換、Esc 關閉——比照舊站 nti-printing.com/home/factory 的相簿。
- * 照片來自後台單元 15 工廠導覽英文分頁的「相簿照片」。
+ * 照片來自後台單元 15 工廠導覽各語系分頁的「相簿照片」（中英各一組）。
  * 縮圖是 `<a href="原圖">`：JS 還沒載入時點了就是直接開原圖。燈箱只在打開時才渲染，
  * 所以 SSR 輸出與 mockup 一字不差，驗收閘才對得上。
  */

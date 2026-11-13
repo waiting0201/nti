@@ -1,6 +1,6 @@
 /* 由 scripts/build-seed.mjs 自 db/seed/*.sql 與 mockup/*.html 產生 —— 請勿手改。
    重新產生：npm run seed
-   筆數：category=51  page=29  solution=4  solution-item=15  home-banner=3  news=12  project=6  faq=8  job=5  trend=5  certification=14  client=6  facility=21  vlog=4  supplier-notice=5  supplier-spec=4  redirect=226 */
+   筆數：category=51  page=29  solution=4  solution-item=15  home-banner=3  news=12  project=0  faq=8  job=5  trend=5  certification=14  client=6  facility=21  vlog=4  supplier-notice=5  supplier-spec=4  redirect=226 */
 import type { Row } from './types'
 
 export const SEED: Record<string, Row[]> = {
@@ -1020,9 +1020,60 @@ export const SEED: Record<string, Row[]> = {
         "zh"
       ],
       "galleryLangs": [
+        "zh",
         "en"
       ],
       "gallery": {
+        "zh": [
+          {
+            "imagePath": "/assets/fac-gallery-01.webp",
+            "imageAlt": "NTI 總部大樓外觀"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-02.webp",
+            "imageAlt": "NTI 總部大樓夜景"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-03.webp",
+            "imageAlt": "一樓大廳"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-04.webp",
+            "imageAlt": "一樓大廳接待區"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-05.webp",
+            "imageAlt": "一樓會議室"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-06.webp",
+            "imageAlt": "二樓員工餐廳"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-07.webp",
+            "imageAlt": "二樓辦公室"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-08.webp",
+            "imageAlt": "二樓茶水間"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-09.webp",
+            "imageAlt": "四樓作業室"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-10.webp",
+            "imageAlt": "二樓印後加工區"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-11.webp",
+            "imageAlt": "一樓裁紙區"
+          },
+          {
+            "imagePath": "/assets/fac-gallery-12.webp",
+            "imageAlt": "生產線上的平版印刷機"
+          }
+        ],
         "en": [
           {
             "imagePath": "/assets/fac-gallery-01.webp",
@@ -2284,146 +2335,7 @@ export const SEED: Record<string, Row[]> = {
       }
     }
   ],
-  "project": [
-    {
-      "id": "10",
-      "sortOrder": 10,
-      "isPublished": true,
-      "categoryId": "Project:food",
-      "image": "/assets/hp-prod0.jpg",
-      "videoUrl": "",
-      "statValue": "-32%",
-      "i18n": {
-        "zh": {
-          "title": "Export snack carton — 32% less carbon per unit",
-          "description": "Migration-safe inks, FSC board and a right-weighted structure for a brand scaling into Japan and the EU.",
-          "alt": "Export snack carton — 32% less carbon per unit",
-          "statLabel": "carbon / unit"
-        },
-        "en": {
-          "title": "Export snack carton — 32% less carbon per unit",
-          "description": "Migration-safe inks, FSC board and a right-weighted structure for a brand scaling into Japan and the EU.",
-          "alt": "Export snack carton — 32% less carbon per unit",
-          "statLabel": "carbon / unit"
-        }
-      }
-    },
-    {
-      "id": "20",
-      "sortOrder": 20,
-      "isPublished": true,
-      "categoryId": "Project:pharma",
-      "image": "/assets/hp-prod1.jpg",
-      "videoUrl": "",
-      "statValue": "0",
-      "i18n": {
-        "zh": {
-          "title": "Serialized pharma cartons, audit-ready",
-          "description": "GMP-aligned inspection, batch traceability and tamper-evident structure for a regulated line.",
-          "alt": "Serialized pharma cartons, audit-ready",
-          "statLabel": "audit findings"
-        },
-        "en": {
-          "title": "Serialized pharma cartons, audit-ready",
-          "description": "GMP-aligned inspection, batch traceability and tamper-evident structure for a regulated line.",
-          "alt": "Serialized pharma cartons, audit-ready",
-          "statLabel": "audit findings"
-        }
-      }
-    },
-    {
-      "id": "30",
-      "sortOrder": 30,
-      "isPublished": true,
-      "categoryId": "Project:esg",
-      "image": "/assets/diff-box.webp",
-      "videoUrl": "",
-      "statValue": "100%",
-      "i18n": {
-        "zh": {
-          "title": "Mono-material redesign kept the shelf wow",
-          "description": "Replaced plastic lamination with a recyclable coating — same gloss, single recycling stream.",
-          "alt": "Mono-material redesign kept the shelf wow",
-          "statLabel": "recyclable"
-        },
-        "en": {
-          "title": "Mono-material redesign kept the shelf wow",
-          "description": "Replaced plastic lamination with a recyclable coating — same gloss, single recycling stream.",
-          "alt": "Mono-material redesign kept the shelf wow",
-          "statLabel": "recyclable"
-        }
-      }
-    },
-    {
-      "id": "40",
-      "sortOrder": 40,
-      "isPublished": true,
-      "categoryId": "Project:retail",
-      "image": "/assets/hp-prod2.jpg",
-      "videoUrl": "",
-      "statValue": "ΔE≤2",
-      "i18n": {
-        "zh": {
-          "title": "Holiday gift set with foil + emboss at volume",
-          "description": "Hot foil and tactile coating across 400k units with color held to ΔE ≤ 2 through the run.",
-          "alt": "Holiday gift set with foil + emboss at volume",
-          "statLabel": "color tolerance"
-        },
-        "en": {
-          "title": "Holiday gift set with foil + emboss at volume",
-          "description": "Hot foil and tactile coating across 400k units with color held to ΔE ≤ 2 through the run.",
-          "alt": "Holiday gift set with foil + emboss at volume",
-          "statLabel": "color tolerance"
-        }
-      }
-    },
-    {
-      "id": "50",
-      "sortOrder": 50,
-      "isPublished": true,
-      "categoryId": "Project:food",
-      "image": "/assets/ps-box1.jpg",
-      "videoUrl": "",
-      "statValue": "-18°C",
-      "i18n": {
-        "zh": {
-          "title": "Frozen-food board that survives the cold chain",
-          "description": "Moisture-resistant coating and flute selection validated with transit and freezer testing.",
-          "alt": "Frozen-food board that survives the cold chain",
-          "statLabel": "validated"
-        },
-        "en": {
-          "title": "Frozen-food board that survives the cold chain",
-          "description": "Moisture-resistant coating and flute selection validated with transit and freezer testing.",
-          "alt": "Frozen-food board that survives the cold chain",
-          "statLabel": "validated"
-        }
-      }
-    },
-    {
-      "id": "60",
-      "sortOrder": 60,
-      "isPublished": true,
-      "categoryId": "Project:esg",
-      "image": "/assets/hp-casestudy.webp",
-      "videoUrl": "",
-      "statValue": "96%",
-      "i18n": {
-        "zh": {
-          "title": "Soy-ink corrugated shipper for a D2C brand",
-          "description": "One-pass flexo on recycled kraft, printed inside and out for an unboxing moment.",
-          "alt": "Soy-ink corrugated shipper for a D2C brand",
-          "statLabel": "recycled fiber"
-        },
-        "en": {
-          "title": "Soy-ink corrugated shipper for a D2C brand",
-          "description": "One-pass flexo on recycled kraft, printed inside and out for an unboxing moment.",
-          "alt": "Soy-ink corrugated shipper for a D2C brand",
-          "statLabel": "recycled fiber"
-        }
-      }
-    }
-  ],
+  "project": [],
   "faq": [
     {
       "id": "10",

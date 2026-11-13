@@ -104,7 +104,7 @@ export function EditPage() {
 
   // page 單元：只有 HasRichBody = 1 的頁面才顯示「頁面內容」欄位（docs §15），
   // 「頁面影片」分語系，只在有影片的頁面與語系才顯示（後端回 videoLangs；工廠導覽只有中文），
-  // 「相簿照片」同理（後端回 galleryLangs；目前只有工廠導覽的英文），頂部有大圖的（hasBanner）才顯示「頂部橫幅」，
+  // 「相簿照片」同理（後端回 galleryLangs；目前只有工廠導覽，中英各一組），頂部有大圖的（hasBanner）才顯示「頂部橫幅」，
   // 「中段橫幅 N」只顯示該頁有的那幾張（後端回 midBannerCount）
   const midSlot = (f: Field) => Number(/^midBanner(\d)$/.exec(f.key)?.[1] ?? 0)
   const showField = (f: Field) =>
