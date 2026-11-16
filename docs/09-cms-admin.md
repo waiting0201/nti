@@ -448,9 +448,15 @@
 `上架` 開關 + `上架時間` + `下架時間`。三者組合的顯示狀態：草稿／已排程／上架中／已下架。時間以台北時間輸入、存 UTC。前台不快取 CMS 資料，存檔後重整就會看到（docs/02 §渲染）。
 
 ### 5.5 富文本編輯器
-白名單標籤：`p h3 h4 strong em ul ol li a blockquote img figure figcaption br`。
+白名單標籤：`p h2 h3 h4 strong em ul ol li a blockquote img figure figcaption br`（H2 於 2026-11-16 加入）。
+H1 不開放：每頁的 H1 是頁面／文章標題，一頁只能有一個（SEO 驗收要求）；貼上內容裡的 H1 自動降為 H2，H5／H6 降為 H4。
+內容一律是「一串區塊」：最外層只會是 `p h2 h3 h4 ul ol blockquote figure`，散落的文字收進 `<p>`、空段落移除。
+工具列的 H2／H3／H4／段落／引言只套用到**游標所在的那一段**，可以任意交錯（H2→段落→H3→段落…）。
+2026-11-16 以前瀏覽器按 Enter 產生的 `<div>` 不在白名單、被拆掉只留文字，整篇黏成一段，看起來像「只能選一種格式」；
+現在 Enter 產生 `<p>`，`div` 之類的容器轉成段落。已經黏成一段的舊內容無法自動拆回，需在後台重新按 Enter 分段。
+前台以 `.rte`（結構）＋ `.rte-text`（內文字級）呈現這些標籤，樣式在 `site.css`。
 禁止：`script iframe style` 與行內 `style`（YouTube 影片一律走 `vlog` 單元的欄位，不從編輯器貼 iframe）。
-貼上 Word／網頁內容時自動清除樣式。伺服器端二次 sanitize，不信任前端。
+貼上 Word／Google 文件／網頁內容時清除樣式與 class，但保留標題、段落、粗體、清單、連結；純文字一行一段。`javascript:` 等非 http(s) 連結與圖片網址一律拿掉。伺服器端二次 sanitize，不信任前端。
 插入圖片時接著要求填替代文字（`alt`）；內文裡的圖片點一下可改 alt，沒填 alt 的圖以紅色虛線框提醒（2026-11-11 加）。
 
 ### 5.6 SEO 欄位組（`page`／`news`／`solution`）

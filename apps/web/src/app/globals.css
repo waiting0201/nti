@@ -154,6 +154,30 @@ header+.fac-banner+.section{padding-top:clamp(24px,3vw,40px)}
 .prose+.prose{margin-top:18px}
 .sec-sub+.prose{margin-top:22px}
 .mt-s{margin-top:18px}.mt-m{margin-top:30px}.mt-l{margin-top:46px}
+/* 後台富文本（CMS 的 BodyHtml）：標籤由編輯器白名單產生（p h2 h3 h4 ul ol blockquote figure…），
+   沒有 class 可掛，所以用 .rte 包起來，視覺沿用 .prose／.dtitle／.flist.plain（2026-11-16）。
+   .rte 只管結構（段距、標題、清單、引言）；字級顏色由 .rte-text 給，FAQ／公告等有自己字級的容器不加它 */
+.rte-text{color:var(--grey-2);font-weight:500;font-size:clamp(1rem,1.25vw,1.1rem);line-height:1.85;text-wrap:pretty}
+.rte>*+*{margin-top:18px}
+.rte h2,.rte h3,.rte h4{color:var(--green-title);font-weight:800;line-height:1.4;letter-spacing:-.012em;text-wrap:balance}
+.rte h2{font-size:clamp(1.2rem,1.7vw,1.42rem)}
+.rte h3{font-size:clamp(1.08rem,1.4vw,1.24rem)}
+.rte h4{font-size:clamp(1rem,1.2vw,1.1rem);color:var(--grey)}
+.rte>*+h2{margin-top:clamp(34px,4.2vw,54px);padding-top:20px;border-top:1px solid var(--line)}
+.rte>*+h3{margin-top:clamp(28px,3.4vw,42px)}
+.rte>*+h4{margin-top:26px}
+.rte>h2+*,.rte>h3+*,.rte>h4+*{margin-top:12px}
+.rte strong,.rte b{color:var(--grey);font-weight:800}
+.rte a{color:var(--green);text-decoration:underline;text-underline-offset:3px}
+.rte ul,.rte ol{padding-left:1.5em}
+.rte ul{list-style:disc}.rte ol{list-style:decimal}
+.rte li+li{margin-top:8px}
+.rte li::marker{color:var(--leaf)}
+.rte blockquote{border-left:4px solid var(--leaf);padding:2px 0 2px 20px;color:var(--grey)}
+.rte blockquote>*+*{margin-top:12px}
+.rte img{max-width:100%;height:auto;border-radius:10px}
+.rte figcaption{margin-top:8px;font-size:.85rem;color:#9aa39a}
+.rte.compact>*+*{margin-top:10px}
 
 /* bracketed green link  e.g. [Take a factory tour] */
 .blink{display:inline-flex;align-items:center;gap:.3em;color:var(--green);font-weight:800;font-size:.96rem;transition:gap .25s var(--ease),color .2s}

@@ -97,58 +97,164 @@ export function categoryName(id: unknown, locale: Locale = 'zh'): string {
 /* ── 富文本 ───────────────────────────────────────────── */
 
 /**
- * docs §5.5 的白名單：p h3 h4 strong em ul ol li a blockquote img figure figcaption br。
+ * docs §5.5 的白名單：p h2 h3 h4 strong em ul ol li a blockquote img figure figcaption br。
  * 禁止 script／iframe／style 與行內 style；貼上時清除樣式。
- * 前端這層是為了讓編輯者當下就看到結果，**伺服器端仍會二次 sanitize**（不信任前端）。
+ * 前端這層是為了讓編輯者當下就看到結果，**伺服器端仍應二次 sanitize**（不信任前端）。
+ *
+ * 輸出一定是「一串區塊」：最外層只會是 p／h2／h3／h4／ul／ol／blockquote／figure。
+ * 這是 H2／H3／段落能逐段套用的前提——2026-11-16 以前瀏覽器按 Enter 產生的 <div>
+ * 不在白名單、被拆掉只留文字，結果整篇黏成一段，按 H3／引言就套到全文。
  */
-const ALLOWED = new Set(['P', 'H3', 'H4', 'STRONG', 'B', 'EM', 'I', 'UL', 'OL', 'LI', 'A', 'BLOCKQUOTE', 'IMG', 'FIGURE', 'FIGCAPTION', 'BR'])
+const ALLOWED = new Set(['P', 'H2', 'H3', 'H4', 'STRONG', 'B', 'EM', 'I', 'UL', 'OL', 'LI', 'A', 'BLOCKQUOTE', 'IMG', 'FIGURE', 'FIGCAPTION', 'BR'])
+/** 最外層允許的區塊；其餘（文字、粗體、連結、圖片…）會被收進 <p> */
+const BLOCKS = new Set(['P', 'H2', 'H3', 'H4', 'UL', 'OL', 'BLOCKQUOTE', 'FIGURE'])
+/** 連同內容整個丟掉（貼上 Word／網頁時會帶進來） */
+const DROP = new Set(['SCRIPT', 'STYLE', 'META', 'LINK', 'TITLE', 'HEAD', 'NOSCRIPT', 'TEMPLATE', 'IFRAME', 'OBJECT', 'EMBED', 'SVG', 'XML', 'BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'])
+/** 換成白名單裡的對應標籤：H1 是頁面標題專用（一頁一個），內文的 H1 降為 H2 */
+const RENAME: Record<string, string> = { H1: 'H2', H5: 'H4', H6: 'H4' }
+/** 區塊容器：裡面還有區塊就拆掉，只有文字就變成一個段落 */
+const CONTAINERS = new Set(['DIV', 'SECTION', 'ARTICLE', 'HEADER', 'FOOTER', 'MAIN', 'ASIDE', 'TR', 'DD', 'DT'])
+const SAFE_HREF = /^(https?:|mailto:|tel:|\/|#)/i
+const SAFE_SRC = /^(https?:|\/)/i
+
+const hasBlock = (el: Element) => [...el.querySelectorAll('*')].some((d) => BLOCKS.has(d.tagName) || CONTAINERS.has(d.tagName))
+const isBlank = (el: Element) => !el.textContent?.trim() && !el.querySelector('img')
+
+function retag(el: Element, tag: string) {
+  const next = el.ownerDocument.createElement(tag)
+  next.append(...Array.from(el.childNodes))
+  el.replaceWith(next)
+  return next
+}
 
 export function sanitizeHtml(html: string): string {
   const doc = new DOMParser().parseFromString(`<div>${html}</div>`, 'text/html')
   const root = doc.body.firstElementChild!
+
+  // 註解（Word 的 <!--[if ...]-->）整個拿掉
+  const comments = doc.createTreeWalker(root, NodeFilter.SHOW_COMMENT)
+  const dead: Node[] = []
+  while (comments.nextNode()) dead.push(comments.currentNode)
+  dead.forEach((n) => n.parentNode?.removeChild(n))
+
   const walk = (node: Element) => {
-    for (const child of [...node.children]) {
+    for (let child of [...node.children]) {
+      const tag = child.tagName.toUpperCase()
+      if (DROP.has(tag) || tag.includes(':')) {
+        // o:p 之類 Office 命名空間標籤：只有空白就丟，有字就留字
+        if (tag.includes(':') && child.textContent?.trim()) child.replaceWith(...Array.from(child.childNodes))
+        else child.remove()
+        continue
+      }
       walk(child)
-      if (!ALLOWED.has(child.tagName)) {
+      // Google 文件會用 <b style="font-weight:normal"> 包住整份內容，不能當粗體
+      if ((tag === 'B' || tag === 'STRONG') && /font-weight\s*:\s*(normal|[1-4]00)/i.test(child.getAttribute('style') ?? '')) {
+        child.replaceWith(...Array.from(child.childNodes))
+        continue
+      }
+      if (RENAME[tag]) child = retag(child, RENAME[tag])
+      else if (CONTAINERS.has(tag)) {
+        if (hasBlock(child)) {
+          child.replaceWith(...Array.from(child.childNodes))
+          continue
+        }
+        child = retag(child, 'P')
+      } else if (!ALLOWED.has(child.tagName)) {
         // 不在白名單：保留文字內容，拿掉標籤本身
         child.replaceWith(...Array.from(child.childNodes))
         continue
       }
       for (const attr of [...child.attributes]) {
         const keep =
-          (child.tagName === 'A' && (attr.name === 'href' || attr.name === 'target' || attr.name === 'rel')) ||
-          (child.tagName === 'IMG' && (attr.name === 'src' || attr.name === 'alt'))
+          (child.tagName === 'A' && ((attr.name === 'href' && SAFE_HREF.test(attr.value.trim())) || attr.name === 'target' || attr.name === 'rel')) ||
+          (child.tagName === 'IMG' && ((attr.name === 'src' && SAFE_SRC.test(attr.value.trim())) || attr.name === 'alt'))
         if (!keep) child.removeAttribute(attr.name)
       }
     }
   }
   walk(root)
+
+  // 最外層：連續的行內內容（文字、粗體、連結、圖片）收進同一個 <p>；空的段落／標題丟掉
+  let para: Element | null = null
+  for (const node of [...root.childNodes]) {
+    const el = node.nodeType === Node.ELEMENT_NODE ? (node as Element) : null
+    if (el && BLOCKS.has(el.tagName)) {
+      para = null
+      if (el.tagName !== 'FIGURE' && isBlank(el)) el.remove()
+      continue
+    }
+    if (el?.tagName === 'BR') {
+      // 區塊之間殘留的換行：結束目前段落
+      para = null
+      el.remove()
+      continue
+    }
+    if (!el && !node.textContent?.trim() && !para) {
+      node.parentNode?.removeChild(node)
+      continue
+    }
+    if (!para) {
+      para = doc.createElement('p')
+      root.insertBefore(para, node)
+    }
+    para.appendChild(node)
+  }
+  for (const p of [...root.querySelectorAll(':scope > p')]) if (isBlank(p)) p.remove()
+
   return root.innerHTML
 }
 
 const escapeAttr = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+const escapeText = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
 function RichText({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const ref = useRef<HTMLDivElement>(null)
+  /** 最後一次送出去的值：外部 value 等於它就是自己剛改的，不要重設 DOM（否則游標會跳回開頭） */
+  const emitted = useRef<string | null>(null)
 
   useEffect(() => {
-    if (ref.current && ref.current.innerHTML !== value) ref.current.innerHTML = value
+    const el = ref.current
+    if (!el || value === emitted.current) return
+    // 外部載入的內容（含舊的、已經黏成一段的資料）先整理成一段一段的區塊再放進編輯區
+    const clean = sanitizeHtml(value)
+    el.innerHTML = clean
+    emitted.current = value
   }, [value])
 
+  const emit = () => {
+    if (!ref.current) return
+    const clean = sanitizeHtml(ref.current.innerHTML)
+    emitted.current = clean
+    onChange(clean)
+  }
   const exec = (cmd: string, arg?: string) => {
     ref.current?.focus()
     document.execCommand(cmd, false, arg)
     emit()
   }
-  const emit = () => {
-    if (ref.current) onChange(sanitizeHtml(ref.current.innerHTML))
+  /** 按 Enter 產生 <p> 而不是 <div>；空白編輯區先放一個段落，讓第一行也是獨立的一段 */
+  const onFocus = () => {
+    document.execCommand('defaultParagraphSeparator', false, 'p')
+    const el = ref.current
+    if (el && !el.textContent?.trim() && !el.querySelector('img')) {
+      el.innerHTML = '<p><br></p>'
+      const range = document.createRange()
+      range.setStart(el.firstChild!, 0)
+      range.collapse(true)
+      const sel = window.getSelection()
+      sel?.removeAllRanges()
+      sel?.addRange(range)
+    }
   }
+  /** 工具列按鈕不搶焦點：選取範圍留在編輯區，按鈕才會套用到游標所在的那一段 */
+  const keepFocus = (e: { preventDefault(): void }) => e.preventDefault()
 
   return (
     <div className="richtext">
-      <div className="rt-bar">
-        <button type="button" onClick={() => exec('formatBlock', 'h3')} title="小標 H3">H3</button>
+      <div className="rt-bar" onMouseDown={keepFocus}>
+        <button type="button" onClick={() => exec('formatBlock', 'h2')} title="大標 H2（文章的章節標題）">H2</button>
+        <button type="button" onClick={() => exec('formatBlock', 'h3')} title="中標 H3">H3</button>
         <button type="button" onClick={() => exec('formatBlock', 'h4')} title="小標 H4">H4</button>
         <button type="button" onClick={() => exec('formatBlock', 'p')} title="段落">段落</button>
         <button type="button" onClick={() => exec('bold')} title="粗體"><b>B</b></button>
@@ -179,12 +285,14 @@ function RichText({ value, onChange }: { value: string; onChange: (v: string) =>
         >
           圖片
         </button>
+        <span className="rt-tip">游標放在哪一段，按鈕就只套用到那一段；按 Enter 分段</span>
       </div>
       <div
         ref={ref}
         className="rt-body"
         contentEditable
         suppressContentEditableWarning
+        onFocus={onFocus}
         onInput={emit}
         onBlur={emit}
         onClick={(e) => {
@@ -197,10 +305,22 @@ function RichText({ value, onChange }: { value: string; onChange: (v: string) =>
           emit()
         }}
         onPaste={(e) => {
-          // 貼上 Word／網頁內容時自動清除樣式（docs §5.5）
+          // 貼上 Word／網頁內容：清除樣式，但保留標題、段落、粗體、清單、連結的結構（docs §5.5）
           e.preventDefault()
+          const html = e.clipboardData.getData('text/html')
           const text = e.clipboardData.getData('text/plain')
-          document.execCommand('insertText', false, text)
+          const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+          if (html.trim()) {
+            const clean = sanitizeHtml(html)
+            // 只有一段的貼上（例如一句話）當成行內文字，不另起一段
+            const single = /^<p>((?:(?!<\/?p>)[\s\S])*)<\/p>$/.exec(clean)
+            document.execCommand('insertHTML', false, single ? single[1] : clean)
+          } else if (lines.length > 1) {
+            // 純文字：一行一段
+            document.execCommand('insertHTML', false, lines.map((l) => `<p>${escapeText(l)}</p>`).join(''))
+          } else {
+            document.execCommand('insertText', false, text)
+          }
           emit()
         }}
       />

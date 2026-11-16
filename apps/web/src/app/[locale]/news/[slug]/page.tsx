@@ -136,7 +136,7 @@ export default async function Page({ params }: Props) {
       </div></section>
       <section className="section tight"><div className="wrap reveal">
         {/* 後台富文本編輯器產生的內容，不是使用者輸入 */}
-        <div dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
+        <div className="rte rte-text" dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
       </div></section>
       {/*
         標籤列。這是客戶 2026-09-08 SEO 簡報的「站內連結」建議來源之一，也是舊站

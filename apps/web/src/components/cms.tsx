@@ -174,7 +174,7 @@ export function SolutionIntro({ html }: { html: string }) {
     ? trimmed.split(/<\/p>\s*/).filter(Boolean).map((p) => p.replace(/^<p>/, ''))
     : null
 
-  if (!paras) return <div className="prose wide reveal mt-s" dangerouslySetInnerHTML={{ __html: trimmed }} />
+  if (!paras) return <div className="rte rte-text reveal mt-s" dangerouslySetInnerHTML={{ __html: trimmed }} />
   return (
     <>
       {paras.map((p, i) => (
@@ -260,7 +260,7 @@ export function FaqList({ items, children, locale }: { items: Faq[]; children?: 
                 <span>{f.question}</span>
               </summary>
               {/* AnswerHtml 是後台富文本編輯器產生的，不是使用者輸入 */}
-              <div dangerouslySetInnerHTML={{ __html: f.answerHtml }} />
+              <div className="rte" dangerouslySetInnerHTML={{ __html: f.answerHtml }} />
             </details>
           ))}
         </div>
@@ -279,7 +279,7 @@ export function TrendSections({ items }: { items: Trend[] }) {
         <section key={t.id} className="section tight snug">
           <div className="wrap reveal">
             <div className="dtitle">{t.title}</div>
-            <div dangerouslySetInnerHTML={{ __html: t.bodyHtml }} />
+            <div className="rte rte-text" dangerouslySetInnerHTML={{ __html: t.bodyHtml }} />
           </div>
         </section>
       ))}
@@ -772,7 +772,7 @@ export function JobList({ items, locale }: { items: Job[]; locale: Locale }) {
       {items.map((j, i) => (
         <details key={j.id} className="faq" open={i === 0}>
           <summary><span>{heading(j)}</span></summary>
-          <div dangerouslySetInnerHTML={{ __html: j.descriptionHtml }} />
+          <div className="rte" dangerouslySetInnerHTML={{ __html: j.descriptionHtml }} />
         </details>
       ))}
     </div>
@@ -802,7 +802,7 @@ export function SupplierNotices({ items, locale }: { items: SupplierNotice[]; lo
             <summary className="notice" style={{ cursor: 'pointer', listStyle: 'none' }}>{row(n)}</summary>
             <div style={{ padding: '14px 6px 20px', borderBottom: '1px solid var(--line)', fontSize: '.9rem', lineHeight: 1.7 }}>
               {/* BodyHtml 是後台富文本編輯器產生的，不是使用者輸入 */}
-              <div dangerouslySetInnerHTML={{ __html: n.bodyHtml }} />
+              <div className="rte compact" dangerouslySetInnerHTML={{ __html: n.bodyHtml }} />
               {n.attachmentPath && (
                 <p style={{ marginTop: 10 }}>
                   <A href={cmsMedia(n.attachmentPath)} className="tour-more">{locale === 'zh' ? '下載附件' : 'Download attachment'}</A>
