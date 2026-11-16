@@ -83,7 +83,7 @@ header.scrolled{box-shadow:0 6px 24px -16px rgba(0,0,0,.25)}
   header.mopen .menu .mi{flex-direction:column;align-items:stretch;border-bottom:1px solid var(--line)}
   header.mopen .menu .mi:last-child{border-bottom:none}
   header.mopen .menu .mi::after,header.mopen .menu .mi>a::after,header.mopen .menu .mi>a .ca{display:none}
-  header.mopen .menu .mi>a{padding:14px 0;font-size:1rem}
+  header.mopen .menu .mi>a{padding:14px 0;font-size:1rem;color:var(--green)}
   header.mopen .sub-menu,header.mopen .menu .mi:hover .sub-menu{position:static;opacity:1;visibility:visible;transform:none;min-width:0;border:none;border-radius:0;box-shadow:none;background:none;padding:0 0 12px 12px}
   header.mopen .sub-menu a{white-space:normal;padding:8px 12px}
   header.mopen .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
