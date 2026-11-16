@@ -3028,13 +3028,6 @@ export const PAGE_TEXTS: Record<string, { mockup: string; items: PageTextItem[] 
         "count": 1
       },
       {
-        "en": "A showcase of NTI's printed packaging work",
-        "zh": "NTI 包裝印刷作品集",
-        "kind": "alt",
-        "section": "Industries / Applications",
-        "count": 1
-      },
-      {
         "en": "Case Studies & Photos",
         "zh": "案例分享",
         "kind": "text",

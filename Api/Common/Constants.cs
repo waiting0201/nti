@@ -299,8 +299,11 @@ public static class PageVideoPages
 /// <summary>
 /// 有「相簿照片」的固定頁與語系（後台單元 15 該語系分頁的欄位只在這裡列出的出現，2026-10-25）。
 /// <para>
-/// 目前只有工廠導覽：英文版是相簿（一排四張縮圖、點開燈箱）；中文版是影片（<see cref="PageVideoPages"/>），
-/// 2026-11-13 起影片下方也放同一種相簿。兩個語系各存各的一組照片與替代文字。
+/// 工廠導覽：英文版是相簿（一排四張縮圖、點開燈箱）；中文版是影片（<see cref="PageVideoPages"/>），
+/// 2026-11-13 起影片下方也放同一種相簿。
+/// Projects（2026-11-16）：產業圖示下方的橫幅改成可放多張，前台依序由上而下整張顯示，不做輪播
+/// （原本是 <see cref="PageMidBannerPages"/> 的一格）。
+/// 兩個語系各存各的一組照片與替代文字。
 /// 照片原本借用單元 10 的「參觀」分類，同日搬到這裡——編輯要改一頁的東西，應該都在那一頁裡。
 /// 三邊要一致：這裡、<c>apps/admin/scripts/build-seed.mjs</c> 的 GALLERY_PAGES、以及前台那一頁。
 /// </para>
@@ -312,6 +315,7 @@ public static class PageGalleryPages
     public static readonly IReadOnlyDictionary<string, string[]> LangsByPage = new Dictionary<string, string[]>(StringComparer.Ordinal)
     {
         [PageKeys.FacilityTour] = [Langs.Zh, Langs.En],
+        [PageKeys.Projects]     = [Langs.Zh, Langs.En],
     };
 
     public static string[] LangsOf(string pageKey) => LangsByPage.TryGetValue(pageKey, out var langs) ? langs : [];
@@ -368,7 +372,7 @@ public static class PageMidBannerPages
         [PageKeys.GreenOurAdvantage]   = 1,
         [PageKeys.GreenCarbon]         = 1,
         [PageKeys.GreenEsg]            = 1,
-        [PageKeys.Projects]            = 1,   // 產業圖示下方那張（客戶 2026-11-11 新增）
+        // Projects 產業圖示下方那張（客戶 2026-11-11 新增）2026-11-16 改成多張，搬到 PageGalleryPages
     };
 
     public static int Of(string pageKey) => Count.TryGetValue(pageKey, out var n) ? n : 0;

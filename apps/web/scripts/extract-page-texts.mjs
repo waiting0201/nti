@@ -127,6 +127,8 @@ const CMS_TEXTS = {
     'Other printing — hand bags, calendars, manuals',
     "A showcase of NTI's printed packaging work",
   ],
+  // 產業圖示下方橫幅的 alt：2026-11-16 起改為「相簿照片」，每張自帶替代文字
+  'projects': ["A showcase of NTI's printed packaging work"],
   // 聯絡頁的地址／信箱／營業時間吃的是「網站設定」（單元 21），在頁面文字裡改不會生效（2026-11-13 稽核 A7）
   'contact': [
     'No. 29, Gongye 6th Rd., Annan Dist., Tainan City 709, Taiwan',

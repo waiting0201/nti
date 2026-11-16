@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
 import { mediaUrl } from '@/lib/media'
-import { PageBanner, PageMidBanner, ProjectGrid } from '@/components/cms'
-import { bannerSrc, getPage, getProjects, midBannerSrc } from '@/lib/api'
+import { PageBanner, ProjectGrid } from '@/components/cms'
+import { bannerSrc, cmsMedia, getPage, getProjects } from '@/lib/api'
 import { ProjectFilter } from '@/components/behaviors/ProjectFilter'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -23,6 +23,11 @@ export default async function Page({ params }: Props) {
   const page = await getPage(locale, 'projects')
   const l = withLocale(locale)
   const projects = await getProjects(locale)
+  // 產業圖示下方的橫幅（單元 15「頁面設定與 SEO › Projects」各語系的「相簿照片」，2026-11-16 起可放多張）：
+  // 依序由上而下整張顯示，不做輪播。沒接 API → mockup 那一張；接了 API 但該語系一張都沒放 → 不顯示
+  const midBanners = page
+    ? (page.galleryImages ?? []).map((g) => ({ src: cmsMedia(g.imagePath), alt: g.imageAlt }))
+    : [{ src: mediaUrl("/assets/ref-home-mid1.webp"), alt: "A showcase of NTI's printed packaging work" }]
   return (
     <T locale={locale} overrides={page?.texts}>
       {/* 頂部橫幅與圖示下方的圖：客戶 2026-11-11 新增，後台「頁面設定與 SEO › Projects」可換圖 */}
@@ -45,7 +50,9 @@ export default async function Page({ params }: Props) {
           <div className="ind-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4.6 10.4h14.8L18.2 20H5.8z"/><path d="M4.6 10.4h14.8"/><path d="M9.2 10.4V8.2a2.8 2.8 0 0 1 5.6 0v2.2"/></svg><b>Industrial &amp; Consumer Goods</b></div>
           <div className="ind-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2.6 12 8.8 6.6 15 12"/><path d="M4.2 10.6V20h9.2v-9.4"/><path d="M7.2 20v-4.6h3.2V20"/><circle cx="19" cy="12.8" r="2.9"/><path d="M19 15.7V20"/><path d="M2 20h20"/></svg><b>Home &amp; Lifestyle</b></div>
         </div>
-        <PageMidBanner src={midBannerSrc(page, 1, "/assets/ref-home-mid1.webp")} alt="A showcase of NTI's printed packaging work" as="div" className="fac-banner reveal mt-l" />
+        {midBanners.map((b, i) => (
+          <div key={i} className="fac-banner reveal mt-l"><img src={b.src} alt={b.alt} loading={i ? 'lazy' : undefined} /></div>
+        ))}
         <div className="dtitle reveal mt-m" id="cases">Case Studies &amp; Photos</div>
         {projects?.length ? (
           <ProjectGrid items={projects} locale={locale} />

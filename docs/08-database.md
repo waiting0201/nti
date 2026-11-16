@@ -541,7 +541,7 @@ CREATE TABLE dbo.Page (
   OgImagePath NVARCHAR(260) NULL,          -- OG 分享圖
   IsIndexable BIT NOT NULL DEFAULT 1,      -- 0 → noindex
   BannerImagePath NVARCHAR(260) NULL,      -- 頂部橫幅圖，只有 PageBannerPages 的 21 頁用（2026-10-08；2026-11-11 加 projects）
-  MidBanner1ImagePath NVARCHAR(260) NULL,  -- 中段橫幅圖 1～4，依頁面由上而下；張數見 PageMidBannerPages（12 頁、18 張，2026-10-25；2026-11-11 加 projects）
+  MidBanner1ImagePath NVARCHAR(260) NULL,  -- 中段橫幅圖 1～4，依頁面由上而下；張數見 PageMidBannerPages（11 頁、17 張，2026-10-25；2026-11-11 加 projects，2026-11-16 projects 改走 PageGalleryImage）
   MidBanner2ImagePath NVARCHAR(260) NULL,
   MidBanner3ImagePath NVARCHAR(260) NULL,
   MidBanner4ImagePath NVARCHAR(260) NULL,
@@ -559,7 +559,8 @@ CREATE TABLE dbo.PageI18n (
 );
 
 -- 相簿照片（2026-10-25，單元 15 該語系分頁的「相簿照片」）
--- 只開放 PageGalleryPages 列出的頁與語系：目前只有 facility-tour 的英文（中文版是影片）。
+-- 只開放 PageGalleryPages 列出的頁與語系：facility-tour 中英（2026-11-13 起中文版影片下方也有）、
+-- projects 中英（2026-11-16 起，產業圖示下方的橫幅，可放多張、前台不輪播）。
 -- 存檔時整組替換；照片是頁面的附屬，頁面刪掉就跟著走。
 CREATE TABLE dbo.PageGalleryImage (
   Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -969,6 +970,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-11-09 | Tim（Claude Code） | §4.1／§4.8：同日把 `CertSection` 併回 `Certification`——08 的 logo 與 08b 的清單共用認證分類（首頁 Proof 牆只顯示有 logo 的分類、認證頁只顯示有清單項目的分類）。依名稱對到既有分類，對不到的新建（代號 `section-*`）。結構數字與合併前相同（外鍵、計算欄改指 Certification；CK_Category_Type 回到九種）。遷移 `*_MergeCertSectionIntoCertification` 與 `db/migrations/0025_merge_cert_section_into_certification.sql` 一對一 |
 | 2026-11-11 | Tim（Claude Code） | §4.8：`Certification.PageCategoryId`——客戶要認證頁排成「區塊大標 → 文字清單 → 該區塊的 logo」，首頁三張卡與認證頁七區塊粒度不同，另開一欄（共用 `CategoryTypeGuard`）。外鍵 +1（`FK_Certification_PageCategory`，Category 型別安全複合外鍵 10 → 11）。遷移 `*_CertPageSection` 與 `db/migrations/0028_cert_page_section.sql` 一對一；初始值 `db/content/370_cert_page_section.sql` |
 | 2026-11-16 | Tim（Claude Code） | §4.7：產業趨勢分清單頁與詳細頁（`/printing-trends/{slug}`）。`IndustryTrendI18n` 加 `Summary`、`Slug` 與 SEO 欄位組（同 `NewsI18n`），`IndustryTrend` 加 `OgImagePath`；唯一索引 +1（`UX_IndustryTrendI18n_Lang_Slug`，非 PK/UQ 索引 22 → 23）。遷移 `*_TrendDetailPage` 與 `db/migrations/0029_trend_detail_page.sql` 一對一；`Slug` 不設 DEFAULT（匿名約束＋空字串撞唯一索引），既有列先給 `trend-{Id}`，正式值由 `db/content/400_trend_detail.sql` 帶入 |
+| 2026-11-16 | Tim（Claude Code） | §4.11：Projects 產業圖示下方的橫幅改成可放多張——`projects` 從 `PageMidBannerPages` 搬到 `PageGalleryPages`（中英）。schema 不變；資料遷移 `*_ProjectsMidBannerGallery` 與 `db/migrations/0030_projects_mid_banner_gallery.sql` 一對一：現有 `MidBanner1ImagePath` 搬成兩語系相簿的第一張（替代文字沿用 `PageText` 改過的值），舊欄位清成 NULL |
 
 *最後更新：2026-11-16*
 

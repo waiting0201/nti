@@ -91,8 +91,14 @@ function pageVideo(pageKey) {
    目前只有工廠導覽；mockup（英文）裡就是那個相簿（#tourGallery 的 .tg-item）。
    中文版（2026-11-13 起，影片下方）用同一批照片，替代文字換成 GALLERY_ALTS_ZH（順序與 mockup 一致）。
    正式資料庫的值由 EF migration PageGallery 與 db/content/330、380 帶入；這裡只給 demo 用。 */
-const GALLERY_PAGES = { 'facility-tour': ['facility-tour.html', ['zh', 'en']] }
+// pageKey → [mockup 檔, 語系, 相簿所在的那一段（第一個擷取群組）]
+const GALLERY_PAGES = {
+  'facility-tour': ['facility-tour.html', ['zh', 'en'], /<div class="tour-gallery[^"]*" id="tourGallery">([\s\S]*?)<\/div>/],
+  // 產業圖示下方的橫幅（2026-11-16 起可放多張，原本是中段橫幅的一格）
+  projects: ['printing-projects.html', ['zh', 'en'], /<div class="indgrid[\s\S]*?<\/div>\s*<\/div>\s*((?:<div class="fac-banner[^"]*">[\s\S]*?<\/div>\s*)+)/],
+}
 const GALLERY_ALTS_ZH = {
+  projects: ['NTI 包裝印刷作品集'],
   'facility-tour': [
     'NTI 總部大樓外觀', 'NTI 總部大樓夜景', '一樓大廳', '一樓大廳接待區', '一樓會議室', '二樓員工餐廳',
     '二樓辦公室', '二樓茶水間', '四樓作業室', '二樓印後加工區', '一樓裁紙區', '生產線上的平版印刷機',
@@ -100,9 +106,9 @@ const GALLERY_ALTS_ZH = {
 }
 
 function pageGallery(pageKey) {
-  const [file, langs] = GALLERY_PAGES[pageKey] ?? []
+  const [file, langs, frameRe] = GALLERY_PAGES[pageKey] ?? []
   if (!file) return {}
-  const frame = /<div class="tour-gallery[^"]*" id="tourGallery">([\s\S]*?)<\/div>/.exec(readMockup(file))?.[1]
+  const frame = frameRe.exec(readMockup(file))?.[1]
   if (!frame) throw new Error(`抽不出 ${file} 的相簿——mockup 的版面改了，請改 pageGallery() 的規則`)
   const items = [...frame.matchAll(/<img\b[^>]*?\ssrc="(assets\/[^"]+)"[^>]*?\salt="([^"]*)"/g)]
     .map((m) => ({ imagePath: asset(m[1]), imageAlt: decode(m[2]) }))
@@ -148,7 +154,8 @@ const MID_BANNER_PAGES = {
   facility: ['facility.html', 1], solutions: ['printing-solutions.html', 1],
   'facility-tour': ['facility-tour.html', 2], 'sustainability-hub': ['green-advantage.html', 4],
   'green-our-advantage': ['green-our-advantage.html', 1], 'green-carbon': ['green-carbon.html', 1],
-  'green-esg': ['green-esg.html', 1], projects: ['printing-projects.html', 1],
+  'green-esg': ['green-esg.html', 1],
+  // projects 那張 2026-11-16 起改為相簿（GALLERY_PAGES），可放多張
 }
 
 function pageMidBanners(pageKey) {
