@@ -274,6 +274,7 @@ export function FaqList({ items, children, locale }: { items: Faq[]; children?: 
 // ── 07 trend ──────────────────────────────────────────────────────────────
 /**
  * 產業趨勢清單：純文字卡（標題＋摘要＋Read more），點進 `/printing-trends/{slug}`。
+ * 放在頁面導言那個區塊的 .wrap 裡（不自帶 section，與 /news 同一種結構）。
  * 趨勢沒有封面圖，沿用最新消息的 `.news-grid`／`.ncard`、不放 `.nc-img`；
  * 摘要段落的樣式是 `.ncard.nc-text`（site.css）。
  * 底下接 mockup 原本放在最後一段的報價 CTA，字串與 mockup 相同（<T> 會翻）。
@@ -282,7 +283,6 @@ export function TrendList({ items, locale }: { items: Trend[]; locale: Locale })
   const l = withLocale(locale)
   return (
     <T locale={locale}>
-      <section className="section tight"><div className="wrap">
         <div className="news-grid">
           {items.map((t, i) => (
             <A key={t.id} href={l(`/printing-trends/${t.slug}`)} className="ncard nc-text reveal" data-d={String((i % 3) + 1)}>
@@ -297,7 +297,6 @@ export function TrendList({ items, locale }: { items: Trend[]; locale: Locale })
           ))}
         </div>
         <TrendCta locale={locale} />
-      </div></section>
     </T>
   )
 }

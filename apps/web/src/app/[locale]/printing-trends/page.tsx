@@ -29,10 +29,10 @@ export default async function Page({ params }: Props) {
         <h1 className="sec-title reveal">Industry Trends <span className="ti-slash">/</span> <span className="ti-alt">Where packaging is heading</span></h1>
         <div className="sec-sub reveal">What brand owners are asking us for, and what the regulations, materials and machines are about to make standard.</div>
         <p className="prose wide reveal mt-s">We sit between brand owners and the pressroom, so we see requirement changes early &mdash; usually a year or two before they land in a tender document. These are the shifts our customers are planning around right now.</p>
+        {/* 接了 CMS：卡片與導言同一個區塊（與 /news 一樣，間距只有格線的 margin-top） */}
+        {trends?.length ? <TrendList items={trends} locale={locale} /> : null}
       </div></section>
-      {trends?.length ? (
-        <TrendList items={trends} locale={locale} />
-      ) : trends ? null : (
+      {trends ? null : (
       <>
       <section className="section tight snug"><div className="wrap reveal">
         <div className="dtitle">Regulation is setting the pace</div>
