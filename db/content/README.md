@@ -307,6 +307,8 @@ Projects 頁隱藏「案例分享」（客戶沒有案例資料，2026-10-25）�
 「…case study highlights below」。頁面文字以英文原文的 hash 為 key，這支用新原文的 hash 補一筆中文
 （客戶 09-30 稿去掉「探索…案例精選」）；只動 `projects` 頁，Solutions 頁同一段沒改。冪等。
 
+> 2026-11-16 已把案例分享區塊與導言原句加回前台。250 寫的舊原文中文沒被刪，所以重新對得上；這支補的那筆暫時用不到，但保留著，之後再隱藏時還能接上。
+
 ```bash
 sqlcmd -S <server> -d NTI -I -b -i db/content/320_projects_hide_cases.sql
 ```
