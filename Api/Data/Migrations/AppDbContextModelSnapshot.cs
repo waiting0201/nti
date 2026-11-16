@@ -1853,6 +1853,10 @@ namespace Nti.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<string>("OgImagePath")
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
                     b.Property<DateTime?>("PublishAt")
                         .HasColumnType("datetime2(0)");
 
@@ -1889,6 +1893,35 @@ namespace Nti.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CanonicalUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("OgDescription")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("OgTitle")
+                        .HasMaxLength(90)
+                        .HasColumnType("nvarchar(90)");
+
+                    b.Property<string>("SeoDescription")
+                        .HasMaxLength(180)
+                        .HasColumnType("nvarchar(180)");
+
+                    b.Property<string>("SeoTitle")
+                        .HasMaxLength(70)
+                        .HasColumnType("nvarchar(70)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("Summary")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -1896,6 +1929,10 @@ namespace Nti.Api.Data.Migrations
 
                     b.HasKey("IndustryTrendId", "Lang")
                         .HasName("PK_IndustryTrendI18n");
+
+                    b.HasIndex("Lang", "Slug")
+                        .IsUnique()
+                        .HasDatabaseName("UX_IndustryTrendI18n_Lang_Slug");
 
                     b.ToTable("IndustryTrendI18n", null, t =>
                         {

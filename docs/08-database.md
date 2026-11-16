@@ -323,6 +323,7 @@ CREATE TABLE dbo.FaqI18n (
 CREATE TABLE dbo.IndustryTrend (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   SortOrder INT NOT NULL DEFAULT 0,
+  OgImagePath NVARCHAR(260) NULL,                         -- 社群分享圖；未填用全站預設（趨勢沒有封面）
   IsPublished BIT NOT NULL DEFAULT 1, PublishAt DATETIME2(0) NULL, UnpublishAt DATETIME2(0) NULL,
   /* audit */
 );
@@ -330,8 +331,11 @@ CREATE TABLE dbo.IndustryTrend (
 CREATE TABLE dbo.IndustryTrendI18n (
   IndustryTrendId INT NOT NULL REFERENCES dbo.IndustryTrend(Id),
   Lang VARCHAR(5) NOT NULL,
-  Title NVARCHAR(200) NOT NULL,
-  BodyHtml NVARCHAR(MAX) NOT NULL,
+  Title NVARCHAR(200) NOT NULL,                          -- 同時作為詳細頁 H1
+  Summary NVARCHAR(500) NULL,                             -- 清單卡片 + 詳細頁導言（2026-11-16）
+  BodyHtml NVARCHAR(MAX) NOT NULL,                        -- 詳細頁正文
+  Slug NVARCHAR(160) NOT NULL,                            -- /{lang}/printing-trends/{slug}；中英可不同
+  /* SEO 欄位組（§2.7，與 NewsI18n 相同）：SeoTitle／SeoDescription／CanonicalUrl／OgTitle／OgDescription */
   CONSTRAINT PK_IndustryTrendI18n PRIMARY KEY (IndustryTrendId, Lang)
 );
 ```
@@ -778,6 +782,7 @@ Azure SQL **Basic（5 DTU / 2 GB）**，索引寧缺勿濫；下列為必要清�
 -- 改真刪之後刪掉就不再有列，加不加都一樣；索引留著是為了擋「兩筆現存內容用同一個 slug」。
 
 CREATE UNIQUE INDEX UX_NewsI18n_Lang_Slug ON dbo.NewsI18n(Lang, Slug);
+CREATE UNIQUE INDEX UX_IndustryTrendI18n_Lang_Slug ON dbo.IndustryTrendI18n(Lang, Slug);   -- 2026-11-16
 CREATE UNIQUE INDEX UX_SolutionI18n_Lang_Slug ON dbo.SolutionI18n(Lang, Slug);
 CREATE UNIQUE INDEX UX_PageI18n_Lang_Slug ON dbo.PageI18n(Lang, Slug);
 
@@ -963,6 +968,7 @@ WHERE n.IsDeleted = 0 GROUP BY n.Id;
 | 2026-11-09 | Tim（Claude Code） | §4.1／§4.8：認證頁清單的區塊改由分類驅動。`Category` 加型別 `CertSection`；`CertificationListItem.Section` → `CategoryId`（型別安全複合 FK），建立七個區塊分類（代號沿用原值），名稱取「頁面文字」對大標的覆寫後刪除那些覆寫。外鍵 +1、PERSISTED 計算欄 +1、CHECK −1、索引換名。遷移 `Api/Data/Migrations/*_CertificationListSectionCategory` 與 `db/migrations/0024_certification_list_section_category.sql` 一對一 |
 | 2026-11-09 | Tim（Claude Code） | §4.1／§4.8：同日把 `CertSection` 併回 `Certification`——08 的 logo 與 08b 的清單共用認證分類（首頁 Proof 牆只顯示有 logo 的分類、認證頁只顯示有清單項目的分類）。依名稱對到既有分類，對不到的新建（代號 `section-*`）。結構數字與合併前相同（外鍵、計算欄改指 Certification；CK_Category_Type 回到九種）。遷移 `*_MergeCertSectionIntoCertification` 與 `db/migrations/0025_merge_cert_section_into_certification.sql` 一對一 |
 | 2026-11-11 | Tim（Claude Code） | §4.8：`Certification.PageCategoryId`——客戶要認證頁排成「區塊大標 → 文字清單 → 該區塊的 logo」，首頁三張卡與認證頁七區塊粒度不同，另開一欄（共用 `CategoryTypeGuard`）。外鍵 +1（`FK_Certification_PageCategory`，Category 型別安全複合外鍵 10 → 11）。遷移 `*_CertPageSection` 與 `db/migrations/0028_cert_page_section.sql` 一對一；初始值 `db/content/370_cert_page_section.sql` |
+| 2026-11-16 | Tim（Claude Code） | §4.7：產業趨勢分清單頁與詳細頁（`/printing-trends/{slug}`）。`IndustryTrendI18n` 加 `Summary`、`Slug` 與 SEO 欄位組（同 `NewsI18n`），`IndustryTrend` 加 `OgImagePath`；唯一索引 +1（`UX_IndustryTrendI18n_Lang_Slug`，非 PK/UQ 索引 22 → 23）。遷移 `*_TrendDetailPage` 與 `db/migrations/0029_trend_detail_page.sql` 一對一；`Slug` 不設 DEFAULT（匿名約束＋空字串撞唯一索引），既有列先給 `trend-{Id}`，正式值由 `db/content/400_trend_detail.sql` 帶入 |
 
-*最後更新：2026-11-11*
+*最後更新：2026-11-16*
 

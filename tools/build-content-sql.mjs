@@ -279,7 +279,11 @@ section({
   unit: 'trend', table: 'IndustryTrend', i18nTable: 'IndustryTrendI18n', fkColumn: 'IndustryTrendId',
   naturalKey: { column: 'SortOrder', value: (r) => int(r.sortOrder) },
   columns: { SortOrder: (r) => int(r.sortOrder), IsPublished: (r) => bit(r.isPublished) },
-  i18nColumns: { Title: ['title'], BodyHtml: ['body'] },
+  // Slug 有 (Lang, Slug) 唯一索引、預設值是空字串——插入時一定要帶，否則第二筆就撞索引
+  i18nColumns: {
+    Title: ['title'], Summary: ['summary'], BodyHtml: ['body'], Slug: ['slug'],
+    SeoTitle: ['seoTitle'], SeoDescription: ['metaDescription'],
+  },
 })
 
 // ── 08 certification ──────────────────────────────────────────────────────

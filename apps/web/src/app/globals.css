@@ -686,6 +686,10 @@ a:hover .rm svg,.ncard:hover .rm svg{transform:translateX(3px)}
 .ncard .news-meta .date{color:#b9c0b9}
 .ncard h3{font-size:1.02rem;font-weight:700;color:var(--grey);line-height:1.4;flex:1}
 .ncard .rm{gap:7px;font-size:.82rem;color:var(--teal)}
+/* 純文字卡（產業趨勢清單，沒有 .nc-img）：摘要段落撐開高度，Read more 對齊卡片底部 */
+.ncard.nc-text .nc-body{padding:28px 28px 30px;gap:12px}
+.ncard.nc-text h3{flex:0 0 auto;font-size:1.12rem}
+.ncard.nc-text p{flex:1;font-size:.9rem;line-height:1.75;color:var(--grey-2)}
 
 /* ---------- reveal ---------- */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}

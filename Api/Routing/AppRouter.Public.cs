@@ -37,6 +37,8 @@ public sealed partial class AppRouter
             ("GET",  ["green-vlog"]) or
             ("GET",  ["faq"]) or
             ("GET",  ["industry-trends"]) or
+            ("GET",  ["industry-trends", _]) or
+            ("GET",  ["industry-trends", _, "moved"]) or
             ("GET",  ["careers"]) or
             ("GET",  ["supplier", "notices"]) or
             ("GET",  ["supplier", "specs"]) or
@@ -94,6 +96,8 @@ public sealed partial class AppRouter
             ("GET",  ["green-vlog"])              => await vlogs.GetListAsync(req),
             ("GET",  ["faq"])                     => await faqs.GetListAsync(req),
             ("GET",  ["industry-trends"])         => await trends.GetListAsync(req),
+            ("GET",  ["industry-trends", var trendSlug])          => await trends.GetBySlugAsync(req, trendSlug),
+            ("GET",  ["industry-trends", var trendSlug, "moved"]) => await trends.GetMovedAsync(req, trendSlug),
             ("GET",  ["careers"])                 => await jobs.GetListAsync(req),
 
             // ── 供應商專區 ────────────────────────────────────────────────

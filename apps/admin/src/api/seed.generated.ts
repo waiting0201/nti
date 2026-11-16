@@ -2553,11 +2553,19 @@ export const SEED: Record<string, Row[]> = {
       "i18n": {
         "zh": {
           "title": "Regulation is setting the pace",
-          "body": "<p>Packaging rules in the EU, Japan and North America are converging on recyclability, recycled content and disclosure. Design decisions that used to be aesthetic — a laminate, a foil, a window — are now compliance decisions.</p>"
+          "summary": "Packaging rules in the EU, Japan and North America are converging on recyclability, recycled content and disclosure. Design decisions that used to be aesthetic — a laminate, a foil, a window — are now compliance decisions.",
+          "body": "<ul><li>Recyclability assessed at the pack level, not the material level.</li><li>Recycled-content thresholds written into purchase specifications.</li><li>Carbon and material data requested as part of the quote, not after delivery.</li></ul>",
+          "slug": "regulation-sets-the-pace",
+          "seoTitle": "Packaging Regulation Is Setting the Pace | NTI Printing",
+          "metaDescription": "EU, Japan and North American packaging rules are converging on recyclability, recycled content and disclosure — design choices are now compliance choices."
         },
         "en": {
           "title": "Regulation is setting the pace",
-          "body": "<p>Packaging rules in the EU, Japan and North America are converging on recyclability, recycled content and disclosure. Design decisions that used to be aesthetic — a laminate, a foil, a window — are now compliance decisions.</p>"
+          "summary": "Packaging rules in the EU, Japan and North America are converging on recyclability, recycled content and disclosure. Design decisions that used to be aesthetic — a laminate, a foil, a window — are now compliance decisions.",
+          "body": "<ul><li>Recyclability assessed at the pack level, not the material level.</li><li>Recycled-content thresholds written into purchase specifications.</li><li>Carbon and material data requested as part of the quote, not after delivery.</li></ul>",
+          "slug": "regulation-sets-the-pace",
+          "seoTitle": "Packaging Regulation Is Setting the Pace | NTI Printing",
+          "metaDescription": "EU, Japan and North American packaging rules are converging on recyclability, recycled content and disclosure — design choices are now compliance choices."
         }
       }
     },
@@ -2568,11 +2576,19 @@ export const SEED: Record<string, Row[]> = {
       "i18n": {
         "zh": {
           "title": "Mono-material replaces the composite pack",
-          "body": "<p>Composite structures print beautifully and recycle badly. The move is toward one board, one coating, one waste stream — which pushes the burden onto printing and finishing to deliver the same shelf impact without plastic lamination.</p>"
+          "summary": "Composite structures print beautifully and recycle badly. The move is toward one board, one coating, one waste stream — which pushes the burden onto printing and finishing to deliver the same shelf impact without plastic lamination.",
+          "body": "<ul><li>Recyclable water-based coatings in place of PET/OPP lamination.</li><li>Structural strength engineered through the dieline rather than added film.</li><li>FSC™ virgin and recycled boards specified side by side in one range.</li></ul>",
+          "slug": "mono-material-packaging",
+          "seoTitle": "Mono-Material Replaces the Composite Pack | NTI Printing",
+          "metaDescription": "One board, one coating, one waste stream: how printing and finishing deliver shelf impact without plastic lamination."
         },
         "en": {
           "title": "Mono-material replaces the composite pack",
-          "body": "<p>Composite structures print beautifully and recycle badly. The move is toward one board, one coating, one waste stream — which pushes the burden onto printing and finishing to deliver the same shelf impact without plastic lamination.</p>"
+          "summary": "Composite structures print beautifully and recycle badly. The move is toward one board, one coating, one waste stream — which pushes the burden onto printing and finishing to deliver the same shelf impact without plastic lamination.",
+          "body": "<ul><li>Recyclable water-based coatings in place of PET/OPP lamination.</li><li>Structural strength engineered through the dieline rather than added film.</li><li>FSC™ virgin and recycled boards specified side by side in one range.</li></ul>",
+          "slug": "mono-material-packaging",
+          "seoTitle": "Mono-Material Replaces the Composite Pack | NTI Printing",
+          "metaDescription": "One board, one coating, one waste stream: how printing and finishing deliver shelf impact without plastic lamination."
         }
       }
     },
@@ -2583,11 +2599,19 @@ export const SEED: Record<string, Row[]> = {
       "i18n": {
         "zh": {
           "title": "Carbon data becomes a line item",
-          "body": "<p>Scope 3 reporting has turned the printed carton into a data point. Brands increasingly need a per-order figure their ESG team can cite — measured against an audited baseline, not estimated from an industry average.</p>"
+          "summary": "Scope 3 reporting has turned the printed carton into a data point. Brands increasingly need a per-order figure their ESG team can cite — measured against an audited baseline, not estimated from an industry average.",
+          "body": "<ul><li>Per-order footprint reported with methodology notes.</li><li>Energy, board, ink and waste metered by production stage.</li><li>Supplier carbon performance weighted in vendor selection.</li></ul>",
+          "slug": "carbon-data-line-item",
+          "seoTitle": "Carbon Data Becomes a Line Item | NTI Printing",
+          "metaDescription": "Scope 3 reporting turns the printed carton into a data point. Brands need a per-order carbon figure measured against an audited baseline."
         },
         "en": {
           "title": "Carbon data becomes a line item",
-          "body": "<p>Scope 3 reporting has turned the printed carton into a data point. Brands increasingly need a per-order figure their ESG team can cite — measured against an audited baseline, not estimated from an industry average.</p>"
+          "summary": "Scope 3 reporting has turned the printed carton into a data point. Brands increasingly need a per-order figure their ESG team can cite — measured against an audited baseline, not estimated from an industry average.",
+          "body": "<ul><li>Per-order footprint reported with methodology notes.</li><li>Energy, board, ink and waste metered by production stage.</li><li>Supplier carbon performance weighted in vendor selection.</li></ul>",
+          "slug": "carbon-data-line-item",
+          "seoTitle": "Carbon Data Becomes a Line Item | NTI Printing",
+          "metaDescription": "Scope 3 reporting turns the printed carton into a data point. Brands need a per-order carbon figure measured against an audited baseline."
         }
       }
     },
@@ -2598,11 +2622,19 @@ export const SEED: Record<string, Row[]> = {
       "i18n": {
         "zh": {
           "title": "Shorter runs, more versions",
-          "body": "<p>Product ranges are fragmenting into regional, seasonal and campaign variants. The economic run length keeps falling, which favours digital and variable-data workflows alongside offset rather than instead of it.</p>"
+          "summary": "Product ranges are fragmenting into regional, seasonal and campaign variants. The economic run length keeps falling, which favours digital and variable-data workflows alongside offset rather than instead of it.",
+          "body": "<ul><li>Variable data and versioning handled without new plates.</li><li>Hybrid routing — the same artwork quoted offset, digital or UV.</li><li>Right-weighted inventory instead of over-printing to hit a price break.</li></ul>",
+          "slug": "shorter-runs-more-versions",
+          "seoTitle": "Shorter Print Runs, More Versions | NTI Printing",
+          "metaDescription": "Regional, seasonal and campaign variants keep shrinking run lengths — favouring digital and variable-data printing alongside offset."
         },
         "en": {
           "title": "Shorter runs, more versions",
-          "body": "<p>Product ranges are fragmenting into regional, seasonal and campaign variants. The economic run length keeps falling, which favours digital and variable-data workflows alongside offset rather than instead of it.</p>"
+          "summary": "Product ranges are fragmenting into regional, seasonal and campaign variants. The economic run length keeps falling, which favours digital and variable-data workflows alongside offset rather than instead of it.",
+          "body": "<ul><li>Variable data and versioning handled without new plates.</li><li>Hybrid routing — the same artwork quoted offset, digital or UV.</li><li>Right-weighted inventory instead of over-printing to hit a price break.</li></ul>",
+          "slug": "shorter-runs-more-versions",
+          "seoTitle": "Shorter Print Runs, More Versions | NTI Printing",
+          "metaDescription": "Regional, seasonal and campaign variants keep shrinking run lengths — favouring digital and variable-data printing alongside offset."
         }
       }
     },
@@ -2613,11 +2645,19 @@ export const SEED: Record<string, Row[]> = {
       "i18n": {
         "zh": {
           "title": "Traceability from plate to pallet",
-          "body": "<p>Food-contact and pharmaceutical work has raised the bar for everyone. Batch traceability, migration-safe ink systems and inspection records are moving from regulated categories into mainstream retail packaging.</p>"
+          "summary": "Food-contact and pharmaceutical work has raised the bar for everyone. Batch traceability, migration-safe ink systems and inspection records are moving from regulated categories into mainstream retail packaging.",
+          "body": "<ul><li>Batch records linking board lot, ink set and press run.</li><li>Low-migration, low-odour inks as a default rather than an upgrade.</li><li>Barcode, colour and rub testing logged per job.</li></ul>",
+          "slug": "traceability-plate-to-pallet",
+          "seoTitle": "Packaging Traceability from Plate to Pallet | NTI Printing",
+          "metaDescription": "Batch traceability, low-migration inks and inspection records are moving from food and pharma into mainstream retail packaging."
         },
         "en": {
           "title": "Traceability from plate to pallet",
-          "body": "<p>Food-contact and pharmaceutical work has raised the bar for everyone. Batch traceability, migration-safe ink systems and inspection records are moving from regulated categories into mainstream retail packaging.</p>"
+          "summary": "Food-contact and pharmaceutical work has raised the bar for everyone. Batch traceability, migration-safe ink systems and inspection records are moving from regulated categories into mainstream retail packaging.",
+          "body": "<ul><li>Batch records linking board lot, ink set and press run.</li><li>Low-migration, low-odour inks as a default rather than an upgrade.</li><li>Barcode, colour and rub testing logged per job.</li></ul>",
+          "slug": "traceability-plate-to-pallet",
+          "seoTitle": "Packaging Traceability from Plate to Pallet | NTI Printing",
+          "metaDescription": "Batch traceability, low-migration inks and inspection records are moving from food and pharma into mainstream retail packaging."
         }
       }
     }

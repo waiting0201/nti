@@ -39,6 +39,26 @@ public sealed class TrendHandler(ITrendReadService reads)
         CacheControl.NoStore(req.HttpContext.Response);
         return new OkObjectResult(ApiResponse.Ok(rows));
     }
+
+    public async Task<IActionResult> GetBySlugAsync(HttpRequest req, string slug)
+    {
+        var dto = await reads.GetBySlugAsync(LangResolver.Resolve(req), slug) ?? throw AppException.NotFound("IndustryTrend");
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok(dto));
+    }
+
+    /// <summary>
+    /// <c>GET /industry-trends/{slug}/moved</c>：舊 slug 搬到哪裡去了。前台詳細頁找不到文章時才打
+    /// （與 <c>/news/{slug}/moved</c> 同一套）。
+    /// </summary>
+    public async Task<IActionResult> GetMovedAsync(HttpRequest req, string slug)
+    {
+        var to = await reads.GetMovedToAsync(LangResolver.Resolve(req), slug) ?? throw AppException.NotFound("Redirect");
+
+        CacheControl.NoStore(req.HttpContext.Response);
+        return new OkObjectResult(ApiResponse.Ok(new { toPath = to }));
+    }
 }
 
 /// <summary>單元 08 certification。</summary>

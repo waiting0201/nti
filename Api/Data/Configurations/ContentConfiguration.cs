@@ -36,6 +36,7 @@ public sealed class IndustryTrendConfiguration : IEntityTypeConfiguration<Indust
     {
         b.ToTable("IndustryTrend");
         b.Property(x => x.SortOrder).HasDefaultValue(0);
+        b.Property(x => x.OgImagePath).HasMaxLength(260);
         b.Publishable().Audit();
     }
 }
@@ -46,6 +47,16 @@ public sealed class IndustryTrendI18nConfiguration : IEntityTypeConfiguration<In
     {
         b.I18nOf<IndustryTrendI18n, IndustryTrend>(nameof(IndustryTrendI18n.IndustryTrendId));
         b.Property(x => x.Title).HasMaxLength(200);
+        // 與 NewsI18n 同一組長度（SEO 欄位組，docs/08 §2.7）
+        b.Property(x => x.Summary).HasMaxLength(500);
+        b.Property(x => x.Slug).HasMaxLength(160);
+        b.Property(x => x.SeoTitle).HasMaxLength(70);
+        b.Property(x => x.SeoDescription).HasMaxLength(180);
+        b.Property(x => x.CanonicalUrl).HasMaxLength(300);
+        b.Property(x => x.OgTitle).HasMaxLength(90);
+        b.Property(x => x.OgDescription).HasMaxLength(200);
+
+        b.HasIndex(x => new { x.Lang, x.Slug }).IsUnique().HasDatabaseName("UX_IndustryTrendI18n_Lang_Slug");
     }
 }
 

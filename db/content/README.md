@@ -358,3 +358,14 @@ sqlcmd -S <server> -d NTI -I -b -i db/content/290_cert_proof_groups.sql
 ```bash
 sqlcmd -S <server> -d NTI -I -b -i db/content/390_solution_cover_home.sql
 ```
+
+## 400_trend_detail.sql
+
+產業趨勢分清單頁／詳細頁（2026-11-16）。EF migration `TrendDetailPage` 給既有的趨勢暫用 slug `trend-{Id}`，
+這支把 mockup 那 5 筆補成正式值：網址代稱、摘要（原本的段落）、內文（段落下的三點）、SEO 標題與搜尋摘要（初稿，待客戶校閱）。
+只動 slug 還是 `trend-{Id}` 的列；摘要／SEO 只補空的；內文只在仍是 200 當初匯入的那一段時才換。冪等。
+新建的庫由 200 直接帶入同樣的值，這支跑了是 0 筆。**正式庫在部署新版前台之前跑**。
+
+```bash
+sqlcmd -S <server> -d NTI -I -b -i db/content/400_trend_detail.sql
+```

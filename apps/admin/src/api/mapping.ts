@@ -22,7 +22,7 @@ export type UnitMap = {
   unsupported?: string[]
 }
 
-/** SEO 欄位組（UI 的 SEO_FIELDS ↔ i18n 的 SEO 欄位）。page／news／solution 共用。 */
+/** SEO 欄位組（UI 的 SEO_FIELDS ↔ i18n 的 SEO 欄位）。page／news／solution／trend 共用。 */
 const SEO_I18N = {
   metaDescription: 'seoDescription',
   canonical: 'canonicalUrl',
@@ -67,7 +67,8 @@ export const UNIT_MAP: Record<string, UnitMap> = {
   },
 
   trend: {
-    i18n: { body: 'bodyHtml' },
+    entity: { ...SEO_ENTITY },
+    i18n: { body: 'bodyHtml', ...SEO_I18N },
   },
 
   certification: {

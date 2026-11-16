@@ -272,18 +272,46 @@ export function FaqList({ items, children, locale }: { items: Faq[]; children?: 
 }
 
 // ── 07 trend ──────────────────────────────────────────────────────────────
-export function TrendSections({ items }: { items: Trend[] }) {
+/**
+ * 產業趨勢清單：純文字卡（標題＋摘要＋Read more），點進 `/printing-trends/{slug}`。
+ * 趨勢沒有封面圖，沿用最新消息的 `.news-grid`／`.ncard`、不放 `.nc-img`；
+ * 摘要段落的樣式是 `.ncard.nc-text`（site.css）。
+ * 底下接 mockup 原本放在最後一段的報價 CTA，字串與 mockup 相同（<T> 會翻）。
+ */
+export function TrendList({ items, locale }: { items: Trend[]; locale: Locale }) {
+  const l = withLocale(locale)
   return (
-    <>
-      {items.map((t) => (
-        <section key={t.id} className="section tight snug">
-          <div className="wrap reveal">
-            <div className="dtitle">{t.title}</div>
-            <div className="rte rte-text" dangerouslySetInnerHTML={{ __html: t.bodyHtml }} />
-          </div>
-        </section>
-      ))}
-    </>
+    <T locale={locale}>
+      <section className="section tight"><div className="wrap">
+        <div className="news-grid">
+          {items.map((t, i) => (
+            <A key={t.id} href={l(`/printing-trends/${t.slug}`)} className="ncard nc-text reveal" data-d={String((i % 3) + 1)}>
+              <div className="nc-body">
+                <h3>{t.title}</h3>
+                {t.summary && <p>{t.summary}</p>}
+                <span className="rm">
+                  Read more <Arrow />
+                </span>
+              </div>
+            </A>
+          ))}
+        </div>
+        <TrendCta locale={locale} />
+      </div></section>
+    </T>
+  )
+}
+
+/** 報價 CTA（mockup printing-trends.html 最後一段的 .faq-cta）。清單與詳細頁共用 */
+export function TrendCta({ locale }: { locale: Locale }) {
+  const l = withLocale(locale)
+  return (
+    <T locale={locale}>
+      <div className="faq-cta reveal mt-l">
+        <div><h3>Planning against one of these shifts?</h3><p>Tell us the spec you are being asked to hit &mdash; we will tell you what it costs to print.</p></div>
+        <A href={l("/get-a-quote")} className="btn btn-solid">Get a quote</A>
+      </div>
+    </T>
   )
 }
 

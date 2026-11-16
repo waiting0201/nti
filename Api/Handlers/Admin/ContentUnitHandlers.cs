@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Nti.Api.Common;
 using Nti.Api.Data;
 using Nti.Api.Models.Entities;
+using Nti.Api.Services.Dapper;
 
 namespace Nti.Api.Handlers.Admin;
 
@@ -68,31 +69,9 @@ public sealed class AdminNewsHandler(AppDbContext db) : AdminContentHandler<News
         var news = await Db.News.FindAsync(id);
         if (news is not { IsPublished: true }) return;
 
-        var from = SitePaths.For(lang, $"/news/{oldSlug}");
-        var to   = SitePaths.For(lang, $"/news/{newSlug}");
-
-        // 改回以前用過的 slug：先前建的「這個網址 → 別處」會變成把現行網址轉走，停用它
-        foreach (var stale in await Db.Redirect.Where(r => r.FromPath == to).ToListAsync())
-            stale.IsActive = false;
-
-        // 改第二次以上：原本指向舊網址的轉址直接改指新網址，不要讓使用者多跳一次
-        // （上一步停用的那筆除外：它改指過去就成了自己轉自己）
-        foreach (var chained in await Db.Redirect.Where(r => r.ToPath == from && r.FromPath != to).ToListAsync())
-            chained.ToPath = to;
-
-        // FromPath 的唯一索引不分軟刪，所以查的時候也不能濾 IsDeleted
-        var existing = await Db.Redirect.FirstOrDefaultAsync(r => r.FromPath == from);
-        if (existing is null)
-        {
-            Db.Redirect.Add(new Redirect { FromPath = from, ToPath = to, StatusCode = 301 });
-        }
-        else
-        {
-            existing.ToPath     = to;
-            existing.StatusCode = 301;
-            existing.IsActive   = true;
-            existing.IsDeleted  = false;
-        }
+        await UpsertSlugRedirectAsync(
+            SitePaths.For(lang, $"/news/{oldSlug}"),
+            SitePaths.For(lang, $"/news/{newSlug}"));
     }
 
     /// <summary>編輯畫面要知道這篇目前掛了哪些標籤，才能把晶片勾起來。</summary>
@@ -113,8 +92,20 @@ public sealed class AdminVlogHandler(AppDbContext db) : AdminContentHandler<Vlog
 /// <summary>06 faq。</summary>
 public sealed class AdminFaqHandler(AppDbContext db) : AdminContentHandler<Faq, FaqI18n>(db);
 
-/// <summary>07 trend。</summary>
-public sealed class AdminTrendHandler(AppDbContext db) : AdminContentHandler<IndustryTrend, IndustryTrendI18n>(db);
+/// <summary>07 trend。有詳細頁（<c>/printing-trends/{slug}</c>），改 slug 的處理與 04 news 相同。</summary>
+public sealed class AdminTrendHandler(AppDbContext db) : AdminContentHandler<IndustryTrend, IndustryTrendI18n>(db)
+{
+    /// <summary>已上架的趨勢改 slug：舊網址自動 301 到新網址（草稿不建，理由同 news）。</summary>
+    protected override async Task OnSlugChangedAsync(int id, string lang, string oldSlug, string newSlug)
+    {
+        var trend = await Db.IndustryTrend.FindAsync(id);
+        if (trend is not { IsPublished: true }) return;
+
+        await UpsertSlugRedirectAsync(
+            SitePaths.For(lang, TrendReadService.DetailPath(oldSlug)),
+            SitePaths.For(lang, TrendReadService.DetailPath(newSlug)));
+    }
+}
 
 /// <summary>08 certification。</summary>
 public sealed class AdminCertificationHandler(AppDbContext db) : AdminContentHandler<Certification, CertificationI18n>(db);

@@ -269,7 +269,7 @@ const HAND_MAINTAINED = new Set([
   'printing-projects',      // 案例格線
   'blog',                   // 影片
   'faq',                    // 問答與分組
-  'printing-trends',        // 趨勢段落
+  'printing-trends',        // 趨勢清單（卡片連到 /printing-trends/{slug}）
   'careers',                // 職缺
   'about-certifications',   // 認證牆
   'contact',                // 公司資訊（網站設定 21，非內容單元）

@@ -186,7 +186,8 @@ mockup 內容（現況部署），設了就改吃 CMS。
 | **全部 44 頁的 `<head>`** | 固定頁 SEO（對照表 `src/lib/pages.ts`）。含 noindex 開關與 OG 欄位 |
 | 首頁 | Banner、Proof 認證牆、客戶 logo |
 | `/news` + **新增的 `/news/{slug}`** | 消息列表與詳細頁 |
-| `/printing-projects`、`/faq`、`/blog`、`/printing-trends`、`/careers` | 各內容單元 |
+| `/printing-trends` + **新增的 `/printing-trends/{slug}`**（2026-11-16） | 產業趨勢清單（標題＋摘要）與詳細頁 |
+| `/printing-projects`、`/faq`、`/blog`、`/careers` | 各內容單元 |
 | `/about-certifications`、`/supplier-area` | 認證牆／公告、規範、下載 |
 | `/facility-*`（4）、`/products-*`（3） | 設備卡、方案品項卡 |
 
@@ -198,6 +199,16 @@ mockup 內容（現況部署），設了就改吃 CMS。
 
 ⚠ 接了 CMS 的 16 頁不再由 `build-pages.mjs` 產生（會洗掉接線），
 清單在該腳本的 `HAND_MAINTAINED`。
+
+### ✅ 產業趨勢分清單頁與詳細頁（2026-11-16）
+
+`/printing-trends` 改成純文字卡（標題＋摘要＋Read more），點進 `/printing-trends/{slug}`（導言＝摘要、正文＝內文、報價 CTA、返回清單）。
+後台 07 加「摘要」與 SEO 欄位組；已上架改網址代稱自動 301。詳細頁有 canonical／hreflang／OG／`Article` 與麵包屑結構化資料，並列進 sitemap。
+
+- schema：EF `*_TrendDetailPage`（參考 `db/migrations/0029`），verify-ef 全數 PASS
+- **正式庫部署順序**：`dotnet ef database update` → `db/content/400_trend_detail.sql` → 再部署新版前台
+- 沒接 API 時清單頁照舊是 mockup 的五段（`verify:markup` 不受影響），詳細頁 404
+- ⚠ 5 筆的網址代稱、SEO 標題／搜尋摘要是我方初稿，待客戶校閱
 
 ### ✅ 稽核「後台改得到、前台卻讀另一份」（2026-11-13）
 

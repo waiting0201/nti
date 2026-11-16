@@ -62,7 +62,7 @@ export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.nti-prin
  * `mediaUrl()` 在未設 MEDIA_BASE 時回的是站內相對路徑，但 OG／Twitter 的圖片
  * 必須是絕對網址，所以這裡補上 `siteUrl`。
  */
-const DEFAULT_OG_IMAGE = (() => {
+export const DEFAULT_OG_IMAGE = (() => {
   const url = mediaUrl('/assets/og-default.jpg')
   return url.startsWith('/') ? siteUrl + url : url
 })()

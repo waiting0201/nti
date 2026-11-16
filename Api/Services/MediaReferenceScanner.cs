@@ -71,6 +71,7 @@ public sealed class MediaReferenceScanner(AppDbContext db)
         AddHtml(await db.NewsI18n.Select(x => x.BodyHtml).ToListAsync(ct));
         AddHtml(await db.FaqI18n.Select(x => x.AnswerHtml).ToListAsync(ct));
         AddHtml(await db.IndustryTrendI18n.Select(x => x.BodyHtml).ToListAsync(ct));
+        AddRange(await db.IndustryTrend.Select(x => x.OgImagePath).ToListAsync(ct));
         AddHtml(await db.JobPostingI18n.Select(x => x.DescriptionHtml).ToListAsync(ct));
         AddHtml(await db.SupplierNoticeI18n.Select(x => x.BodyHtml).ToListAsync(ct));
         AddHtml(await db.PageI18n.Select(x => x.BodyHtml).ToListAsync(ct));

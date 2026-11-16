@@ -263,6 +263,27 @@ export function newsArticle(
 }
 
 /**
+ * 產業趨勢詳細頁（`/printing-trends/{slug}`）。趨勢沒有發佈日與分類，所以用一般的
+ * `Article` 而不是 `NewsArticle`；圖片用分享圖（沒填就是全站預設那張）。
+ */
+export function trendArticle(
+  locale: Locale,
+  article: { title: string; summary?: string | null; image: string; url: string },
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    ...(article.summary ? { description: article.summary } : {}),
+    inLanguage: htmlLang[locale],
+    ...(article.image ? { image: [absolute(article.image)] } : {}),
+    mainEntityOfPage: article.url,
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+  }
+}
+
+/**
  * `/faq` 的問答。答案原樣給後台富文本的 HTML——Google 允許 `p`／`ul`／`a`／`strong` 等少數標籤，
  * 與畫面上 `<details>` 裡渲染的是同一份。
  */

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getNews, getPageIndexability, hasApi } from '@/lib/api'
+import { getNews, getPageIndexability, getTrends, hasApi } from '@/lib/api'
 import { PAGE_KEY_BY_PATH } from '@/lib/pages'
 import { localeUrl as url, locales, type Locale } from '@/lib/i18n'
 import { ROUTES } from '@/lib/routes'
@@ -13,7 +13,7 @@ import { ZH_ONLY_ROUTES } from '@/lib/careers'
  * 兩邊不一致的話 Google 會兩邊都不信。
  *
  * - 靜態路由來自 `lib/routes.ts`（由 mockup 產生，44 條）
- * - CMS 的消息詳細頁在有設 `NEXT_PUBLIC_API_BASE` 時一併展開；沒設就只有靜態路由
+ * - CMS 的消息詳細頁與產業趨勢詳細頁在有設 `NEXT_PUBLIC_API_BASE` 時一併展開；沒設就只有靜態路由
  * - 標籤封存頁不列（noindex）
  *   （`/news/{slug}` 那條路由此時本來就會 404，列進來只會製造無效網址）
  *
@@ -82,6 +82,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(item.publishDate),
         alternates: {
           languages: siblings.en ? { ...languages, 'x-default': url('en', `/news/${siblings.en}`) } : languages,
+        },
+      })
+    }
+  }
+
+  /*
+   * CMS 產業趨勢詳細頁（2026-11-16 起）：與消息同一套配對方式。沒有日期欄位，不給 lastModified。
+   */
+  const trends = Object.fromEntries(
+    await Promise.all(locales.map(async (l) => [l, (await getTrends(l)) ?? []] as const)),
+  ) as Record<Locale, Awaited<ReturnType<typeof getTrends>> & object>
+
+  const trendSlugById = new Map<number, Partial<Record<Locale, string>>>()
+  for (const locale of locales) {
+    for (const item of trends[locale]) {
+      trendSlugById.set(item.id, { ...trendSlugById.get(item.id), [locale]: item.slug })
+    }
+  }
+
+  for (const locale of locales) {
+    for (const item of trends[locale]) {
+      const siblings = trendSlugById.get(item.id) ?? {}
+      const languages = Object.fromEntries(
+        locales
+          .filter((l) => siblings[l])
+          .map((l) => [langKey(l), url(l, `/printing-trends/${siblings[l]}`)]),
+      )
+      entries.push({
+        url: url(locale, `/printing-trends/${item.slug}`),
+        alternates: {
+          languages: siblings.en ? { ...languages, 'x-default': url('en', `/printing-trends/${siblings.en}`) } : languages,
         },
       })
     }

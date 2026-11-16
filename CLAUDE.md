@@ -151,6 +151,7 @@ NTI/
   db/tools/sqlcmd.sh NTI < db/content/370_cert_page_section.sql      # 認證 logo 的「認證頁區塊」：依名稱對到 08b 清單的區塊
   db/tools/sqlcmd.sh NTI < db/content/380_factory_gallery_zh.sql     # 工廠導覽中文版影片下方的相簿：帶入與英文版相同的 12 張（中文替代文字）
   db/tools/sqlcmd.sh NTI < db/content/390_solution_cover_home.sql    # 方案封面預設值改為首頁方案卡那四張（前台首頁卡片改讀 02 的封面）
+  db/tools/sqlcmd.sh NTI < db/content/400_trend_detail.sql           # 產業趨勢分清單／詳細頁：5 筆補網址代稱、摘要、SEO（只動 trend-{Id} 暫用 slug 的列）
   db/tools/sqlcmd.sh NTI < db/verify/verify-ef.sql             # 應輸出「全數 PASS」
   ```
 

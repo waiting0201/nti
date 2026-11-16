@@ -708,6 +708,7 @@ export const ZH: Record<string, string> = {
   "Through 25 May 2025, 12:00–19:00, free entry.": "至 2025 年 5 月 25 日，12:00–19:00，免費入場。",
   "The work was covered by Yahoo News, China Times, InTime and INNEWS, and an exhibition film is available on YouTube.": "本次展覽獲 Yahoo 新聞、中國時報、InTime 與 INNEWS 報導，展覽影片可於 YouTube 觀看。",
   "« All news": "« 所有消息",
+  "« All trends": "« 所有產業趨勢",
   "Newer: Green Drive × Digital Innovation seminar wraps up": "較新：綠色驅動 × 數位創新研討會圓滿落幕",
   "Older: Gentle Wild paper bags: a different animal on every bag": "較舊：溫柔的野：每個紙袋上都是不同的動物",
   "NTI interviewed by CommonWealth Magazine — NTI Printing": "NTI 接受《天下雜誌》專訪 —— NTI Printing",

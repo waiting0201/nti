@@ -373,18 +373,51 @@ function detailsList(file, keys) {
 }
 
 /* ── mockup：產業趨勢 ──────────────────────────────────── */
+/*
+ * 2026-11-16 起分清單頁與詳細頁（/printing-trends/{slug}）：
+ *   - mockup 每段的導言段落 → 摘要（清單卡片＋詳細頁導言）
+ *   - 段落下的三點 → 內文（<ul>）
+ * mockup 沒有網址代稱與 SEO 文案，這裡補一份初稿（後台 SEO 欄位組必填）。
+ * 中文在 tools/content-zh.mjs（以 sortOrder 為 key）。
+ */
+const TREND_SEO = {
+  10: { slug: 'regulation-sets-the-pace',
+        seoTitle: 'Packaging Regulation Is Setting the Pace | NTI Printing',
+        metaDescription: 'EU, Japan and North American packaging rules are converging on recyclability, recycled content and disclosure — design choices are now compliance choices.' },
+  20: { slug: 'mono-material-packaging',
+        seoTitle: 'Mono-Material Replaces the Composite Pack | NTI Printing',
+        metaDescription: 'One board, one coating, one waste stream: how printing and finishing deliver shelf impact without plastic lamination.' },
+  30: { slug: 'carbon-data-line-item',
+        seoTitle: 'Carbon Data Becomes a Line Item | NTI Printing',
+        metaDescription: 'Scope 3 reporting turns the printed carton into a data point. Brands need a per-order carbon figure measured against an audited baseline.' },
+  40: { slug: 'shorter-runs-more-versions',
+        seoTitle: 'Shorter Print Runs, More Versions | NTI Printing',
+        metaDescription: 'Regional, seasonal and campaign variants keep shrinking run lengths — favouring digital and variable-data printing alongside offset.' },
+  50: { slug: 'traceability-plate-to-pallet',
+        seoTitle: 'Packaging Traceability from Plate to Pallet | NTI Printing',
+        metaDescription: 'Batch traceability, low-migration inks and inspection records are moving from food and pharma into mainstream retail packaging.' },
+}
+
 function trends() {
   const html = readMockup('printing-trends.html')
-  const re = /<div class="dtitle[^"]*">([\s\S]*?)<\/div>\s*<p class="prose[^"]*">([\s\S]*?)<\/p>/g
+  const re = /<div class="dtitle[^"]*">([\s\S]*?)<\/div>\s*<p class="prose[^"]*">([\s\S]*?)<\/p>\s*<div class="flist[^"]*">([\s\S]*?)<\/div>/g
   const rows = []
   let m
   let order = 0
   while ((m = re.exec(html))) {
     order += 10
-    const t = text(m[1])
-    const b = `<p>${text(m[2])}</p>`
-    rows.push({ id: String(order), sortOrder: order, isPublished: true, i18n: { zh: { title: t, body: b }, en: { title: t, body: b } } })
+    const seo = TREND_SEO[order]
+    if (!seo) throw new Error(`printing-trends.html 第 ${order / 10} 段沒有對應的 TREND_SEO`)
+    const points = [...m[3].matchAll(/<p class="fi">([\s\S]*?)<\/p>/g)].map((x) => `<li>${text(x[1])}</li>`)
+    const t = {
+      title: text(m[1]),
+      summary: text(m[2]),
+      body: `<ul>${points.join('')}</ul>`,
+      ...seo,
+    }
+    rows.push({ id: String(order), sortOrder: order, isPublished: true, i18n: { zh: { ...t }, en: { ...t } } })
   }
+  if (rows.length !== Object.keys(TREND_SEO).length) throw new Error(`產業趨勢只解析到 ${rows.length} 段`)
   return rows
 }
 

@@ -233,12 +233,15 @@ export const trend: Unit = {
   title: '產業趨勢 Industry Trends',
   group: '內容',
   phase: 'P4',
-  frontend: '產業趨勢 的段落區塊',
+  frontend: '產業趨勢 清單（標題＋摘要）與詳細頁（/printing-trends/網址代稱）',
   sortable: true,
   hasStatus: true,
+  hasSeo: true,
   fields: [
-    { key: 'title', label: '標題', type: 'text', i18n: true, required: true, max: 200, side: 'locale' },
-    { key: 'body', label: '內文', type: 'richtext', i18n: true, required: true, side: 'locale' },
+    { key: 'title', label: '標題', type: 'text', i18n: true, required: true, max: 200, side: 'locale', hint: '同時作為詳細頁的大標',
+      tag: 'h1', tagNote: '詳細頁的大標是 <h1>；清單卡片上是 <h3>' },
+    { key: 'summary', label: '摘要', type: 'textarea', i18n: true, required: true, max: 500, side: 'locale', hint: '清單卡片 + 詳細頁導言' },
+    { key: 'body', label: '內文', type: 'richtext', i18n: true, required: true, side: 'locale', hint: '詳細頁的正文（導言之下）' },
   ],
   columns: [{ key: 'title', label: '標題' }, ...statusColumns],
 }

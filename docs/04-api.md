@@ -81,10 +81,13 @@
   - `GET /news/{slug}` 的回應含 `tags: TagDto[]`
   - `GET /news/{slug}/moved` → `{ toPath }`：舊 slug 的新網址，沒搬過回 404。已上架消息在後台改 slug 時
     自動寫一筆 `Redirect`（`/{lang}/news/{舊}` → `/{lang}/news/{新}`），前台詳細頁找不到文章時才查
-- 消息／方案／標籤的 slug 值域一律 `^[a-z0-9]+(?:-[a-z0-9]+)*$`（`Api/Common/Slugs.cs`），不合規回 `VALIDATION_FORMAT`
+- 消息／方案／標籤／產業趨勢的 slug 值域一律 `^[a-z0-9]+(?:-[a-z0-9]+)*$`（`Api/Common/Slugs.cs`），不合規回 `VALIDATION_FORMAT`
 - `GET /tags`、`GET /tags/{slug}` — 消息標籤（單元 25）。**只回有已上架消息的標籤**；
   `NewsCount = 0` 的標籤在 `/tags/{slug}` 回 404，避免產出空的封存頁
-- `GET /faq`、`GET /industry-trends`、`GET /careers`
+- `GET /faq`、`GET /careers`
+- `GET /industry-trends`（清單：`id`／`title`／`summary`／`slug`，**不含內文**）、
+  `GET /industry-trends/{slug}`（詳細頁：`title`／`summary`／`bodyHtml`／`seo`）、
+  `GET /industry-trends/{slug}/moved` → `{ toPath }`（同 news：已上架趨勢改 slug 時自動建的 301）。2026-11-16 起
 - `GET /supplier/notices`、`/supplier/specs`、`/supplier/downloads`
 - `POST /supplier/downloads/{id}/hit`（累計 `SupplierDownload.DownloadCount`；全部項目一律公開下載）
 - `GET /pages/{pageKey}`（**29 個**固定頁的 SEO 欄位；`HasRichBody = 1` 者另含 `bodyHtml` —— `privacy-legal` 與預留的 `green-csr`；
@@ -211,8 +214,9 @@
 | 2026-09-10 | Tim（Claude Code） | 新增 **`POST /admin/{unit}/upload-file`**（文件：PDF／DOCX／XLSX／ZIP，≤20MB，權限同 `{unit}.edit`）。原本只有一支 `/upload` 且白名單寫死圖片，公告附件與供應商下載檔（docs/09 §3 就寫明收 PDF／XLSX／DOCX／ZIP）接上 API 後會一律被退成 `UPLOAD_TYPE`。不把 zip／docx 併進 `/upload` 的白名單，是因為那會讓圖片欄位也開始收壓縮檔。`Api/openapi.yaml` 已同步 |
 | 2026-09-11 | Tim（Claude Code） | **快取標頭全面改 `no-store`**：前台跟著拿掉 ISR（見 docs/02），留著沒有人遵守的 `s-maxage=300` 只會在哪天中間冒出一層共用快取時，讓「後台改了前台沒變」以無法重現的方式回來 |
 | 2026-11-05 | Tim（Claude Code） | 新增 `GET /sustainability-goals`（ESG 頁永續目標表，每筆 `id`／`sortOrder`／`goal`／`timeline`，依排序）。後台 `/admin/certification/goal` 沿用 `certification.*`，權限矩陣不變。`Api/openapi.yaml` 已同步 |
+| 2026-11-16 | Tim（Claude Code） | 產業趨勢分清單與詳細頁：`GET /industry-trends` 改回卡片欄位（不含 `bodyHtml`），新增 `GET /industry-trends/{slug}` 與 `/{slug}/moved`；兩條都登記在 `AppRouter.Public.cs` 白名單 |
 
-*最後更新：2026-09-11*
+*最後更新：2026-11-16*
 
 | 2026-09-24 | Tim（Claude Code） | 頁面文字覆寫（09 §7.1）：`GET /pages/{pageKey}` 多回 `texts`（原文 → 該語系的字）；新增 `GET`／`PUT /admin/page/{pageKey}/texts`，PUT body 為 `{ items: [{ lang, sourceText, value }] }`，value 為空＝刪除該覆寫。沿用 `page.view`／`page.edit`，權限矩陣不變。首批開放 About Us 五頁 |
 | 2026-09-24 | Tim（Claude Code） | `GET /certifications`（與首頁 `certifications`）每筆多回 `certificateNo`、`certifiedDate`、`lastAuditDate`（皆可空）；頁面文字的開放範圍擴大到所有固定頁（`green-csr` 除外），端點不變 |

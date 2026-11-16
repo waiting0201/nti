@@ -205,7 +205,11 @@ export type Faq = {
   answerHtml: string
 }
 
-export type Trend = { id: number; title: string; bodyHtml: string }
+/** 產業趨勢清單的一張卡（2026-11-16 起清單不含內文，內文在詳細頁） */
+export type Trend = { id: number; title: string; summary: string | null; slug: string }
+
+/** `/printing-trends/{slug}` 詳細頁 */
+export type TrendDetail = { id: number; title: string; summary: string | null; bodyHtml: string; seo: Seo }
 
 export type Certification = {
   id: number
@@ -337,6 +341,12 @@ export const getNewsByTag      = cache((l: Locale, slug: string) =>
 export const getVlogs          = (l: Locale) => fetchApi<Vlog[]>(`/green-vlog${q(l)}`)
 export const getFaqs           = (l: Locale) => fetchApi<Faq[]>(`/faq${q(l)}`)
 export const getTrends         = (l: Locale) => fetchApi<Trend[]>(`/industry-trends${q(l)}`)
+// generateMetadata 與頁面本體都要，cache() 讓同一請求只打一次
+export const getTrend          = cache((l: Locale, slug: string) =>
+  fetchApi<TrendDetail>(`/industry-trends/${encodeURIComponent(slug)}${q(l)}`))
+/** 已上架趨勢改過 slug 時，舊 slug 的新網址（後台自動建的 301）；沒搬過回 null */
+export const getTrendMoved     = (l: Locale, slug: string) =>
+  fetchApi<{ toPath: string }>(`/industry-trends/${encodeURIComponent(slug)}/moved${q(l)}`)
 export const getCertifications = (l: Locale) => fetchApi<Certification[]>(`/certifications${q(l)}`)
 export const getCertificationItems = (l: Locale) =>
   fetchApi<CertificationListItem[]>(`/certification-items${q(l)}`)

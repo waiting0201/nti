@@ -6,13 +6,14 @@ import * as content from './content'
 import * as rest from './rest'
 
 /**
- * SEO 欄位組（docs/09-cms-admin.md §5.6）—— 僅 page／news／solution 三個單元有。
- * Slug 只有新聞真的會上網址（`/news/{slug}`），已上架的消息改 slug 時後端自動建 301。
+ * SEO 欄位組（docs/09-cms-admin.md §5.6）—— page／news／solution／trend 四個單元有。
+ * Slug 只有新聞與產業趨勢真的會上網址（`/news/{slug}`、`/printing-trends/{slug}`），
+ * 已上架的內容改 slug 時後端自動建 301。
  * 固定頁與方案的網址寫死在前台路由，slug 在後台不顯示（見 unitFields）。
  */
 export const SEO_FIELDS: Field[] = [
   { key: 'slug', label: '網址代稱 Slug', type: 'text', i18n: true, required: true, side: 'locale',
-    hint: '會出現在網址上（/news/這一段）；小寫英數與連字號，中英可不同。已上架後修改，舊網址會自動 301 到新網址',
+    hint: '會出現在網址上（最新消息是 /news/這一段，產業趨勢是 /printing-trends/這一段）；小寫英數與連字號，中英可不同。已上架後修改，舊網址會自動 301 到新網址',
     pattern: SLUG_PATTERN },
   { key: 'seoTitle', label: 'SEO 標題', type: 'text', i18n: true, required: true, max: 70, side: 'locale' },
   { key: 'metaDescription', label: '搜尋摘要 Meta Description', type: 'textarea', i18n: true, required: true, max: 180, side: 'locale' },

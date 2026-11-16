@@ -116,7 +116,8 @@ export function SiteHeader({ solutions }: { solutions?: { code: string; name: st
   const { locale, path } = splitLocale(pathname)
   const l = withLocale(locale)
   const slug = path.replace(/^\/|\/$/g, '')
-  const [activeTop, activeSub] = NAV_ACTIVE[slug] ?? []
+  // CMS 的詳細頁（/news/{slug}、/printing-trends/{slug}）不在表裡，沿用所屬清單頁的 active 狀態
+  const [activeTop, activeSub] = NAV_ACTIVE[slug] ?? NAV_ACTIVE[slug.split('/')[0]] ?? []
 
   const menu = !solutions
     ? MENU

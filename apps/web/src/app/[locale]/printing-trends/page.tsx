@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { T } from '@/lib/t'
 import { A } from '@/components/A'
-import { TrendSections, PageBanner } from '@/components/cms'
+import { TrendList, PageBanner } from '@/components/cms'
 import { bannerSrc, getPage, getTrends } from '@/lib/api'
 import { pageMetadata, withLocale, type Locale } from '@/lib/i18n'
 
@@ -31,7 +31,7 @@ export default async function Page({ params }: Props) {
         <p className="prose wide reveal mt-s">We sit between brand owners and the pressroom, so we see requirement changes early &mdash; usually a year or two before they land in a tender document. These are the shifts our customers are planning around right now.</p>
       </div></section>
       {trends?.length ? (
-        <TrendSections items={trends} />
+        <TrendList items={trends} locale={locale} />
       ) : trends ? null : (
       <>
       <section className="section tight snug"><div className="wrap reveal">

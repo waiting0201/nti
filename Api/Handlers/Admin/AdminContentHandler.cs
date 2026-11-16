@@ -543,7 +543,37 @@ public abstract class AdminContentHandler<TEntity, TI18n>(AppDbContext db)
 
     /// <summary>
     /// 既有內容的 slug 改了（已正規化、已通過檢查）。在 i18n 存檔的同一個交易內呼叫。
-    /// 目前只有 04 news 用它建 301——只有消息的 slug 會出現在前台網址上。
+    /// 04 news 與 07 trend 用它建 301——只有這兩個單元的 slug 會出現在前台網址上。
     /// </summary>
     protected virtual Task OnSlugChangedAsync(int id, string lang, string oldSlug, string newSlug) => Task.CompletedTask;
+
+    /// <summary>
+    /// 在 <c>Redirect</c> 補一筆舊網址 → 新網址的 301（<see cref="OnSlugChangedAsync"/> 的共用實作）。
+    /// <paramref name="from"/>／<paramref name="to"/> 是含語系前綴的真實網址（<see cref="SitePaths.For"/>）。
+    /// </summary>
+    protected async Task UpsertSlugRedirectAsync(string from, string to)
+    {
+        // 改回以前用過的 slug：先前建的「這個網址 → 別處」會變成把現行網址轉走，停用它
+        foreach (var stale in await db.Redirect.Where(r => r.FromPath == to).ToListAsync())
+            stale.IsActive = false;
+
+        // 改第二次以上：原本指向舊網址的轉址直接改指新網址，不要讓使用者多跳一次
+        // （上一步停用的那筆除外：它改指過去就成了自己轉自己）
+        foreach (var chained in await db.Redirect.Where(r => r.ToPath == from && r.FromPath != to).ToListAsync())
+            chained.ToPath = to;
+
+        // FromPath 的唯一索引不分軟刪，所以查的時候也不能濾 IsDeleted
+        var existing = await db.Redirect.FirstOrDefaultAsync(r => r.FromPath == from);
+        if (existing is null)
+        {
+            db.Redirect.Add(new Redirect { FromPath = from, ToPath = to, StatusCode = 301 });
+        }
+        else
+        {
+            existing.ToPath     = to;
+            existing.StatusCode = 301;
+            existing.IsActive   = true;
+            existing.IsDeleted  = false;
+        }
+    }
 }

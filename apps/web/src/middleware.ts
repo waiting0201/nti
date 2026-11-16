@@ -72,13 +72,14 @@ function redirectTo(req: NextRequest, hit: CmsRedirect) {
  *
  * `ROUTES` 是 `scripts/build-pages.mjs` 從 mockup 產生的 44 條，與 sitemap 同一份來源。
  *
- * ⚠️ 消息詳細頁 `/news/{slug}` 的 slug 在 CMS 裡，middleware 查不到（Edge runtime，
- * 不打 API），所以整個前綴一律放行，由 `news/[slug]/page.tsx` 自己 `notFound()`。
+ * ⚠️ 消息詳細頁 `/news/{slug}` 與產業趨勢詳細頁 `/printing-trends/{slug}` 的 slug 在 CMS 裡，
+ * middleware 查不到（Edge runtime，不打 API），所以整個前綴一律放行，由各自的
+ * `[slug]/page.tsx` 自己 `notFound()`。
  * 那條路徑的 404 畫面會是 Next 的空殼——狀態碼仍然正確，只是沒有站台版型。
  */
 function isKnownRoute(path: string): boolean {
   const clean = path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path
-  return clean === '/' || ROUTES.includes(clean) || clean.startsWith('/news/')
+  return clean === '/' || ROUTES.includes(clean) || clean.startsWith('/news/') || clean.startsWith('/printing-trends/')
 }
 
 export async function middleware(req: NextRequest) {

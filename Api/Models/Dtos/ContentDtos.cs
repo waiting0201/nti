@@ -147,13 +147,24 @@ public sealed class FaqDto
     public string  AnswerHtml   { get; set; } = null!;
 }
 
-/// <summary>產業趨勢（後台單元 07）。</summary>
+/// <summary>產業趨勢清單（後台單元 07）。清單只要卡片用的欄位，內文在詳細頁才取。</summary>
 public sealed class IndustryTrendDto
 {
-    public int    Id        { get; set; }
-    public int    SortOrder { get; set; }
-    public string Title     { get; set; } = null!;
-    public string BodyHtml  { get; set; } = null!;
+    public int     Id        { get; set; }
+    public int     SortOrder { get; set; }
+    public string  Title     { get; set; } = null!;
+    public string? Summary   { get; set; }
+    public string  Slug      { get; set; } = null!;
+}
+
+/// <summary>產業趨勢詳細頁（<c>/{lang}/printing-trends/{slug}</c>）。</summary>
+public sealed class IndustryTrendDetailDto
+{
+    public int     Id       { get; set; }
+    public string  Title    { get; set; } = null!;
+    public string? Summary  { get; set; }
+    public string  BodyHtml { get; set; } = null!;
+    public SeoDto  Seo      { get; set; } = null!;
 }
 
 /// <summary>認證／夥伴／獎項（後台單元 08）。</summary>
