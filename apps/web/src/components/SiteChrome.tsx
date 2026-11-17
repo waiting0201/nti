@@ -146,6 +146,37 @@ export function SiteChrome() {
       })
     }
 
+    // desktop dropdown: 子選單是純 CSS（.mi:hover / :focus-within），而 next/link 換頁時
+    // header 不重掛載 —— 點完連結焦點留在 <a> 上、指標也還在面板上，子選單就一直開著。
+    // 點到選單連結時：先 blur 解除 :focus-within；若點的是子選單項目，再用 inline style
+    // 蓋掉 :hover，直到指標離開該 .mi 才還原（不動 globals.css，驗收閘不受影響）。
+    if (menu) {
+      const desktop = matchMedia('(min-width: 901px)')
+      const pickDesktop = (e: MouseEvent) => {
+        if (!desktop.matches) return
+        const a = (e.target as Element).closest<HTMLAnchorElement>('a')
+        if (!a) return
+        a.blur()
+        if (!a.closest('.sub-menu')) return
+        const mi = a.closest<HTMLElement>('.mi')
+        const sub = mi?.querySelector<HTMLElement>('.sub-menu')
+        if (!mi || !sub) return
+        sub.style.visibility = 'hidden'
+        sub.style.opacity = '0'
+        // 監聽掛在 DOM 上、不隨 pathname 的 cleanup 移除：換頁後指標還在面板上，此時還原會立刻重開
+        mi.addEventListener(
+          'mouseleave',
+          () => {
+            sub.style.visibility = ''
+            sub.style.opacity = ''
+          },
+          { once: true },
+        )
+      }
+      menu.addEventListener('click', pickDesktop as EventListener)
+      cleanups.push(() => menu.removeEventListener('click', pickDesktop as EventListener))
+    }
+
     return () => cleanups.forEach((fn) => fn())
   }, [pathname, revealThreshold])
 
