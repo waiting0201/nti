@@ -20,7 +20,8 @@ public static class ErrorCodes
     public const string ConflictState     = "CONFLICT_STATE";      // 409 狀態不允許此操作
 
     public const string UploadType      = "UPLOAD_TYPE";       // 400 副檔名或 magic bytes 不在白名單
-    public const string UploadSize      = "UPLOAD_SIZE";       // 400 單檔 > 20MB 或超過 5 個
+    public const string UploadSize      = "UPLOAD_SIZE";       // 400／413 單檔 > 20MB、超過 5 個、合計 > 95MB 或請求本文過大
+    public const string UploadContent   = "UPLOAD_CONTENT";    // 400 壓縮檔內含執行檔／巢狀壓縮檔／異常壓縮比，或檔案損毀
 
     public const string RateLimited     = "RATE_LIMITED";      // 429 公開表單／登入頻率限制
     public const string BotCheckFailed  = "BOT_CHECK_FAILED";  // 400 reCAPTCHA v3 未通過（分數過低或 action 不符）

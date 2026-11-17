@@ -913,7 +913,7 @@ components:
       enum: [null, VALIDATION_REQUIRED, VALIDATION_FORMAT, VALIDATION_RANGE,
              AUTH_INVALID_CREDENTIALS, AUTH_TOKEN_INVALID, AUTH_MUST_CHANGE_PASSWORD,
              AUTH_ACCOUNT_INACTIVE, FORBIDDEN, NOT_FOUND, CONFLICT_DUPLICATE, CONFLICT_STATE,
-             UPLOAD_TYPE, UPLOAD_SIZE, UPLOAD_UNSCANNED, RATE_LIMITED, BOT_CHECK_FAILED, INTERNAL]
+             UPLOAD_TYPE, UPLOAD_SIZE, UPLOAD_CONTENT, RATE_LIMITED, BOT_CHECK_FAILED, INTERNAL]
 
     PagedResult:
       type: object
@@ -962,7 +962,7 @@ components:
         needsSustainableAdvice: { type: boolean, default: false }
         requirement:            { type: string }
         consent:                { type: boolean, description: 必須為 true。伺服器端另記同意時間、IP、UA、來源語系。 }
-        recaptchaToken:         { type: string, description: 'grecaptcha.execute(siteKey, { action: "quote" }) 取得的 token' }
+        recaptchaToken:         { type: string, description: 'grecaptcha.execute(siteKey, { action: "quote" }) 取得的 token。建議改放 X-Recaptcha-Token 標頭（讀本文前即驗證），有標頭時此欄位不使用' }
 
     ContactCreate:
       type: object

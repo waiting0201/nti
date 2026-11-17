@@ -30,10 +30,12 @@ const MSG = {
                zh: '機器人驗證未通過，請重新整理後再試。' },
   tooMany:   { en: 'Too many submissions. Please try again later.',
                zh: '提交次數過於頻繁，請稍後再試。' },
-  tooLarge:  { en: 'Attachment too large or too many files (max 20 MB each, up to 5).',
-               zh: '附件太大或數量過多（單檔上限 20MB，最多 5 個）。' },
+  tooLarge:  { en: 'Attachment too large or too many files (max 20 MB each, 95 MB in total, up to 5).',
+               zh: '附件太大或數量過多（單檔上限 20MB、合計 95MB，最多 5 個）。' },
   badType:   { en: 'Unsupported file type. Accepted: PDF, AI, PSD, JPG, PNG, ZIP.',
                zh: '不支援的檔案格式，可接受 PDF、AI、PSD、JPG、PNG、ZIP。' },
+  badZip:    { en: 'A ZIP file could not be accepted. Please do not include programs, scripts, shortcuts or other archives inside it.',
+               zh: '壓縮檔無法接受：請勿在壓縮檔內放程式、腳本、捷徑或其他壓縮檔。' },
   invalid:   { en: 'Please check the highlighted fields and try again.',
                zh: '請檢查填寫的欄位後再送出一次。' },
   failed:    { en: 'Could not send right now. Please try again, or email us directly.',
@@ -46,9 +48,35 @@ const BY_CODE: Record<string, keyof typeof MSG> = {
   RATE_LIMITED:      'tooMany',
   UPLOAD_SIZE:       'tooLarge',
   UPLOAD_TYPE:       'badType',
+  UPLOAD_CONTENT:    'badZip',
   VALIDATION_FAILED: 'invalid',
   VALIDATION_REQUIRED: 'invalid',
   VALIDATION_FORMAT: 'invalid',
+}
+
+/**
+ * 附件規則，與後端 `UploadRules` 一致。這裡只是讓訪客**不必等上傳完**才知道被退件——
+ * 真正的關卡在後端（檔頭、ZIP 內容都只有後端看得到），這裡擋不住任何刻意繞過的人。
+ */
+const ATTACH = {
+  exts: ['.pdf', '.ai', '.psd', '.jpg', '.jpeg', '.png', '.zip'],
+  maxCount: 5,
+  maxBytes: 20 * 1024 * 1024,
+  maxTotalBytes: 95 * 1024 * 1024,
+} as const
+
+function checkAttachments(form: HTMLFormElement): keyof typeof MSG | null {
+  const input = form.querySelector('input[type="file"][name="files"]') as HTMLInputElement | null
+  const files = Array.from(input?.files ?? [])
+  if (files.length === 0) return null
+
+  const ext = (name: string) => name.slice(name.lastIndexOf('.')).toLowerCase()
+  if (files.some((f) => !(ATTACH.exts as readonly string[]).includes(ext(f.name)))) return 'badType'
+
+  const total = files.reduce((sum, f) => sum + f.size, 0)
+  if (files.length > ATTACH.maxCount || total > ATTACH.maxTotalBytes
+      || files.some((f) => f.size > ATTACH.maxBytes || f.size === 0)) return 'tooLarge'
+  return null
 }
 
 declare global {
@@ -169,6 +197,9 @@ export function PageForm() {
       // 後端還沒接上時維持原型行為，不然線上的表單會變成「按了沒反應」
       if (!hasApi) return succeed()
 
+      const attachProblem = checkAttachments(form)
+      if (attachProblem) return say(MSG[attachProblem][locale])
+
       if (submit) {
         submit.disabled = true
         submit.textContent = MSG.sending[locale]
@@ -177,13 +208,19 @@ export function PageForm() {
       try {
         const body = new FormData(form)
         const token = await recaptchaToken(ACTION[kind])
-        if (token) body.set('recaptchaToken', token)
+        const headers: Record<string, string> = { 'Accept-Language': locale }
+        if (token) {
+          // 標頭讓後端在收附件之前就驗 token（FormHandler.BotTokenHeader）；
+          // 本文欄位保留給沒讀標頭的舊版 API，兩者送的是同一個 token、後端只驗一次
+          headers['X-Recaptcha-Token'] = token
+          body.set('recaptchaToken', token)
+        }
 
         // 沒選檔案時 FormData 仍會帶一個空的 files 欄位，後端會當成 0 個附件
         const res = await fetch(`${apiBase}/${kind === 'quote' ? 'quotes' : 'contacts'}`, {
           method: 'POST',
           body,
-          headers: { 'Accept-Language': locale },
+          headers,
         })
         const envelope = await res.json().catch(() => null)
 

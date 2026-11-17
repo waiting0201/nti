@@ -295,7 +295,8 @@ int pageSize = int.TryParse(req.Query["pageSize"], out var ps) ? Math.Clamp(ps, 
 | `CONFLICT_DUPLICATE` | 409 | slug、`Code`、email 重複 |
 | `CONFLICT_STATE` | 409 | 狀態不允許此操作（如上架但缺英文語系） |
 | `UPLOAD_TYPE` | 400 | 副檔名或 magic bytes 不在白名單 |
-| `UPLOAD_SIZE` | 400 | 單檔 > 20MB 或超過 5 個 |
+| `UPLOAD_SIZE` | 400／413 | 單檔 > 20MB、超過 5 個、合計 > 95MB；請求本文過大回 413 |
+| `UPLOAD_CONTENT` | 400 | 報價附件 ZIP 內含執行檔／腳本／捷徑／巢狀壓縮檔、路徑穿越、異常壓縮比，或 ZIP 損毀 |
 | `RATE_LIMITED` | 429 | 公開表單／登入頻率限制（§9.6） |
 | `BOT_CHECK_FAILED` | 400 | reCAPTCHA v3 未通過（分數低於門檻、action 不符或驗證服務異常） |
 | `INTERNAL` | 500 | 未預期例外（不得洩漏堆疊） |
@@ -587,13 +588,19 @@ override `SaveChangesAsync`，集中填 [`08-database.md`](08-database.md) §2.3
 
 流程（[`09-cms-admin.md`](09-cms-admin.md) §3 為尺寸與格式權威）：
 
-1. `req.ReadFormAsync()` → `IFormFile`
-2. 副檔名白名單（報價設計稿：PDF/AI/PSD/JPG/PNG/ZIP；後台圖片：JPG/PNG/WebP/SVG 依單元）
-3. 大小：報價附件單檔 ≤20MB、最多 5 個；後台圖片依 09 §3
-4. **magic bytes 驗證**（`Common/FileSignatureValidator.cs`）—— 只信任檔頭，不信任 `Content-Type` 與副檔名（Jabez 已驗證，防偽造）
-5. 上傳 Blob，路徑 `{container}/{yyyy}/{MM}/{guid}{ext}`
-6. 影像另存 WebP 衍生檔、原檔保留；命名慣例 `{原檔名}.webp` 同目錄（補上 `db/README.md` 已知缺口 #4）
-7. 報價附件不做病毒掃描（2026-09-08 決策，09 §17）——下載限超管且一律以 octet-stream 送出
+1. **讀本文之前**（公開表單）：以 `Content-Length` 擋過大請求（報價 96MB、聯絡 256KB，超過回 413），
+   並先驗 `X-Recaptcha-Token` 標頭與 rate limit——沒通過的請求不讓伺服器先把附件收進暫存（§9.6）
+2. `ReadFormAsync(FormOptions)` → `IFormFile`。公開表單帶上限：本文同上、欄位（含檔案）≤64 個、單一值 ≤64KB；
+   超過時 ASP.NET Core 拋 `InvalidDataException`，轉成 413 `UPLOAD_SIZE`
+3. **檔名淨化**（`Common/UploadFileName.cs`）：去路徑、控制字元與雙向文字控制字元（U+202E 可把 `fdp.exe` 顯示成 `exe.pdf`），截到 200 字保留副檔名。**白名單判斷的是淨化後的名字**
+4. 副檔名白名單（報價設計稿：PDF/AI/PSD/JPG/PNG/ZIP；後台圖片：JPG/PNG/WebP/SVG 依單元）
+5. 大小：報價附件單檔 ≤20MB、最多 5 個、**合計 ≤95MB**（Functions host 預設本文上限 100MB，5×20MB 會在 host 層被切斷）；後台圖片依 09 §3
+6. **magic bytes 驗證**（`Common/FileSignatureValidator.cs`）—— 只信任檔頭，不信任 `Content-Type` 與副檔名（Jabez 已驗證，防偽造）
+7. **ZIP 內容檢查**（`Common/ZipInspector.cs`，只讀中央目錄、不解壓）：擋執行檔／腳本／捷徑／帶巨集 Office／巢狀壓縮檔與磁碟映像、Zip Slip 路徑、>2000 項、解壓合計 >1GB、單項壓縮比 >200 倍
+8. **全部附件驗完才開始上傳**；上傳到一半或落庫失敗，當場刪掉已傳的 Blob（`quote-attachments` 不在孤兒檔排程範圍內，漏刪就是永久殘留的客戶檔案）
+9. 上傳 Blob，路徑 `{container}/{yyyy}/{MM}/{guid}{ext}`；報價附件的 `Content-Type` **由副檔名決定**（`UploadRules.QuoteAttachmentContentTypes`），不採用上傳端送來的值
+10. 影像另存 WebP 衍生檔、原檔保留；命名慣例 `{原檔名}.webp` 同目錄（補上 `db/README.md` 已知缺口 #4）
+11. 報價附件不做病毒掃描（2026-09-08 決策，09 §17）——下載限超管且一律以 octet-stream 送出。第 7 條的 ZIP 檢查**不是防毒**：PDF／AI／PSD 內嵌的惡意內容仍擋不到，擋的是「不需漏洞、點兩下就執行」的那一類
 
 **所有 Blob 容器一律 private**（`PublicAccessType.None`），前端經後端代理路由 `/files/{container}/{*path}` 取檔，避開 403/CORS 並可施加授權（附件下載需 `quote.download`，僅超管）。
 
@@ -603,6 +610,10 @@ Jabez 是內網 ERP，無此需求；NTI 的 `/quotes`、`/contacts`、`/auth/*`
 
 - **Google reCAPTCHA v3**（2026-09-08 由 Cloudflare Turnstile 換來）：前端 `grecaptcha.execute(siteKey, { action })`
   取 token，後端 `RecaptchaService` 呼叫 siteverify 驗證後才處理。失敗回 400 `BOT_CHECK_FAILED`。
+  - **token 放 `X-Recaptcha-Token` 標頭**（`FormHandler.BotTokenHeader`）：報價表單是 multipart，token 若只在本文欄位，
+    伺服器得先收完附件才看得到它。標頭讓驗證與 rate limit 發生在讀本文之前。前端同時在本文帶 `recaptchaToken`
+    給舊版 API；後端有標頭就只驗標頭，同一個 token 不會驗兩次（v3 token 一次性）。自訂標頭會觸發 CORS preflight，
+    平台層 CORS 須放行（App Service CORS 不限制請求標頭）
   - **v3 不回「過／不過」，回 0.0–1.0 的分數**，門檻由 `Recaptcha__MinScore` 決定（預設 0.5，Google 建議值）。
     上線後要看實際分佈再調：訂太高會擋掉用 VPN 或隱私瀏覽器的真人，訂太低等於沒擋。拒絕時分數會進 log。
   - **一定要比對 `action`**：少了這道，攻擊者可以拿在別頁取得的合法 token 打這支端點。
@@ -790,5 +801,6 @@ traces | where timestamp > ago(30m)
 | 2026-09-10 | Tim（Claude Code） | **§9.9 補即時媒體清除**：編輯者移除或換掉的檔案不再等夜間排程。`AppDbContext.SaveChangesAsync` 從 ChangeTracker 記下「被拿掉引用」的路徑（`*Path` 欄位比對舊值、`*Html` 比對內文的 `<img src>`），`AppRouter` 在後台寫入成功後交給 `IMediaCleaner` 重掃引用並刪檔。孤兒檔排程降為安全網。欄位清單抽成共用的 `MediaReferenceScanner`，兩條路徑各維護一份遲早會分岔。同時修掉 `Normalize` 的一個既有錯誤：內文若存的是代理路由的完整網址（`{apiBase}/api/v1/files/media/…`），原本只比對開頭的寫法剝不掉 `api/v1/`，正規化後與 DB 的相對路徑對不起來——排程開啟刪除後會把還掛在內文裡的圖判成孤兒 |
 | 2026-09-11 | Tim（Claude Code） | **§9.8 快取標頭改為一律 `no-store`**，並移除 `FrontendRevalidator`（前台的 `/api/revalidate` 一起拿掉）。同時更正 §效能那條「API 不承擔每次請求」——前台不快取之後，每個訪客的每一頁都會進 API 與 DB |
 | 2026-11-05 | Tim（Claude Code） | §9.4：通知信內容改由 `FormMailService` 從原始資料組出（完整欄位、Reply-To 客戶、確認信依語系、讀 `mail.bcc` 密件副本）；重寄改為重組原內容（原本只寄出「（重寄）」兩個字）。§12 新增 `Mail__AdminUrl`（選填）與本機用的 `Smtp__PickupDirectory` |
+| 2026-11-17 | Tim（Claude Code） | **報價附件上傳加固**（§9.5 改寫為 11 步、§9.6 補標頭 token、錯誤碼補 `UPLOAD_CONTENT`）：讀本文前先擋 `Content-Length` 與驗 reCAPTCHA（token 改走 `X-Recaptcha-Token` 標頭）、`FormOptions` 收窄（原為預設 128MB／1024 欄）、合計 95MB 上限、檔名淨化（雙向控制字元、超長檔名原本會在上傳 Blob 後才撞 DB 截斷）、Content-Type 改由副檔名決定、ZIP 內容檢查、全部驗完才上傳且失敗時回收 Blob（原本第 3 個檔被擋時前 2 個會永久殘留）、`FileSignatureValidator` 改 `ReadAtLeastAsync`（`ReadAsync` 不保證讀滿檔頭） |
 
-*最後更新：2026-11-05*
+*最後更新：2026-11-17*

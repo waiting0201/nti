@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -30,15 +31,34 @@ public sealed class FormHandler(
     /// <summary>單號衝突重試次數。</summary>
     private const int QuoteNoRetries = 3;
 
+    /// <summary>
+    /// reCAPTCHA token 也可以放在這個標頭（前端一律這樣送）。放在標頭才能在
+    /// <b>讀取本文之前</b>驗證——放在 multipart 欄位裡，伺服器得先收完近 100MB 才看得到它。
+    /// </summary>
+    public const string BotTokenHeader = "X-Recaptcha-Token";
+
     public async Task<IActionResult> CreateQuoteAsync(HttpRequest req)
     {
-        var (dto, files) = await ReadQuoteAsync(req);
-        var sourceIp     = RequestContext.SourceIp(req);
+        var sourceIp = RequestContext.SourceIp(req);
+        RequireBodyWithin(req, UploadRules.QuoteRequestMaxBytes);
 
-        await GuardPublicWriteAsync(req, dto.RecaptchaToken, BotCheckActions.Quote, sourceIp,
-            () => rateLimit.IsQuoteLimitExceededAsync(sourceIp));
+        // 先驗機器人與頻率、再收本文：沒通過的請求不該讓伺服器先把附件收進暫存。
+        // 標頭沒帶 token 的舊用戶端退回讀完本文再驗（本文大小已被上面與 FormOptions 限住）。
+        var headerToken = req.Headers[BotTokenHeader].FirstOrDefault();
+        if (!string.IsNullOrWhiteSpace(headerToken))
+            await GuardPublicWriteAsync(req, headerToken, BotCheckActions.Quote, sourceIp,
+                () => rateLimit.IsQuoteLimitExceededAsync(sourceIp));
+
+        var (dto, files) = await ReadQuoteAsync(req);
+
+        if (string.IsNullOrWhiteSpace(headerToken))
+            await GuardPublicWriteAsync(req, dto.RecaptchaToken, BotCheckActions.Quote, sourceIp,
+                () => rateLimit.IsQuoteLimitExceededAsync(sourceIp));
 
         ValidateQuote(dto, files);
+        // 全部附件先驗完才開始上傳：原本逐個驗、逐個傳，第 3 個被擋時前 2 個已經進了 Blob，
+        // 而 quote-attachments 容器不在孤兒檔排程的範圍內，會永久留著。
+        var incoming = await InspectAttachmentsAsync(files);
 
         var now = Clock.UtcNow;
         var quote = new QuoteRequest
@@ -65,10 +85,18 @@ public sealed class FormHandler(
             SubmittedAt            = now,
         };
 
-        // 附件先上傳 Blob 再落庫：上傳失敗就整筆不進 DB，不會留下指向不存在檔案的紀錄
-        var attachments = await UploadAttachmentsAsync(files);
-
-        await SaveQuoteWithRetryAsync(quote, attachments);
+        // 附件先上傳 Blob 再落庫：上傳失敗就整筆不進 DB，不會留下指向不存在檔案的紀錄。
+        // 反過來落庫失敗時要把剛傳的檔收回，否則就是沒有任何紀錄指著的客戶檔案。
+        var attachments = await UploadAttachmentsAsync(incoming);
+        try
+        {
+            await SaveQuoteWithRetryAsync(quote, attachments);
+        }
+        catch
+        {
+            await DeleteUploadedAsync(attachments);
+            throw;
+        }
         // 寄信失敗不影響已回 200 的提交（docs/10 §9.4），失敗只留在 EmailLog 等後台重寄
         await mails.SendQuoteMailsAsync(quote.Id);
 
@@ -78,7 +106,8 @@ public sealed class FormHandler(
 
     public async Task<IActionResult> CreateContactAsync(HttpRequest req)
     {
-        var dto      = await ReadJsonOrFormAsync<ContactCreateDto>(req, BindContact);
+        RequireBodyWithin(req, UploadRules.ContactRequestMaxBytes);
+        var dto      = await ReadJsonOrFormAsync<ContactCreateDto>(req, BindContact, UploadRules.ContactRequestMaxBytes);
         var sourceIp = RequestContext.SourceIp(req);
 
         await GuardPublicWriteAsync(req, dto.RecaptchaToken, BotCheckActions.Contact, sourceIp,
@@ -132,7 +161,7 @@ public sealed class FormHandler(
         if (!req.HasFormContentType)
             return (await ReadJsonAsync<QuoteCreateDto>(req), new FormFileCollection());
 
-        var form = await req.ReadFormAsync();
+        var form = await ReadFormWithinAsync(req, UploadRules.QuoteRequestMaxBytes);
         return (BindQuote(form), form.Files);
     }
 
@@ -149,6 +178,10 @@ public sealed class FormHandler(
         if (files.Count > UploadRules.QuoteAttachmentMaxCount)
             throw AppException.BadRequest(ErrorCodes.UploadSize,
                 $"附件最多 {UploadRules.QuoteAttachmentMaxCount} 個。");
+
+        if (files.Sum(f => f.Length) > UploadRules.QuoteAttachmentMaxTotalBytes)
+            throw AppException.BadRequest(ErrorCodes.UploadSize,
+                $"附件合計超過 {UploadRules.QuoteAttachmentMaxTotalBytes / 1024 / 1024}MB。");
     }
 
     /// <summary>
@@ -182,42 +215,95 @@ public sealed class FormHandler(
         return id;
     }
 
-    private async Task<List<QuoteAttachment>> UploadAttachmentsAsync(IFormFileCollection files)
+    /// <summary>通過檢查、準備上傳的附件。檔名已淨化，Content-Type 由副檔名決定。</summary>
+    private sealed record IncomingAttachment(IFormFile File, string SafeName, string ContentType);
+
+    /// <summary>
+    /// 每個附件依序過：副檔名白名單 → 大小 → 檔頭 → ZIP 內容。
+    /// <b>檔名先淨化再取副檔名</b>：白名單判斷的對象必須是後台日後顯示的那個名字。
+    /// </summary>
+    private static async Task<List<IncomingAttachment>> InspectAttachmentsAsync(IFormFileCollection files)
     {
-        var attachments = new List<QuoteAttachment>();
+        var incoming = new List<IncomingAttachment>();
 
         foreach (var file in files)
         {
-            var ext = Path.GetExtension(file.FileName);
+            var name = UploadFileName.Sanitize(file.FileName);
+            var ext  = Path.GetExtension(name);
 
-            if (!UploadRules.QuoteAttachmentExtensions.Contains(ext, StringComparer.OrdinalIgnoreCase))
+            if (!UploadRules.QuoteAttachmentContentTypes.TryGetValue(ext, out var contentType))
                 throw AppException.BadRequest(ErrorCodes.UploadType,
                     $"不支援的檔案格式：{ext}。可接受 {string.Join("、", UploadRules.QuoteAttachmentExtensions)}。");
 
+            if (file.Length == 0)
+                throw AppException.BadRequest(ErrorCodes.UploadType, $"{name} 是空檔案。");
+
             if (file.Length > UploadRules.QuoteAttachmentMaxBytes)
-                throw AppException.BadRequest(ErrorCodes.UploadSize, $"{file.FileName} 超過 20MB。");
+                throw AppException.BadRequest(ErrorCodes.UploadSize, $"{name} 超過 20MB。");
 
             await using var stream = file.OpenReadStream();
 
             // 只信檔頭：副檔名與 Content-Type 都是使用者說了算（docs/10 §9.5）
-            if (!await FileSignatureValidator.IsValidAsync(stream, file.FileName))
-                throw AppException.BadRequest(ErrorCodes.UploadType,
-                    $"{file.FileName} 的內容與副檔名不符。");
+            if (!await FileSignatureValidator.IsValidAsync(stream, name))
+                throw AppException.BadRequest(ErrorCodes.UploadType, $"{name} 的內容與副檔名不符。");
 
-            var path = await blobs.UploadAsync(
-                UploadRules.Containers.QuoteAttachments, file.FileName, stream, file.ContentType);
+            if (ext.Equals(".zip", StringComparison.OrdinalIgnoreCase)
+                && ZipInspector.Inspect(stream, name) is { } reason)
+                throw AppException.BadRequest(ErrorCodes.UploadContent, reason);
 
-            attachments.Add(new QuoteAttachment
+            incoming.Add(new IncomingAttachment(file, name, contentType));
+        }
+
+        return incoming;
+    }
+
+    private async Task<List<QuoteAttachment>> UploadAttachmentsAsync(List<IncomingAttachment> incoming)
+    {
+        var attachments = new List<QuoteAttachment>();
+
+        try
+        {
+            foreach (var item in incoming)
             {
-                FilePath     = path,
-                OriginalName = file.FileName,
-                ContentType  = file.ContentType,
-                SizeBytes    = file.Length,
-                CreatedAt    = Clock.UtcNow,
-            });
+                await using var stream = item.File.OpenReadStream();
+
+                var path = await blobs.UploadAsync(
+                    UploadRules.Containers.QuoteAttachments, item.SafeName, stream, item.ContentType);
+
+                attachments.Add(new QuoteAttachment
+                {
+                    FilePath     = path,
+                    OriginalName = item.SafeName,
+                    ContentType  = item.ContentType,
+                    SizeBytes    = item.File.Length,
+                    CreatedAt    = Clock.UtcNow,
+                });
+            }
+        }
+        catch
+        {
+            // 傳到一半失敗：已經傳上去的不會有任何紀錄指著，當場收回
+            await DeleteUploadedAsync(attachments);
+            throw;
         }
 
         return attachments;
+    }
+
+    /// <summary>盡力刪除；刪不掉只留 log，不蓋掉原本的例外。</summary>
+    private async Task DeleteUploadedAsync(List<QuoteAttachment> attachments)
+    {
+        foreach (var attachment in attachments)
+        {
+            try
+            {
+                await blobs.DeleteAsync(UploadRules.Containers.QuoteAttachments, attachment.FilePath);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "報價附件回收失敗，Blob 會殘留：{Path}", attachment.FilePath);
+            }
+        }
     }
 
     private async Task SaveQuoteWithRetryAsync(QuoteRequest quote, List<QuoteAttachment> attachments)
@@ -264,11 +350,49 @@ public sealed class FormHandler(
     }
 
     // ── 讀取請求（JSON 或 multipart 皆可）─────────────────────────────────
-    private static async Task<T> ReadJsonOrFormAsync<T>(HttpRequest req, Func<IFormCollection, T> bind)
+
+    /// <summary>
+    /// 有 <c>Content-Length</c> 就在讀本文之前擋掉過大的請求（413）。
+    /// chunked 請求沒有這個標頭，由 <see cref="ReadFormWithinAsync"/> 的 <c>FormOptions</c> 在讀取途中擋。
+    /// </summary>
+    private static void RequireBodyWithin(HttpRequest req, long maxBytes)
+    {
+        if (req.ContentLength is long length && length > maxBytes)
+            throw new AppException(ErrorCodes.UploadSize,
+                $"請求內容過大（上限 {maxBytes / 1024 / 1024.0:0.#}MB）。", 413);
+    }
+
+    /// <summary>
+    /// 帶上限的 <c>ReadFormAsync</c>。預設的 <c>FormOptions</c> 允許 128MB 本文、1024 個欄位，
+    /// 公開端點不需要那麼寬。欄位數把檔案也算在內，所以同時擋住「一次塞上萬個小檔」。
+    /// </summary>
+    private static async Task<IFormCollection> ReadFormWithinAsync(HttpRequest req, long maxBytes)
+    {
+        var options = new FormOptions
+        {
+            MultipartBodyLengthLimit = maxBytes,
+            BufferBodyLengthLimit    = maxBytes,
+            ValueCountLimit          = 64,
+            ValueLengthLimit         = 64 * 1024,
+            KeyLengthLimit           = 256,
+        };
+
+        try
+        {
+            return await req.ReadFormAsync(options);
+        }
+        catch (InvalidDataException ex)
+        {
+            // 超過 FormOptions 任一上限時 ASP.NET Core 拋這個；不接住會變成 500
+            throw new AppException(ErrorCodes.UploadSize, $"請求內容超過上限：{ex.Message}", 413);
+        }
+    }
+
+    private static async Task<T> ReadJsonOrFormAsync<T>(HttpRequest req, Func<IFormCollection, T> bind, long maxBytes)
         where T : new()
     {
         if (!req.HasFormContentType) return await ReadJsonAsync<T>(req);
-        return bind(await req.ReadFormAsync());
+        return bind(await ReadFormWithinAsync(req, maxBytes));
     }
 
     private static async Task<T> ReadJsonAsync<T>(HttpRequest req) where T : new()

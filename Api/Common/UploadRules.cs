@@ -31,6 +31,45 @@ public static class UploadRules
     /// <summary>報價附件最多 5 個。</summary>
     public const int QuoteAttachmentMaxCount = 5;
 
+    /// <summary>
+    /// 報價附件合計上限 95MB。
+    /// <para>
+    /// 不是 20MB × 5：Functions host 預設整個請求本文上限 100MB（<c>FUNCTIONS_REQUEST_BODY_SIZE_LIMIT</c>），
+    /// 5 個都滿 20MB 再加 multipart 的分界與文字欄位，會在 host 那層被直接切斷，
+    /// 訪客看到的是連線錯誤而不是可理解的訊息。留 5MB 給 multipart 開銷與欄位。
+    /// </para>
+    /// </summary>
+    public const long QuoteAttachmentMaxTotalBytes = 95L * 1024 * 1024;
+
+    /// <summary>
+    /// 報價請求本文上限：附件合計 + 1MB 文字欄位。<b>在讀取本文之前</b>就以
+    /// <c>Content-Length</c> 擋，並同時作為 <c>FormOptions</c> 的上限（chunked 請求沒有 Content-Length）。
+    /// </summary>
+    public const long QuoteRequestMaxBytes = QuoteAttachmentMaxTotalBytes + 1024 * 1024;
+
+    /// <summary>聯絡表單沒有附件，本文 256KB 已遠超任何正常留言。</summary>
+    public const long ContactRequestMaxBytes = 256 * 1024;
+
+    /// <summary>
+    /// 報價附件存檔時的 Content-Type：<b>由副檔名決定，不採用上傳端送來的值</b>。
+    /// 上傳端的 Content-Type 是使用者說了算（可以是 <c>text/html</c>），存進 Blob 與 DB
+    /// 等於讓外部檔案決定日後任何讀取者怎麼解讀它。
+    /// </summary>
+    public static readonly IReadOnlyDictionary<string, string> QuoteAttachmentContentTypes =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            [".pdf"]  = "application/pdf",
+            [".ai"]   = "application/postscript",
+            [".psd"]  = "image/vnd.adobe.photoshop",
+            [".jpg"]  = "image/jpeg",
+            [".jpeg"] = "image/jpeg",
+            [".png"]  = "image/png",
+            [".zip"]  = "application/zip",
+        };
+
+    /// <summary>附件原始檔名的上限，與 <c>QuoteAttachment.OriginalName</c> 欄位長度一致。</summary>
+    public const int OriginalNameMaxLength = 200;
+
     /// <summary>後台圖片單檔上限 10MB。</summary>
     public const long ImageMaxBytes = 10 * 1024 * 1024;
 
@@ -65,7 +104,7 @@ public static class UploadRules
         /// <summary>後台上傳的內容圖片。</summary>
         public const string Media = "media";
 
-        /// <summary>報價附件——需授權且掃描通過才給下載。</summary>
+        /// <summary>報價附件——下載限 <c>quote.download</c>（僅超管），本期不做病毒掃描（docs/09 §17）。</summary>
         public const string QuoteAttachments = "quote-attachments";
     }
 }

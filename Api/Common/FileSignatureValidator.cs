@@ -42,7 +42,9 @@ public static class FileSignatureValidator
         if (!Signatures.TryGetValue(ext, out var candidates)) return false;
 
         var buffer = new byte[Math.Max(SvgProbeLength, 16)];
-        var read   = await stream.ReadAsync(buffer);
+        // ReadAsync 只保證讀到「至少 1 byte」，不保證填滿；檔頭剛好被切在兩次讀取之間時會誤判。
+        // ReadAtLeastAsync 讀到要求的量或檔案結尾才回來。
+        var read   = await stream.ReadAtLeastAsync(buffer, buffer.Length, throwOnEndOfStream: false);
         stream.Position = 0;
 
         if (ext.Equals(".svg", StringComparison.OrdinalIgnoreCase))

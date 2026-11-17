@@ -226,3 +226,4 @@
 | 2026-11-09 | Tim（Claude Code） | `GET /certification-items` 每筆的 `section` 改為 `categoryId`／`sectionCode`／`sectionTitle`（區塊＝認證分類 `Certification`，與 `/certifications` 的分組同一套），排序改為區塊排序→項目排序，停用區塊不回傳。後台 `/admin/certification/item` 的欄位 `section` → `categoryId`（同日一度開了 `CertSection` 型別，已併回）。`Api/openapi.yaml` 已同步 |
 | 2026-11-13 | Tim（Claude Code） | 新增 `GET /redirects/lookup`：前台 middleware 改讀後台的轉址表（單元 16），接上 CMS 後以資料庫為準，內建的舊站對照表只在 API 沒回應時備援。命中即累加 `HitCount` |
 | 2026-11-13 | Tim（Claude Code） | 新增 `GET /pages`（固定頁的索引開關清單，sitemap 用）。`POST /supplier/downloads/{id}/hit` 前台開始實際呼叫（之前只有端點、沒有呼叫端） |
+| 2026-11-17 | Tim（Claude Code） | `POST /quotes`／`POST /contacts`：reCAPTCHA token 可（前端一律）放 `X-Recaptcha-Token` 標頭，讓後端在讀本文前驗證；本文的 `recaptchaToken` 欄位保留相容。新增錯誤碼 `UPLOAD_CONTENT`（ZIP 內含執行檔等）；`UPLOAD_SIZE` 增加「附件合計 > 95MB」與 413「請求本文過大」。細節見 10 §9.5–9.6。`Api/openapi.yaml` 已同步 |
