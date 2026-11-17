@@ -620,6 +620,7 @@ Jabez 是內網 ERP，無此需求；NTI 的 `/quotes`、`/contacts`、`/auth/*`
     動作名稱定義在 `BotCheckActions`（`quote`／`contact`／`admin_login`），前端 execute 時要送一模一樣的字串。
   - 介面是 `IBotCheckService`，刻意不帶供應商名稱——已經換過一次，呼叫端不該再因為換供應商而改動。
 - **Rate limit**：以 IP + 端點為鍵，公開表單 10 次／小時、登入 5 次／15 分鐘。Consumption plan 無共享記憶體，**狀態存 DB 或 Blob**，不要用 `MemoryCache`（多實例會失效）。超限回 429 `RATE_LIMITED`
+  - **IP 取 `X-Forwarded-For` 的最後一段**（`RequestContext.SourceIp`）：瀏覽器直連 Function App，App Service 前端把真實位址附加在最後；前面各段是用戶端自己送的，取第一段等於讓人換個標頭值就繞過限流。日後若加 Front Door／APIM 等代理層，最後一段會變成代理位址、所有人被算成同一個 IP，屆時要改成從右邊數過信任的層數
 - 隱私同意：`consent` 為必填，伺服器端另記 `ConsentAt`／IP／UA／來源語系
 - 表單回應**不回傳內部 Id**，只回 `quoteNo`（`Q20260901-0001`）
 
@@ -802,5 +803,6 @@ traces | where timestamp > ago(30m)
 | 2026-09-11 | Tim（Claude Code） | **§9.8 快取標頭改為一律 `no-store`**，並移除 `FrontendRevalidator`（前台的 `/api/revalidate` 一起拿掉）。同時更正 §效能那條「API 不承擔每次請求」——前台不快取之後，每個訪客的每一頁都會進 API 與 DB |
 | 2026-11-05 | Tim（Claude Code） | §9.4：通知信內容改由 `FormMailService` 從原始資料組出（完整欄位、Reply-To 客戶、確認信依語系、讀 `mail.bcc` 密件副本）；重寄改為重組原內容（原本只寄出「（重寄）」兩個字）。§12 新增 `Mail__AdminUrl`（選填）與本機用的 `Smtp__PickupDirectory` |
 | 2026-11-17 | Tim（Claude Code） | **報價附件上傳加固**（§9.5 改寫為 11 步、§9.6 補標頭 token、錯誤碼補 `UPLOAD_CONTENT`）：讀本文前先擋 `Content-Length` 與驗 reCAPTCHA（token 改走 `X-Recaptcha-Token` 標頭）、`FormOptions` 收窄（原為預設 128MB／1024 欄）、合計 95MB 上限、檔名淨化（雙向控制字元、超長檔名原本會在上傳 Blob 後才撞 DB 截斷）、Content-Type 改由副檔名決定、ZIP 內容檢查、全部驗完才上傳且失敗時回收 Blob（原本第 3 個檔被擋時前 2 個會永久殘留）、`FileSignatureValidator` 改 `ReadAtLeastAsync`（`ReadAsync` 不保證讀滿檔頭） |
+| 2026-11-17 | Tim（Claude Code） | **§9.6 來源 IP 改取 `X-Forwarded-For` 最後一段**：原本取第一段（註解寫「前面有 SWA／Front Door」，但正式站是瀏覽器直連 `func-nti-prod.azurewebsites.net`），第一段是用戶端可任意填的值，表單與後台登入的 rate limit 都能被繞過 |
 
 *最後更新：2026-11-17*
