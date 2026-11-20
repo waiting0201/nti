@@ -145,7 +145,12 @@ export function SiteHeader({ solutions }: { solutions?: { code: string; name: st
     <header id="hdr">
       <div className="wrap nav">
         <A href={l('/')} className="brand" aria-label="NTI Printing home">
-          <img className="logo-img" src={mediaUrl('/assets/logo.svg')} alt="NTI Printing" />
+          {/* 中文版用客戶 2026-11-20 提供的「南台彩藝」中英雙行 logo；英文版維持原本的 logo.svg */}
+          <img
+            className="logo-img"
+            src={mediaUrl(locale === 'zh' ? '/assets/logo-zh.png' : '/assets/logo.svg')}
+            alt={locale === 'zh' ? '南台彩藝 NTI Printing' : 'NTI Printing'}
+          />
         </A>
         <nav className="menu">
           {menu.map((mi) => (

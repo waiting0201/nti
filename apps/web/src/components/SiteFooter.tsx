@@ -60,7 +60,12 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
         <div className="fgrid">
           <div className="fbrand">
             <A href={l('/')} className="brand" aria-label="NTI Printing home">
-              <img className="logo-img" src={mediaUrl('/assets/logo-white.svg')} alt="NTI Printing" />
+              {/* footer 是深色底，中文版用同一個 logo 的全白版（logo-zh-white.png） */}
+              <img
+                className="logo-img"
+                src={mediaUrl(locale === 'zh' ? '/assets/logo-zh-white.png' : '/assets/logo-white.svg')}
+                alt={locale === 'zh' ? '南台彩藝 NTI Printing' : 'NTI Printing'}
+              />
             </A>
             <p>The Courage to Print Green — sustainable packaging printing from Tainan, Taiwan.</p>
             <div className="fsocial">
